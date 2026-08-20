@@ -342,44 +342,26 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 9: Simplify Payment Methods
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Remove Stripe and PayPal. Keep Cash on Delivery. Add Bank Transfer with payment proof upload.
 **Details:**
-- Remove Stripe integration:
-  - Remove Stripe API routes (`app/api/payment/stripe/*`)
-  - Remove StripePaymentForm component
-  - Remove `@stripe/react-stripe-js`, `stripe` packages
-  - Remove Stripe Tax integration from products/orders
-- Remove PayPal integration:
-  - Remove PayPal API routes (`app/api/payment/paypal/*`)
-  - Remove PayPalPaymentButton component
-  - Remove `@paypal/react-paypal-js` package
-- Keep Cash on Delivery (COD)
-- Add Bank Transfer payment method:
-  - Admin can configure bank details: Account Name, Account Number, IBAN, Bank Name
-  - Admin can upload QR code image for easy payment
-  - During checkout, user selects "Bank Transfer"
-  - Show bank details + QR code to user
-  - User can upload payment screenshot/proof after placing order
-  - Payment proof stored with order
-  - Admin can view payment proof in order management
-- Update PaymentGateway model: remove stripe/paypal, add bank_transfer
-- Update Payment model: add bank transfer fields (proof_url, bank_reference)
-- Update checkout flow to support new payment methods
-- Update admin order view to show payment proof
+- ~~Remove Stripe integration~~ — Deleted API routes, components, packages
+- ~~Remove PayPal integration~~ — Deleted API routes, components, packages
+- ~~Remove Stripe/PayPal packages~~ — Uninstalled stripe, @stripe/react-stripe-js, @stripe/stripe-js, @paypal/react-paypal-js
+- ~~Keep Cash on Delivery (COD)~~ — Works as before
+- ~~Add Bank Transfer payment method~~ — Admin configures bank details + QR code; user sees details at checkout, uploads proof screenshot
+- ~~Update PaymentGateway model~~ — Only cod + bank_transfer, bank credentials
+- ~~Update Payment model~~ — cod + bank_transfer, proof_url, bank_reference
+- ~~Update checkout flow~~ — PaymentSection handles COD + Bank Transfer
+- ~~Update admin order view~~ — Shows payment proof and bank reference
+- ~~Clean up refund system~~ — Removed Stripe/PayPal refund logic
 **Files Affected:**
-- `app/api/payment/stripe/*` (remove)
-- `app/api/payment/paypal/*` (remove)
-- `app/components/checkout/StripePaymentForm.tsx` (remove)
-- `app/components/checkout/PayPalPaymentButton.tsx` (remove)
-- `app/components/checkout/PaymentMethodSelector.tsx` (rewrite)
-- `app/models/PaymentGateway.js` (update)
-- `app/models/Payment.js` (update)
-- `app/models/Order.ts` (add bank transfer fields)
-- `app/api/checkout/route.ts` (update)
-- `app/admin/orders/[id]/*` (add payment proof display)
-- `package.json` (remove stripe, paypal packages)
-**Verification:** Can checkout with COD and Bank Transfer, payment proof uploads work, admin can view proofs
+- 4 API routes deleted (Stripe create-intent, webhook; PayPal create-order, capture-order)
+- 2 components deleted (StripePaymentForm, PayPalPaymentButton)
+- 4 packages removed from package.json
+- 1 new API route (upload/payment-proof)
+- 30+ files updated (models, components, services, admin views)
+**Verification:** ✅ Build compiles, checkout supports COD and Bank Transfer, admin can view payment proofs
 
 ---
 
@@ -583,7 +565,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 6 | Implement Cart Sidebar | DONE |
 | 7 | Simplify Product Management (Admin) | DONE |
 | 8 | Remove Dynamic Pages & Simplify Site Settings | DONE |
-| 9 | Simplify Payment Methods (COD + Bank Transfer) | PENDING |
+| 9 | Simplify Payment Methods (COD + Bank Transfer) | DONE |
 | 10 | Keep & Adjust Coupon System | PENDING |
 | 11 | Simplify Product Attributes | PENDING |
 | 12 | Implement Track Order & Auto Confirmation | PENDING |
