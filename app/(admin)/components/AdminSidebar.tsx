@@ -24,17 +24,14 @@ import {
   FaChartBar,
   FaCreditCard,
   FaEnvelope,
-  FaImages,
   FaRobot,
   FaStar,
   FaUserTie,
 } from "react-icons/fa6";
-import { SiAliexpress } from "react-icons/si";
-import { TbPackageImport } from "react-icons/tb";
+
 import { useUser } from "../../context/UserContext";
 import { useState } from "react";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
-import { Flag } from "lucide-react";
 
 type LinkItem = {
   type: "link";
@@ -94,21 +91,9 @@ export default function AdminSidebar() {
     },
     {
       type: "link",
-      href: "/admin/hero-slider",
-      label: "Hero Slider",
-      icon: FaImages,
-    },
-    {
-      type: "link",
       href: "/admin/site-settings",
       label: "Site Settings",
       icon: FaFileAlt,
-    },
-    {
-      type: "link",
-      href: "/admin/promotional-banners",
-      label: "Promotional Banners",
-      icon: Flag,
     },
     {
       type: "link",
@@ -130,24 +115,7 @@ export default function AdminSidebar() {
       label: "Customers",
       icon: FaUserTie,
     },
-    {
-      type: "group",
-      key: "dropshipping",
-      label: "Dropshipping",
-      icon: FaShippingFast,
-      children: [
-        {
-          href: "/admin/dropshipping/aliexpress",
-          label: "AliExpress",
-          icon: SiAliexpress,
-        },
-        {
-          href: "/admin/dropshipping/cj",
-          label: "CJ Dropshipping",
-          icon: TbPackageImport,
-        },
-      ],
-    },
+
     {
       type: "group",
       key: "users",

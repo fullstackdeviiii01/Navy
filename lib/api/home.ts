@@ -35,23 +35,3 @@ export const getHomeDataSSR = async () => {
     };
   }
 };
-
-// Add this new function at the bottom of the file
-export const getHeroSlidesSSR = async () => {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/hero-slider`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch hero slides");
-    }
-
-    const data = await response.json();
-    return data.slides || [];
-  } catch (error) {
-    console.error("Error fetching hero slides:", error);
-    return [];
-  }
-};

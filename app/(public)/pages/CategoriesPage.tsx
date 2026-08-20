@@ -5,16 +5,12 @@ import { useState, useEffect, Suspense } from "react";
 import { categoriesApi } from "../../../lib/api/categories";
 import CategoryGrid from "../../components/category/CategoryGrid";
 import CategorySearchBar from "../../components/category/CategorySearchBar";
-import BannerDisplay from "../../components/banners/BannerDisplay";
 import { FaSearch } from "react-icons/fa";
 import Loader from "../../components/shared/Loader";
 
 function CategoriesPageContent() {
   const [allCategories, setAllCategories] = useState<any[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
-  const [topBanners, setTopBanners] = useState<any[]>([]);
-  const [middleBanners, setMiddleBanners] = useState<any[]>([]);
-  const [bottomBanners, setBottomBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -31,16 +27,6 @@ function CategoriesPageContent() {
     try {
       const categoriesData = await categoriesApi.getAll(false);
       setAllCategories(categoriesData.categories);
-
-      const bannersResponse = await fetch('/api/promotional-banners/active?target_page=categories');
-      if (bannersResponse.ok) {
-        const bannersData = await bannersResponse.json();
-        const banners = bannersData.banners || [];
-        
-        setTopBanners(banners.filter((b: any) => b.position === 'top').sort((a: any, b: any) => a.sort_order - b.sort_order));
-        setMiddleBanners(banners.filter((b: any) => b.position === 'middle').sort((a: any, b: any) => a.sort_order - b.sort_order));
-        setBottomBanners(banners.filter((b: any) => b.position === 'bottom').sort((a: any, b: any) => a.sort_order - b.sort_order));
-      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -70,17 +56,6 @@ function CategoriesPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Top Banners */}
-      {topBanners.length > 0 && (
-        <div className="mb-6" role="region" aria-label="Promotional banners">
-          {topBanners.map((banner) => (
-            <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-              <BannerDisplay banner={banner} />
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Hero Section */}
       <header className="max-w-7xl mx-auto px-4 py-12 md:py-10">
         <div className="max-w-3xl">
@@ -133,33 +108,8 @@ function CategoriesPageContent() {
           )}
         </div>
 
-        {/* Split categories for middle banner placement */}
-        {filteredCategories.length > 0 && middleBanners.length > 0 ? (
-          <>
-            {/* First half of categories */}
-            <CategoryGrid 
-              categories={filteredCategories.slice(0, Math.ceil(filteredCategories.length / 2))} 
-              loading={loading} 
-            />
-
-            {/* Middle Banners */}
-            <div className="my-8" role="region" aria-label="Featured promotions">
-              {middleBanners.map((banner) => (
-                <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-                  <BannerDisplay banner={banner} />
-                </div>
-              ))}
-            </div>
-
-            {/* Second half of categories */}
-            <CategoryGrid 
-              categories={filteredCategories.slice(Math.ceil(filteredCategories.length / 2))} 
-              loading={loading} 
-            />
-          </>
-        ) : (
-          <CategoryGrid categories={filteredCategories} loading={loading} />
-        )}
+        {/* Categories Grid */}
+        <CategoryGrid categories={filteredCategories} loading={loading} />
 
         {/* Empty State for Search */}
         {!loading && filteredCategories.length === 0 && searchQuery && (
@@ -184,17 +134,6 @@ function CategoriesPageContent() {
           </div>
         )}
       </main>
-
-      {/* Bottom Banners */}
-      {bottomBanners.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 mt-8 mb-6" role="region" aria-label="Additional promotions">
-          {bottomBanners.map((banner) => (
-            <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-              <BannerDisplay banner={banner} />
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

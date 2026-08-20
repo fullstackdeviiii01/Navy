@@ -15,15 +15,13 @@ import { formatPrice } from "../../../lib/utils/formatPrice";
 interface ProductVariant {
   _id?: string;
   sku: string;
-  aliexpressSkuId?: string;
-  aliexpressSkuAttr?: string;
   attributes: { name: string; value: string }[];
   price: number;
   compareAtPrice?: number;
   stockQuantity: number;
   isAvailable: boolean;
   position: number;
-  imageUrl?: string; // Per-variant swatch image (AliExpress colour photo)
+  imageUrl?: string;
 }
 
 interface ProductCardProps {

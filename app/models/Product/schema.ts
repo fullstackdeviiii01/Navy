@@ -22,26 +22,6 @@ const VariantAttributeSchema = new Schema<VariantAttribute>(
   { _id: false },
 );
 
-const AliexpressMetaSchema = new Schema(
-  {
-    productId: { type: Number, index: true }, // AliExpress product_id
-    storeId: { type: Number }, // AliExpress store_id
-    storeName: { type: String }, // e.g. "XWSN Official Store"
-    subProductId: { type: String }, // US market sub_product_id for order placement
-  },
-  { _id: false },
-);
-
-const CJMetaSchema = new Schema(
-  {
-    productId: { type: String, index: true },
-    productSku: { type: String, index: true },
-    supplierId: { type: String },
-    supplierName: { type: String },
-  },
-  { _id: false },
-);
-
 // Product Variant Schema
 const ProductVariantSchema = new Schema<ProductVariant>(
   {
@@ -52,18 +32,6 @@ const ProductVariantSchema = new Schema<ProductVariant>(
       sparse: true,
       index: true,
       trim: true,
-    },
-    aliexpressSkuId: {
-      type: String,
-    },
-    aliexpressSkuAttr: {
-      type: String,
-    },
-    cjVid: {
-      type: String,
-    },
-    cjVariantSku: {
-      type: String,
     },
     attributes: {
       type: [VariantAttributeSchema],
@@ -363,17 +331,6 @@ export const ProductSchema = new Schema<IProductDocument>(
       trim: true,
     },
 
-    // ========== AliExpress Metadata (dropshipping) ==========
-    aliexpress: {
-      type: AliexpressMetaSchema,
-      default: undefined,
-    },
-
-    cj: {
-      type: CJMetaSchema,
-      default: undefined,
-    },
-
     // ========== Variants Configuration ==========
     hasVariants: {
       type: Boolean,
@@ -558,7 +515,4 @@ ProductSchema.index({ category_id: 1, status: 1 });
 // Stripe Tax index
 ProductSchema.index({ stripe_tax_code: 1 });
 
-// AliExpress import index
-ProductSchema.index({ "aliexpress.productId": 1 }, { sparse: true });
-ProductSchema.index({ "cj.productId": 1 }, { sparse: true });
-ProductSchema.index({ "cj.productSku": 1 }, { sparse: true });
+

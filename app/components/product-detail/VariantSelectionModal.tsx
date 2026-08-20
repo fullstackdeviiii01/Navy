@@ -15,8 +15,6 @@ interface VariantAttribute {
 interface ProductVariant {
   _id?: string;
   sku: string;
-  aliexpressSkuId?: string;
-  aliexpressSkuAttr?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;

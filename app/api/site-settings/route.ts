@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import connectDB from "../../../lib/db";
 import SiteSettings from "../../models/SiteSettings";
-import PromotionalBanner from "../../models/PromotionalBanner";
 import User from "../../models/User";
 
 async function getGlobalSettings() {
@@ -12,14 +11,13 @@ async function getGlobalSettings() {
   if (!settings) {
     console.log("   getGlobalSettings: No global settings found, creating defaults...");
     const defaultComponents = [
-      { component_key: 'hero_slider', component_type: 'static', display_name: 'Hero Slider', is_visible: true, sort_order: 0 },
-      { component_key: 'category_carousel', component_type: 'static', display_name: 'Category Carousel', is_visible: true, sort_order: 1 },
-      { component_key: 'new_arrivals', component_type: 'static', display_name: 'New Arrivals', is_visible: true, sort_order: 2 },
-      { component_key: 'features_section', component_type: 'static', display_name: 'Features Section', is_visible: true, sort_order: 3 },
-      { component_key: 'featured_products', component_type: 'static', display_name: 'Featured Products', is_visible: true, sort_order: 4 },
-      { component_key: 'best_sellers', component_type: 'static', display_name: 'Best Sellers', is_visible: true, sort_order: 5 },
-      { component_key: 'trending_products', component_type: 'static', display_name: 'Trending Products', is_visible: true, sort_order: 6 },
-      { component_key: 'on_sale_products', component_type: 'static', display_name: 'On Sale Products', is_visible: true, sort_order: 7 }
+      { component_key: 'category_carousel', component_type: 'static', display_name: 'Category Carousel', is_visible: true, sort_order: 0 },
+      { component_key: 'new_arrivals', component_type: 'static', display_name: 'New Arrivals', is_visible: true, sort_order: 1 },
+      { component_key: 'features_section', component_type: 'static', display_name: 'Features Section', is_visible: true, sort_order: 2 },
+      { component_key: 'featured_products', component_type: 'static', display_name: 'Featured Products', is_visible: true, sort_order: 3 },
+      { component_key: 'best_sellers', component_type: 'static', display_name: 'Best Sellers', is_visible: true, sort_order: 4 },
+      { component_key: 'trending_products', component_type: 'static', display_name: 'Trending Products', is_visible: true, sort_order: 5 },
+      { component_key: 'on_sale_products', component_type: 'static', display_name: 'On Sale Products', is_visible: true, sort_order: 6 }
     ];
 
     const defaultStaticPages = [
@@ -58,37 +56,8 @@ export async function GET(request: NextRequest) {
       console.log("   GET /api/site-settings: Fetching home settings...");
       const settings = await getGlobalSettings();
       
-      const homeBanners = await (PromotionalBanner as any)
-        .find({ target_page: 'home' })
-        .sort({ sort_order: 1 })
-        .lean();
-      console.log(`   GET /api/site-settings: Found ${homeBanners.length} home banners in PromotionalBanner`);
-
       let components = settings.home_components || [];
-      console.log(`   GET /api/site-settings: Initial components count = ${components.length}`);
-      
-      const existingBannerIds = new Set(
-        components
-          .filter((c: any) => c.component_type === 'banner' && c.banner_id)
-          .map((c: any) => c.banner_id.toString())
-      );
-      console.log(`   GET /api/site-settings: Existing banner IDs in components = ${Array.from(existingBannerIds)}`);
-
-      homeBanners.forEach((banner: any) => {
-        if (!existingBannerIds.has(banner._id.toString())) {
-          console.log(`   GET /api/site-settings: Adding banner ${banner._id} to home_components`);
-          components.push({
-            component_key: `banner_${banner._id}`,
-            component_type: 'banner',
-            banner_id: banner._id,
-            display_name: banner.title,
-            is_visible: banner.is_active || false,
-            sort_order: components.length
-          });
-        }
-      });
-
-      console.log(`   GET /api/site-settings: Final components count = ${components.length}`);
+      console.log(`   GET /api/site-settings: Components count = ${components.length}`);
 
       return NextResponse.json({
         home_meta_title: settings.home_meta_title,
@@ -223,47 +192,6 @@ export async function PUT(request: NextRequest) {
       }
       
       if (data.home_components) {
-        const bannerComponents = data.home_components
-          .filter((c: any) => c.component_type === 'banner' && c.banner_id);
-        
-        if (bannerComponents.length > 0) {
-          const visibleBannerIds = bannerComponents
-            .filter((c: any) => c.is_visible)
-            .map((c: any) => c.banner_id);
-          
-          await (PromotionalBanner as any).updateMany(
-            { target_page: 'home' },
-            { 
-              is_active: false,
-              updated_by: adminUser._id,
-              updated_at: new Date()
-            }
-          );
-          
-          if (visibleBannerIds.length > 0) {
-            await (PromotionalBanner as any).updateMany(
-              { _id: { $in: visibleBannerIds } },
-              { 
-                is_active: true,
-                updated_by: adminUser._id,
-                updated_at: new Date()
-              }
-            );
-            
-            for (let i = 0; i < bannerComponents.length; i++) {
-              const bannerComp = bannerComponents[i];
-              await (PromotionalBanner as any).findByIdAndUpdate(
-                bannerComp.banner_id,
-                { 
-                  sort_order: i,
-                  updated_by: adminUser._id,
-                  updated_at: new Date()
-                }
-              );
-            }
-          }
-        }
-        
         settings.home_components = data.home_components;
       }
     } else if (updateType === 'static') {

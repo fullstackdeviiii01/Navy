@@ -130,31 +130,74 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 
 ---
 
-### Step 4: Remove Homepage Management System
-**Status:** PENDING
-**Description:** Remove the dynamic homepage component system, hero slider management, and promotional banner management. Replace with a simple static homepage layout.
+### Step 4: Remove Homepage Management System + Dropshipping
+**Status:** ✅ DONE
+**Description:** Remove the dynamic homepage component system, hero slider management, promotional banner management, and all AliExpress/CJ Dropshipping functionality.
 **Details:**
-- Remove HeroSlider model (`app/models/HeroSlider.ts`)
-- Remove HeroSlider API routes (`app/api/hero-slider/*`)
-- Remove HeroSlider admin pages (`app/admin/hero-slider/*`)
-- Remove HeroSlider admin components (`app/(admin)/components/hero-slider/*`)
-- Remove PromotionalBanner model (`app/models/PromotionalBanner.ts`)
-- Remove PromotionalBanner API routes (`app/api/promotional-banners/*`)
-- Remove PromotionalBanner admin pages (`app/admin/promotional-banners/*`)
-- Remove PromotionalBanner admin components (`app/(admin)/components/promotional-banners/*`)
-- Remove BannerDisplay component (`app/components/banners/BannerDisplay.tsx`)
-- Remove `home_components` from SiteSettings model
-- Simplify homepage (`app/page.tsx`): static layout with hero section, featured products, categories
-- Remove homepage-related types (`types/banner.types.ts`)
-- Clean up admin sidebar: remove Hero Slider and Promotional Banners sections
-- Remove promotional banner images from `public/promotional-banners/`
+- ~~Remove HeroSlider model, API routes, admin pages, admin components~~ — Removed
+- ~~Remove PromotionalBanner model, API routes, admin pages, admin components~~ — Removed
+- ~~Remove BannerDisplay component~~ — Removed
+- ~~Remove homepage-related types (`types/banner.types.ts`)~~ — Removed
+- ~~Clean up admin sidebar: remove Hero Slider, Promotional Banners, Dropshipping sections~~ — Cleaned
+- ~~Remove hero slider images from `public/hero-slider/`~~ — Removed
+- ~~Remove promotional banner images from `public/promotional-banners/`~~ — Removed
+- ~~Remove AliExpress model, API routes, admin pages, admin components, lib files~~ — Removed completely
+- ~~Remove CJ Dropshipping model, API routes, admin pages, admin components, lib files~~ — Removed completely
+- ~~Remove aliexpress/cj fields from Product schema and types~~ — Cleaned
+- ~~Remove aliexpressSkuId/aliexpressSkuAttr from variant types and components~~ — Cleaned
+- ~~Remove Bulk Upload functionality (CSV/Excel import tied to dropshipping)~~ — Removed
+- ~~Clean up `lib/api/home.ts` (remove hero slider functions)~~ — Cleaned
+- ~~Clean up `lib/api/products.ts` (remove bulk upload functions)~~ — Cleaned
+- ~~Clean up SiteSettings model (remove banner references)~~ — Cleaned
 **Files Affected:**
-- `app/models/HeroSlider.ts` (remove)
-- `app/models/PromotionalBanner.ts` (remove)
-- `app/api/hero-slider/*` (remove)
-- `app/api/promotional-banners/*` (remove)
-- `app/admin/hero-slider/*` (remove)
-- `app/admin/promotional-banners/*` (remove)
+- `app/models/HeroSlider.ts` (deleted)
+- `app/models/PromotionalBanner.ts` (deleted)
+- `app/models/AliexpressCredentials.ts` (deleted)
+- `app/models/CJCredentials.ts` (deleted)
+- `app/api/hero-slider/*` (deleted — 3 routes)
+- `app/api/promotional-banners/*` (deleted — 4 routes)
+- `app/api/aliexpress/*` (deleted — 4 routes)
+- `app/api/cj/*` (deleted — 4 routes)
+- `app/api/products/bulk-upload-products/*` (deleted — 2 routes)
+- `app/admin/hero-slider/*` (deleted)
+- `app/admin/promotional-banners/*` (deleted)
+- `app/admin/dropshipping/*` (deleted)
+- `app/(admin)/pages/hero-slider/*` (deleted)
+- `app/(admin)/pages/promotional-banners/*` (deleted)
+- `app/(admin)/pages/aliexpress/*` (deleted)
+- `app/(admin)/pages/dropshipping/*` (deleted)
+- `app/(admin)/components/hero-slider/*` (deleted — 4 components)
+- `app/(admin)/components/promotional-banners/*` (deleted — 4 components)
+- `app/(admin)/components/aliexpress/*` (deleted — 4 components)
+- `app/(admin)/components/dropshipping/*` (deleted — 4 components)
+- `app/(admin)/components/products/BulkUploadModal.tsx` (deleted)
+- `app/components/home/Slider.tsx` (deleted)
+- `app/components/banners/*` (deleted)
+- `lib/api/heroSlider.ts` (deleted)
+- `lib/api/promotionalBanners.ts` (deleted)
+- `lib/api/aliexpress.ts` (deleted)
+- `lib/api/aliexpress-credentials.ts` (deleted)
+- `lib/api/cj.ts` (deleted)
+- `lib/aliexpress/*` (deleted — 3 files)
+- `lib/cj/*` (deleted — 4 files)
+- `lib/media-deletion/heroSliderFileUtils.ts` (deleted)
+- `lib/media-deletion/bannerFileUtils.ts` (deleted)
+- `types/types/banner.types.ts` (deleted)
+- `.cj-token.json` (deleted)
+- `app/page.tsx` (cleaned — removed hero slider and banner rendering)
+- `app/(admin)/components/AdminSidebar.tsx` (cleaned — removed nav links)
+- `app/(admin)/pages/site-settings/SiteSettingsPage.tsx` (cleaned)
+- `app/models/SiteSettings.ts` (cleaned — removed banner_id)
+- `app/api/site-settings/route.ts` (cleaned — removed banner queries)
+- `app/(public)/pages/ProductsPage.tsx` (cleaned — removed banners)
+- `app/(public)/pages/CategoriesPage.tsx` (cleaned — removed banners)
+- `app/models/Product/schema.ts` (cleaned — removed AliExpress/CJ schemas)
+- `app/models/Product/types.ts` (cleaned)
+- `app/(admin)/pages/products/ProductListPage.tsx` (cleaned — removed bulk upload)
+- `app/(admin)/components/products/ProductHeader.tsx` (cleaned — removed bulk upload button)
+- `lib/api/products.ts` (cleaned — removed bulk upload functions)
+- `lib/api/home.ts` (cleaned — removed hero slider SSR)
+**Verification:** ✅ Build compiles successfully, no hero slider/promo banner/dropshipping references remain
 - `app/(admin)/components/hero-slider/*` (remove)
 - `app/(admin)/components/promotional-banners/*` (remove)
 - `app/components/banners/*` (remove)
@@ -208,22 +251,20 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 7: Simplify Product Management (Admin)
-**Status:** PENDING
+**Status:** IN PROGRESS (dropshipping/bulk upload removed, form simplification pending)
 **Description:** Simplify the admin product management system. Remove bulk upload. Create unified product add/edit with variant support.
 **Details:**
-- Remove bulk upload functionality:
-  - Remove bulk upload API (`app/api/products/bulk-upload/*`)
-  - Remove bulk upload admin UI components
-  - Remove AliExpress import functionality
-  - Remove CJ Dropshipping import functionality
+- ~~Remove bulk upload functionality~~ — Removed (CSV/Excel routes + BulkUploadModal + ProductHeader button)
+- ~~Remove AliExpress import functionality~~ — Removed completely in Step 4
+- ~~Remove CJ Dropshipping import functionality~~ — Removed completely in Step 4
+- ~~Remove AliExpress/CJ credentials models and admin pages~~ — Removed in Step 4
+- ~~Clean up Product model: remove dropshipping-specific fields~~ — Cleaned in Step 4
 - Simplify product add/edit form:
   - Single unified form for all products
   - Basic fields: name, description, category, images, price
   - Variant section: add variants with attribute combinations
   - Each variant can have: different price, SKU, stock quantity, image
   - Remove complex badge system (keep simple: featured, sale)
-- Remove AliExpress/CJ credentials models and admin pages
-- Clean up Product model: remove dropshipping-specific fields (AliExpress IDs, CJ IDs)
 - Simplify admin product list view
 - Remove complex product filtering in admin (keep basic search + category filter)
 **Files Affected:**
@@ -514,7 +555,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 1 | Project Backup & Initialization | DONE |
 | 2 | Remove Firebase Auth → Simple JWT Auth | DONE |
 | 3 | Remove Multi-Currency → PKR Only | DONE |
-| 4 | Remove Homepage Management System | PENDING |
+| 4 | Remove Homepage Management + Dropshipping | DONE |
 | 5 | Simplify Product Cards | PENDING |
 | 6 | Implement Cart Sidebar | PENDING |
 | 7 | Simplify Product Management (Admin) | PENDING |

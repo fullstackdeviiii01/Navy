@@ -21,7 +21,6 @@ import ProductProgressBar from "../../components/product/ProductProgressBar";
 import ActiveFilters from "../../components/product/ActiveFilters";
 import LoadMoreButton from "../../components/product/LoadMoreButton";
 import ScrollToTopButton from "../../components/product/ScrollToTopButton";
-import BannerDisplay from "../../components/banners/BannerDisplay";
 import { FaFilter } from "react-icons/fa";
 
 function ProductsPageContent() {
@@ -33,9 +32,6 @@ function ProductsPageContent() {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCoupons, setActiveCoupons] = useState([]);
-  const [topBanners, setTopBanners] = useState<any[]>([]);
-  const [middleBanners, setMiddleBanners] = useState<any[]>([]);
-  const [bottomBanners, setBottomBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -67,11 +63,10 @@ function ProductsPageContent() {
     router.push(`/products?${params.toString()}`, { scroll: false });
   }, [productsPerPage, router]);
 
-  // Fetch categories, coupons, and banners on mount
+  // Fetch categories and coupons on mount
   useEffect(() => {
     fetchCategories();
     fetchActiveCoupons();
-    fetchBanners();
   }, []);
 
   // Fetch products when filters change (reset to page 1)
@@ -149,23 +144,6 @@ function ProductsPageContent() {
     }
   };
 
-  const fetchBanners = async () => {
-    try {
-      const response = await fetch('/api/promotional-banners/active?target_page=products');
-      if (response.ok) {
-        const data = await response.json();
-        const banners = data.banners || [];
-        
-        // Group banners by position
-        setTopBanners(banners.filter((b: any) => b.position === 'top').sort((a: any, b: any) => a.sort_order - b.sort_order));
-        setMiddleBanners(banners.filter((b: any) => b.position === 'middle').sort((a: any, b: any) => a.sort_order - b.sort_order));
-        setBottomBanners(banners.filter((b: any) => b.position === 'bottom').sort((a: any, b: any) => a.sort_order - b.sort_order));
-      }
-    } catch (error) {
-      console.error("Failed to fetch banners:", error);
-    }
-  };
-
   const handleLoadMore = () => {
     const nextPage = currentPage + 1;
     setCurrentPage(nextPage);
@@ -198,17 +176,6 @@ function ProductsPageContent() {
 
   return (
     <div className="min-h-screen user-bg">
-      {/* Top Banners */}
-      {topBanners.length > 0 && (
-        <section className="mb-6" aria-label="Promotional banners">
-          {topBanners.map((banner) => (
-            <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-              <BannerDisplay banner={banner} />
-            </div>
-          ))}
-        </section>
-      )}
-
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header with Search */}
         <header className="mb-8">
@@ -299,46 +266,14 @@ function ProductsPageContent() {
               </div>
             </div>
 
-            {/* Split products for middle banner placement */}
-            {displayedProducts.length > 0 && middleBanners.length > 0 ? (
-              <>
-                {/* First half of products */}
-                <section aria-label="Product results - part 1">
-                  <ProductGrid 
-                    products={displayedProducts.slice(0, Math.ceil(displayedProducts.length / 2))} 
-                    loading={loading}
-                    activeCoupons={activeCoupons}
-                  />
-                </section>
-
-                {/* Middle Banners */}
-                <section className="my-8" aria-label="Featured promotions">
-                  {middleBanners.map((banner) => (
-                    <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-                      <BannerDisplay banner={banner} />
-                    </div>
-                  ))}
-                </section>
-
-                {/* Second half of products */}
-                <section aria-label="Product results - part 2">
-                  <ProductGrid 
-                    products={displayedProducts.slice(Math.ceil(displayedProducts.length / 2))} 
-                    loading={loading}
-                    activeCoupons={activeCoupons}
-                  />
-                </section>
-              </>
-            ) : (
-              /* All Products Grid (no middle banner) */
-              <section aria-label="Product results">
-                <ProductGrid 
-                  products={displayedProducts} 
-                  loading={loading}
-                  activeCoupons={activeCoupons}
-                />
-              </section>
-            )}
+            {/* Product Grid */}
+            <section aria-label="Product results">
+              <ProductGrid 
+                products={displayedProducts} 
+                loading={loading}
+                activeCoupons={activeCoupons}
+              />
+            </section>
 
             {/* Load More Button */}
             {!loading && hasMore && (
@@ -364,17 +299,6 @@ function ProductsPageContent() {
           </main>
         </div>
       </div>
-
-      {/* Bottom Banners */}
-      {bottomBanners.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 mt-8 mb-6" aria-label="Additional promotions">
-          {bottomBanners.map((banner) => (
-            <div key={banner._id} className="my-6 max-w-6xl mx-auto px-4">
-              <BannerDisplay banner={banner} />
-            </div>
-          ))}
-        </section>
-      )}
 
       {/* Scroll to Top Button */}
       {/* <ScrollToTopButton /> */}

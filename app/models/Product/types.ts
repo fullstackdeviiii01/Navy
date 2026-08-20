@@ -13,10 +13,6 @@ export interface VariantAttribute {
 export interface ProductVariant {
   _id?: mongoose.Types.ObjectId;
   sku: string;
-  aliexpressSkuId?: string;
-  aliexpressSkuAttr?: string;
-  cjVid?: string; // CJ variant ID — required for CJ order placement
-  cjVariantSku?: string; // CJ variantSku — required for CJ order placement
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
@@ -91,21 +87,6 @@ export interface IProductDocument extends Document {
 
   // ========== Stripe Tax Code ==========
   stripe_tax_code?: string;
-
-  // ========== AliExpress Metadata (dropshipping) ==========
-  aliexpress?: {
-    productId?: number;
-    storeId?: number;
-    storeName?: string;
-    subProductId?: string;
-  };
-
-  cj?: {
-    productId?: string;
-    productSku?: string;
-    supplierId?: string;
-    supplierName?: string;
-  };
 
   // ========== Variants Configuration ==========
   hasVariants: boolean;

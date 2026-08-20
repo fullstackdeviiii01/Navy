@@ -9,7 +9,6 @@ import { productsApi } from "../../../../lib/api/products";
 import ProductHeader from "../../components/products/ProductHeader";
 import ProductFilters from "../../components/products/ProductFilters";
 import ProductTable from "../../components/products/ProductTable";
-import BulkUploadModal from "../../components/products/BulkUploadModal";
 import Loader from "../../../components/shared/Loader";
 
 interface Product {
@@ -49,7 +48,6 @@ export default function ProductListPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -112,7 +110,6 @@ export default function ProductListPage() {
     <div className="space-y-6">
       <ProductHeader
         onAddProduct={handleAddProduct}
-        onBulkUpload={() => setShowBulkUpload(true)}
       />
 
       <ProductFilters
@@ -130,11 +127,6 @@ export default function ProductListPage() {
         onPageChange={(page) => setPagination({ ...pagination, page })}
       />
 
-      <BulkUploadModal
-        isOpen={showBulkUpload}
-        onClose={() => setShowBulkUpload(false)}
-        onSuccess={fetchProducts}
-      />
     </div>
   );
 }

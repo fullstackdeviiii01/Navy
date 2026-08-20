@@ -3,8 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IHomeComponent {
   component_key: string;
-  component_type: 'static' | 'banner';
-  banner_id?: mongoose.Types.ObjectId;
+  component_type: 'static';
   display_name: string;
   is_visible: boolean;
   sort_order: number;
@@ -83,8 +82,7 @@ export interface ISiteSettingsDocument extends Document {
 
 const HomeComponentSchema = new Schema<IHomeComponent>({
   component_key: { type: String, required: true },
-  component_type: { type: String, enum: ['static', 'banner'], required: true },
-  banner_id: { type: Schema.Types.ObjectId, ref: 'PromotionalBanner' },
+  component_type: { type: String, enum: ['static'], required: true },
   display_name: { type: String, required: true },
   is_visible: { type: Boolean, default: true },
   sort_order: { type: Number, default: 0 }

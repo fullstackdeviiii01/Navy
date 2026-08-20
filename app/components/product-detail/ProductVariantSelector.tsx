@@ -11,15 +11,13 @@ interface VariantAttribute {
 interface ProductVariant {
   _id?: string;
   sku: string;
-  aliexpressSkuId?: string;
-  aliexpressSkuAttr?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
   stockQuantity: number;
   isAvailable: boolean;
   position: number;
-  imageUrl?: string; // Per-variant swatch image (e.g. colour photo from AliExpress)
+  imageUrl?: string;
 }
 
 interface VariantOption {

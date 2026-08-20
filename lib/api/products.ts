@@ -65,30 +65,6 @@ export const productsApi = {
     return handleResponse(response);
   },
 
-  bulkUpload: async (products: any[]) => {
-    const response = await fetch("/api/products/bulk-upload-products/csv-file", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-      body: JSON.stringify({ products }),
-    });
-    return handleResponse(response);
-  },
-
-  bulkUploadExcel: async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/products/bulk-upload-products/excel-file", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
-      body: formData,
-    });
-    return handleResponse(response);
-  },
-
   uploadImage: async (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
