@@ -1,5 +1,4 @@
 import { getAuthToken, handleResponse } from "./helpers";
-import { ICategoryAttribute } from "../../app/models/Category";
 
 export const categoriesApi = {
   getAll: async (includeInactive = true) => {
@@ -60,58 +59,6 @@ export const categoriesApi = {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
       body: formData,
     });
-    return handleResponse(response);
-  },
-
-  getAttributes: async (categoryId: string) => {
-    const response = await fetch(
-      `/api/categories/${categoryId}/attributes`
-    );
-    return handleResponse(response);
-  },
-
-  addAttribute: async (categoryId: string, attribute: Partial<ICategoryAttribute>) => {
-    const response = await fetch(
-      `/api/categories/${categoryId}/attributes`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-        body: JSON.stringify(attribute),
-      }
-    );
-    return handleResponse(response);
-  },
-
-  updateAttribute: async (
-    categoryId: string,
-    attributeId: string,
-    attribute: Partial<ICategoryAttribute>
-  ) => {
-    const response = await fetch(
-      `/api/categories/${categoryId}/attributes/${attributeId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-        body: JSON.stringify(attribute),
-      }
-    );
-    return handleResponse(response);
-  },
-
-  deleteAttribute: async (categoryId: string, attributeId: string) => {
-    const response = await fetch(
-      `/api/categories/${categoryId}/attributes/${attributeId}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${getAuthToken()}` },
-      }
-    );
     return handleResponse(response);
   },
 

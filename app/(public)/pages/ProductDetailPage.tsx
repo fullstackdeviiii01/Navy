@@ -209,8 +209,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 productId={product._id}
                 description={product.description}
                 specifications={product.specifications}
-                attributes={product.attributes}
-                categoryId={product.category_id?._id}
               />
             </section>
           </div>
@@ -361,8 +359,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
             productId={product._id}
             description={product.description}
             specifications={product.specifications}
-            attributes={product.attributes}
-            categoryId={product.category_id?._id}
           />
         </section>
 

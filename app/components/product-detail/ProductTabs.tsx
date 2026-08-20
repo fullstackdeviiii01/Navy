@@ -1,57 +1,27 @@
 // app/components/product-detail/ProductTabs.tsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductSpecs from "./ProductSpecs";
-import ProductAttributesDisplay from "./ProductAttributesDisplay";
 import ProductReviewSection from "./ProductReviewSection";
 import JoditHtmlContent from "../shared/JoditHtmlContent";
-import { ICategoryAttribute } from "../../models/Category";
-import { categoriesApi } from "../../../lib/api/categories";
 
 interface ProductTabsProps {
   productId: string;
   description: string;
   specifications?: Map<string, string> | { [key: string]: string };
-  attributes?: { [key: string]: any };
-  categoryId?: string;
 }
 
 export default function ProductTabs({
   productId,
   description,
   specifications,
-  attributes,
-  categoryId,
 }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState
-    <"description" | "attributes" | "specifications" | "reviews"
-  >("description");
-  const [categoryAttributes, setCategoryAttributes] = useState
-    <ICategoryAttribute[]
-  >([]);
-
-  useEffect(() => {
-    if (categoryId && attributes && Object.keys(attributes).length > 0) {
-      fetchCategoryAttributes();
-    }
-  }, [categoryId]);
-
-  const fetchCategoryAttributes = async () => {
-    try {
-      const data = await categoriesApi.getAttributes(categoryId!);
-      setCategoryAttributes(data.attributes || []);
-    } catch (error) {
-      console.error("Failed to fetch category attributes:", error);
-    }
-  };
+  const [activeTab, setActiveTab] = useState<"description" | "specifications" | "reviews">("description");
 
   const hasSpecifications =
     specifications && Object.keys(specifications).length > 0;
 
-  const hasAttributes = attributes && Object.keys(attributes).length > 0;
-
   const tabs = [
     { id: "description", label: "Description" },
-    ...(hasAttributes ? [{ id: "attributes", label: "Attributes" }] : []),
     ...(hasSpecifications
       ? [{ id: "specifications", label: "Specifications" }]
       : []),
@@ -92,15 +62,6 @@ export default function ProductTabs({
             {activeTab === "description" && (
               <div role="tabpanel" id="description-panel" aria-labelledby="description-tab">
                 <JoditHtmlContent content={description} />
-              </div>
-            )}
-
-            {activeTab === "attributes" && hasAttributes && (
-              <div role="tabpanel" id="attributes-panel" aria-labelledby="attributes-tab">
-                <ProductAttributesDisplay
-                  attributes={attributes}
-                  categoryAttributes={categoryAttributes}
-                />
               </div>
             )}
 

@@ -228,27 +228,6 @@ export default function ProductDetailPage({
         </div>
       </div>
 
-      {/* Attributes */}
-      {product.attributes && Object.keys(product.attributes).length > 0 && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Attributes
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(product.attributes).map(([key, value]) => (
-              <div key={key}>
-                <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  {key}
-                </label>
-                <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  {Array.isArray(value) ? value.join(", ") : String(value)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* SEO */}
       {product.seo && (
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { productsApi } from "../../../../lib/api/products";
-import ProductAttributeFields from "../../components/products/ProductAttributeFields";
 import ProductFormImages from "../../components/products/form/ProductFormImages";
 import ProductFormVideos from "../../components/products/form/ProductFormVideos";
 import VariantConfiguration from "../../components/products/form/VariantConfiguration";
@@ -35,7 +34,6 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const [uploadingVideos, setUploadingVideos] = useState(false);
   const [videos, setVideos] = useState<any[]>([]);
   const [newVideos, setNewVideos] = useState<File[]>([]);
-  const [productAttributes, setProductAttributes] = useState<{ [key: string]: any }>({});
 
   const [hasVariants, setHasVariants] = useState(false);
   const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
@@ -123,7 +121,6 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
 
       setImages(product.images || []);
       setVideos(product.videos || []);
-      setProductAttributes(product.attributes || {});
       setHasVariants(product.hasVariants || false);
       setVariantOptions(product.variantOptions || []);
       setVariants(product.variants || []);
@@ -262,7 +259,6 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
         visibility: "public",
         images: allImages,
         videos: allVideos,
-        attributes: productAttributes,
         hasVariants,
       };
 
@@ -451,17 +447,6 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
             </select>
           </div>
         </div>
-
-        {/* Attributes */}
-        {formData.category_id && (
-          <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
-            <ProductAttributeFields
-              categoryId={formData.category_id}
-              attributes={productAttributes}
-              onAttributesChange={setProductAttributes}
-            />
-          </div>
-        )}
 
         {/* Product Type Toggle */}
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">

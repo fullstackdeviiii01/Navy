@@ -13,9 +13,7 @@ interface Category {
   slug: string;
   description?: string;
   image_url?: string;
-  sort_order: number;
   is_active: boolean;
-  is_featured: boolean;
   product_count: number;
   created_at: string;
 }

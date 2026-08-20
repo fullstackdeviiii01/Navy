@@ -14,9 +14,7 @@ interface Category {
   slug: string;
   description?: string;
   image_url?: string;
-  sort_order: number;
   is_active: boolean;
-  is_featured: boolean;
   product_count: number;
   created_at: string;
 }
@@ -146,11 +144,6 @@ export default function CategoryManagement() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 flex-shrink-0">
-                  {category.is_featured && (
-                    <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 whitespace-nowrap">
-                      Featured
-                    </span>
-                  )}
                   {!category.is_active && (
                     <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 whitespace-nowrap">
                       Inactive

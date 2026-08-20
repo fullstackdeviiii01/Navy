@@ -9,7 +9,6 @@ interface Category {
   _id: string;
   name: string;
   slug: string;
-  is_featured: boolean;
   product_count: number;
 }
 
@@ -23,18 +22,8 @@ export default function CategoryNavigation() {
 
   const fetchCategories = async () => {
     try {
-      const data = await categoriesApi.getAll(false); // Only active categories
-      // Filter featured categories or take first 6
-      const displayCategories = data.categories
-        .filter((cat: Category) => cat.is_featured)
-        .slice(0, 6);
-      
-      // If no featured categories, take first 6 active ones
-      if (displayCategories.length === 0) {
-        setCategories(data.categories.slice(0, 6));
-      } else {
-        setCategories(displayCategories);
-      }
+      const data = await categoriesApi.getAll(false);
+      setCategories(data.categories.slice(0, 6));
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     } finally {

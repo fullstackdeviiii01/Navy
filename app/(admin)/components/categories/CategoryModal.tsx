@@ -3,8 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { FaUpload, FaTimes, FaImage } from "react-icons/fa";
 import Image from "next/image";
-import CategoryAttributeManager from './CategoryAttributeManager';
-import { ICategoryAttribute } from '../../../models/Category'
 
 interface Category {
   _id: string;
@@ -12,12 +10,9 @@ interface Category {
   slug: string;
   description?: string;
   image_url?: string;
-  sort_order: number;
   is_active: boolean;
-  is_featured: boolean;
   product_count: number;
   created_at: string;
-  attributes?: ICategoryAttribute[];
 }
 
 interface CategoryModalProps {
@@ -35,46 +30,33 @@ export default function CategoryModal({
 }: CategoryModalProps) {
   const [formData, setFormData] = useState({
     name: "",
-    slug: "",
     description: "",
     image_url: "",
-    sort_order: 0,
     is_active: true,
-    is_featured: false,
   });
-  
-  const [attributes, setAttributes] = useState<ICategoryAttribute[]>([]);
+
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize form when category changes or modal opens
   useEffect(() => {
     if (category) {
       setFormData({
         name: category.name,
-        slug: category.slug,
         description: category.description || "",
         image_url: category.image_url || "",
-        sort_order: category.sort_order,
         is_active: category.is_active,
-        is_featured: category.is_featured,
       });
       setImagePreview(category.image_url || "");
-      setAttributes(category.attributes || []);
     } else {
       setFormData({
         name: "",
-        slug: "",
         description: "",
         image_url: "",
-        sort_order: 0,
         is_active: true,
-        is_featured: false,
       });
       setImagePreview("");
-      setAttributes([]);
     }
   }, [category, isOpen]);
 
@@ -82,14 +64,12 @@ export default function CategoryModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
       alert("Please select a valid image file (JPEG, PNG, or WebP)");
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("File size must be less than 5MB");
       return;
@@ -97,15 +77,12 @@ export default function CategoryModal({
 
     try {
       setUploading(true);
-
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
 
-      // Upload image
       const result = await categoriesApi.uploadImage(file);
       setFormData({ ...formData, image_url: result.imageUrl });
     } catch (error: any) {
@@ -129,15 +106,10 @@ export default function CategoryModal({
     setLoading(true);
 
     try {
-      const categoryData = {
-        ...formData,
-        attributes: attributes,
-      };
-
       if (category) {
-        await categoriesApi.update(category._id, categoryData);
+        await categoriesApi.update(category._id, formData);
       } else {
-        await categoriesApi.create(categoryData);
+        await categoriesApi.create(formData);
       }
       onSuccess();
     } catch (error: any) {
@@ -162,9 +134,7 @@ export default function CategoryModal({
             <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
               Category Image
             </label>
-            
             <div className="space-y-2 sm:space-y-3">
-              {/* Image Preview */}
               {imagePreview ? (
                 <div className="relative w-full h-40 sm:h-48 rounded-lg overflow-hidden border-2 border-theme-border-light dark:border-theme-border-dark">
                   <Image
@@ -190,7 +160,6 @@ export default function CategoryModal({
                 </div>
               )}
 
-              {/* Upload Button */}
               <div>
                 <input
                   ref={fileInputRef}
@@ -216,43 +185,17 @@ export default function CategoryModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-                Name *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => {
-                  setFormData({ ...formData, name: e.target.value });
-                  // Auto-generate slug only for new categories
-                  if (!category) {
-                    const slug = e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, "-")
-                      .replace(/^-+|-+$/g, "");
-                    setFormData((prev) => ({ ...prev, slug }));
-                  }
-                }}
-                required
-                className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-                Slug *
-              </label>
-              <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                required
-                disabled
-                className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm"
-              />
-            </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Name *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm"
+            />
           </div>
 
           <div>
@@ -269,36 +212,7 @@ export default function CategoryModal({
             />
           </div>
 
-          {/* Attributes Section */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="text-sm sm:text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark border-b border-theme-border-light dark:border-theme-border-dark pb-2">
-              Product Attributes
-            </h4>
-            <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Define what attributes products in this category should have (size, color, material, etc.)
-            </p>
-            <CategoryAttributeManager
-              attributes={attributes}
-              onAttributesChange={setAttributes}
-              disabled={loading}
-            />
-          </div>
-
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Sort Order
-            </label>
-            <input
-              type="number"
-              value={formData.sort_order}
-              onChange={(e) =>
-                setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })
-              }
-              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm"
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -310,20 +224,6 @@ export default function CategoryModal({
               />
               <span className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 Active
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.is_featured}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_featured: e.target.checked })
-                }
-                className="rounded"
-              />
-              <span className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Featured
               </span>
             </label>
           </div>

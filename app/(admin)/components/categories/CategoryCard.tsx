@@ -9,9 +9,7 @@ interface Category {
   slug: string;
   description?: string;
   image_url?: string;
-  sort_order: number;
   is_active: boolean;
-  is_featured: boolean;
   product_count: number;
   created_at: string;
 }
@@ -25,7 +23,6 @@ interface CategoryCardProps {
 export default function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
   return (
     <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg shadow border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
-      {/* Category Image */}
       {category.image_url ? (
         <div className="relative w-full h-32 sm:h-40 bg-gray-200 dark:bg-gray-700">
           <Image
@@ -42,7 +39,6 @@ export default function CategoryCard({ category, onEdit, onDelete }: CategoryCar
         </div>
       )}
 
-      {/* Category Info */}
       <div className="p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
           <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -56,18 +52,11 @@ export default function CategoryCard({ category, onEdit, onDelete }: CategoryCar
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            {category.is_featured && (
-              <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 whitespace-nowrap">
-                Featured
-              </span>
-            )}
-            {!category.is_active && (
-              <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 whitespace-nowrap">
-                Inactive
-              </span>
-            )}
-          </div>
+          {!category.is_active && (
+            <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-semibold rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 whitespace-nowrap">
+              Inactive
+            </span>
+          )}
         </div>
 
         {category.description && (

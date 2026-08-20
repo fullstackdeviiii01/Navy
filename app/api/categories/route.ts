@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const categories = await Category.find(query)
       .populate("created_by", "name email")
-      .sort({ sort_order: 1, name: 1 })
+      .sort({ name: 1 })
       .lean();
 
     return NextResponse.json({ categories });
@@ -48,14 +48,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-
-    // Generate slug if not provided
-    if (!body.slug) {
-      body.slug = body.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-    }
 
     body.created_by = adminUser._id;
 
