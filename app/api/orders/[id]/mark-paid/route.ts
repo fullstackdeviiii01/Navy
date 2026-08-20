@@ -25,7 +25,7 @@ export async function POST(
 
     await connectDB();
 
-    const admin = await (User as any).findOne({ uid: decodedToken.uid });
+    const admin = await (User as any).findOne({ email: decodedToken.email });
     if (!admin || admin.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized - Admin access required" },

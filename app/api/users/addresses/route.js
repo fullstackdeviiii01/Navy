@@ -36,7 +36,7 @@ export async function POST(request) {
     } = body;
 
     // Find user
-    const user = await User.findOne({ uid: decodedToken.uid });
+    const user = await User.findOne({ email: decodedToken.email });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

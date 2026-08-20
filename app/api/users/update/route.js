@@ -48,7 +48,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid timezone" }, { status: 400 });
     }
 
-    const user = await User.findOne({ uid: decodedToken.uid });
+    const user = await User.findOne({ email: decodedToken.email });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

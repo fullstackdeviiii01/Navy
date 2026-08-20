@@ -1,8 +1,6 @@
-// ============================================
-// 2. app/(admin)/components/products/form/ProductFormImages.tsx
-// ============================================
 "use client";
 
+import { useState, useEffect } from "react";
 import { FaUpload, FaTrash } from "react-icons/fa";
 
 interface ProductFormImagesProps {
@@ -11,6 +9,40 @@ interface ProductFormImagesProps {
   onImageSelect: (files: File[]) => void;
   onRemoveExisting: (index: number) => void;
   onRemoveNew: (index: number) => void;
+}
+
+function NewImagePreview({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [file]);
+
+  if (!url) return null;
+
+  return (
+    <div className="relative group">
+      <img
+        src={url}
+        alt={file.name || "New upload"}
+        className="w-full h-32 object-cover rounded-lg border border-theme-border-light dark:border-theme-border-dark"
+      />
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <FaTrash size={12} />
+      </button>
+      <span className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+        New
+      </span>
+    </div>
+  );
 }
 
 export default function ProductFormImages({
@@ -24,6 +56,8 @@ export default function ProductFormImages({
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       onImageSelect(filesArray);
+      // Reset input value so same file can be selected again if needed
+      e.target.value = "";
     }
   };
 
@@ -57,23 +91,11 @@ export default function ProductFormImages({
         ))}
 
         {newImages.map((file, index) => (
-          <div key={`new-${index}`} className="relative group">
-            <img
-              src={URL.createObjectURL(file)}
-              alt="New upload"
-              className="w-full h-32 object-cover rounded-lg border border-theme-border-light dark:border-theme-border-dark"
-            />
-            <button
-              type="button"
-              onClick={() => onRemoveNew(index)}
-              className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <FaTrash size={12} />
-            </button>
-            <span className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
-              New
-            </span>
-          </div>
+          <NewImagePreview
+            key={`new-${index}-${file.name}-${file.lastModified}`}
+            file={file}
+            onRemove={() => onRemoveNew(index)}
+          />
         ))}
 
         <label className="w-full h-32 flex flex-col items-center justify-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-lg cursor-pointer hover:border-theme-primary transition-colors">

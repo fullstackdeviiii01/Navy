@@ -1,7 +1,6 @@
-// app/(admin)/components/products/form/ProductFormVideos.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUpload, FaTrash, FaVideo } from "react-icons/fa";
 
 interface ProductFormVideosProps {
@@ -15,6 +14,49 @@ interface ProductFormVideosProps {
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 const MAX_VIDEO_DURATION = 30;
 const ALLOWED_FORMATS = ["video/mp4", "video/webm", "video/quicktime"];
+
+function NewVideoPreview({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [file]);
+
+  if (!url) return null;
+
+  return (
+    <div className="relative group">
+      <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark">
+        <video
+          src={url}
+          className="w-full h-full object-cover"
+          muted
+          loop
+          onMouseEnter={(e) => e.currentTarget.play()}
+          onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
+          <FaVideo className="text-white text-2xl" />
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-700"
+      >
+        <FaTrash size={12} />
+      </button>
+      <span className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow">New</span>
+      <span className="absolute top-2 left-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded shadow">
+        {(file.size / (1024 * 1024)).toFixed(1)}MB
+      </span>
+    </div>
+  );
+}
 
 export default function ProductFormVideos({
   videos,
@@ -61,6 +103,7 @@ export default function ProductFormVideos({
       setValidationErrors(errors);
       if (validFiles.length > 0) onVideoSelect(validFiles);
       if (errors.length > 0) setTimeout(() => setValidationErrors([]), 5000);
+      e.target.value = "";
     }
   };
 
@@ -113,32 +156,11 @@ export default function ProductFormVideos({
         ))}
 
         {newVideos.map((file, index) => (
-          <div key={`new-${index}`} className="relative group">
-            <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark">
-              <video
-                src={URL.createObjectURL(file)}
-                className="w-full h-full object-cover"
-                muted
-                loop
-                onMouseEnter={(e) => e.currentTarget.play()}
-                onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
-                <FaVideo className="text-white text-2xl" />
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => onRemoveNew(index)}
-              className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-700"
-            >
-              <FaTrash size={12} />
-            </button>
-            <span className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow">New</span>
-            <span className="absolute top-2 left-2 bg-yellow-600 text-white text-xs px-2 py-1 rounded shadow">
-              {(file.size / (1024 * 1024)).toFixed(1)}MB
-            </span>
-          </div>
+          <NewVideoPreview
+            key={`new-video-${index}-${file.name}-${file.lastModified}`}
+            file={file}
+            onRemove={() => onRemoveNew(index)}
+          />
         ))}
 
         <label className="w-full h-40 flex flex-col items-center justify-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-lg cursor-pointer hover:border-theme-primary hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark transition-all">

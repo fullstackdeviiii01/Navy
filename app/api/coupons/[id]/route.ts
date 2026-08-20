@@ -20,7 +20,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     await connectDB();
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
@@ -69,7 +69,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     await connectDB();
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }

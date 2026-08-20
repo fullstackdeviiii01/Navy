@@ -1,5 +1,7 @@
 // app/models/Invoice.ts
 import mongoose, { Schema, Document } from "mongoose";
+import "./Order";
+import "./User";
 
 export interface IInvoice extends Document {
   invoice_number: string;       // INV-2026-00001

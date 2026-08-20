@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
     console.log("[Build Trigger] DB connected. Looking up user...");
 
-    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
 
     if (!adminUser) {
       console.warn("[Build Trigger] No user found for UID:", decodedToken.uid);

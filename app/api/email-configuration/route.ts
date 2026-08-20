@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     await connectDB();
     console.log("✅ [API DEBUG] Database connected");
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
       console.error("❌ [API DEBUG] Unauthorized - Admin access required");
       return NextResponse.json(
@@ -119,7 +119,7 @@ export async function PUT(request: NextRequest) {
 
     await connectDB();
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized - Admin access required" },

@@ -1,7 +1,13 @@
 // lib/api/helpers.ts
 
 export const getAuthToken = () => {
-  return document.cookie.split("__session=")[1]?.split(";")[0] || "";
+  if (typeof window !== "undefined") {
+    const localToken = localStorage.getItem("auth_token");
+    if (localToken) return localToken;
+    const match = document.cookie.match(/(?:^|;\s*)__session=([^;]+)/);
+    if (match) return decodeURIComponent(match[1]);
+  }
+  return "";
 };
 
 export const handleResponse = async (response: Response) => {

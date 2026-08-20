@@ -1,5 +1,8 @@
 // app/models/Return.ts - SIMPLIFIED REFUND-ONLY MODEL
 import mongoose, { Schema, Document } from "mongoose";
+import "./Product";
+import "./User";
+import "./Order";
 
 export interface IReturnItem {
   product_id: mongoose.Types.ObjectId;

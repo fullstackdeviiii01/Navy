@@ -41,19 +41,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
+    // Validate file type (supports JPEG, PNG, WebP, AVIF, GIF, etc.)
+    const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
+    if (!isImage) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed" },
+        { error: "Invalid file type. Please upload an image" },
         { status: 400 }
       );
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 25MB)
+    if (file.size > 25 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File size too large. Maximum 5MB allowed" },
+        { error: "File size too large. Maximum 25MB allowed" },
         { status: 400 }
       );
     }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import connectToDatabase from "../../../../lib/db.js"
-import mongoose from "mongoose"
+import User from "../../../models/User.js"
 import { generateToken, getClientIp } from "../../../../lib/auth.js"
 
 export async function POST(request) {
@@ -16,7 +16,6 @@ export async function POST(request) {
     }
 
     await connectToDatabase()
-    const User = mongoose.models.User || mongoose.model("User")
 
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() })
@@ -56,6 +55,9 @@ export async function POST(request) {
     const loginIp = getClientIp(request)
     user.last_login_at = new Date()
     user.last_login_ip = loginIp
+    if (!Array.isArray(user.login_history)) {
+      user.login_history = []
+    }
     user.login_history.push({
       at: new Date(),
       ip: loginIp,

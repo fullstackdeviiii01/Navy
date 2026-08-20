@@ -29,7 +29,7 @@ export async function POST(
     await connectDB();
     console.log("✅ [API DEBUG] Database connected");
 
-    const admin = await (User as any).findOne({ uid: decodedToken.uid });
+    const admin = await (User as any).findOne({ email: decodedToken.email });
     if (!admin || admin.role !== "admin") {
       console.error("❌ [API DEBUG] Unauthorized - Admin access required");
       return NextResponse.json(

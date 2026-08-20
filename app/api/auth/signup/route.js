@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import connectToDatabase from "../../../../lib/db.js"
-import mongoose from "mongoose"
+import User from "../../../models/User.js"
 import { generateToken, getClientIp } from "../../../../lib/auth.js"
 
 export async function POST(request) {
@@ -23,7 +23,6 @@ export async function POST(request) {
     }
 
     await connectToDatabase()
-    const User = mongoose.models.User || mongoose.model("User")
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() })

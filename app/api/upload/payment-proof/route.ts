@@ -13,10 +13,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
+    // Validate file type
+    const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
+    if (!isImage) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed" },
+        { error: "Invalid file type. Only images are allowed" },
         { status: 400 }
       );
     }

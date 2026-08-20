@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
@@ -35,18 +35,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
+    const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
+    if (!isImage) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed" },
+        { error: "Invalid file type. Please upload a valid image" },
         { status: 400 }
       );
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
+    // Validate file size (max 25MB)
+    if (file.size > 25 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File size too large. Maximum 2MB allowed" },
+        { error: "File size too large. Maximum 25MB allowed" },
         { status: 400 }
       );
     }

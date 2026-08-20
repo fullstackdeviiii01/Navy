@@ -1,5 +1,11 @@
 // app/models/Order.ts
 import mongoose, { Schema, Document } from "mongoose";
+import "./Product";
+import "./Coupon";
+import "./ShippingService";
+import "./User";
+import "./Payment";
+import "./Invoice";
 
 export interface IOrderItem {
   product_id: mongoose.Types.ObjectId;

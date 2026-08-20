@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     if (token) {
       const decodedToken = await verifyIdToken(token);
       if (decodedToken) {
-        user = await (User as any).findOne({ uid: decodedToken.uid });
+        user = await (User as any).findOne({ email: decodedToken.email });
       }
     }
 

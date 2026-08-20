@@ -20,7 +20,7 @@ export async function GET(request) {
 
     await connectDB();
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -83,7 +83,7 @@ export async function PATCH(request) {
 
     await connectDB();
 
-    const user = await (User as any).findOne({ uid: decodedToken.uid });
+    const user = await (User as any).findOne({ email: decodedToken.email });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

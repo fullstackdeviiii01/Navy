@@ -1,5 +1,7 @@
 // app/models/Wishlist.ts - NEW FILE
 import mongoose, { Schema, Document, Model } from "mongoose";
+import "./Product";
+import "./User";
 
 export interface IWishlistDocument extends Document {
   user_id?: mongoose.Types.ObjectId | null;

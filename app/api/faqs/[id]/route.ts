@@ -51,7 +51,7 @@ export async function PUT(
 
     await connectDB();
 
-    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
@@ -101,7 +101,7 @@ export async function DELETE(
 
     await connectDB();
 
-    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }

@@ -34,7 +34,7 @@ export async function PUT(request, { params }) {
     const { id: addressId } = await params
 
     // Find user and update address
-    const user = await User.findOne({ uid: decodedToken.uid })
+    const user = await User.findOne({ email: decodedToken.email })
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
@@ -111,7 +111,7 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
 
     // Find user
-    const user = await User.findOne({ uid: decodedToken.uid })
+    const user = await User.findOne({ email: decodedToken.email })
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }

@@ -1,5 +1,8 @@
-// // app/models/Review.ts
+// app/models/Review.ts
 import mongoose, { Schema, Document, Model } from "mongoose";
+import "./Product";
+import "./User";
+import "./Order";
 
 export interface IReviewDocument extends Document {
   user_id?: mongoose.Types.ObjectId;

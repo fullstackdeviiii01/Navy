@@ -40,7 +40,7 @@ export async function POST(
     if (token) {
       const decodedToken = await verifyIdToken(token);
       if (decodedToken) {
-        user = await (User as any).findOne({ uid: decodedToken.uid });
+        user = await (User as any).findOne({ email: decodedToken.email });
         if (user) {
           userId = user._id;
         }

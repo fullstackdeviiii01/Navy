@@ -21,7 +21,7 @@ export async function GET(request) {
     await connectDB()
 
     // Check if user is admin
-    const adminUser = await User.findOne({ uid: decodedToken.uid })
+    const adminUser = await User.findOne({ email: decodedToken.email })
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }

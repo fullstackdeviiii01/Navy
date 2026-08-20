@@ -1,6 +1,9 @@
 // app/models/Cart.ts - UPDATED WITH SHIPPING SERVICE
 import mongoose, { Schema, Document, Model } from "mongoose";
-import "../models/ShippingService";
+import "./Product";
+import "./Coupon";
+import "./ShippingService";
+import "./User";
 
 export interface ICartItem {
   _id: mongoose.Types.ObjectId;

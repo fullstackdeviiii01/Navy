@@ -6,6 +6,9 @@ import connectDB from "../../../lib/db";
 import Cart from "../../models/Cart";
 import Order from "../../models/Order";
 import User from "../../models/User";
+import Product from "../../models/Product";
+import Coupon from "../../models/Coupon";
+import ShippingService from "../../models/ShippingService";
 import Payment from "../../models/Payment";
 import CouponUsage from "../../models/CouponUsage";
 import { EmailService } from "../../../lib/services/emailService";
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (token) {
       const decodedToken = await verifyIdToken(token);
       if (decodedToken) {
-        user = await (User as any).findOne({ uid: decodedToken.uid });
+        user = await (User as any).findOne({ email: decodedToken.email });
       }
     }
 

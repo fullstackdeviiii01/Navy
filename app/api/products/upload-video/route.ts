@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
@@ -86,32 +86,56 @@ export async function POST(request: NextRequest) {
     tempInputPath = path.join(tempDir, inputFilename);
     await writeFile(tempInputPath, buffer);
 
-    // Get video metadata to validate duration
-    const metadata = await getVideoMetadata(tempInputPath);
-    if (metadata.duration > MAX_DURATION) {
-      // Clean up temp file
-      if (tempInputPath && existsSync(tempInputPath)) {
-        await unlink(tempInputPath);
-      }
-      return NextResponse.json(
-        {
-          error: `Video too long. Maximum duration is ${MAX_DURATION} seconds. Your video is ${Math.round(metadata.duration)}s`,
-        },
-        { status: 400 }
-      );
-    }
-
     // Output path
     const outputPath = path.join(uploadDir, outputFilename);
     tempOutputPath = outputPath;
 
-    // Compress and convert video
-    await compressVideo(tempInputPath, outputPath);
+    let finalSize = file.size;
+    let videoDuration = 0;
+    let thumbnailFilename = "";
+    let thumbnailUrl = "";
 
-    // Generate thumbnail
-    const thumbnailFilename = `thumb_${timestamp}_${randomString}.jpg`;
-    const thumbnailPath = path.join(uploadDir, thumbnailFilename);
-    await generateThumbnail(outputPath, thumbnailPath);
+    try {
+      // Try getting video metadata
+      const metadata = await getVideoMetadata(tempInputPath);
+      videoDuration = Math.round(metadata.duration || 0);
+
+      if (videoDuration > MAX_DURATION) {
+        if (tempInputPath && existsSync(tempInputPath)) {
+          await unlink(tempInputPath);
+        }
+        return NextResponse.json(
+          {
+            error: `Video too long. Maximum duration is ${MAX_DURATION} seconds. Your video is ${videoDuration}s`,
+          },
+          { status: 400 }
+        );
+      }
+
+      // Try ffmpeg compression
+      await compressVideo(tempInputPath, outputPath);
+
+      // Try thumbnail generation
+      thumbnailFilename = `thumb_${timestamp}_${randomString}.jpg`;
+      const thumbnailPath = path.join(uploadDir, thumbnailFilename);
+      try {
+        await generateThumbnail(outputPath, thumbnailPath);
+        thumbnailUrl = `/products/videos/${thumbnailFilename}`;
+      } catch (thumbErr) {
+        console.warn("Thumbnail generation failed, skipping thumbnail:", thumbErr);
+        thumbnailUrl = "";
+      }
+
+      const fs = require("fs");
+      if (existsSync(outputPath)) {
+        const finalStats = fs.statSync(outputPath);
+        finalSize = finalStats.size;
+      }
+    } catch (ffmpegErr) {
+      console.warn("FFMPEG processing failed, saving raw video directly:", ffmpegErr);
+      await writeFile(outputPath, buffer);
+      finalSize = file.size;
+    }
 
     // Clean up temp input file
     if (tempInputPath && existsSync(tempInputPath)) {
@@ -119,25 +143,19 @@ export async function POST(request: NextRequest) {
       tempInputPath = null;
     }
 
-    // Get final file size
-    const fs = require("fs");
-    const finalStats = fs.statSync(outputPath);
-    const finalSize = finalStats.size;
-
     // Return public URLs
     const videoUrl = `/products/videos/${outputFilename}`;
-    const thumbnailUrl = `/products/videos/${thumbnailFilename}`;
 
     return NextResponse.json({
       success: true,
-      message: "Video uploaded and compressed successfully",
+      message: "Video uploaded successfully",
       url: videoUrl,
-      thumbnail: thumbnailUrl,
+      thumbnail: thumbnailUrl || videoUrl,
       filename: outputFilename,
       originalSize: file.size,
       compressedSize: finalSize,
       compressionRatio: ((1 - finalSize / file.size) * 100).toFixed(1),
-      duration: Math.round(metadata.duration),
+      duration: videoDuration,
     });
   } catch (error: any) {
     console.error("Video upload failed:", error);

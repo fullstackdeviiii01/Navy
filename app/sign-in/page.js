@@ -32,8 +32,19 @@ export default function SignInPage() {
       }
 
       // Store token and update context
-      await login(data.token, data.user);
-      window.location.href = "/";
+      const profile = await login(data.token, data.user);
+      const role = data.user?.role || profile?.role;
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectUrl = searchParams.get("redirect");
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+      } else if (role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/";
+      }
     } catch (error) {
       setError(error.message || "Failed to sign in");
     } finally {

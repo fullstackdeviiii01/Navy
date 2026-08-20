@@ -1,5 +1,8 @@
 // app/models/CouponUsage.ts - COMPLETE REPLACEMENT
 import mongoose, { Schema, Document, Model } from "mongoose";
+import "./Coupon";
+import "./User";
+import "./Order";
 
 export interface ICouponUsageDocument extends Document {
   coupon_id: mongoose.Types.ObjectId;

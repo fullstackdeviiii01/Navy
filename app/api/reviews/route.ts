@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Invalid token" }, { status: 401 });
       }
 
-      const user = await (User as any).findOne({ uid: decodedToken.uid });
+      const user = await (User as any).findOne({ email: decodedToken.email });
       if (!user) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
     if (token) {
       const decodedToken = await verifyIdToken(token);
       if (decodedToken) {
-        user = await (User as any).findOne({ uid: decodedToken.uid });
+        user = await (User as any).findOne({ email: decodedToken.email });
       }
     }
 

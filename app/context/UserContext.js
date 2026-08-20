@@ -97,12 +97,15 @@ export function UserProvider({ children }) {
 
         if (!token) {
           // No token — user is a guest
+          console.log("No token found in localStorage, user is guest");
           setAuthUser(null);
           setDbUser(null);
           await fetchGuestCart();
           setLoading(false);
           return;
         }
+
+        console.log("Token found, verifying with server...");
 
         // Verify token with server
         const response = await fetch("/api/auth/me", {
@@ -115,6 +118,7 @@ export function UserProvider({ children }) {
 
         if (response.ok) {
           const userData = await response.json();
+          console.log("Token verified successfully, user:", userData.email);
           setAuthUser(userData);
 
           // Fetch full profile and cart
@@ -122,6 +126,7 @@ export function UserProvider({ children }) {
           await fetchCart(token);
         } else {
           // Token is invalid or expired — clear it
+          console.log("Token verification failed, clearing auth");
           localStorage.removeItem("auth_token");
           setAuthUser(null);
           setDbUser(null);
@@ -165,7 +170,8 @@ export function UserProvider({ children }) {
   const login = useCallback(
     async (token, userData) => {
       localStorage.setItem("auth_token", token);
-      document.cookie = `__session=${token}; path=/; max-age=604800; secure; samesite=strict`;
+      const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+      document.cookie = `__session=${token}; path=/; max-age=604800; ${isHttps ? "secure;" : ""} samesite=lax`;
       setAuthUser(userData);
 
       // Fetch full profile and cart
@@ -192,19 +198,20 @@ export function UserProvider({ children }) {
     setCart(null);
   }, []);
 
-  // Role checks
-  const hasRole = (role) => dbUser?.role === role;
-  const isAdmin = () => dbUser?.role === "admin";
-  const isUser = () => dbUser?.role === "user";
+  // Role checks (check both dbUser and authUser to avoid race condition on reload)
+  const hasRole = (role) => (dbUser?.role || authUser?.role) === role;
+  const isAdmin = () => (dbUser?.role || authUser?.role) === "admin";
+  const isUser = () => (dbUser?.role || authUser?.role) === "user";
   const canAccess = (requiredRoles = []) => {
-    if (!dbUser || !dbUser.role) return false;
-    return requiredRoles.includes(dbUser.role);
+    const role = dbUser?.role || authUser?.role;
+    if (!role) return false;
+    return requiredRoles.includes(role);
   };
 
   // User status checks
-  const isActive = () => dbUser?.is_active === true;
+  const isActive = () => (dbUser?.is_active !== undefined ? dbUser.is_active === true : true);
   const isBanned = () => dbUser?.is_banned === true;
-  const isEmailVerified = () => dbUser?.email_verified === true;
+  const isEmailVerified = () => (dbUser?.email_verified ?? authUser?.email_verified ?? false);
 
   // Refresh user data
   const refreshUser = async () => {
@@ -271,7 +278,7 @@ export function UserProvider({ children }) {
     closeCart: () => setIsCartOpen(false),
 
     // Authentication state
-    isAuthenticated: !!authUser && !!dbUser,
+    isAuthenticated: !!authUser || !!dbUser,
     isLoading: loading,
 
     // Role-based access

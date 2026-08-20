@@ -38,6 +38,7 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const [hasVariants, setHasVariants] = useState(false);
   const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [existingProduct, setExistingProduct] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -95,7 +96,7 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
 
   const fetchCategories = async () => {
     try {
-      const data = await categoriesApi.getAll(false);
+      const data = await categoriesApi.getAll(true);
       setCategories(data.categories);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
@@ -130,6 +131,7 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       setHasVariants(product.hasVariants || false);
       setVariantOptions(product.variantOptions || []);
       setVariants(product.variants || []);
+      setExistingProduct(product);
     } catch (error) {
       console.error("Failed to fetch product:", error);
     } finally {
@@ -246,7 +248,7 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
 
       const slug =
         mode === "edit" && productId
-          ? undefined
+          ? (existingProduct?.seo?.slug || undefined)
           : `${baseSlug}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
       const productData: any = {
@@ -258,17 +260,25 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
         brand: formData.brand?.trim() || undefined,
         category_id: formData.category_id,
         subcategory_ids: [],
-        seo: {
-          slug,
-          meta_title: formData.name.trim(),
-          meta_description: "",
-        },
+        ...(slug ? { seo: { slug, meta_title: formData.name.trim(), meta_description: "" } } : {}),
         status: formData.status,
         is_visible: true,
         visibility: "public",
         images: allImages,
         videos: allVideos,
         hasVariants,
+        shipping: {
+          weight: 0,
+          weight_unit: "kg",
+          dimensions: {
+            length: 0,
+            width: 0,
+            height: 0,
+            unit: "cm",
+          },
+          requires_shipping: true,
+          is_fragile: false,
+        },
       };
 
       if (hasVariants) {

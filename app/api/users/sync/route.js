@@ -40,7 +40,7 @@ export async function POST(request) {
     // not a background token-refresh sync triggered by onAuthStateChanged
     const isNewLogin = additionalData.isNewLogin === true;
 
-    let user = await User.findOne({ uid: decodedToken.uid });
+    let user = await User.findOne({ email: decodedToken.email });
 
     if (user) {
       // Existing user - update only Firebase fields
