@@ -71,9 +71,7 @@ function money(amount: number, currency: string): string {
 function paymentLabel(method: string): string {
   const map: Record<string, string> = {
     cod: "Cash on Delivery",
-    card: "Credit / Debit Card",
-    stripe: "Card (Stripe)",
-    paypal: "PayPal",
+    bank_transfer: "Bank Transfer",
   };
   return map[method?.toLowerCase()] ?? method ?? "N/A";
 }

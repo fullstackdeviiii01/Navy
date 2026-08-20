@@ -3,17 +3,14 @@
 
 import { useState } from "react";
 import {
-  FaCreditCard,
   FaToggleOn,
   FaToggleOff,
   FaCog,
   FaTrash,
 } from "react-icons/fa";
 import {
-  FaCcStripe,
-  FaPaypal,
   FaMoneyBillWave,
-  FaWallet,
+  FaUniversity,
 } from "react-icons/fa";
 
 interface PaymentGatewayCardProps {
@@ -40,10 +37,9 @@ export default function PaymentGatewayCard({
     string,
     React.ComponentType<{ className?: string }>
   > = {
-    stripe: FaCcStripe,
-    paypal: FaPaypal,
     cod: FaMoneyBillWave,
-    default: FaWallet,
+    bank_transfer: FaUniversity,
+    default: FaMoneyBillWave,
   };
 
   const GatewayIcon = gatewayIcons[gateway.name] || gatewayIcons.default;

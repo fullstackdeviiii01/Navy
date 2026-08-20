@@ -128,7 +128,7 @@ export async function POST(
         return_status: "approved"
       });
     } else {
-      // For Stripe/PayPal, mark as completed immediately
+      // Mark as completed
       returnRequest.refund_status = "completed";
       returnRequest.status = "refunded";
       returnRequest.refunded_at = new Date();

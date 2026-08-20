@@ -29,7 +29,7 @@ export interface IReturnDocument extends Document {
   rejection_reason?: string;
   
   refund_amount: number;
-  refund_method: "stripe" | "paypal" | "bank_transfer"; // COD uses bank_transfer
+  refund_method: "bank_transfer" | "manual";
   refund_status?: "pending" | "processing" | "completed" | "failed";
   
   // Bank transfer details for COD orders
@@ -162,7 +162,7 @@ const ReturnSchema = new Schema<IReturnDocument>(
     },
     refund_method: {
       type: String,
-      enum: ["stripe", "paypal", "bank_transfer"],
+      enum: ["bank_transfer", "manual"],
       required: true,
     },
     refund_status: {

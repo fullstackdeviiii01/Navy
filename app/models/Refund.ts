@@ -7,14 +7,11 @@ export interface IRefundDocument extends Document {
   return_id: mongoose.Types.ObjectId;
   payment_id?: mongoose.Types.ObjectId;
   
-  payment_intent_id?: string; // Stripe
-  paypal_refund_id?: string; // PayPal
-  
   amount: number;
   currency: string;
   
   refund_method: "original_payment" | "store_credit" | "manual";
-  payment_gateway?: "stripe" | "paypal" | "cod";
+  payment_gateway?: "cod" | "bank_transfer";
   
   status: "pending" | "processing" | "completed" | "failed";
   
@@ -62,9 +59,6 @@ const RefundSchema = new Schema<IRefundDocument>(
       ref: "Payment",
     },
     
-    payment_intent_id: { type: String },
-    paypal_refund_id: { type: String },
-    
     amount: {
       type: Number,
       required: true,
@@ -83,7 +77,7 @@ const RefundSchema = new Schema<IRefundDocument>(
     },
     payment_gateway: {
       type: String,
-      enum: ["stripe", "paypal", "cod"],
+      enum: ["cod", "bank_transfer"],
     },
     
     status: {

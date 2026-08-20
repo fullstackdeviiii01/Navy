@@ -12,7 +12,8 @@ export async function GET() {
       .select(
         "name display_name is_test_mode " +
         "settings.currency settings.allow_all_orders settings.min_order_amount settings.max_order_amount settings.instructions " +
-        "credentials.stripe_publishable_key credentials.paypal_client_id"
+        "credentials.bank_account_name credentials.bank_account_number credentials.bank_iban credentials.bank_name credentials.bank_instructions " +
+        "qr_code_image"
       )
       .lean();
 

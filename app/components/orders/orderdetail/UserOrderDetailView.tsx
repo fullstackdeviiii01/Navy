@@ -288,14 +288,6 @@ export default function UserOrderDetailView({
                       {formatPrice(order.pricing.tax_amount)}
                     </span>
                   </div>
-                  {order.stripe_tax_calculation_id && (
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      <span>Stripe Tax Ref:</span>
-                      <span className="font-mono text-[10px] truncate max-w-[120px]">
-                        {order.stripe_tax_calculation_id}
-                      </span>
-                    </div>
-                  )}
                   <div className="flex justify-between">
                     <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                       Shipping
@@ -316,6 +308,48 @@ export default function UserOrderDetailView({
                   </div>
                 </div>
               </div>
+
+              {/* Bank Transfer Payment Proof */}
+              {(order.payment_proof_url || order.bank_reference) && (
+                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
+                  <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
+                    <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+                      <CreditCard size={18} aria-hidden="true" />
+                      Payment Proof
+                    </h3>
+                  </div>
+                  <div className="p-4 space-y-3 text-sm">
+                    {order.bank_reference && (
+                      <div>
+                        <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                          Bank Reference
+                        </p>
+                        <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
+                          {order.bank_reference}
+                        </p>
+                      </div>
+                    )}
+                    {order.payment_proof_url && (
+                      <div>
+                        <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+                          Payment Screenshot
+                        </p>
+                        <a
+                          href={order.payment_proof_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src={order.payment_proof_url}
+                            alt="Payment proof"
+                            className="w-full rounded-lg border border-theme-border-light dark:border-theme-border-dark cursor-pointer hover:opacity-80 transition-opacity"
+                          />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Timeline */}
               <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">

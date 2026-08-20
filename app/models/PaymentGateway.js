@@ -1,4 +1,4 @@
-// // app/models/PaymentGateway.js
+// app/models/PaymentGateway.js
 import mongoose from "mongoose";
 
 const PaymentGatewaySchema = new mongoose.Schema(
@@ -6,7 +6,7 @@ const PaymentGatewaySchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      enum: ["stripe", "paypal", "cod"],
+      enum: ["cod", "bank_transfer"],
       unique: true,
     },
     display_name: {
@@ -17,32 +17,21 @@ const PaymentGatewaySchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    is_test_mode: {
-      type: Boolean,
-      default: true,
-    },
     credentials: {
-      // Stripe
-      stripe_publishable_key: String,
-      stripe_secret_key: String,
-      stripe_webhook_secret: String,
-      
-      // PayPal
-      paypal_client_id: String,
-      paypal_client_secret: String,
-      paypal_webhook_id: String,
+      // Bank Transfer
+      bank_account_name: String,
+      bank_account_number: String,
+      bank_iban: String,
+      bank_name: String,
+      bank_instructions: String,
+      qr_code_image: String,
     },
     settings: {
       currency: {
         type: String,
         default: "PKR",
       },
-      accepted_currencies: [String],
       payment_description: String,
-      success_url: String,
-      cancel_url: String,
-      
-      // COD specific settings
       min_order_amount: {
         type: Number,
         default: 0,

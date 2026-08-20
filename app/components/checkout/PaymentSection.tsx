@@ -1,11 +1,9 @@
-// // app/components/checkout/PaymentSection.tsx
+// app/components/checkout/PaymentSection.tsx
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, Lock, CreditCard } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, CreditCard, Upload, Building2 } from "lucide-react";
 import PaymentMethodSelector from "./PaymentMethodSelector";
-import StripePaymentForm from "./StripePaymentForm";
-import PayPalPaymentButton from "./PayPalPaymentButton";
 import { checkoutApi } from "../../../lib/api/checkout";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
@@ -25,6 +23,46 @@ export default function PaymentSection({
   const [selectedMethod, setSelectedMethod] = useState("");
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [bankGateway, setBankGateway] = useState<any>(null);
+
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [bankReference, setBankReference] = useState("");
+  const [uploadingProof, setUploadingProof] = useState(false);
+
+  useEffect(() => {
+    if (selectedMethod === "bank_transfer") {
+      fetchBankGateway();
+    }
+  }, [selectedMethod]);
+
+  const fetchBankGateway = async () => {
+    try {
+      const res = await fetch("/api/payment/gateways/active");
+      const data = await res.json();
+      const bt = data.gateways?.find((g: any) => g.name === "bank_transfer");
+      if (bt) setBankGateway(bt);
+    } catch (err) {
+      console.error("Failed to fetch bank gateway:", err);
+    }
+  };
+
+  const uploadProof = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload/payment-proof", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Failed to upload payment proof");
+    }
+
+    const data = await res.json();
+    return data.url;
+  };
 
   const createOrder = async (paymentMethod: string, paymentData?: any) => {
     setProcessing(true);
@@ -34,13 +72,8 @@ export default function PaymentSection({
       const orderData: any = {
         ...checkoutData,
         payment_method: paymentMethod,
+        ...paymentData,
       };
-
-      if (paymentMethod === "stripe" && paymentData?.payment_intent_id) {
-        orderData.payment_intent_id = paymentData.payment_intent_id;
-      } else if (paymentMethod === "paypal" && paymentData?.paypal_order_id) {
-        orderData.paypal_order_id = paymentData.paypal_order_id;
-      }
 
       const result = await checkoutApi.processCheckout(orderData);
       setProcessing(false);
@@ -52,21 +85,29 @@ export default function PaymentSection({
     }
   };
 
-  const handleStripeSuccess = async (paymentIntentId: string) => {
-    await createOrder("stripe", { payment_intent_id: paymentIntentId });
-  };
-
-  const handlePayPalSuccess = async (paypalOrderId: string) => {
-    await createOrder("paypal", { paypal_order_id: paypalOrderId });
-  };
-
   const handleCODConfirm = async () => {
     await createOrder("cod");
   };
 
-  const handlePaymentError = (errorMessage: string) => {
-    setError(errorMessage);
-    setProcessing(false);
+  const handleBankTransferConfirm = async () => {
+    if (proofFile) {
+      setUploadingProof(true);
+      try {
+        const proofUrl = await uploadProof(proofFile);
+        await createOrder("bank_transfer", {
+          proof_url: proofUrl,
+          bank_reference: bankReference || undefined,
+        });
+      } catch (err: any) {
+        setError(err.message || "Failed to upload payment proof");
+        setProcessing(false);
+        setUploadingProof(false);
+      }
+    } else {
+      await createOrder("bank_transfer", {
+        bank_reference: bankReference || undefined,
+      });
+    }
   };
 
   return (
@@ -110,26 +151,7 @@ export default function PaymentSection({
 
         {selectedMethod && (
           <div className="mt-4 sm:mt-5 md:mt-6">
-            {selectedMethod === "stripe" && (
-              <StripePaymentForm
-                checkoutData={checkoutData}
-                amount={cart?.total || 0}
-                currency={cart.currency || "USD"}
-                onSuccess={handleStripeSuccess}
-                onError={handlePaymentError}
-              />
-            )}
-
-            {selectedMethod === "paypal" && (
-              <PayPalPaymentButton
-                checkoutData={checkoutData}
-                amount={cart.total}
-                currency={cart.currency || "USD"}
-                onSuccess={handlePayPalSuccess}
-                onError={handlePaymentError}
-              />
-            )}
-
+            {/* COD Panel */}
             {selectedMethod === "cod" && (
               <div className="space-y-3 sm:space-y-4">
                 <div className="p-3 sm:p-3.5 md:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
@@ -154,19 +176,113 @@ export default function PaymentSection({
                 </button>
               </div>
             )}
+
+            {/* Bank Transfer Panel */}
+            {selectedMethod === "bank_transfer" && (
+              <div className="space-y-3 sm:space-y-4">
+                {/* Bank Details */}
+                {bankGateway && (
+                  <div className="p-3 sm:p-3.5 md:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-700 dark:text-blue-300" />
+                      <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm sm:text-base">
+                        Bank Transfer Details
+                      </h4>
+                    </div>
+                    <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-blue-800 dark:text-blue-200">
+                      {bankGateway.credentials?.bank_name && (
+                        <p><span className="font-medium">Bank:</span> {bankGateway.credentials.bank_name}</p>
+                      )}
+                      {bankGateway.credentials?.bank_account_name && (
+                        <p><span className="font-medium">Account Name:</span> {bankGateway.credentials.bank_account_name}</p>
+                      )}
+                      {bankGateway.credentials?.bank_account_number && (
+                        <p><span className="font-medium">Account Number:</span> {bankGateway.credentials.bank_account_number}</p>
+                      )}
+                      {bankGateway.credentials?.bank_iban && (
+                        <p><span className="font-medium">IBAN:</span> {bankGateway.credentials.bank_iban}</p>
+                      )}
+                    </div>
+
+                    {/* QR Code */}
+                    {bankGateway.qr_code_image && (
+                      <div className="mt-3 sm:mt-4">
+                        <img
+                          src={bankGateway.qr_code_image}
+                          alt="Bank QR Code"
+                          className="w-32 h-32 sm:w-40 sm:h-40 object-contain rounded-lg border border-blue-200 dark:border-blue-700"
+                        />
+                      </div>
+                    )}
+
+                    {/* Instructions */}
+                    {bankGateway.settings?.instructions && (
+                      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-blue-700 dark:text-blue-300 whitespace-pre-line">
+                        {bankGateway.settings.instructions}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Payment Proof Upload */}
+                <div className="p-3 sm:p-3.5 md:p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
+                    Payment Screenshot (optional)
+                  </label>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <label className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                      <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400" />
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        {proofFile ? proofFile.name : "Choose file"}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => setProofFile(e.target.files?.[0] || null)}
+                      />
+                    </label>
+                    {proofFile && (
+                      <button
+                        type="button"
+                        onClick={() => setProofFile(null)}
+                        className="text-xs sm:text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bank Reference */}
+                <div className="p-3 sm:p-3.5 md:p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
+                    Bank Reference Number (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={bankReference}
+                    onChange={(e) => setBankReference(e.target.value)}
+                    placeholder="Enter transaction/reference number"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <button
+                  onClick={handleBankTransferConfirm}
+                  disabled={processing || uploadingProof}
+                  className="w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                >
+                  {processing
+                    ? "Creating Order..."
+                    : uploadingProof
+                      ? "Uploading Proof..."
+                      : "Place Order"}
+                </button>
+              </div>
+            )}
           </div>
         )}
-      </div>
-
-      {/* Security Badge */}
-      <div className="flex items-center gap-1.5 sm:gap-2 p-3 sm:p-3.5 md:p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-        <Lock
-          className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-400 flex-shrink-0"
-          aria-hidden="true"
-        />
-        <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
-          Your payment information is secure and encrypted
-        </p>
       </div>
 
       {/* Back Button */}

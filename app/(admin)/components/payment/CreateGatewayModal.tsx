@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { FaCcStripe, FaPaypal, FaMoneyBillWave } from "react-icons/fa";
+import { FaMoneyBillWave, FaUniversity } from "react-icons/fa";
 
 interface CreateGatewayModalProps {
   onClose: () => void;
@@ -19,22 +19,16 @@ export default function CreateGatewayModal({
 
   const availableGateways = [
     {
-      name: "stripe",
-      display_name: "Stripe",
-      description: "Accept cards, wallets, and more",
-      icon: FaCcStripe,
-    },
-    {
-      name: "paypal",
-      display_name: "PayPal",
-      description: "Accept PayPal and cards",
-      icon: FaPaypal,
-    },
-    {
       name: "cod",
       display_name: "Cash on Delivery",
       description: "Collect payment upon delivery",
       icon: FaMoneyBillWave,
+    },
+    {
+      name: "bank_transfer",
+      display_name: "Bank Transfer",
+      description: "Accept direct bank transfers",
+      icon: FaUniversity,
     },
   ];
 

@@ -111,19 +111,15 @@ export const refundConfirmationTemplate = (returnRequest: any, order: any) => {
           <div class="refund-details">
             <p><strong>RMA Number:</strong> <span style="font-family: monospace; color: #2563eb;">${returnRequest.rma_number}</span></p>
             <p><strong>Order Number:</strong> ${order.order_number}</p>
-            <p><strong>Refund Method:</strong> ${returnRequest.refund_method === "stripe" ? "Credit Card" : returnRequest.refund_method === "paypal" ? "PayPal" : "Original Payment Method"}</p>
+            <p><strong>Refund Method:</strong> ${returnRequest.refund_method === "bank_transfer" ? "Bank Transfer" : returnRequest.refund_method}</p>
             <p><strong>Processed Date:</strong> ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
           </div>
           
           <div class="timeline-box">
             <p style="font-weight: 600; font-size: 16px; margin-bottom: 10px;">When will I receive my refund?</p>
-            <p>The refund has been issued to your ${returnRequest.refund_method === "stripe" ? "card" : returnRequest.refund_method === "paypal" ? "PayPal account" : "original payment method"}.</p>
+            <p>The refund will be transferred to your bank account.</p>
             <p style="margin-top: 10px;">
-              ${
-                returnRequest.refund_method === "paypal"
-                  ? "PayPal refunds typically appear within 24 hours."
-                  : "Depending on your bank or card issuer, it may take 3-5 business days for the refund to appear in your account."
-              }
+              Depending on your bank, it may take 3-5 business days for the refund to appear in your account.
             </p>
           </div>
           

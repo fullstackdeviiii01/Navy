@@ -5,8 +5,7 @@ import Order from "../../app/models/Order";
 
 export class InvoiceService {
   /**
-   * Create a draft invoice when order is placed (before payment for COD,
-   * immediately issued for Stripe).
+   * Create a draft invoice when order is placed.
    */
   static async createForOrder(
     orderId: string,
@@ -14,7 +13,7 @@ export class InvoiceService {
       userId?: string | null;
       guestEmail?: string;
       currency: string;
-      issueImmediately?: boolean; // true for Stripe, false for COD
+      issueImmediately?: boolean;
     }
   ) {
     await connectDB();

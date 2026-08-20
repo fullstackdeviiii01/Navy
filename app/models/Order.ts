@@ -1,4 +1,4 @@
-// app/models/Order.ts - UPDATED WITH STRIPE TAX FIELDS
+// app/models/Order.ts
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrderItem {
@@ -71,7 +71,8 @@ export interface IOrderDocument extends Document {
   shipping_service?: IShippingServiceInfo;
   coupon_code?: string;
   coupon_id?: mongoose.Types.ObjectId;
-  stripe_tax_calculation_id?: string; // NEW: Stripe Tax reference
+  payment_proof_url?: string;
+  bank_reference?: string;
   status:
     | "pending"
     | "confirmed"
@@ -223,11 +224,8 @@ const OrderSchema = new Schema<IOrderDocument>(
     coupon_code: { type: String },
     coupon_id: { type: Schema.Types.ObjectId, ref: "Coupon" },
 
-    // NEW: Store Stripe Tax calculation ID for records, reports, and refund reversal
-    stripe_tax_calculation_id: {
-      type: String,
-      default: null,
-    },
+    payment_proof_url: { type: String },
+    bank_reference: { type: String },
 
     status: {
       type: String,

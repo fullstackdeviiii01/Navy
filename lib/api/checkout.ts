@@ -22,11 +22,9 @@ export interface CheckoutData {
     name: string;
     phone: string;
   };
-  payment_method: "stripe" | "cod" | "paypal";
-  payment_intent_id?: string;    // Stripe
-  paypal_order_id?: string;      // PayPal
-  tax_calculation_id?: string;   // Stripe Tax
-  tax_amount?: number;           // Stripe Tax amount
+  payment_method: "cod" | "bank_transfer";
+  proof_url?: string;
+  bank_reference?: string;
 }
 
 export interface CheckoutResponse {

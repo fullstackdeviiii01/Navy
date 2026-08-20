@@ -282,6 +282,48 @@ export default function AdminOrderDetailView({
               </div>
             </div>
 
+            {/* Bank Transfer Payment Proof */}
+            {(order.payment_proof_url || order.bank_reference) && (
+              <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
+                  <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+                    <CreditCard size={18} />
+                    Payment Proof
+                  </h3>
+                </div>
+                <div className="p-4 space-y-3 text-sm">
+                  {order.bank_reference && (
+                    <div>
+                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        Bank Reference
+                      </p>
+                      <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
+                        {order.bank_reference}
+                      </p>
+                    </div>
+                  )}
+                  {order.payment_proof_url && (
+                    <div>
+                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+                        Payment Screenshot
+                      </p>
+                      <a
+                        href={order.payment_proof_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={order.payment_proof_url}
+                          alt="Payment proof"
+                          className="w-full rounded-lg border border-theme-border-light dark:border-theme-border-dark cursor-pointer hover:opacity-80 transition-opacity"
+                        />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Timeline */}
             <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
               <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">

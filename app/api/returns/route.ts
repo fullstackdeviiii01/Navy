@@ -6,7 +6,6 @@ import connectDB from "../../../lib/db";
 import Return from "../../models/Return";
 import Order from "../../models/Order";
 import User from "../../models/User";
-import Payment from "../../models/Payment";
 import { EmailService } from "../../../lib/services/emailService";
 
 // POST - Create return request (User/Guest)
@@ -158,64 +157,8 @@ export async function POST(request: NextRequest) {
     );
 
     // ─── Determine refund method ──────────────────────────────────────────────
-    // 1. First check order.payment_method
-    // 2. Fall back to Payment collection (handles cases where order was saved
-    //    with wrong/missing payment_method)
-    let refundMethod: "stripe" | "paypal" | "bank_transfer" = "bank_transfer";
-
-    const orderPaymentMethod = (order.payment_method || "").toLowerCase();
-
-    if (orderPaymentMethod === "card" || orderPaymentMethod === "stripe") {
-      refundMethod = "stripe";
-    } else if (orderPaymentMethod === "paypal") {
-      refundMethod = "paypal";
-    } else {
-      // Fallback: look up the completed payment record for this order
-      console.log(
-        "🔵 [API DEBUG] order.payment_method not decisive, checking Payment collection..."
-      );
-
-      // Try by order_id first
-      let paymentRecord = await (Payment as any).findOne({
-        order_id: order._id,
-        status: "completed",
-      });
-
-      // For guest orders the payment may be linked by session_id
-      if (!paymentRecord && order.session_id) {
-        paymentRecord = await (Payment as any).findOne({
-          session_id: order.session_id,
-          status: "completed",
-        });
-      }
-
-      // Also try any payment that references this order (some flows store
-      // checkout_data but leave order_id null until after order creation)
-      if (!paymentRecord && order.session_id) {
-        paymentRecord = await (Payment as any).findOne({
-          session_id: order.session_id,
-        }).sort({ created_at: -1 });
-      }
-
-      if (paymentRecord) {
-        console.log(
-          `🔵 [API DEBUG] Found payment record: gateway=${paymentRecord.payment_gateway}, method=${paymentRecord.payment_method}`
-        );
-        if (
-          paymentRecord.payment_gateway === "stripe" ||
-          paymentRecord.payment_method === "card"
-        ) {
-          refundMethod = "stripe";
-        } else if (paymentRecord.payment_gateway === "paypal") {
-          refundMethod = "paypal";
-        }
-      } else {
-        console.log(
-          "🔵 [API DEBUG] No payment record found, defaulting to bank_transfer"
-        );
-      }
-    }
-
+    // All orders use bank_transfer for refunds (only COD and Bank Transfer gateways remain)
+    const refundMethod: "bank_transfer" = "bank_transfer";
     console.log(`🔵 [API DEBUG] Resolved refund method: ${refundMethod}`);
     // ─────────────────────────────────────────────────────────────────────────
 

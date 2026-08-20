@@ -1,4 +1,4 @@
-// app/models/Payment.js - UPDATED
+// app/models/Payment.js
 import mongoose from "mongoose";
 
 const PaymentSchema = new mongoose.Schema(
@@ -6,28 +6,28 @@ const PaymentSchema = new mongoose.Schema(
     order_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
-      default: null, // CHANGED: Now optional initially
+      default: null,
       index: true,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null, // CHANGED: Optional for guest checkout
+      default: null,
       index: true,
     },
     session_id: {
-      type: String, // NEW: For guest checkout
+      type: String,
       default: null,
       index: true,
     },
     payment_gateway: {
       type: String,
-      enum: ["stripe", "paypal", "cod"],
+      enum: ["cod", "bank_transfer"],
       required: true,
     },
     payment_method: {
       type: String,
-      enum: ["card", "paypal", "cod"],
+      enum: ["cod", "bank_transfer"],
       required: true,
     },
     transaction_id: {
@@ -36,13 +36,6 @@ const PaymentSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    capture_id: {
-      type: String,
-      sparse: true,
-      index: true,
-    },
-    payment_intent_id: String, // Stripe
-    payer_id: String, // PayPal
     amount: {
       type: Number,
       required: true,
@@ -59,14 +52,10 @@ const PaymentSchema = new mongoose.Schema(
       default: "pending",
       index: true,
     },
-    payment_details: {
-      card_last4: String,
-      card_brand: String,
-      paypal_email: String,
-      payer_name: String,
-    },
+    proof_url: String,
+    bank_reference: String,
     checkout_data: {
-      type: mongoose.Schema.Types.Mixed, // NEW: Store checkout data temporarily
+      type: mongoose.Schema.Types.Mixed,
     },
     metadata: {
       type: Map,

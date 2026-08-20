@@ -48,20 +48,6 @@ export default function ProcessRefundModal({
 
   const getRefundMethodDetails = () => {
     switch (refundMethod) {
-      case "stripe":
-        return {
-          title: "Stripe Card Refund",
-          timeline: "3-5 business days",
-          description:
-            "Refund will be automatically processed to the customer's original card",
-        };
-      case "paypal":
-        return {
-          title: "PayPal Refund",
-          timeline: "Within 24 hours",
-          description:
-            "Refund will be automatically processed to the customer's PayPal account",
-        };
       case "bank_transfer":
         return {
           title: "Bank Transfer Refund",
@@ -238,31 +224,20 @@ export default function ProcessRefundModal({
                     <li>Customer will be notified via email</li>
                     <li>Expected timeline: {methodDetails.timeline}</li>
                   </>
-                ) : refundMethod === "stripe" ? (
-                  <>
-                    <li>
-                      Stripe will automatically refund $
-                      {returnRequest.refund_amount.toFixed(2)} to the customer's
-                      card
-                    </li>
-                    <li>
-                      Customer will receive refund in {methodDetails.timeline}
-                    </li>
-                    <li>Customer will be notified via email</li>
-                    <li>Return status will be updated to "Refunded"</li>
-                  </>
                 ) : (
                   <>
+                    <li>Refund will be marked as "Processing"</li>
                     <li>
-                      PayPal will automatically refund $
+                      You must manually transfer $
                       {returnRequest.refund_amount.toFixed(2)} to the customer's
-                      account
+                      bank account
                     </li>
                     <li>
-                      Customer will receive refund {methodDetails.timeline}
+                      After transfer, mark the refund as "Completed" in the
+                      system
                     </li>
                     <li>Customer will be notified via email</li>
-                    <li>Return status will be updated to "Refunded"</li>
+                    <li>Expected timeline: {methodDetails.timeline}</li>
                   </>
                 )}
               </ul>

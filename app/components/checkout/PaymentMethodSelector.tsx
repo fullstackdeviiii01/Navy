@@ -1,11 +1,10 @@
-// // app/components/checkout/PaymentMethodSelector.tsx - FULLY RESPONSIVE
+// app/components/checkout/PaymentMethodSelector.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaCreditCard, FaPaypal, FaMoneyBillWave } from "react-icons/fa";
+import { FaUniversity, FaMoneyBillWave } from "react-icons/fa";
 import { paymentApi } from "../../../lib/api/payment";
 import Loader from "../shared/Loader";
-import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface PaymentMethodSelectorProps {
   selectedMethod: string;
@@ -20,7 +19,7 @@ export default function PaymentMethodSelector({
 }: PaymentMethodSelectorProps) {
   const [gateways, setGateways] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     fetchActiveGateways();
   }, []);
@@ -28,20 +27,20 @@ export default function PaymentMethodSelector({
   const fetchActiveGateways = async () => {
     try {
       const data = await paymentApi.getActiveGateways();
-      
+
       const availableGateways = data.gateways.filter((gateway: any) => {
         if (gateway.name === "cod") {
           if (gateway.settings?.allow_all_orders) {
             return true;
           }
-          
+
           const minAmount = gateway.settings?.min_order_amount || 0;
           const maxAmount = gateway.settings?.max_order_amount;
-          
+
           if (orderTotal < minAmount) {
             return false;
           }
-          
+
           if (maxAmount && orderTotal > maxAmount) {
             return false;
           }
@@ -64,14 +63,12 @@ export default function PaymentMethodSelector({
   const getGatewayIcon = (name: string) => {
     const iconClass = "w-5 h-5 sm:w-6 sm:h-6";
     switch (name) {
-      case "stripe":
-        return <FaCreditCard className={iconClass}/>;
-      case "paypal":
-        return <FaPaypal className={iconClass}/>;
+      case "bank_transfer":
+        return <FaUniversity className={iconClass} />;
       case "cod":
-        return <FaMoneyBillWave className={iconClass}/>;
+        return <FaMoneyBillWave className={iconClass} />;
       default:
-        return <FaCreditCard className={iconClass}/>;
+        return <FaMoneyBillWave className={iconClass} />;
     }
   };
 
@@ -127,20 +124,10 @@ export default function PaymentMethodSelector({
               <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark text-sm sm:text-base truncate">
                 {gateway.display_name}
               </p>
-              {gateway.name === "cod" && gateway.settings?.instructions && (
+              {gateway.settings?.instructions && (
                 <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5 sm:mt-1 line-clamp-2">
                   {gateway.settings.instructions}
                 </p>
-              )}
-              {gateway.name !== "cod" && (
-                <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
-                  Pay in {"PKR"}
-                </p>
-              )}
-              {gateway.name !== "cod" && gateway.is_test_mode && (
-                <span className="inline-block text-[10px] sm:text-xs text-yellow-600 dark:text-yellow-400 mt-0.5">
-                  Test Mode
-                </span>
               )}
             </div>
           </div>

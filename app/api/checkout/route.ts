@@ -1,6 +1,5 @@
-// // app/api/checkout/route.ts — UPDATED WITH INVOICE CREATION
+// app/api/checkout/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import { getSessionIdFromRequest } from "../../../lib/auth/session";
 import connectDB from "../../../lib/db";
@@ -9,7 +8,6 @@ import Order from "../../models/Order";
 import User from "../../models/User";
 import Payment from "../../models/Payment";
 import CouponUsage from "../../models/CouponUsage";
-import PaymentGateway from "../../models/PaymentGateway";
 import { EmailService } from "../../../lib/services/emailService";
 import { InvoiceService } from "../../../lib/services/invoiceService";
 
@@ -22,15 +20,20 @@ export async function POST(request: NextRequest) {
       customer_notes,
       guest_info,
       payment_method,
-      payment_intent_id,
-      paypal_order_id,
-      tax_calculation_id,
-      tax_amount,
+      proof_url,
+      bank_reference,
     } = await request.json();
 
     if (!shipping_address || !payment_method) {
       return NextResponse.json(
         { error: "Shipping address and payment method are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!["cod", "bank_transfer"].includes(payment_method)) {
+      return NextResponse.json(
+        { error: "Invalid payment method" },
         { status: 400 }
       );
     }
@@ -97,32 +100,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // ── Payment verification ──────────────────────────────────────────────────
-    let paymentRecord = null;
-
-    if (payment_method === "stripe" && payment_intent_id) {
-      const stripeGateway = await (PaymentGateway as any).findOne({ name: "stripe" });
-      const stripeSecretKey = stripeGateway?.credentials?.stripe_secret_key || process.env.STRIPE_SECRET_KEY!;
-      const stripe = new Stripe(stripeSecretKey);
-      const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
-      if (paymentIntent.status !== "succeeded") {
-        return NextResponse.json({ error: "Payment not confirmed" }, { status: 400 });
-      }
-      paymentRecord = await (Payment as any).findOne({ payment_intent_id });
-      if (paymentRecord && paymentRecord.status !== "completed") {
-        paymentRecord.status = "completed";
-        paymentRecord.completed_at = new Date();
-      }
-    } else if (payment_method === "paypal" && paypal_order_id) {
-      paymentRecord = await (Payment as any).findOne({
-        transaction_id: paypal_order_id,
-        status: "completed",
-      });
-      if (!paymentRecord) {
-        return NextResponse.json({ error: "Payment not confirmed" }, { status: 400 });
-      }
-    }
-
     // ── Cart ──────────────────────────────────────────────────────────────────
     let cart: any;
     const cartQuery = user
@@ -185,11 +162,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Pricing ───────────────────────────────────────────────────────────────
-    const finalTaxAmount =
-      payment_method === "stripe" && tax_amount ? tax_amount : cart.tax_amount;
-
     const finalTotal =
-      cart.subtotal - cart.discount_amount + finalTaxAmount + cart.shipping_cost;
+      cart.subtotal - cart.discount_amount + cart.tax_amount + cart.shipping_cost;
 
     // ── Build order ───────────────────────────────────────────────────────────
     const orderData: any = {
@@ -198,7 +172,7 @@ export async function POST(request: NextRequest) {
       pricing: {
         subtotal: cart.subtotal,
         discount_amount: cart.discount_amount,
-        tax_amount: finalTaxAmount,
+        tax_amount: cart.tax_amount,
         shipping_cost: cart.shipping_cost,
         total: finalTotal,
         currency: "PKR",
@@ -210,14 +184,10 @@ export async function POST(request: NextRequest) {
       coupon_id: (cart.applied_coupon_id as any)?._id ?? cart.applied_coupon_id ?? undefined,
       customer_notes: customer_notes || undefined,
       payment_method,
-      status: payment_method === "cod" ? "pending" : "confirmed",
-      payment_status: payment_method === "cod" ? "pending" : "paid",
+      status: "pending",
+      payment_status: "pending",
       placed_at: new Date(),
     };
-
-    if (payment_method === "stripe" && tax_calculation_id) {
-      orderData.stripe_tax_calculation_id = tax_calculation_id;
-    }
 
     if (cart.selected_shipping_service_id) {
       const svc = cart.selected_shipping_service_id;
@@ -230,10 +200,6 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    if (payment_method !== "cod") {
-      orderData.confirmed_at = new Date();
-    }
-
     if (isGuestOrder) {
       orderData.guest_info = guest_info;
       orderData.session_id = sessionId;
@@ -244,41 +210,25 @@ export async function POST(request: NextRequest) {
     const order = new Order(orderData);
     await order.save();
 
-    // ── Stripe Tax commit ─────────────────────────────────────────────────────
-    if (payment_method === "stripe" && tax_calculation_id) {
-      try {
-        const stripeGateway = await (PaymentGateway as any).findOne({ name: "stripe" });
-        const stripeSecretKey = stripeGateway?.credentials?.stripe_secret_key || process.env.STRIPE_SECRET_KEY!;
-        const stripe = new Stripe(stripeSecretKey);
-        await stripe.tax.transactions.createFromCalculation({
-          calculation: tax_calculation_id,
-          reference: order.order_number,
-          expand: ["line_items"],
-        });
-      } catch (taxCommitError) {
-        console.error("Stripe Tax transaction commit failed:", taxCommitError);
-      }
+    // ── Payment record ────────────────────────────────────────────────────────
+    const paymentRecordData: any = {
+      order_id: order._id,
+      user_id: user?._id || null,
+      session_id: sessionId || null,
+      payment_gateway: payment_method,
+      payment_method,
+      transaction_id: `${payment_method.toUpperCase()}-${order.order_number}`,
+      amount: order.pricing.total,
+      currency: order.pricing.currency,
+      status: "pending",
+    };
+
+    if (payment_method === "bank_transfer") {
+      if (proof_url) paymentRecordData.proof_url = proof_url;
+      if (bank_reference) paymentRecordData.bank_reference = bank_reference;
     }
 
-    // ── COD payment record ────────────────────────────────────────────────────
-    if (payment_method === "cod") {
-      await (Payment as any).create({
-        order_id: order._id,
-        user_id: user?._id || null,
-        session_id: sessionId || null,
-        payment_gateway: "cod",
-        payment_method: "cod",
-        transaction_id: `COD-${order.order_number}`,
-        amount: order.pricing.total,
-        currency: order.pricing.currency,
-        status: "pending",
-      });
-    }
-
-    if (paymentRecord) {
-      paymentRecord.order_id = order._id;
-      await paymentRecord.save();
-    }
+    await (Payment as any).create(paymentRecordData);
 
     // ── Coupon tracking ───────────────────────────────────────────────────────
     if (cart.applied_coupon_id) {
@@ -301,21 +251,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Update user stats (non-COD only) ──────────────────────────────────────
-    if (user && payment_method !== "cod") {
-      await (User as any).findByIdAndUpdate(user._id, {
-        $inc: { order_count: 1, total_spent: order.pricing.total },
-        $set: { last_order_at: new Date() },
-      });
-    }
-
     // ── Create invoice record ─────────────────────────────────────────────────
     try {
       await InvoiceService.createForOrder(order._id.toString(), {
         userId: user?._id?.toString() ?? null,
         guestEmail: guest_info?.email,
         currency: order.pricing.currency,
-        issueImmediately: payment_method !== "cod",
+        issueImmediately: false,
       });
     } catch (invoiceError) {
       console.error("Failed to create invoice record:", invoiceError);

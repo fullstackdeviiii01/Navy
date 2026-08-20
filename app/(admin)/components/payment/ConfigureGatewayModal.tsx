@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Eye, EyeOff, AlertCircle, DollarSign } from "lucide-react";
+import { X, AlertCircle, DollarSign } from "lucide-react";
 
 interface ConfigureGatewayModalProps {
   gateway: any;
@@ -16,19 +16,18 @@ export default function ConfigureGatewayModal({
   onSave,
 }: ConfigureGatewayModalProps) {
   const [loading, setLoading] = useState(false);
-  const [showSecrets, setShowSecrets] = useState<{ [key: string]: boolean }>({});
   const [formData, setFormData] = useState({
     name: gateway?.name || "",
     display_name: gateway?.display_name || "",
     is_enabled: gateway?.is_enabled || false,
     is_test_mode: gateway?.is_test_mode ?? true,
     credentials: {
-      stripe_publishable_key: gateway?.credentials?.stripe_publishable_key || "",
-      stripe_secret_key: gateway?.credentials?.stripe_secret_key || "",
-      stripe_webhook_secret: gateway?.credentials?.stripe_webhook_secret || "",
-      paypal_client_id: gateway?.credentials?.paypal_client_id || "",
-      paypal_client_secret: gateway?.credentials?.paypal_client_secret || "",
-      paypal_webhook_id: gateway?.credentials?.paypal_webhook_id || "",
+      account_name: gateway?.credentials?.account_name || "",
+      account_number: gateway?.credentials?.account_number || "",
+      iban: gateway?.credentials?.iban || "",
+      bank_name: gateway?.credentials?.bank_name || "",
+      instructions: gateway?.credentials?.instructions || "",
+      qr_code_image: gateway?.credentials?.qr_code_image || "",
     },
     settings: {
       currency: gateway?.settings?.currency || "USD",
@@ -54,197 +53,141 @@ export default function ConfigureGatewayModal({
     }
   };
 
-  const toggleShowSecret = (field: string) => {
-    setShowSecrets((prev) => ({ ...prev, [field]: !prev[field] }));
-  };
-
   const renderCredentialFields = () => {
-    if (formData.name === "stripe") {
+    if (formData.name === "bank_transfer") {
       return (
         <>
           <div>
-            <label htmlFor="stripe_publishable_key" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Publishable Key *
+            <label htmlFor="account_name" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Account Holder Name *
             </label>
             <input
-              id="stripe_publishable_key"
+              id="account_name"
               type="text"
-              value={formData.credentials.stripe_publishable_key}
+              value={formData.credentials.account_name}
               onChange={(e) =>
                 setFormData({
                   ...formData,
                   credentials: {
                     ...formData.credentials,
-                    stripe_publishable_key: e.target.value,
+                    account_name: e.target.value,
                   },
                 })
               }
               required
-              placeholder="pk_test_..."
+              placeholder="John Doe"
               className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>
 
           <div>
-            <label htmlFor="stripe_secret_key" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Secret Key *
-            </label>
-            <div className="relative">
-              <input
-                id="stripe_secret_key"
-                type={showSecrets["stripe_secret_key"] ? "text" : "password"}
-                value={formData.credentials.stripe_secret_key}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    credentials: {
-                      ...formData.credentials,
-                      stripe_secret_key: e.target.value,
-                    },
-                  })
-                }
-                required
-                placeholder="sk_test_..."
-                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 pr-10 sm:pr-12 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => toggleShowSecret("stripe_secret_key")}
-                aria-label={showSecrets["stripe_secret_key"] ? "Hide secret key" : "Show secret key"}
-                aria-pressed={showSecrets["stripe_secret_key"]}
-                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark p-1"
-              >
-                {showSecrets["stripe_secret_key"] ? (
-                  <EyeOff size={16} className="sm:w-4 sm:h-4" />
-                ) : (
-                  <Eye size={16} className="sm:w-4 sm:h-4" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="stripe_webhook_secret" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Webhook Secret
-            </label>
-            <div className="relative">
-              <input
-                id="stripe_webhook_secret"
-                type={showSecrets["stripe_webhook_secret"] ? "text" : "password"}
-                value={formData.credentials.stripe_webhook_secret}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    credentials: {
-                      ...formData.credentials,
-                      stripe_webhook_secret: e.target.value,
-                    },
-                  })
-                }
-                placeholder="whsec_..."
-                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 pr-10 sm:pr-12 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => toggleShowSecret("stripe_webhook_secret")}
-                aria-label={showSecrets["stripe_webhook_secret"] ? "Hide webhook secret" : "Show webhook secret"}
-                aria-pressed={showSecrets["stripe_webhook_secret"]}
-                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark p-1"
-              >
-                {showSecrets["stripe_webhook_secret"] ? (
-                  <EyeOff size={16} className="sm:w-4 sm:h-4"/>
-                ) : (
-                  <Eye size={16} className="sm:w-4 sm:h-4"/>
-                )}
-              </button>
-            </div>
-          </div>
-        </>
-      );
-    }
-
-    if (formData.name === "paypal") {
-      return (
-        <>
-          <div>
-            <label htmlFor="paypal_client_id" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Client ID *
+            <label htmlFor="account_number" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Account Number *
             </label>
             <input
-              id="paypal_client_id"
+              id="account_number"
               type="text"
-              value={formData.credentials.paypal_client_id}
+              value={formData.credentials.account_number}
               onChange={(e) =>
                 setFormData({
                   ...formData,
                   credentials: {
                     ...formData.credentials,
-                    paypal_client_id: e.target.value,
+                    account_number: e.target.value,
                   },
                 })
               }
               required
-              placeholder="AXxxx..."
+              placeholder="1234567890"
               className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>
 
           <div>
-            <label htmlFor="paypal_client_secret" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Client Secret *
-            </label>
-            <div className="relative">
-              <input
-                id="paypal_client_secret"
-                type={showSecrets["paypal_client_secret"] ? "text" : "password"}
-                value={formData.credentials.paypal_client_secret}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    credentials: {
-                      ...formData.credentials,
-                      paypal_client_secret: e.target.value,
-                    },
-                  })
-                }
-                required
-                placeholder="EXxxx..."
-                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 pr-10 sm:pr-12 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => toggleShowSecret("paypal_client_secret")}
-                aria-label={showSecrets["paypal_client_secret"] ? "Hide client secret" : "Show client secret"}
-                aria-pressed={showSecrets["paypal_client_secret"]}
-                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark p-1"
-              >
-                {showSecrets["paypal_client_secret"] ? (
-                  <EyeOff size={16} className="sm:w-4 sm:h-4" />
-                ) : (
-                  <Eye size={16} className="sm:w-4 sm:h-4"/>
-                )}
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="paypal_webhook_id" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Webhook ID (Optional)
+            <label htmlFor="iban" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              IBAN
             </label>
             <input
-              id="paypal_webhook_id"
+              id="iban"
               type="text"
-              value={formData.credentials.paypal_webhook_id}
+              value={formData.credentials.iban}
               onChange={(e) =>
                 setFormData({
                   ...formData,
                   credentials: {
                     ...formData.credentials,
-                    paypal_webhook_id: e.target.value,
+                    iban: e.target.value,
                   },
                 })
               }
-              placeholder="WH-xxx..."
+              placeholder="PK36SCBL0000001123456702"
+              className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="bank_name" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Bank Name *
+            </label>
+            <input
+              id="bank_name"
+              type="text"
+              value={formData.credentials.bank_name}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  credentials: {
+                    ...formData.credentials,
+                    bank_name: e.target.value,
+                  },
+                })
+              }
+              required
+              placeholder="State Bank of Pakistan"
+              className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="bank_instructions" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Transfer Instructions
+            </label>
+            <textarea
+              id="bank_instructions"
+              value={formData.credentials.instructions}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  credentials: {
+                    ...formData.credentials,
+                    instructions: e.target.value,
+                  },
+                })
+              }
+              rows={3}
+              placeholder="Please include your order number in the transfer reference."
+              className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm resize-none"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="qr_code_image" className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              QR Code Image URL (Optional)
+            </label>
+            <input
+              id="qr_code_image"
+              type="text"
+              value={formData.credentials.qr_code_image}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  credentials: {
+                    ...formData.credentials,
+                    qr_code_image: e.target.value,
+                  },
+                })
+              }
+              placeholder="https://example.com/qr-code.png"
               className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>

@@ -1,4 +1,4 @@
-// // lib/api/payment.ts - UPDATED WITH STRIPE TAX
+// lib/api/payment.ts
 import { getAuthToken, handleResponse } from "./helpers";
 
 export const paymentApi = {
@@ -49,59 +49,6 @@ export const paymentApi = {
   // User - Get active payment gateways
   getActiveGateways: async () => {
     const response = await fetch("/api/payment/gateways/active");
-    return handleResponse(response);
-  },
-
-  // UPDATED: Create Stripe payment intent WITH tax calculation ID
-  createStripeIntent: async (
-    amount: number,
-    currency: string = "USD",
-    checkoutData?: any,
-    taxCalculationId?: string | null // NEW: optional tax calculation ID
-  ) => {
-    const response = await fetch("/api/payment/stripe/create-intent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-      body: JSON.stringify({
-        amount,
-        currency,
-        checkoutData,
-        tax_calculation_id: taxCalculationId || null, // NEW
-      }),
-    });
-    return handleResponse(response);
-  },
-
-  // Create PayPal order (unchanged)
-  createPayPalOrder: async (
-    amount: number,
-    currency: string = "USD",
-    checkoutData?: any
-  ) => {
-    const response = await fetch("/api/payment/paypal/create-order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-      body: JSON.stringify({ amount, currency, checkoutData }),
-    });
-    return handleResponse(response);
-  },
-
-  // User - Capture PayPal payment (unchanged)
-  capturePayPalOrder: async (paypalOrderId: string) => {
-    const response = await fetch("/api/payment/paypal/capture-order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-      body: JSON.stringify({ paypalOrderId }),
-    });
     return handleResponse(response);
   },
 };

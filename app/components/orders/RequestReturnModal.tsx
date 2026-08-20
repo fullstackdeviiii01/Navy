@@ -19,21 +19,7 @@ interface RequestReturnModalProps {
  */
 function isCODPayment(order: any): boolean {
   const method = (order.payment_method || "").toLowerCase();
-
-  // Explicit non-COD methods
-  if (["card", "stripe", "paypal", "credit_card", "debit_card"].includes(method)) {
-    return false;
-  }
-
-  // Explicit COD
-  if (method === "cod") {
-    return true;
-  }
-
-  // If payment_method is empty / unknown, assume online payment was used
-  // so we do NOT ask for bank details (safer UX – the backend will still
-  // validate properly via the Payment collection lookup).
-  return false;
+  return method === "cod";
 }
 
 export default function RequestReturnModal({
@@ -64,10 +50,9 @@ export default function RequestReturnModal({
   // Determine the refund method label shown to the user
   const refundMethodLabel = (() => {
     const method = (order.payment_method || "").toLowerCase();
-    if (method === "paypal") return "PayPal Account";
     if (method === "cod") return "Bank Transfer";
-    // card / stripe / unknown → assume card
-    return "Original Payment Card";
+    if (method === "bank_transfer") return "Bank Transfer";
+    return "Bank Transfer";
   })();
 
   const returnReasons = [
