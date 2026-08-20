@@ -1,6 +1,6 @@
 // app/api/orders/[id]/invoice/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/auth";
 import connectDB from "../../../../../lib/db";
 import Order from "../../../../models/Order";
 import Invoice from "../../../../models/Invoice";
@@ -24,20 +24,7 @@ async function getCompanyInfo() {
   };
 }
 
-// ── Exchange rates from CurrencySettings DB ──────────────────────────────────
-// Orders are always stored in USD. This converts to the user's display currency.
-// CurrencySettings is the model behind /api/currency-settings
-async function getExchangeRates(): Promise<Record<string, number>> {
-  // Dynamic import to avoid circular deps — same pattern as the currency API route
-  const CurrencySettings = (await import("../../../../models/CurrencySettings")).default;
-  const settings = await (CurrencySettings as any).findOne({}).lean() as any;
-  return settings?.exchangeRates ?? {};
-}
-
-function convertFromUSD(amount: number, toCurrency: string, rates: Record<string, number>): number {
-  if (toCurrency === "USD" || !rates[toCurrency]) return amount;
-  return amount * rates[toCurrency];
-}
+// ── Exchange rates removed — all prices in PKR ──────────────────────────────
 
 function formatDate(date: Date | string): string {
   return new Date(date).toLocaleDateString("en-US", {
@@ -112,24 +99,13 @@ export async function GET(
       );
     }
 
-    // ── Fetch company + exchange rates in parallel ────────────────────────────
-    const [company, exchangeRates] = await Promise.all([
-      getCompanyInfo(),
-      getExchangeRates(),
-    ]);
+    // ── Fetch company info ────────────────────────────────────────────────
+    const company = await getCompanyInfo();
 
-    // ── Currency conversion ───────────────────────────────────────────────────
-    // DB always stores amounts in USD. The user's preferred_currency is on their
-    // profile. For registered users use that; for guests fall back to USD.
-    const displayCurrency: string =
-      user?.preferred_currency && exchangeRates[user.preferred_currency]
-        ? user.preferred_currency
-        : "USD";
+    // ── Currency: PKR only ────────────────────────────────────────────────
+    const displayCurrency = "PKR";
 
-    const convert = (amount: number) =>
-      convertFromUSD(amount, displayCurrency, exchangeRates);
-
-    // ── Customer email ────────────────────────────────────────────────────────
+    // ── Customer email ────────────────────────────────────────────────────
     const customerEmail = user?.email ?? order.guest_info?.email ?? null;
 
     // ── Build InvoiceData ────────────────────────────────────────────────────
@@ -176,16 +152,16 @@ export async function GET(
           ? Object.fromEntries(Object.entries(item.variant_attributes))
           : undefined,
         quantity: item.quantity,
-        price:    convert(item.price),
-        subtotal: convert(item.subtotal),
+        price:    item.price,
+        subtotal: item.subtotal,
       })),
 
       pricing: {
-        subtotal:       convert(order.pricing.subtotal),
-        discountAmount: convert(order.pricing.discount_amount ?? 0),
-        taxAmount:      convert(order.pricing.tax_amount ?? 0),
-        shippingCost:   convert(order.pricing.shipping_cost ?? 0),
-        total:          convert(order.pricing.total),
+        subtotal:       order.pricing.subtotal,
+        discountAmount: order.pricing.discount_amount ?? 0,
+        taxAmount:      order.pricing.tax_amount ?? 0,
+        shippingCost:   order.pricing.shipping_cost ?? 0,
+        total:          order.pricing.total,
       },
     };
 

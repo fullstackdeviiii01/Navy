@@ -1,6 +1,6 @@
 // app/api/cart/route.ts - UPDATED WITH SHIPPING SERVICE
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import {
   getOrCreateSessionId,
   createSessionCookie,

@@ -2,7 +2,7 @@
 "use client";
 
 import Rating from "../shared/Rating";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface ProductInfoProps {
   product: {
@@ -37,8 +37,7 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-  const { convertPrice, formatPrice, selectedCurrency } = useCurrency();
-  
+    
   const isVariableProduct = product.hasVariants && product.variantPricing;
 
   // Base prices from product
@@ -48,12 +47,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const comparePrice = isVariableProduct 
     ? undefined 
     : product.pricing.compare_at_price;
-  const baseCurrency = product.pricing.currency;
 
   // Display price based on product type
-  const displayPrice = formatPrice(basePrice, baseCurrency);
+  const displayPrice = formatPrice(basePrice);
   const maxPrice = isVariableProduct && product.variantPricing!.priceVaries
-    ? formatPrice(product.variantPricing!.maxPrice, baseCurrency)
+    ? formatPrice(product.variantPricing!.maxPrice)
     : null;
 
   const isOutOfStock = product.inventory.stock_status === "out_of_stock";
@@ -62,7 +60,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   // Calculate savings if compare price exists
   const hasSavings = !isVariableProduct && comparePrice && comparePrice > basePrice;
   const savingsAmount = hasSavings 
-    ? convertPrice(comparePrice!, baseCurrency) - convertPrice(basePrice, baseCurrency)
+    ? comparePrice! - basePrice
     : 0;
   const savingsPercent = hasSavings 
     ? Math.round(((comparePrice! - basePrice) / comparePrice!) * 100)
@@ -138,8 +136,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           )}
           {!isVariableProduct && comparePrice && (
             <>
-              <span className="text-base sm:text-lg md:text-xl text-theme-text-muted-light dark:text-theme-text-muted-dark line-through" aria-label={`Original price: ${formatPrice(comparePrice, baseCurrency)}`}>
-                {formatPrice(comparePrice, baseCurrency)}
+              <span className="text-base sm:text-lg md:text-xl text-theme-text-muted-light dark:text-theme-text-muted-dark line-through" aria-label={`Original price: ${formatPrice(comparePrice)}`}>
+                {formatPrice(comparePrice)}
               </span>
               <span className="px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs sm:text-sm font-bold rounded-lg" aria-label={`Save ${savingsPercent} percent`}>
                 Save {savingsPercent}%
@@ -147,25 +145,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             </>
           )}
         </div>
-
-        {/* Show original price if currency is converted */}
-        {selectedCurrency !== baseCurrency && (
-          <div className="mt-1.5 sm:mt-2">
-            <p className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              {isVariableProduct ? (
-                <>
-                  Original price range: {baseCurrency} {product.variantPricing!.minPrice.toFixed(2)}
-                  {product.variantPricing!.priceVaries && ` - ${baseCurrency} ${product.variantPricing!.maxPrice.toFixed(2)}`}
-                </>
-              ) : (
-                <>
-                  Original price: {baseCurrency} {basePrice.toFixed(2)}
-                  {comparePrice && ` (was ${baseCurrency} ${comparePrice.toFixed(2)})`}
-                </>
-              )}
-            </p>
-          </div>
-        )}
 
         {isVariableProduct && (
           <p className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark mt-1.5 sm:mt-2">
@@ -201,15 +180,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </p>
       )}
 
-      {/* Currency Disclaimer */}
-      {selectedCurrency !== baseCurrency && (
-        <div className="p-2 sm:p-2.5 md:p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg" role="note">
-          <p className="text-[10px] sm:text-xs text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> Prices shown in {selectedCurrency} are converted from {baseCurrency} based on current exchange rates. 
-            Final charges may vary slightly based on the exchange rate at the time of payment.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

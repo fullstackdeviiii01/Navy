@@ -2,7 +2,7 @@
 "use client";
 
 import { Tag, Truck, User, Loader2 } from "lucide-react";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface OrderSummaryCheckoutProps {
   cart: any;
@@ -31,8 +31,7 @@ export default function OrderSummaryCheckout({
   taxLoading = false,
   displayTotal,
 }: OrderSummaryCheckoutProps) {
-  const { formatPrice } = useCurrency();
-
+  
   // Use dynamic displayTotal if provided, otherwise fall back to cart.total
   const finalTotal = displayTotal !== undefined ? displayTotal : cart?.total || 0;
 

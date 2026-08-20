@@ -21,7 +21,6 @@ import Cart from "./Cart";
 import { useRouter } from "next/navigation";
 import { useUser } from "../context/UserContext";
 import { useWishlist } from "../context/WishlistContext";
-import CurrencySelector from "./shared/CurrencySelector";
 import SearchBar from "./shared/SearchBar";
 import CategoryNavigation from "./shared/CategoryNavigation";
 import { useState, useEffect } from "react";
@@ -155,11 +154,6 @@ const Header = () => {
 
           {/* Right Side Actions - Desktop */}
           <div className="hidden md:flex items-center gap-1 flex-shrink-0">
-            {/* Currency Selector */}
-            {/* <div className="px-2">
-              <CurrencySelector />
-            </div> */}
-
             {/* Divider */}
             <div className="h-8 w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
 

@@ -19,9 +19,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import ReviewForm from "../reviews/ReviewForm";
-import { useCurrency } from "../../context/CurrencyContext";
 import Loader from "../shared/Loader";
 import Image from "next/image";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface OrdersTabProps {
   dbUser: any;
@@ -36,8 +36,7 @@ export default function OrdersTab({ dbUser }: OrdersTabProps) {
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const [reviewingProduct, setReviewingProduct] = useState<any>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const { formatPrice } = useCurrency();
-
+  
   useEffect(() => {
     fetchOrders();
   }, []);

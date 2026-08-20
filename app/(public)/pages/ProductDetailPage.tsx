@@ -15,10 +15,10 @@ import BuyNowButton from "../../components/product-detail/BuyNowButton";
 import VariantSelectionModal from "../../components/product-detail/VariantSelectionModal";
 import SelectOptionsButton from "../../components/product-detail/SelectOptionsButton";
 import ProductShareButton from "../../components/product-detail/ProductShareButton";
-import { useCurrency } from "../../context/CurrencyContext";
 import Loader from "../../components/shared/Loader";
 import ProductMediaCarousel from "../../components/product/ProductMediaCarousel";
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface Props {
   productId: string;
@@ -42,8 +42,7 @@ interface ProductVariant {
 }
 
 export default function ProductDetailPageContent({ productId }: Props) {
-  const { convertPrice, formatPrice, selectedCurrency } = useCurrency();
-  const [product, setProduct] = useState<any>(null);
+    const [product, setProduct] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -147,7 +146,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
     : product.inventory?.stock_status === "out_of_stock";
 
   // Get current price based on variant or base product
-  const baseCurrency = product.pricing?.currency || "USD";
   const currentPrice = selectedVariant?.price || product.pricing?.price || 0;
   const currentComparePrice =
     selectedVariant?.compareAtPrice || product.pricing?.compare_at_price;
@@ -161,12 +159,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
       )
     : product.inventory?.stock_quantity || 0;
 
-  // Convert prices to selected currency
-  const convertedCurrentPrice = convertPrice(currentPrice, baseCurrency);
-  const convertedComparePrice = currentComparePrice
-    ? convertPrice(currentComparePrice, baseCurrency)
-    : undefined;
-  const totalPrice = convertedCurrentPrice * quantity;
+  const totalPrice = currentPrice * quantity;
 
   return (
     <div className="min-h-screen bg-white dark:bg-theme-bg-dark">
@@ -257,31 +250,23 @@ export default function ProductDetailPageContent({ productId }: Props) {
                     </span>
                     <span
                       className="text-base sm:text-lg md:text-xl font-bold text-green-700 dark:text-green-300"
-                      aria-label={`Price: ${selectedCurrency} ${convertedCurrentPrice.toFixed(2)}`}
+                      aria-label={`Price: ${formatPrice(currentPrice)}`}
                     >
-                      {selectedCurrency} {convertedCurrentPrice.toFixed(2)}
+                      {formatPrice(currentPrice)}
                     </span>
                   </div>
-                  {convertedComparePrice && (
+                  {currentComparePrice && (
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] sm:text-xs text-green-700 dark:text-green-300">
                         Original Price:
                       </span>
                       <span
                         className="text-xs sm:text-sm text-green-600 dark:text-green-400 line-through"
-                        aria-label={`Original price: ${selectedCurrency} ${convertedComparePrice.toFixed(2)}`}
+                        aria-label={`Original price: ${formatPrice(currentComparePrice)}`}
                       >
-                        {selectedCurrency} {convertedComparePrice.toFixed(2)}
+                        {formatPrice(currentComparePrice)}
                       </span>
                     </div>
-                  )}
-                  {selectedCurrency !== baseCurrency && (
-                    <p
-                      className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1.5 sm:mt-2"
-                      aria-label={`Approximately ${baseCurrency} ${currentPrice.toFixed(2)}`}
-                    >
-                      ≈{baseCurrency} {currentPrice.toFixed(2)}
-                    </p>
                   )}
                 </div>
               )}
@@ -304,16 +289,11 @@ export default function ProductDetailPageContent({ productId }: Props) {
                     </span>
                     <span
                       className="text-base sm:text-lg md:text-xl font-bold text-theme-primary"
-                      aria-label={`Total price: ${selectedCurrency} ${totalPrice.toFixed(2)}`}
+                      aria-label={`Total price: ${formatPrice(totalPrice)}`}
                     >
-                      {selectedCurrency} {totalPrice.toFixed(2)}
+                      {formatPrice(totalPrice)}
                     </span>
                   </div>
-                  {selectedCurrency !== baseCurrency && (
-                    <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark text-right">
-                      ≈{baseCurrency} {(currentPrice * quantity).toFixed(2)}
-                    </p>
-                  )}
                 </div>
               )}
 

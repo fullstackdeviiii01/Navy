@@ -1,6 +1,6 @@
 // // app/api/categories/upload-image/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import User from "../../../models/User";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";

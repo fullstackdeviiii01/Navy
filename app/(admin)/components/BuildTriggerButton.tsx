@@ -8,7 +8,7 @@ type BuildStatus = "idle" | "loading" | "done" | "error";
 
 export default function BuildTriggerButton() {
   const [status, setStatus] = useState<BuildStatus>("idle");
-  const { firebaseUser } = useUser();
+  const { authUser } = useUser();
   const pollRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopPolling = () => {
@@ -62,7 +62,7 @@ export default function BuildTriggerButton() {
 
     try {
       console.log("[BuildButton] Getting Firebase ID token...");
-      const token = await firebaseUser?.getIdToken();
+      const token = await authUser?.getIdToken();
 
       if (!token) {
         console.error("[BuildButton] No Firebase token available. Is user logged in?");

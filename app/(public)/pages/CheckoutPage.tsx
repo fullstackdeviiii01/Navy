@@ -15,7 +15,7 @@ import EmailNotificationModal from "../../components/checkout/EmailNotificationM
 import Loader from "../../components/shared/Loader";
 
 export default function CheckoutPage() {
-  const { firebaseUser, dbUser, loading: userLoading, refreshCart, updateUserProfile, refreshUser } = useUser();
+  const { authUser, dbUser, loading: userLoading, refreshCart, updateUserProfile, refreshUser } = useUser();
   const router = useRouter();
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export default function CheckoutPage() {
   // Ban state
   const [isEmailBanned, setIsEmailBanned] = useState(false);
 
-  const isGuestCheckout = !firebaseUser;
+  const isGuestCheckout = !authUser;
 
   useEffect(() => {
     if (!userLoading) {
@@ -133,7 +133,7 @@ export default function CheckoutPage() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
-            firebaseUser ? await firebaseUser.getIdToken() : ""
+            authUser ? await authUser.getIdToken() : ""
           }`,
         },
         body: JSON.stringify({ shipping_address: address }),
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
     } finally {
       setTaxLoading(false);
     }
-  }, [firebaseUser]);
+  }, [authUser]);
 
   const handleShippingSelect = async (serviceId: string) => {
     setShippingLoading(true);

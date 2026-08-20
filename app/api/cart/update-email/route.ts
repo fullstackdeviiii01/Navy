@@ -1,7 +1,7 @@
 // app/api/cart/update-email/route.ts - NEW FILE
 
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import { getSessionIdFromRequest } from "../../../../lib/auth/session";
 import connectDB from "../../../../lib/db";
 import Cart from "../../../models/Cart";

@@ -1,6 +1,6 @@
 // app/api/products/variants/[productId]/configure/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { verifyIdToken, getIdTokenFromHeader } from "../../../../../../lib/firebase/auth";
+import { verifyIdToken, getIdTokenFromHeader } from "../../../../../../lib/auth";
 import connectDB from "../../../../../../lib/db";
 import Product from "../../../../../models/Product";
 import User from "../../../../../models/User";

@@ -7,7 +7,7 @@ import { X, Save, Info } from "lucide-react";
 interface AddressModalProps {
   address: any;
   dbUser: any;
-  firebaseUser: any;
+  authUser: any;
   onClose: () => void;
   refreshUser: () => Promise<void>;
   setError: (error: string) => void;
@@ -19,7 +19,7 @@ interface AddressModalProps {
 export default function AddressModal({
   address,
   dbUser,
-  firebaseUser,
+  authUser,
   onClose,
   refreshUser,
   setError,
@@ -66,7 +66,7 @@ export default function AddressModal({
         }
       }
 
-      const token = await firebaseUser.getIdToken();
+      const token = await authUser.getIdToken();
       const url = address ? `/api/users/addresses/${address._id}` : "/api/users/addresses";
       const method = address ? "PUT" : "POST";
 

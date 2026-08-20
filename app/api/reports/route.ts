@@ -2,7 +2,7 @@
 // app/api/reports/route.ts
 // ============================================
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import connectDB from "../../../lib/db";
 import User from "../../models/User";
 import { calculateDateRange, calculatePreviousPeriod } from "../../../lib/utils/reports/dateUtils";

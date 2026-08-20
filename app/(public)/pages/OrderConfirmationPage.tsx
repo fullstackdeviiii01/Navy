@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ordersApi } from "../../../lib/api/orders";
-import { useCurrency } from "../../context/CurrencyContext";
 import {
   CheckCircle,
   Package,
@@ -13,6 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Loader from "../../components/shared/Loader";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface Props {
   orderId: string;
@@ -23,8 +23,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { formatPrice } = useCurrency();
-  
+    
   useEffect(() => {
     if (orderId) {
       fetchOrder(orderId);
@@ -153,10 +152,10 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                       <div className="flex items-center gap-4 mt-2 text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark">
                         <span>Qty: {item.quantity}</span>
                         <span aria-hidden="true">•</span>
-                        <span>{formatPrice(item.price, order.pricing.currency)} each</span>
+                        <span>{formatPrice(item.price)} each</span>
                       </div>
                       <p className="text-lg font-bold text-theme-primary mt-2">
-                        {formatPrice(item.subtotal, order.pricing.currency)}
+                        {formatPrice(item.subtotal)}
                       </p>
                     </div>
                   </article>
@@ -210,7 +209,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                     Subtotal
                   </span>
                   <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {formatPrice(order.pricing.subtotal, order.pricing.currency)}
+                    {formatPrice(order.pricing.subtotal)}
                   </span>
                 </div>
                 {order.pricing.discount_amount > 0 && (
@@ -219,7 +218,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                       Discount
                     </span>
                     <span className="font-medium text-green-600 dark:text-green-400">
-                      -{formatPrice(order.pricing.discount_amount, order.pricing.currency)}
+                      -{formatPrice(order.pricing.discount_amount)}
                     </span>
                   </div>
                 )}
@@ -228,7 +227,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                     Tax
                   </span>
                   <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {formatPrice(order.pricing.tax_amount, order.pricing.currency)}
+                    {formatPrice(order.pricing.tax_amount)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -238,7 +237,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                   <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {order.pricing.shipping_cost === 0
                       ? "FREE"
-                      : `${formatPrice(order.pricing.shipping_cost, order.pricing.currency)}`}
+                      : `${formatPrice(order.pricing.shipping_cost)}`}
                   </span>
                 </div>
                 <div className="border-t-2 border-theme-border-light dark:border-theme-border-dark pt-3 flex justify-between items-center">
@@ -246,7 +245,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                     Total
                   </span>
                   <span className="text-2xl font-bold text-theme-primary">
-                    {formatPrice(order.pricing.total, order.pricing.currency)}
+                    {formatPrice(order.pricing.total)}
                   </span>
                 </div>
               </div>

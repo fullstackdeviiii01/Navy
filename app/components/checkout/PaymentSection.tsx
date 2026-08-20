@@ -6,8 +6,8 @@ import { ChevronLeft, Lock, CreditCard } from "lucide-react";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import StripePaymentForm from "./StripePaymentForm";
 import PayPalPaymentButton from "./PayPalPaymentButton";
-import { useCurrency } from "../../context/CurrencyContext";
 import { checkoutApi } from "../../../lib/api/checkout";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface PaymentSectionProps {
   cart: any;
@@ -27,8 +27,7 @@ export default function PaymentSection({
   const [selectedMethod, setSelectedMethod] = useState("");
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState(false);
-  const { formatPrice } = useCurrency();
-
+  
   // Calculate total including tax for Stripe payments
   const stripeTotal = cart?.total
     ? cart.total - (cart.tax_amount || 0) + taxAmount

@@ -3,7 +3,6 @@
 import { DarkModeProvider } from "./context/DarkModeProvider";
 import { UserProvider } from "./context/UserContext";
 import { WishlistProvider } from "./context/WishlistContext";
-import { CurrencyProvider } from "./context/CurrencyContext";
 
 export default function ClientProviders({
   children,
@@ -13,11 +12,9 @@ export default function ClientProviders({
   return (
     <DarkModeProvider>
       <UserProvider>
-        <CurrencyProvider>
           <WishlistProvider>
             {children}
           </WishlistProvider>
-        </CurrencyProvider>
       </UserProvider>
     </DarkModeProvider>
   );

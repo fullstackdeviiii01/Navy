@@ -1,6 +1,6 @@
 // app/api/categories/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import Category from "../../../models/Category";
 import Product from "../../../models/Product";

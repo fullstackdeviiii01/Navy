@@ -10,7 +10,7 @@ import BuyNowButton from "../product-detail/BuyNowButton";
 import SelectOptionsButton from "../product-detail/SelectOptionsButton";
 import VariantSelectionModal from "../product-detail/VariantSelectionModal";
 import ProductMediaCarousel from "./ProductMediaCarousel";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface ProductVariant {
   _id?: string;
@@ -74,8 +74,7 @@ export default function ProductCard({
   product,
   activeCoupons = [],
 }: ProductCardProps) {
-  const { convertPrice, formatPrice, selectedCurrency } = useCurrency();
-  const [variantModalOpen, setVariantModalOpen] = useState(false);
+    const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<
     "add-to-cart" | "buy-now" | null
   >(null);
@@ -111,7 +110,6 @@ export default function ProductCard({
   const comparePrice = hasVariants
     ? undefined
     : product.pricing.compare_at_price;
-  const baseCurrency = product.pricing.currency;
   const showPriceRange = hasVariants && product.variantPricing?.priceVaries;
 
   // Find applicable coupon
@@ -142,7 +140,7 @@ export default function ProductCard({
   const calculateDiscountedPrice = () => {
     if (!applicableCoupon) return null;
 
-    const convertedPrice = convertPrice(basePrice, baseCurrency);
+    const convertedPrice = basePrice;
     let discount = 0;
     let showMinimumMessage = false;
 
@@ -192,10 +190,10 @@ export default function ProductCard({
       style={{ scrollbarWidth: "none" }}
     >
       <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight whitespace-nowrap">
-        {formatPrice(product.variantPricing!.minPrice, baseCurrency)}
+        {formatPrice(product.variantPricing!.minPrice)}
       </span>
       <span className="text-[10px] sm:text-xs md:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark leading-tight whitespace-nowrap ml-1">
-        – {formatPrice(product.variantPricing!.maxPrice, baseCurrency)}
+        – {formatPrice(product.variantPricing!.maxPrice)}
       </span>
     </div>
   );
@@ -215,11 +213,11 @@ export default function ProductCard({
       style={{ scrollbarWidth: "none" }}
     >
       <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight whitespace-nowrap">
-        {formatPrice(price, baseCurrency)}
+        {formatPrice(price)}
       </span>
       {compare && (
         <span className="text-[10px] sm:text-xs md:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark line-through leading-tight ml-1.5 whitespace-nowrap">
-          {formatPrice(compare, baseCurrency)}
+          {formatPrice(compare)}
         </span>
       )}
     </div>
@@ -252,7 +250,7 @@ export default function ProductCard({
                 <span className="whitespace-nowrap">
                   {applicableCoupon.discount_type === "percentage"
                     ? `${applicableCoupon.discount_value}% OFF`
-                    : `${selectedCurrency} ${applicableCoupon.discount_value} OFF`}
+                    : `Rs. ${applicableCoupon.discount_value} OFF`}
                 </span>
               </div>
             )}
@@ -287,7 +285,7 @@ export default function ProductCard({
                 <span className="whitespace-nowrap">
                   {applicableCoupon.discount_type === "percentage"
                     ? `${applicableCoupon.discount_value}% OFF`
-                    : `${selectedCurrency} ${applicableCoupon.discount_value} OFF`}
+                    : `Rs. ${applicableCoupon.discount_value} OFF`}
                 </span>
               </div>
             )}
@@ -373,7 +371,7 @@ export default function ProductCard({
                       Code: {discountInfo.code}
                     </span>
                     <span className="text-[10px] md:text-xs text-green-600 dark:text-green-400 leading-tight">
-                      Add more items to maximize {selectedCurrency}{" "}
+                      Add more items to maximize Rs.{" "}
                       {discountInfo.minimumRequired.toFixed(2)} discount at
                       checkout
                     </span>
@@ -384,7 +382,7 @@ export default function ProductCard({
                       Use code: {discountInfo.code}
                     </span>
                     <span className="text-[10px] md:text-xs font-bold text-green-700 dark:text-green-300 whitespace-nowrap">
-                      Save {selectedCurrency} {discountInfo.discount.toFixed(2)}
+                      Save Rs. {discountInfo.discount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -399,12 +397,10 @@ export default function ProductCard({
                     {!discountInfo.showMinimumMessage ? (
                       <div className="flex flex-col gap-0.5 min-w-0">
                         <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-green-600 dark:text-green-400 leading-tight break-all">
-                          {selectedCurrency}{" "}
-                          {discountInfo.discountedPrice.toFixed(2)}
+                          {formatPrice(discountInfo.discountedPrice)}
                         </span>
                         <span className="text-[10px] sm:text-xs md:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark line-through break-all leading-tight">
-                          {selectedCurrency}{" "}
-                          {discountInfo.originalPrice.toFixed(2)}
+                          {formatPrice(discountInfo.originalPrice)}
                         </span>
                         <span className="hidden md:block text-[9px] md:text-[10px] lg:text-xs text-green-600 dark:text-green-400 font-medium leading-tight">
                           After applying coupon at checkout

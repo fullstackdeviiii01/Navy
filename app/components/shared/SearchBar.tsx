@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaSearch, FaSpinner, FaTimes, FaTag, FaBox } from "react-icons/fa";
 import { searchApi } from "../../../lib/api/search";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface SearchResult {
   products: Array<{
@@ -50,8 +50,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { formatPrice } = useCurrency();
-
+  
   // Debounced search
   useEffect(() => {
     const delaySearch = setTimeout(async () => {
@@ -242,9 +241,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                       <div className="flex items-center gap-2 mt-1">
                         <p className="text-sm font-semibold text-theme-primary">
                           {formatPrice(
-                            product.pricing.price,
-                            product.pricing.currency
-                          )}
+                            product.pricing.price)}
                         </p>
                         {product.category_id && (
                           <>

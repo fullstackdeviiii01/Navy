@@ -1,6 +1,6 @@
 // app/api/coupons/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import connectDB from "../../../lib/db";
 import Coupon from "../../models/Coupon";
 import User from "../../models/User";

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 interface ProfileTabProps {
   dbUser: any;
-  firebaseUser: any;
+  authUser: any;
   updateUserProfile: (data: any) => Promise<any>;
   refreshUser: () => Promise<void>;
   setError: (error: string) => void;
@@ -30,7 +30,7 @@ interface ProfileTabProps {
 
 export default function ProfileTab({
   dbUser,
-  firebaseUser,
+  authUser,
   updateUserProfile,
   refreshUser,
   setError,
@@ -49,13 +49,13 @@ export default function ProfileTab({
   useEffect(() => {
     if (dbUser) {
       setFormData({
-        name: dbUser.name || firebaseUser?.displayName || "",
+        name: dbUser.name || authUser?.displayName || "",
         phone: dbUser.phone || "",
         email_notifications: dbUser.email_notifications ?? true,
         marketing_opt_in: dbUser.marketing_opt_in ?? false,
       });
     }
-  }, [dbUser, firebaseUser]);
+  }, [dbUser, authUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +93,7 @@ export default function ProfileTab({
     {
       icon: DollarSign,
       label: "Total Spent",
-      value: `${dbUser?.preferred_currency || "USD"} ${parseFloat(dbUser?.total_spent || 0).toFixed(2)}`,
+      value: `Rs. ${parseFloat(dbUser?.total_spent || 0).toLocaleString("en-PK")}`,
       color: "green",
     },
     {
@@ -117,7 +117,7 @@ export default function ProfileTab({
   return (
     <div className="space-y-6">
       {/* Email Verification Alert */}
-      {!firebaseUser?.emailVerified && (
+      {!authUser?.emailVerified && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <div className="flex flex-col sm:flex-row sm:items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
@@ -280,7 +280,7 @@ export default function ProfileTab({
                   Full Name
                 </label>
                 <p className="text-sm sm:text-base text-gray-900 dark:text-white">
-                  {dbUser?.name || firebaseUser?.displayName || "Not provided"}
+                  {dbUser?.name || authUser?.displayName || "Not provided"}
                 </p>
               </div>
               <div>
@@ -289,7 +289,7 @@ export default function ProfileTab({
                   Email Address
                 </label>
                 <p className="text-sm sm:text-base text-gray-900 dark:text-white truncate">
-                  {firebaseUser?.email}
+                  {authUser?.email}
                 </p>
               </div>
               <div>

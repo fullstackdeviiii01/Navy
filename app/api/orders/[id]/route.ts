@@ -1,6 +1,6 @@
 // app/api/orders/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import Order from "../../../models/Order";
 import User from "../../../models/User";

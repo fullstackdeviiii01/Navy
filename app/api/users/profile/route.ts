@@ -1,9 +1,8 @@
 // app/api/users/profile/route.js
 import { NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
-import CurrencySettings from "../../../models/CurrencySettings";
 
 export async function GET(request) {
   try {
@@ -83,32 +82,6 @@ export async function PATCH(request) {
     }
 
     await connectDB();
-
-    // If currency is being updated, validate it against active currencies
-    if (allowedUpdates.preferred_currency) {
-      const currencySettings = await (CurrencySettings as any).findOne({
-        baseCurrency: "USD",
-      });
-
-      if (currencySettings) {
-        const activeCurrencies = currencySettings.supportedCurrencies || ["USD"];
-        
-        if (!activeCurrencies.includes(allowedUpdates.preferred_currency)) {
-          return NextResponse.json(
-            { error: `Currency ${allowedUpdates.preferred_currency} is not active. Available currencies: ${activeCurrencies.join(", ")}` },
-            { status: 400 }
-          );
-        }
-      } else {
-        // If no currency settings exist, only allow USD
-        if (allowedUpdates.preferred_currency !== "USD") {
-          return NextResponse.json(
-            { error: "Only USD is currently available" },
-            { status: 400 }
-          );
-        }
-      }
-    }
 
     const user = await (User as any).findOne({ uid: decodedToken.uid });
 

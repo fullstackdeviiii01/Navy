@@ -1,6 +1,6 @@
 // app/api/products/upload-video/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
 import { writeFile, mkdir, unlink } from "fs/promises";

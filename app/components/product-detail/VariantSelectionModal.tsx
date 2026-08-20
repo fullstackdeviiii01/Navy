@@ -5,7 +5,7 @@ import { FaTimes, FaMinus, FaPlus } from "react-icons/fa";
 import ProductVariantSelector from "./ProductVariantSelector";
 import AddToCartButton from "./AddToCartButton";
 import BuyNowButton from "./BuyNowButton";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface VariantAttribute {
   name: string;
@@ -63,8 +63,7 @@ export default function VariantSelectionModal({
   const [selection, setSelection] = useState<VariantSelection>({});
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
-  const { convertPrice, selectedCurrency } = useCurrency();
-
+  
   const availableAttributes = useMemo(() => {
     const availableAttrs = new Set<string>();
     product.variants?.forEach((variant) => {
@@ -166,14 +165,12 @@ export default function VariantSelectionModal({
                           Price
                         </p>
                         <p className="text-lg sm:text-xl md:text-2xl font-bold text-theme-primary">
-                          {selectedCurrency}{" "}
-                          {convertPrice(selectedVariant.price, product.pricing.currency).toFixed(2)}
+                          {formatPrice(selectedVariant.price)}
                         </p>
                       </div>
                       {selectedVariant.compareAtPrice && (
                         <p className="text-xs sm:text-sm line-through text-theme-text-muted-light dark:text-theme-text-muted-dark mt-auto">
-                          {selectedCurrency}{" "}
-                          {convertPrice(selectedVariant.compareAtPrice, product.pricing.currency).toFixed(2)}
+                          {formatPrice(selectedVariant.compareAtPrice)}
                         </p>
                       )}
                     </div>
@@ -233,8 +230,7 @@ export default function VariantSelectionModal({
                             Total:
                           </span>
                           <span className="text-base sm:text-lg font-bold text-theme-primary">
-                            {selectedCurrency}{" "}
-                            {(convertPrice(selectedVariant.price, product.pricing.currency) * quantity).toFixed(2)}
+                            {formatPrice(selectedVariant.price * quantity)}
                           </span>
                         </div>
                       </div>

@@ -19,10 +19,10 @@ import Image from "next/image";
 import Loader from "../shared/Loader";
 
 interface MyReviewsTabProps {
-  firebaseUser: any;
+  authUser: any;
 }
 
-export default function MyReviewsTab({ firebaseUser }: MyReviewsTabProps) {
+export default function MyReviewsTab({ authUser }: MyReviewsTabProps) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingReview, setEditingReview] = useState<any>(null);

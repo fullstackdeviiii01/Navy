@@ -45,7 +45,7 @@ export default function AccountPage() {
   const [success, setSuccess] = useState("");
   
   const activeTab = searchParams.get("tab") || "profile";
-  const firebaseUser = useAuthUser(authUser);
+  const userWrapper = useAuthUser(authUser);
 
   useEffect(() => {
     if (!userLoading && !authUser) {
@@ -93,7 +93,7 @@ export default function AccountPage() {
       <NotificationBanner error={error} success={success} />
       
       <AccountHeader
-        firebaseUser={firebaseUser}
+        authUser={userWrapper}
         dbUser={dbUser}
         onLogout={handleLogout}
       />
@@ -106,7 +106,7 @@ export default function AccountPage() {
           {activeTab === "profile" && (
             <ProfileTab
               dbUser={dbUser}
-              firebaseUser={firebaseUser}
+              authUser={userWrapper}
               updateUserProfile={updateUserProfile}
               refreshUser={refreshUser}
               setError={setError}
@@ -121,7 +121,7 @@ export default function AccountPage() {
           {activeTab === "addresses" && (
             <AddressesTab
               dbUser={dbUser}
-              firebaseUser={firebaseUser}
+              authUser={userWrapper}
               refreshUser={refreshUser}
               setError={setError}
               setSuccess={setSuccess}
@@ -131,7 +131,7 @@ export default function AccountPage() {
           )}
 
           {activeTab === "reviews" && (
-            <MyReviewsTab firebaseUser={firebaseUser} />
+            <MyReviewsTab authUser={userWrapper} />
           )}
 
           {activeTab === "preferences" && (

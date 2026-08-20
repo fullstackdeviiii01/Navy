@@ -1,6 +1,6 @@
 // app/api/aliexpress-credentials/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import AliexpressCredentials from "../../../models/AliexpressCredentials";
 import User from "../../../models/User";

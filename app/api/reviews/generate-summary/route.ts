@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getIdTokenFromHeader,
   verifyIdToken,
-} from "../../../../lib/firebase/auth";
+} from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import Review from "../../../models/Review";
 import AISettings from "../../../models/AISettings";

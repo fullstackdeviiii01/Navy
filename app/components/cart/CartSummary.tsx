@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { ShoppingBag, Tag, Truck, Receipt } from "lucide-react";
 import CouponSection from "./CouponSection";
 import SaveCartEmail from "./SaveCartEmail";
-import { useCurrency } from "../../context/CurrencyContext";
 import { useUser } from "../../context/UserContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CartSummaryProps {
   cart: any;
@@ -18,8 +18,7 @@ export default function CartSummary({
   onCouponUpdate,
 }: CartSummaryProps) {
   const router = useRouter();
-  const { formatPrice } = useCurrency();
-  const { isAuthenticated } = useUser();
+    const { isAuthenticated } = useUser();
 
   const shippingService = cart.selected_shipping_service_id;
 

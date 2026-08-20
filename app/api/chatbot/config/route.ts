@@ -1,6 +1,6 @@
 // app/api/chatbot/config/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import ChatbotConfig from "../../../models/ChatbotConfig";
 import User from "../../../models/User";

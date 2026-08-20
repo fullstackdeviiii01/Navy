@@ -5,13 +5,13 @@ import Image from "next/image";
 import { LogOut, BadgeCheck, AlertCircle } from "lucide-react";
 
 interface AccountHeaderProps {
-  firebaseUser: any;
+  authUser: any;
   dbUser: any;
   onLogout: () => void;
 }
 
 export default function AccountHeader({
-  firebaseUser,
+  authUser,
   dbUser,
   onLogout,
 }: AccountHeaderProps) {
@@ -24,7 +24,7 @@ export default function AccountHeader({
             <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
               <Image
                 src={
-                  firebaseUser.photoURL ||
+                  authUser.photoURL ||
                   dbUser?.avatar_url ||
                   "https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
                 }
@@ -39,13 +39,13 @@ export default function AccountHeader({
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white truncate">
-                {dbUser?.name || firebaseUser?.displayName || "User Account"}
+                {dbUser?.name || authUser?.displayName || "User Account"}
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
-                  {firebaseUser?.email}
+                  {authUser?.email}
                 </p>
-                {firebaseUser?.emailVerified ? (
+                {authUser?.emailVerified ? (
                   <BadgeCheck className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                 ) : (
                   <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />

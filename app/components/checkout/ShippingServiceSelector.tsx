@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Truck, Clock, Check } from "lucide-react";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface ShippingService {
   _id: string;
@@ -27,8 +27,7 @@ export default function ShippingServiceSelector({
   onServiceSelect,
   loading = false,
 }: ShippingServiceSelectorProps) {
-  const { formatPrice } = useCurrency();
-  const [services, setServices] = useState<ShippingService[]>([]);
+    const [services, setServices] = useState<ShippingService[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
 

@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Rating from "../shared/Rating";
-import { useCurrency } from "../../context/CurrencyContext";
 
 interface ProductFiltersProps {
   categories: any[];
@@ -35,42 +34,27 @@ export default function ProductFilters({
   onBrandChange,
   availableBrands,
 }: ProductFiltersProps) {
-  const { convertPrice, selectedCurrency, exchangeRates } = useCurrency();
-  const [expandedSection, setExpandedSection] = useState<string>("categories");
+    const [expandedSection, setExpandedSection] = useState<string>("categories");
 
-  // Local state for price inputs in selected currency
+  // Local state for price inputs
   const [localPriceRange, setLocalPriceRange] = useState({ min: 0, max: 0 });
 
-  // Convert USD price range to display currency whenever currency or filters change
   useEffect(() => {
     if (priceRange.min > 0 || priceRange.max > 0) {
-      const convertedMin = Math.round(convertPrice(priceRange.min, "USD"));
-      const convertedMax = Math.round(convertPrice(priceRange.max, "USD"));
+      const convertedMin = Math.round(priceRange.min);
+      const convertedMax = Math.round(priceRange.max);
       setLocalPriceRange({ min: convertedMin, max: convertedMax });
     } else {
       setLocalPriceRange({ min: 0, max: 0 });
     }
-  }, [priceRange, selectedCurrency, exchangeRates, convertPrice]);
+  }, [priceRange]);
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? "" : section);
   };
 
   const handlePriceApply = () => {
-    // Convert displayed currency back to USD for filtering
-    let usdMin = priceRange.min;
-    let usdMax = priceRange.max;
-
-    if (selectedCurrency !== "USD") {
-      const rate = exchangeRates[selectedCurrency] || 1;
-      usdMin = Math.round(localPriceRange.min / rate);
-      usdMax = Math.round(localPriceRange.max / rate);
-    } else {
-      usdMin = localPriceRange.min;
-      usdMax = localPriceRange.max;
-    }
-
-    onPriceChange({ min: usdMin, max: usdMax });
+    onPriceChange({ min: localPriceRange.min, max: localPriceRange.max });
   };
 
   const handlePriceClear = () => {
@@ -207,9 +191,9 @@ export default function ProductFilters({
               />
             </div>
             <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Price in {selectedCurrency}
+              Price in {"PKR"}
             </p>
-            {selectedCurrency !== "USD" &&
+            {"PKR" !== "USD" &&
               (priceRange.min > 0 || priceRange.max > 0) && (
                 <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
                   ≈${priceRange.min} - ${priceRange.max} USD

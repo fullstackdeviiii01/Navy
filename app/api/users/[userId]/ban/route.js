@@ -1,6 +1,6 @@
 // app/api/users/[userId]/ban/route.js
 import { NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/auth";
 import connectDB from "../../../../../lib/db";
 import User from "../../../../models/User";
 

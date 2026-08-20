@@ -1,7 +1,6 @@
 // app/components/orders/OrderItems.tsx
 "use client";
 
-import { useCurrency } from "../../../context/CurrencyContext";
 
 interface OrderItem {
   product_image: string;
@@ -17,8 +16,7 @@ interface OrderItemsProps {
 }
 
 export default function OrderItems({ items }: OrderItemsProps) {
-  const { formatPrice } = useCurrency();
-
+  
   return (
     <div className="space-y-3">
       {items.map((item: OrderItem, index: number) => (

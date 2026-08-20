@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 import { writeFileSync } from "fs";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
 

@@ -4,7 +4,7 @@ import {
   getIdTokenFromHeader,
   verifyIdToken,
   getClientIp,
-} from "../../../../lib/firebase/auth";
+} from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
 
@@ -34,12 +34,7 @@ export async function POST(request) {
     const clientIp = getClientIp(request);
     const now = new Date();
 
-    const signupMethod =
-      decodedToken.firebase?.sign_in_provider === "google.com"
-        ? "google"
-        : "password";
-    const providerIds =
-      signupMethod === "google" ? ["google.com"] : ["password"];
+    const signupMethod = "email";
 
     // Only record login history when this is an actual login event,
     // not a background token-refresh sync triggered by onAuthStateChanged
@@ -102,7 +97,7 @@ export async function POST(request) {
       phone: userPhone,
 
       signup_method: signupMethod,
-      provider_ids: providerIds,
+      provider_ids: ["email"],
 
       role: "user",
       is_active: true,

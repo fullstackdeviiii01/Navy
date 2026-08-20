@@ -7,10 +7,9 @@ import SiteSettingsTabs from "../../components/site-settings/SiteSettingsTabs";
 import HomePageSettings from "../../components/site-settings/HomePageSettings";
 import StaticPagesSettings from "../../components/site-settings/StaticPagesSettings";
 import DynamicPagesSettings from "../../components/site-settings/DynamicPagesSettings";
-import CurrencySettings from "../../components/site-settings/CurrencySettings";
 import CompanyInfoSettings from "../../components/site-settings/CompanyInfoSettings";
 
-type TabType = 'home' | 'static' | 'dynamic' | 'currency' | 'company';
+type TabType = 'home' | 'static' | 'dynamic' | 'company';
 
 export default function SiteSettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -34,12 +33,6 @@ export default function SiteSettingsPage() {
       icon: FaFileAlt,
       description: 'Create and manage custom content pages'
     },
-    // {
-    //   id: 'currency',
-    //   label: 'Currency',
-    //   icon: FaDollarSign,
-    //   description: 'Configure currency conversion and exchange rates'
-    // },
     {
       id: 'company',
       label: 'Company Info',
@@ -63,7 +56,6 @@ export default function SiteSettingsPage() {
         {activeTab === 'home' && <HomePageSettings />}
         {activeTab === 'static' && <StaticPagesSettings />}
         {activeTab === 'dynamic' && <DynamicPagesSettings />}
-        {/* {activeTab === 'currency' && <CurrencySettings />} */}
         {activeTab === 'company' && <CompanyInfoSettings />}
       </div>
     </div>

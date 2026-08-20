@@ -1,6 +1,6 @@
 // // app/api/reviews/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import Review from "../../../models/Review";
 import User from "../../../models/User";

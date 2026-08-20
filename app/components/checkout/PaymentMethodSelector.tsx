@@ -4,8 +4,8 @@
 import { useState, useEffect } from "react";
 import { FaCreditCard, FaPaypal, FaMoneyBillWave } from "react-icons/fa";
 import { paymentApi } from "../../../lib/api/payment";
-import { useCurrency } from "../../context/CurrencyContext";
 import Loader from "../shared/Loader";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface PaymentMethodSelectorProps {
   selectedMethod: string;
@@ -20,8 +20,7 @@ export default function PaymentMethodSelector({
 }: PaymentMethodSelectorProps) {
   const [gateways, setGateways] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { selectedCurrency, formatPrice } = useCurrency();
-
+  
   useEffect(() => {
     fetchActiveGateways();
   }, []);
@@ -135,7 +134,7 @@ export default function PaymentMethodSelector({
               )}
               {gateway.name !== "cod" && (
                 <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
-                  Pay in {selectedCurrency}
+                  Pay in {"PKR"}
                 </p>
               )}
               {gateway.name !== "cod" && gateway.is_test_mode && (

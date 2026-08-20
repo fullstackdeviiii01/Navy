@@ -1,6 +1,6 @@
 // app/api/reviews/upload-video/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import { getSessionIdFromRequest } from "../../../../lib/auth/session";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";

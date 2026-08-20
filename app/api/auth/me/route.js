@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth.js"
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth.js"
 
 export async function GET(request) {
   try {

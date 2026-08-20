@@ -87,29 +87,46 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 3: Remove Multi-Currency → PKR Only
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Remove the entire currency conversion system. Hardcode PKR as the only currency throughout the application.
 **Details:**
-- Remove CurrencyContext (`app/context/CurrencyContext.tsx`)
-- Remove CurrencySelector component (`app/components/shared/CurrencySelector.tsx`)
-- Remove CurrencySettings model (`app/models/CurrencySettings.ts`)
-- Remove currency API routes (`app/api/currency-settings/*`)
-- Remove currency conversion functions (`convertPrice`, `formatPrice`)
-- Update all price displays to show PKR format (e.g., "Rs. 2,500")
-- Create a shared `formatPrice.ts` utility that formats PKR
-- Update Product model: remove multi-currency pricing, keep single price field
-- Update Order model: remove currency conversion, hardcode PKR
-- Update Cart model: remove currency fields
-- Remove currency preference from user profile
-- Remove CurrencySelector from layout/header
+- ~~Remove CurrencyContext (`app/context/CurrencyContext.tsx`)~~ — Removed
+- ~~Remove CurrencySelector component (`app/components/shared/CurrencySelector.tsx`)~~ — Removed
+- ~~Remove CurrencySettings model (`app/models/CurrencySettings.ts`)~~ — Removed
+- ~~Remove currency API routes (`app/api/currency-settings/*`)~~ — Removed
+- ~~Update all price displays to show PKR format (e.g., "Rs. 2,500")~~ — Updated via `lib/utils/formatPrice.ts`
+- ~~Create a shared `formatPrice.ts` utility that formats PKR~~ — Created using `Intl.NumberFormat`
+- ~~Remove CurrencyProvider from layouts~~ — Removed from `ClientProviders.tsx` and `ConditionalLayout.jsx`
+- ~~Remove CurrencySelector from Header~~ — Removed
+- ~~Update all components using `useCurrency()` to use `formatPrice` from `lib/utils`~~ — Updated 21+ files
+- ~~Clean up PreferencesTab~~ — Removed currency selector, kept language/timezone
+- ~~Clean up admin SiteSettings~~ — Removed CurrencySettings tab and import
+- ~~Clean up invoice route~~ — Removed CurrencySettings import and conversion logic
+- ~~Clean up user update/profile routes~~ — Removed CurrencySettings import and validation
+- Removed `preferred_currency` updates from user routes (field still in DB for backward compat)
 **Files Affected:**
-- `app/context/CurrencyContext.tsx` (remove)
-- `app/components/shared/CurrencySelector.tsx` (remove)
-- `app/models/CurrencySettings.ts` (remove)
-- `app/api/currency-settings/*` (remove)
+- `app/context/CurrencyContext.tsx` (deleted)
+- `app/components/shared/CurrencySelector.tsx` (deleted)
+- `app/models/CurrencySettings.ts` (deleted)
+- `app/(admin)/components/site-settings/CurrencySettings.tsx` (deleted)
+- `app/api/currency-settings/*` (deleted — 2 routes)
 - `lib/utils/formatPrice.ts` (new utility)
-- All files displaying prices (update to use PKR format)
-**Verification:** All prices display in PKR, no currency selector visible, no currency-related errors
+- `app/ClientProviders.tsx` (removed CurrencyProvider)
+- `app/ConditionalLayout.jsx` (removed CurrencyProvider)
+- `app/components/Header.tsx` (removed CurrencySelector import)
+- `app/components/account/PreferencesTab.tsx` (rewritten — no currency selector)
+- `app/components/account/ProfileTab.tsx` (updated total_spent format)
+- `app/(admin)/pages/site-settings/SiteSettingsPage.tsx` (removed currency tab)
+- `app/api/users/update/route.js` (removed CurrencySettings validation)
+- `app/api/users/profile/route.ts` (removed CurrencySettings validation)
+- `app/api/orders/[id]/invoice/route.ts` (removed currency conversion)
+- `app/(public)/pages/ProductDetailPage.tsx` (updated prices)
+- `app/components/product/ProductCard.tsx` (updated prices)
+- `app/components/product-detail/ProductInfo.tsx` (updated prices)
+- `app/components/product-detail/VariantSelectionModal.tsx` (updated prices)
+- `app/components/product/ProductFilters.tsx` (removed currency conversion)
+- All cart/checkout/order components (updated `formatPrice` calls)
+**Verification:** ✅ Build compiles successfully, all prices display in PKR, no currency selector visible, no currency-related errors
 
 ---
 
@@ -494,9 +511,9 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 
 | Step | Description | Status |
 |------|------------|--------|
-| 1 | Project Backup & Initialization | PENDING |
-| 2 | Remove Firebase Auth → Simple JWT Auth | PENDING |
-| 3 | Remove Multi-Currency → PKR Only | PENDING |
+| 1 | Project Backup & Initialization | DONE |
+| 2 | Remove Firebase Auth → Simple JWT Auth | DONE |
+| 3 | Remove Multi-Currency → PKR Only | DONE |
 | 4 | Remove Homepage Management System | PENDING |
 | 5 | Simplify Product Cards | PENDING |
 | 6 | Implement Cart Sidebar | PENDING |

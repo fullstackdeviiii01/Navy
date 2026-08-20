@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Trash2, Minus, Plus, Video, PlayCircle } from "lucide-react";
 import Link from "next/link";
-import { useCurrency } from "../../context/CurrencyContext";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CartItemProps {
   item: {
@@ -42,8 +42,7 @@ export default function CartItem({
   onRemove,
   updating,
 }: CartItemProps) {
-  const { formatPrice } = useCurrency();
-  const [localQuantity, setLocalQuantity] = useState(item.quantity);
+    const [localQuantity, setLocalQuantity] = useState(item.quantity);
   const [showVideo, setShowVideo] = useState(false);
 
   const getAvailableStock = (): number => {

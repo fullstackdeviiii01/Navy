@@ -1,20 +1,14 @@
 // app/api/users/update/route.js
 import { NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
-import CurrencySettings from "../../../models/CurrencySettings";
 
-const ALLOWED_LOCALES = ["en-US", "en-GB", "ur-PK", "hi-IN", "ar-AE"];
+const ALLOWED_LOCALES = ["en-US", "en-GB", "ur-PK"];
 const ALLOWED_TIMEZONES = [
   "UTC",
-  "America/New_York",
-  "America/Los_Angeles",
-  "Europe/London",
-  "Europe/Paris",
   "Asia/Karachi",
   "Asia/Dubai",
-  "Asia/Kolkata",
 ];
 
 export async function POST(request) {
@@ -44,32 +38,6 @@ export async function POST(request) {
 
     await connectDB();
 
-    // Validate currency against active currencies
-    if (preferred_currency) {
-      const currencySettings = await CurrencySettings.findOne({
-        baseCurrency: "USD",
-      });
-
-      if (currencySettings) {
-        const activeCurrencies = currencySettings.supportedCurrencies || ["USD"];
-        
-        if (!activeCurrencies.includes(preferred_currency)) {
-          return NextResponse.json(
-            { error: `Currency ${preferred_currency} is not active. Available currencies: ${activeCurrencies.join(", ")}` },
-            { status: 400 }
-          );
-        }
-      } else {
-        // If no currency settings exist, only allow USD
-        if (preferred_currency !== "USD") {
-          return NextResponse.json(
-            { error: "Only USD is currently available" },
-            { status: 400 }
-          );
-        }
-      }
-    }
-
     // Validate locale
     if (preferred_locale && !ALLOWED_LOCALES.includes(preferred_locale)) {
       return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
@@ -93,7 +61,6 @@ export async function POST(request) {
       user.email_notifications = email_notifications;
     if (marketing_opt_in !== undefined)
       user.marketing_opt_in = marketing_opt_in;
-    if (preferred_currency) user.preferred_currency = preferred_currency;
     if (preferred_locale) user.preferred_locale = preferred_locale;
     if (timezone) user.timezone = timezone;
 

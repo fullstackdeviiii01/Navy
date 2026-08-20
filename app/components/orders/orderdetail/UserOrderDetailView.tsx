@@ -13,8 +13,8 @@ import OrderStatusBadge from "../OrderStatusBadge";
 import ShippingAddress from "./ShippingAddress";
 import BillingAddress from "./BillingAddress";
 import RequestReturnButton from "../RequestReturnButton";
-import { useCurrency } from "../../../context/CurrencyContext";
 import DownloadInvoiceButton from "../../invoice/DownloadInvoiceButton";
+import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface UserOrderDetailViewProps {
   order: any;
@@ -31,8 +31,7 @@ export default function UserOrderDetailView({
   onReviewClick,
   isGuestView = false,
 }: UserOrderDetailViewProps) {
-  const { formatPrice } = useCurrency();
-  const canCancel = ["pending", "confirmed"].includes(order.status);
+    const canCancel = ["pending", "confirmed"].includes(order.status);
   const canReview = order.status === "delivered";
 
   return (

@@ -1,6 +1,6 @@
 // app/api/shipping-services/admin/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import ShippingService from "../../../models/ShippingService";
 import User from "../../../models/User";

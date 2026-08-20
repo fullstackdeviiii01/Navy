@@ -7,7 +7,7 @@ import AddressModal from "./AddressModal";
 
 interface AddressesTabProps {
   dbUser: any;
-  firebaseUser: any;
+  authUser: any;
   refreshUser: () => Promise<void>;
   setError: (error: string) => void;
   setSuccess: (success: string) => void;
@@ -17,7 +17,7 @@ interface AddressesTabProps {
 
 export default function AddressesTab({
   dbUser,
-  firebaseUser,
+  authUser,
   refreshUser,
   setError,
   setSuccess,
@@ -44,7 +44,7 @@ export default function AddressesTab({
     setError("");
 
     try {
-      const token = await firebaseUser.getIdToken();
+      const token = await authUser.getIdToken();
       const response = await fetch(`/api/users/addresses/${addressId}`, {
         method: "DELETE",
         headers: {
@@ -181,7 +181,7 @@ export default function AddressesTab({
         <AddressModal
           address={editingAddress}
           dbUser={dbUser}
-          firebaseUser={firebaseUser}
+          authUser={authUser}
           onClose={() => setShowAddressModal(false)}
           refreshUser={refreshUser}
           setError={setError}

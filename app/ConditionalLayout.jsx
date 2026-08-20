@@ -9,7 +9,6 @@ import { DarkModeProvider } from "./context/DarkModeProvider";
 import EmailVerificationBanner from "./components/email-verification-banner";
 import { UserProvider } from "./context/UserContext";
 import { WishlistProvider } from "./context/WishlistContext";
-import { CurrencyProvider } from "./context/CurrencyContext";
 
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname();
@@ -18,7 +17,6 @@ export default function ConditionalLayout({ children }) {
   return (
     <DarkModeProvider>
       <UserProvider>
-         <CurrencyProvider>
         <WishlistProvider>
           {!isAdminPage && <Header />}
           <Suspense fallback={null}>
@@ -28,7 +26,6 @@ export default function ConditionalLayout({ children }) {
           <Analytics />
           {!isAdminPage && <Footerr />}
         </WishlistProvider>
-         </CurrencyProvider>
       </UserProvider>
     </DarkModeProvider>
   );

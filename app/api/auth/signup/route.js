@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import connectToDatabase from "../../../../lib/db.js"
 import mongoose from "mongoose"
-import { generateToken, getClientIp } from "../../../../lib/firebase/auth.js"
+import { generateToken, getClientIp } from "../../../../lib/auth.js"
 
 export async function POST(request) {
   try {
