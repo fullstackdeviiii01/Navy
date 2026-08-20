@@ -17,8 +17,6 @@ import {
   Check,
   AlertTriangle,
 } from "lucide-react";
-import { sendEmailVerification } from "firebase/auth";
-
 interface ProfileTabProps {
   dbUser: any;
   firebaseUser: any;
@@ -82,15 +80,7 @@ export default function ProfileTab({
   };
 
   const handleResendVerification = async () => {
-    setUpdating(true);
-    try {
-      await sendEmailVerification(firebaseUser);
-      setSuccess("Verification email sent! Check your inbox.");
-    } catch (error) {
-      setError("Failed to send verification email. Please try again.");
-    } finally {
-      setUpdating(false);
-    }
+    setSuccess("Email verification is not required for this account.");
   };
 
   const stats = [

@@ -1,17 +1,17 @@
 "use client"
 
 import { useEffect } from "react"
-import { signOut } from "firebase/auth"
-import { auth } from "../../lib/firebase/firebaseClient.js"
 import { useRouter } from "next/navigation"
+import { useUser } from "../context/UserContext"
 
 export default function LogoutPage() {
   const router = useRouter()
+  const { logout } = useUser()
 
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        await signOut(auth)
+        await logout()
         router.push("/")
       } catch (error) {
         console.error("Logout failed:", error)
@@ -20,7 +20,7 @@ export default function LogoutPage() {
     }
 
     handleLogout()
-  }, [router])
+  }, [router, logout])
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

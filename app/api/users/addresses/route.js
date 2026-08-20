@@ -1,6 +1,6 @@
 // app/api/users/addresses/route.js
 import { NextResponse } from "next/server";
-import { verifyIdToken } from "../../../../lib/firebase/firebaseAdmin";
+import { verifyIdToken } from "../../../../lib/firebase/auth.js";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
 

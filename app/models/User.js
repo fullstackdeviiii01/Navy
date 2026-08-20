@@ -40,8 +40,9 @@ const CartItemSchema = new mongoose.Schema(
 const UserSchema = new mongoose.Schema(
   {
     // Identity
-    uid: { type: String, required: true, unique: true }, // Firebase UID
-    email: { type: String, required: true, index: true },
+    uid: { type: String, unique: true, sparse: true },
+    email: { type: String, required: true, unique: true, index: true },
+    password: { type: String }, // bcrypt hashed password
     email_verified: { type: Boolean, default: false },
     name: { type: String },
     phone: { type: String },
@@ -50,8 +51,7 @@ const UserSchema = new mongoose.Schema(
     avatar_url: { type: String },
 
     // Auth meta
-    signup_method: { type: String, enum: ["google", "password"], required: true },
-    provider_ids: [{ type: String }], // e.g., ['google.com', 'password']
+    signup_method: { type: String, enum: ["email"], default: "email" },
 
     // Status
     role: { type: String, enum: ["user", "admin"], default: "user" },

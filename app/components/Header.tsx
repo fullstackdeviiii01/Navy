@@ -18,8 +18,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Darkmode from "./Darkmode";
 import Cart from "./Cart";
-import { signOut } from "firebase/auth";
-import { auth } from "../../lib/firebase/firebaseClient";
 import { useRouter } from "next/navigation";
 import { useUser } from "../context/UserContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -56,12 +54,12 @@ interface CompanyInfo {
 const Header = () => {
   const {
     isAuthenticated,
-    firebaseUser,
     name,
     email,
     avatar,
     loading,
     isAdmin,
+    logout,
   } = useUser();
   const { wishlistCount } = useWishlist();
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
@@ -83,9 +81,7 @@ const Header = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      document.cookie =
-        "__session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      await logout();
       router.push("/sign-in");
     } catch (error) {
       console.error("Sign out error:", error);

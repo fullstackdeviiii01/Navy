@@ -2,8 +2,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signOut } from "firebase/auth";
-import { auth } from "../../../lib/firebase/firebaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "../../context/UserContext.js";
 import AccountHeader from "../../components/account/AccountHeader";
@@ -16,13 +14,28 @@ import NotificationBanner from "../../components/account/NotificationBanner";
 import MyReviewsTab from "../../components/account/MyReviewsTab";
 import Loader from "../../components/shared/Loader";
 
+// Wrapper that provides getIdToken() using localStorage token
+// This keeps child components working without changes
+function useAuthUser(authUser) {
+  if (!authUser) return null;
+  return {
+    ...authUser,
+    getIdToken: async () => localStorage.getItem("auth_token"),
+    get displayName() { return authUser.name; },
+    get email() { return authUser.email; },
+    get photoURL() { return authUser.avatar_url || null; },
+    get emailVerified() { return authUser.email_verified; },
+  };
+}
+
 export default function AccountPage() {
   const {
     user: dbUser,
-    firebaseUser,
+    authUser,
     loading: userLoading,
     refreshUser,
     updateUserProfile,
+    logout,
   } = useUser();
 
   const router = useRouter();
@@ -32,12 +45,13 @@ export default function AccountPage() {
   const [success, setSuccess] = useState("");
   
   const activeTab = searchParams.get("tab") || "profile";
+  const firebaseUser = useAuthUser(authUser);
 
   useEffect(() => {
-    if (!userLoading && !firebaseUser) {
+    if (!userLoading && !authUser) {
       router.push("/sign-in");
     }
-  }, [firebaseUser, userLoading, router]);
+  }, [authUser, userLoading, router]);
 
   useEffect(() => {
     if (error || success) {
@@ -55,7 +69,7 @@ export default function AccountPage() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await logout();
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -70,7 +84,7 @@ export default function AccountPage() {
     );
   }
 
-  if (!firebaseUser) {
+  if (!authUser) {
     return null;
   }
 

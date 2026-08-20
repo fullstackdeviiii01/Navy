@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { usersApi } from "../../../../lib/api/users";
-import { auth } from "../../../../lib/firebase/firebaseClient";
 import CustomerManagementHeader from "../../components/customers/CustomerManagementHeader";
 import CustomerStatsCards from "../../components/customers/CustomerStatsCards";
 import CustomerFilters from "../../components/customers/CustomerFilters";
@@ -89,15 +88,14 @@ export default function CustomersPage() {
       );
 
       // Get guest customers
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
         setCustomers(registeredCustomers);
         calculateStats(registeredCustomers);
         setLoading(false);
         return;
       }
 
-      const token = await currentUser.getIdToken();
       const guestResponse = await fetch("/api/users/guests", {
         headers: {
           Authorization: `Bearer ${token}`,

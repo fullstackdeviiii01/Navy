@@ -31,8 +31,6 @@ import {
 } from "react-icons/fa6";
 import { SiAliexpress } from "react-icons/si";
 import { TbPackageImport } from "react-icons/tb";
-import { signOut } from "firebase/auth";
-import { auth } from "../../../lib/firebase/firebaseClient";
 import { useUser } from "../../context/UserContext";
 import { useState } from "react";
 import { BsFillPatchQuestionFill } from "react-icons/bs";
@@ -58,15 +56,13 @@ type MenuItem = LinkItem | GroupItem;
 export default function AdminSidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { name, avatar } = useUser();
+  const { name, avatar, logout } = useUser();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      document.cookie =
-        "__session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      await logout();
       router.push("/sign-in");
     } catch (error) {
       console.error("Sign out error:", error);

@@ -1,4 +1,4 @@
-// // app/context/UserContext.js
+// app/context/UserContext.js
 "use client";
 
 import {
@@ -9,14 +9,12 @@ import {
   useCallback,
   useRef,
 } from "react";
-import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import { auth } from "../../lib/firebase/firebaseClient";
 import Loader from "../components/shared/Loader";
 
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const [firebaseUser, setFirebaseUser] = useState(null);
+  const [authUser, setAuthUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,10 +22,9 @@ export function UserProvider({ children }) {
   const syncInProgress = useRef(false);
   const [sessionId, setSessionId] = useState(null);
 
-  // Fetch user profile from MongoDB
-  const fetchUserProfile = useCallback(async (firebaseUser) => {
+  // Fetch user profile from MongoDB using JWT
+  const fetchUserProfile = useCallback(async (token) => {
     try {
-      const token = await firebaseUser.getIdToken();
       const response = await fetch("/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,14 +49,13 @@ export function UserProvider({ children }) {
   }, []);
 
   // Fetch user cart
-  const fetchCart = useCallback(async (firebaseUser) => {
+  const fetchCart = useCallback(async (token) => {
     try {
-      const token = await firebaseUser.getIdToken();
-      const response = await fetch("/api/cart", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      const response = await fetch("/api/cart", { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -89,144 +85,69 @@ export function UserProvider({ children }) {
     }
   }, []);
 
-  // Sync user with backend
-  const syncUser = useCallback(
-    async (user, additionalData = {}) => {
-      if (syncInProgress.current) {
-        return null;
-      }
-
-      syncInProgress.current = true;
-
-      try {
-        const token = await user.getIdToken();
-
-        document.cookie = `__session=${token}; path=/; max-age=3600; secure; samesite=strict`;
-
-        const response = await fetch("/api/users/sync", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(additionalData),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-
-          if (errorData.error && errorData.error.includes("duplicate key")) {
-            return await fetchUserProfile(user);
-          }
-
-          throw new Error("Failed to sync user");
-        }
-
-        const result = await response.json();
-
-        // Fetch full profile and cart after sync
-        const userProfile = await fetchUserProfile(user);
-        await fetchCart(user);
-
-        return { ...result, profile: userProfile };
-      } catch (error) {
-        console.error("User sync failed:", error);
-
-        if (
-          error.message.includes("duplicate key") ||
-          error.code === 11000
-        ) {
-          return await fetchUserProfile(user);
-        }
-
-        return { success: false, error: error.message };
-      } finally {
-        syncInProgress.current = false;
-      }
-    },
-    [fetchUserProfile, fetchCart]
-  );
-
+  // Check auth status on mount by calling /api/auth/me
   useEffect(() => {
     let mounted = true;
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!mounted) return;
+    const checkAuth = async () => {
+      try {
+        // Check if we have a token in localStorage
+        const token = localStorage.getItem("auth_token");
 
-      setFirebaseUser(firebaseUser);
-      setError(null);
-
-      if (firebaseUser) {
-        // ✅ FIX: Check skipAutoSync flag.
-        //
-        // This flag is set by the sign-up page BEFORE Firebase creates the
-        // user, so this listener doesn't race ahead and try to fetch a
-        // profile that doesn't exist in MongoDB yet.
-        //
-        // The sign-up page removes this flag only AFTER MongoDB sync is
-        // confirmed complete, then navigates with window.location.href.
-        // That full-page reload triggers this listener again — this time
-        // with no flag — so we fall through to the normal sync below,
-        // and the profile fetch succeeds because the user now exists in DB.
-        if (sessionStorage.getItem("skipAutoSync") === "true") {
-          // Profile doesn't exist in DB yet — skip everything and wait
-          // for the sign-up page to finish, remove the flag, and navigate.
+        if (!token) {
+          // No token — user is a guest
+          setAuthUser(null);
+          setDbUser(null);
+          await fetchGuestCart();
           setLoading(false);
           return;
         }
 
-        if (syncInProgress.current) {
-          setLoading(false);
-          return;
+        // Verify token with server
+        const response = await fetch("/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!mounted) return;
+
+        if (response.ok) {
+          const userData = await response.json();
+          setAuthUser(userData);
+
+          // Fetch full profile and cart
+          const profile = await fetchUserProfile(token);
+          await fetchCart(token);
+        } else {
+          // Token is invalid or expired — clear it
+          localStorage.removeItem("auth_token");
+          setAuthUser(null);
+          setDbUser(null);
+          await fetchGuestCart();
         }
-
-        syncInProgress.current = true;
-
-        try {
-          const token = await firebaseUser.getIdToken();
-          document.cookie = `__session=${token}; path=/; max-age=3600; secure; samesite=strict`;
-
-          const explicitLogin =
-            sessionStorage.getItem("isExplicitLogin") === "true";
-          sessionStorage.removeItem("isExplicitLogin");
-
-          const response = await fetch("/api/users/sync", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isExplicitLogin: explicitLogin }),
-          });
-
-          if (response.ok || response.status === 409) {
-            await fetchUserProfile(firebaseUser);
-            await fetchCart(firebaseUser);
-          }
-        } catch (error) {
-          console.error("Sync failed:", error);
-        } finally {
-          syncInProgress.current = false;
-          setLoading(false);
-        }
-      } else {
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        localStorage.removeItem("auth_token");
+        setAuthUser(null);
         setDbUser(null);
-        document.cookie =
-          "__session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-        await fetchGuestCart();
-        setLoading(false);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-    });
+    };
+
+    checkAuth();
 
     return () => {
       mounted = false;
-      unsubscribe();
     };
   }, [fetchUserProfile, fetchCart]);
 
   // Initialize or get session ID for guests
   useEffect(() => {
-    if (!firebaseUser) {
+    if (!authUser) {
       let storedSessionId = localStorage.getItem("guest_session_id");
       if (!storedSessionId) {
         storedSessionId = crypto.randomUUID();
@@ -237,7 +158,38 @@ export function UserProvider({ children }) {
       localStorage.removeItem("guest_session_id");
       setSessionId(null);
     }
-  }, [firebaseUser]);
+  }, [authUser]);
+
+  // Login function — called after successful signin API call
+  const login = useCallback(
+    async (token, userData) => {
+      localStorage.setItem("auth_token", token);
+      document.cookie = `__session=${token}; path=/; max-age=604800; secure; samesite=strict`;
+      setAuthUser(userData);
+
+      // Fetch full profile and cart
+      const profile = await fetchUserProfile(token);
+      await fetchCart(token);
+
+      return profile;
+    },
+    [fetchUserProfile, fetchCart]
+  );
+
+  // Logout function
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Logout API error:", error);
+    }
+
+    localStorage.removeItem("auth_token");
+    document.cookie = "__session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    setAuthUser(null);
+    setDbUser(null);
+    setCart(null);
+  }, []);
 
   // Role checks
   const hasRole = (role) => dbUser?.role === role;
@@ -255,15 +207,17 @@ export function UserProvider({ children }) {
 
   // Refresh user data
   const refreshUser = async () => {
-    if (firebaseUser) {
-      await fetchUserProfile(firebaseUser);
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      await fetchUserProfile(token);
     }
   };
 
   // Refresh cart
   const refreshCart = async () => {
-    if (firebaseUser) {
-      await fetchCart(firebaseUser);
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      await fetchCart(token);
     } else {
       await fetchGuestCart();
     }
@@ -271,16 +225,10 @@ export function UserProvider({ children }) {
 
   // Update user profile
   const updateUserProfile = async (updates) => {
-    if (!firebaseUser) return { success: false, error: "Not authenticated" };
+    const token = localStorage.getItem("auth_token");
+    if (!token) return { success: false, error: "Not authenticated" };
 
     try {
-      if (updates.name && updates.name !== firebaseUser.displayName) {
-        await updateProfile(firebaseUser, {
-          displayName: updates.name,
-        });
-      }
-
-      const token = await firebaseUser.getIdToken();
       const response = await fetch("/api/users/profile", {
         method: "PATCH",
         headers: {
@@ -305,7 +253,7 @@ export function UserProvider({ children }) {
 
   const contextValue = {
     // User data
-    firebaseUser,
+    authUser,
     dbUser,
     user: dbUser,
     loading,
@@ -317,7 +265,7 @@ export function UserProvider({ children }) {
     cartItemCount: cart?.items?.length || 0,
 
     // Authentication state
-    isAuthenticated: !!firebaseUser && !!dbUser,
+    isAuthenticated: !!authUser && !!dbUser,
     isLoading: loading,
 
     // Role-based access
@@ -332,12 +280,14 @@ export function UserProvider({ children }) {
     isEmailVerified,
 
     // Actions
+    login,
+    logout,
     refreshUser,
     refreshCart,
     updateUserProfile,
 
     // User properties
-    uid: dbUser?.uid,
+    uid: dbUser?.uid || dbUser?._id,
     email: dbUser?.email,
     name: dbUser?.name,
     role: dbUser?.role,
@@ -349,7 +299,7 @@ export function UserProvider({ children }) {
     totalSpent: dbUser?.total_spent || 0,
     customerSince: dbUser?.customer_since,
     preferences: {
-      currency: dbUser?.preferred_currency || "PKR",
+      currency: "PKR",
       locale: dbUser?.preferred_locale || "en-US",
       timezone: dbUser?.timezone || "UTC",
       marketing: dbUser?.marketing_opt_in || false,
