@@ -1,0 +1,96 @@
+// app/api/company/upload-logo/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/firebase/auth";
+import connectDB from "../../../../lib/db";
+import User from "../../../models/User";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+import { existsSync } from "fs";
+import sharp from "sharp";
+
+export async function POST(request: NextRequest) {
+  try {
+    const token = getIdTokenFromHeader(request);
+    if (!token) {
+      return NextResponse.json({ error: "No token provided" }, { status: 401 });
+    }
+
+    const decodedToken = await verifyIdToken(token);
+    if (!decodedToken) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    await connectDB();
+
+    const adminUser = await (User as any).findOne({ uid: decodedToken.uid });
+    if (!adminUser || adminUser.role !== "admin") {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
+    const formData = await request.formData();
+    const file = formData.get("image") as File;
+
+    if (!file) {
+      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+    }
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: "Invalid file type. Only JPEG, PNG, and WebP are allowed" },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size too large. Maximum 2MB allowed" },
+        { status: 400 }
+      );
+    }
+
+    // Create unique filename
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const filename = `company_logo_${timestamp}_${randomString}.webp`;
+
+    // Ensure directory exists
+    const uploadDir = path.join(process.cwd(), "public", "company");
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true });
+    }
+
+    // Convert file to buffer, compress and convert to WebP
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    const compressedBuffer = await sharp(buffer)
+      .webp({ quality: 80 })
+      .resize(400, 400, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .toBuffer();
+
+    const filepath = path.join(uploadDir, filename);
+    await writeFile(filepath, compressedBuffer);
+
+    // Return public URL
+    const publicUrl = `/company/${filename}`;
+
+    return NextResponse.json({
+      success: true,
+      message: "Logo uploaded successfully",
+      url: publicUrl,
+      filename,
+    });
+  } catch (error) {
+    console.error("Logo upload failed:", error);
+    return NextResponse.json(
+      { error: "Failed to upload logo" },
+      { status: 500 }
+    );
+  }
+}

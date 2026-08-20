@@ -1,0 +1,44 @@
+name: MongoDB Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install MongoDB Tools
+        run: |
+          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb
+          sudo dpkg -i mongodb-database-tools-*.deb
+          wget https://downloads.mongodb.com/compass/mongosh-2.1.1-linux-x64.tgz
+          tar -zxvf mongosh-2.1.1-linux-x64.tgz
+          sudo cp mongosh-2.1.1-linux-x64/bin/mongosh /usr/local/bin/
+
+      - name: Create Backup (JSON + Separate Collections)
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          COLLECTIONS=$(mongosh "$MONGODB_URI" --quiet --eval "db.getCollectionNames().join('\n')")
+          mkdir -p backup-$DATE
+          for col in $COLLECTIONS; do
+            mongoexport --uri="$MONGODB_URI" --collection=$col --out=backup-$DATE/$col.json
+          done
+          zip -r backup-$DATE.zip backup-$DATE/
+
+      - name: Upload to Backblaze B2
+        env:
+          B2_APP_KEY_ID: ${{ secrets.B2_APP_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          pip install b2 --break-system-packages
+          b2 authorize-account $B2_APP_KEY_ID $B2_APP_KEY
+          b2 file upload $B2_BUCKET_NAME backup-$DATE.zip backup-$DATE.zip
+
+      - name: Cleanup
+        run: rm -rf backup-*/

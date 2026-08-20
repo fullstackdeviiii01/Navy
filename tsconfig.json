@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "app/admin/page.jsx",
+    "app/api/users/activities/route.js",
+    "app/api/users/[userId]/ban/route.js",
+    "app/api/users/[userId]/promote/route.js",
+    "app/api/users/[userId]/unban/route.js",
+    "app/api/users/route.js",
+    "app/api/categories/route.ts",
+    ".next/dev/types/**/*.ts"
+, "app/components/Header.tsx"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
