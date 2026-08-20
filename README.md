@@ -384,28 +384,16 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 11: Simplify Product Attributes
-**Status:** PENDING
-**Description:** Reduce the product attribute system to only what the client needs. Simplify category attributes and product specifications.
+**Status:** ✅ DONE
+**Description:** Reduce attribute types from 7 to 4 for a lamp/lighting store.
 **Details:**
-- Simplify category attributes: reduce to essential attributes only
-- For the client's lamp/lighting store, relevant attributes might include:
-  - Material (e.g., Metal, Wood, Glass)
-  - Style (e.g., Modern, Classic, Industrial)
-  - Room (e.g., Living Room, Bedroom, Kitchen)
-  - Color Temperature (e.g., Warm White, Cool White)
-  - Wattage
-  - Dimensions
-- Simplify Product Specs: admin can add custom spec name + value pairs
-- Remove complex filter system if not needed (keep basic category filter)
-- Update ProductFilters component to match simplified attributes
-- Remove advanced filter types (multiselect, checkbox filters) if not needed
+- ~~Remove checkbox, textarea, date types~~ — Removed from Category model, AttributeFieldInput, CategoryAttributeManager
+- ~~Keep text, number, select, multiselect~~ — Kept. These cover lamp attributes well (brand/model, wattage, color, features)
 **Files Affected:**
-- `app/models/Category.ts` (simplify attributes)
-- `app/models/Product/schema.ts` (simplify attributes/specifications)
-- `app/components/product/ProductFilters.tsx` (simplify)
-- `app/hooks/useProductFilters.ts` (simplify)
-- `app/(admin)/components/categories/*` (simplify attribute management)
-**Verification:** Admin can define simple attributes per category, products can have specs, filters work correctly
+- `app/models/Category.ts` (type union + Mongoose enum)
+- `app/(admin)/components/shared/AttributeFieldInput.tsx` (removed 3 switch cases)
+- `app/(admin)/components/categories/CategoryAttributeManager.tsx` (ATTRIBUTE_TYPES array)
+**Verification:** ✅ Build compiles. Admin can create text, number, select, multiselect attributes
 
 ---
 
@@ -571,7 +559,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 8 | Remove Dynamic Pages & Simplify Site Settings | DONE |
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | DONE |
 | 10 | Keep & Adjust Coupon System | DONE |
-| 11 | Simplify Product Attributes | PENDING |
+| 11 | Simplify Product Attributes | DONE |
 | 12 | Implement Track Order & Auto Confirmation | PENDING |
 | 13 | Simplify Product Detail Page + Sticky Bar | PENDING |
 | 14 | Update Header/Navigation | PENDING |
