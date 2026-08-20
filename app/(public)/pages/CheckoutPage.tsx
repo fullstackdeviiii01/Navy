@@ -241,11 +241,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // Calculate display total including tax
-  const displayTotal = cart
-    ? cart.subtotal - cart.discount_amount + cart.shipping_cost
-    : 0;
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6">
@@ -342,7 +337,6 @@ export default function CheckoutPage() {
                 billingAddress={sameAsShipping ? shippingAddress : billingAddress}
                 onPlaceOrder={handleContinueToPayment}
                 processing={false}
-                displayTotal={displayTotal}
               />
             </div>
           </aside>

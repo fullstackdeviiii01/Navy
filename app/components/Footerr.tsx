@@ -8,7 +8,6 @@ import {
   FooterLink,
   FooterLinkGroup,
   FooterTitle,
-  TextInput,
 } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import {
@@ -24,14 +23,6 @@ import {
   BsPinterest,
 } from "react-icons/bs";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
-import NewsletterSubscribeForm from "./newsletter/NewsletterSubscribeForm";
-
-interface Page {
-  _id: string;
-  title: string;
-  slug: string;
-  page_type: string;
-}
 
 interface CompanyInfo {
   company_name?: string;
@@ -51,22 +42,11 @@ interface CompanyInfo {
 }
 
 const Footerr = () => {
-  const [pages, setPages] = useState<Page[]>([]);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
 
   useEffect(() => {
-    fetchPages();
     fetchCompanyInfo();
   }, []);
-
-  const fetchPages = async () => {
-    try {
-      const data = await siteSettingsApi.getAllPages(false);
-      setPages(data.pages || []);
-    } catch (error) {
-      console.error("Failed to fetch pages:", error);
-    }
-  };
 
   const fetchCompanyInfo = async () => {
     try {
@@ -77,17 +57,6 @@ const Footerr = () => {
     }
   };
 
-  const legalPages = pages.filter((page) =>
-    ["terms", "privacy", "refund", "shipping"].includes(page.page_type),
-  );
-
-  const aboutPages = pages.filter((page) =>
-    ["about", "licensing"].includes(page.page_type),
-  );
-
-  const customPages = pages.filter((page) => page.page_type === "custom");
-
-  // Filter out empty social media links
   const socialIcons = [
     {
       key: "facebook",
@@ -107,9 +76,9 @@ const Footerr = () => {
       url: companyInfo.social_media?.linkedin,
       label: "LinkedIn",
     },
-    { 
-      key: "tiktok", 
-      icon: BsTiktok, 
+    {
+      key: "tiktok",
+      icon: BsTiktok,
       url: companyInfo.social_media?.tiktok,
       label: "TikTok",
     },
@@ -131,15 +100,15 @@ const Footerr = () => {
       url: companyInfo.social_media?.twitter,
       label: "Twitter/X",
     },
-    { 
-      key: "github", 
-      icon: BsGithub, 
+    {
+      key: "github",
+      icon: BsGithub,
       url: companyInfo.social_media?.github,
       label: "GitHub",
     },
-    { 
-      key: "youtube", 
-      icon: BsYoutube, 
+    {
+      key: "youtube",
+      icon: BsYoutube,
       url: companyInfo.social_media?.youtube,
       label: "YouTube",
     },
@@ -154,7 +123,7 @@ const Footerr = () => {
   return (
     <Footer className="mt-10">
       <div className="w-full">
-        <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 py-8">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 py-8">
           {/* Main Menu */}
           <nav aria-labelledby="footer-main-menu">
             <FooterTitle title="Main Menu" id="footer-main-menu" />
@@ -166,22 +135,13 @@ const Footerr = () => {
             </FooterLinkGroup>
           </nav>
 
-          {/* About & Custom Pages */}
-          <nav aria-labelledby="footer-about">
-            <FooterTitle title="About" id="footer-about" />
+          {/* Help */}
+          <nav aria-labelledby="footer-help">
+            <FooterTitle title="Help" id="footer-help" />
             <FooterLinkGroup col>
               <FooterLink href="/contact">Contact</FooterLink>
               <FooterLink href="/faqs">FAQs</FooterLink>
-              {aboutPages.map((page) => (
-                <FooterLink key={page._id} href={`/pages/${page.slug}`}>
-                  {page.title}
-                </FooterLink>
-              ))}
-              {customPages.slice(0, 3).map((page) => (
-                <FooterLink key={page._id} href={`/pages/${page.slug}`}>
-                  {page.title}
-                </FooterLink>
-              ))}
+              <FooterLink href="/track-order">Track Order</FooterLink>
             </FooterLinkGroup>
           </nav>
 
@@ -189,30 +149,12 @@ const Footerr = () => {
           <nav aria-labelledby="footer-legal">
             <FooterTitle title="Legal" id="footer-legal" />
             <FooterLinkGroup col>
-              {legalPages.map((page) => (
-                <FooterLink key={page._id} href={`/pages/${page.slug}`}>
-                  {page.title}
-                </FooterLink>
-              ))}
-              {customPages.slice(3, 6).map((page) => (
-                <FooterLink key={page._id} href={`/pages/${page.slug}`}>
-                  {page.title}
-                </FooterLink>
-              ))}
+              <FooterLink href="#">Privacy Policy</FooterLink>
+              <FooterLink href="#">Terms & Conditions</FooterLink>
+              <FooterLink href="#">Shipping & Delivery</FooterLink>
+              <FooterLink href="#">Returns & Exchanges</FooterLink>
             </FooterLinkGroup>
           </nav>
-
-          {/* Newsletter */}
-          <div>
-            <FooterTitle title="Newsletter" />
-            <div className="flex flex-col gap-3">
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Subscribe to receive updates, access to exclusive deals, and
-                more.
-              </p>
-              <NewsletterSubscribeForm />
-            </div>
-          </div>
         </div>
 
         {/* Bottom Bar */}

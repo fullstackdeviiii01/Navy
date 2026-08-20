@@ -1,23 +1,6 @@
 // app/models/SiteSettings.ts
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-export interface IHomeComponent {
-  component_key: string;
-  component_type: 'static';
-  display_name: string;
-  is_visible: boolean;
-  sort_order: number;
-}
-
-export interface IStaticPageConfig {
-  page_key: string;
-  page_name: string;
-  page_path: string;
-  is_visible: boolean;
-  meta_title?: string;
-  meta_description?: string;
-}
-
 export interface IWorkingHours {
   monday: { open: string; close: string; is_open: boolean };
   tuesday: { open: string; close: string; is_open: boolean };
@@ -56,46 +39,12 @@ export interface ICompanyInfo {
 
 export interface ISiteSettingsDocument extends Document {
   is_global_settings: boolean;
-  
-  // Dynamic page fields
-  title?: string;
-  slug: string;
-  content?: string;
-  meta_title?: string;
-  meta_description?: string;
-  is_active?: boolean;
-  sort_order?: number;
-  page_type?: "terms" | "privacy" | "refund" | "shipping" | "about" | "licensing" | "custom";
-  
-  // Global settings
-  home_meta_title?: string;
-  home_meta_description?: string;
-  home_components?: IHomeComponent[];
-  static_pages?: IStaticPageConfig[];
   company_info?: ICompanyInfo;
-  
   created_by?: mongoose.Types.ObjectId;
   updated_by?: mongoose.Types.ObjectId;
   created_at: Date;
   updated_at: Date;
 }
-
-const HomeComponentSchema = new Schema<IHomeComponent>({
-  component_key: { type: String, required: true },
-  component_type: { type: String, enum: ['static'], required: true },
-  display_name: { type: String, required: true },
-  is_visible: { type: Boolean, default: true },
-  sort_order: { type: Number, default: 0 }
-}, { _id: false });
-
-const StaticPageConfigSchema = new Schema<IStaticPageConfig>({
-  page_key: { type: String, required: true },
-  page_name: { type: String, required: true },
-  page_path: { type: String, required: true },
-  is_visible: { type: Boolean, default: true },
-  meta_title: { type: String },
-  meta_description: { type: String }
-}, { _id: false });
 
 const WorkingHoursEntrySchema = new Schema({
   open: { type: String, default: "09:00" },
@@ -141,57 +90,15 @@ const CompanyInfoSchema = new Schema<ICompanyInfo>({
 
 const SiteSettingsSchema = new Schema<ISiteSettingsDocument>({
   is_global_settings: { type: Boolean, default: false, index: true },
-  
-  title: { 
-    type: String, 
-    trim: true,
-    required: function(this: ISiteSettingsDocument) { return !this.is_global_settings; }
-  },
-  slug: { 
-    type: String, 
-    required: true, 
-    unique: true, 
-    index: true, 
-    lowercase: true, 
-    trim: true 
-  },
-  content: { 
-    type: String,
-    required: function(this: ISiteSettingsDocument) { return !this.is_global_settings; }
-  },
-  meta_title: { type: String, trim: true },
-  meta_description: { type: String, trim: true },
-  is_active: { type: Boolean, default: true, index: true },
-  sort_order: { type: Number, default: 0 },
-  page_type: {
-    type: String,
-    enum: ["terms", "privacy", "refund", "shipping", "about", "licensing", "custom"],
-    index: true
-  },
-  
-  home_meta_title: { type: String, trim: true },
-  home_meta_description: { type: String, trim: true },
-  home_components: {
-    type: [HomeComponentSchema],
-    default: undefined
-  },
-  static_pages: {
-    type: [StaticPageConfigSchema],
-    default: undefined
-  },
   company_info: {
     type: CompanyInfoSchema,
     default: undefined
   },
-  
   created_by: { type: Schema.Types.ObjectId, ref: "User" },
   updated_by: { type: Schema.Types.ObjectId, ref: "User" }
 }, {
   timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
 });
 
-SiteSettingsSchema.index({ slug: 1, is_active: 1 });
-SiteSettingsSchema.index({ page_type: 1, is_active: 1 });
-
-export default (mongoose.models.SiteSettings || 
+export default (mongoose.models.SiteSettings ||
   mongoose.model<ISiteSettingsDocument>("SiteSettings", SiteSettingsSchema)) as Model<ISiteSettingsDocument>;
