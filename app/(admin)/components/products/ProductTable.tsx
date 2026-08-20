@@ -3,6 +3,7 @@
 
 import { FaEdit, FaTrash, FaEye, FaCog } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface Product {
   _id: string;
@@ -105,8 +106,6 @@ export default function ProductTable({
   };
 
   const renderPrice = (product: Product) => {
-    const currency = product.pricing.currency;
-
     if (product.hasVariants && product.variantPricing) {
       const { minPrice, maxPrice, priceVaries } = product.variantPricing;
       return (
@@ -114,10 +113,10 @@ export default function ProductTable({
           <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mr-1">
             From
           </span>
-          {currency} {minPrice.toFixed(2)}
+          {formatPrice(minPrice)}
           {priceVaries && (
             <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              – {currency} {maxPrice.toFixed(2)}
+              – {formatPrice(maxPrice)}
             </div>
           )}
         </div>
@@ -127,11 +126,11 @@ export default function ProductTable({
     return (
       <div>
         <div className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-          {currency} {product.pricing.price.toFixed(2)}
+          {formatPrice(product.pricing.price)}
         </div>
         {product.pricing.compare_at_price && (
           <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
-            {currency} {product.pricing.compare_at_price.toFixed(2)}
+            {formatPrice(product.pricing.compare_at_price)}
           </div>
         )}
       </div>

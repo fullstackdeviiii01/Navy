@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { GiNewspaper } from "react-icons/gi";
 import {
   FaHome,
   FaUsers,
@@ -24,7 +23,6 @@ import {
   FaChartBar,
   FaCreditCard,
   FaEnvelope,
-  FaRobot,
   FaStar,
   FaUserTie,
 } from "react-icons/fa6";
@@ -108,7 +106,6 @@ export default function AdminSidebar() {
       label: "Coupons",
       icon: FaTicketAlt,
     },
-    { type: "link", href: "/admin/chatbot", label: "Chatbot", icon: FaRobot },
     {
       type: "link",
       href: "/admin/customers",
@@ -157,12 +154,6 @@ export default function AdminSidebar() {
       href: "/admin/email-configuration",
       label: "Email Config",
       icon: FaEnvelope,
-    },
-    {
-      type: "link",
-      href: "/admin/newsletter",
-      label: "Newsletter",
-      icon: GiNewspaper,
     },
     {
       type: "link",

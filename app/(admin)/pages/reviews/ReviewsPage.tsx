@@ -9,9 +9,7 @@ import ReviewFilters from "../../components/reviews/ReviewFilters";
 import ReviewsTable from "../../components/reviews/ReviewsTable";
 import ReviewPagination from "../../components/reviews/ReviewPagination";
 import ReviewDetailModal from "../../components/reviews/ReviewDetailModal";
-import AISettingsPanel from "../../components/reviews/AISettingsPanel";
 import Loader from "../../../components/shared/Loader";
-import { Settings } from "lucide-react";
 
 interface Review {
   _id: string;
@@ -55,7 +53,6 @@ export default function ReviewsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [showAISettings, setShowAISettings] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -142,22 +139,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header with AI Settings Toggle */}
-      <div className="flex items-center justify-between">
-        <ReviewManagementHeader />
-        <button
-          onClick={() => setShowAISettings(!showAISettings)}
-          className="flex items-center gap-2 px-4 py-2 border-2 border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors font-medium text-sm"
-        >
-          <Settings size={18}/>
-          {showAISettings ? "Hide" : "AI Settings"}
-        </button>
-      </div>
-
-      {/* AI Settings Panel */}
-      {showAISettings && (
-        <AISettingsPanel onSettingsSaved={() => console.log("Settings saved")} />
-      )}
+      <ReviewManagementHeader />
 
       <ReviewStatsCards
         totalReviews={pagination.total}

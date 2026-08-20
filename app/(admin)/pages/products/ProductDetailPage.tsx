@@ -7,6 +7,7 @@ import { FaEdit, FaCog, FaArrowLeft } from "react-icons/fa";
 import { productsApi } from "../../../../lib/api/products";
 import Loader from "../../../components/shared/Loader";
 import JoditHtmlContent from "../../../components/shared/JoditHtmlContent";
+import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface ProductDetailPageProps {
   productId: string;
@@ -53,6 +54,8 @@ export default function ProductDetailPage({
     );
   }
 
+  const isVariableProduct = product.hasVariants && product.variants?.length > 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -71,24 +74,26 @@ export default function ProductDetailPage({
         <div className="flex gap-3">
           <button
             onClick={() => router.push(`/admin/products/${productId}/edit`)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <FaEdit />
             Edit Product
           </button>
-          <button
-            onClick={() => router.push(`/admin/products/${productId}/variants`)}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-          >
-            <FaCog />
-            Manage Variants
-          </button>
+          {isVariableProduct && (
+            <button
+              onClick={() => router.push(`/admin/products/${productId}/variants`)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <FaCog />
+              Manage Variants
+            </button>
+          )}
         </div>
       </div>
 
       {/* Product Images */}
       {product.images && product.images.length > 0 && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark">
           <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Images
           </h3>
@@ -112,7 +117,7 @@ export default function ProductDetailPage({
       )}
 
       {/* Basic Information */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark">
         <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Basic Information
         </h3>
@@ -121,7 +126,7 @@ export default function ProductDetailPage({
             <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Name
             </label>
-            <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
               {product.name}
             </p>
           </div>
@@ -154,11 +159,11 @@ export default function ProductDetailPage({
         </div>
 
         {product.description && (
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
             <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Description
             </label>
-            <div className="mt-1">
+            <div className="mt-2">
               <JoditHtmlContent content={product.description} />
             </div>
           </div>
@@ -166,37 +171,48 @@ export default function ProductDetailPage({
       </div>
 
       {/* Pricing */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark">
         <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Pricing
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Price
-            </label>
-            <p className="mt-1 text-xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              {product.pricing?.currency} {product.pricing?.price?.toFixed(2)}
-            </p>
-          </div>
-          {product.pricing?.compare_at_price && (
+          {isVariableProduct && product.variantPricing ? (
+            <div>
+              <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Variant Price Range
+              </label>
+              <p className="mt-1 text-xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                {formatPrice(product.variantPricing.minPrice)}
+                {product.variantPricing.priceVaries && ` – ${formatPrice(product.variantPricing.maxPrice)}`}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Price
+              </label>
+              <p className="mt-1 text-xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                {formatPrice(product.pricing?.price || 0)}
+              </p>
+            </div>
+          )}
+          {product.pricing?.compare_at_price && !isVariableProduct && (
             <div>
               <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
                 Compare at Price
               </label>
               <p className="mt-1 text-xl font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
-                {product.pricing?.currency}{" "}
-                {product.pricing?.compare_at_price?.toFixed(2)}
+                {formatPrice(product.pricing.compare_at_price)}
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Inventory */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+      {/* Inventory & Variants */}
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark">
         <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-          Inventory
+          Inventory {isVariableProduct ? "& Variants" : ""}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -209,10 +225,12 @@ export default function ProductDetailPage({
           </div>
           <div>
             <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Stock Quantity
+              {isVariableProduct ? "Total Variant Stock" : "Stock Quantity"}
             </label>
             <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              {product.inventory?.stock_quantity}
+              {isVariableProduct
+                ? product.variantInventory?.totalStock ?? product.inventory?.stock_quantity
+                : product.inventory?.stock_quantity}
             </p>
           </div>
           <div>
@@ -226,11 +244,66 @@ export default function ProductDetailPage({
             </p>
           </div>
         </div>
+
+        {isVariableProduct && (
+          <div className="mt-6 pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
+            <h4 className="text-sm font-semibold mb-2 text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Configured Options ({product.variants?.length || 0} Variants)
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {product.variantOptions?.map((opt: any, idx: number) => (
+                <div key={idx} className="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg text-xs">
+                  <span className="font-semibold text-gray-700 dark:text-gray-300">{opt.name}: </span>
+                  <span className="text-gray-600 dark:text-gray-400">{opt.values?.join(", ")}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Care Guide, Shipping Info, Return Info */}
+      {(product.care_guide || product.shipping_info || product.return_info) && (
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark space-y-4">
+          <h3 className="text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Additional Information
+          </h3>
+          {product.care_guide && (
+            <div>
+              <label className="text-xs font-semibold uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Care Guide
+              </label>
+              <p className="mt-1 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark whitespace-pre-wrap">
+                {product.care_guide}
+              </p>
+            </div>
+          )}
+          {product.shipping_info && (
+            <div>
+              <label className="text-xs font-semibold uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Shipping Information
+              </label>
+              <p className="mt-1 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark whitespace-pre-wrap">
+                {product.shipping_info}
+              </p>
+            </div>
+          )}
+          {product.return_info && (
+            <div>
+              <label className="text-xs font-semibold uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Return Information
+              </label>
+              <p className="mt-1 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark whitespace-pre-wrap">
+                {product.return_info}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* SEO */}
       {product.seo && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 border border-theme-border-light dark:border-theme-border-dark">
           <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
             SEO Information
           </h3>
@@ -250,16 +323,6 @@ export default function ProductDetailPage({
                 </label>
                 <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark break-words">
                   {product.seo.meta_title}
-                </p>
-              </div>
-            )}
-            {product.seo.meta_description && (
-              <div>
-                <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  Meta Description
-                </label>
-                <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark break-words">
-                  {product.seo.meta_description}
                 </p>
               </div>
             )}

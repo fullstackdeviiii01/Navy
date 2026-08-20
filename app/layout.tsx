@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import Footerr from "./components/Footerr";
 import { Analytics } from "@vercel/analytics/next";
 import { ReactNode } from "react";
-import ChatbotProvider from "./components/chatbot/ChatbotProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -35,7 +34,6 @@ export default async function RootLayout({
         <ClientProviders>
           {!isAdminPage && <Header />}
           {children}
-          <ChatbotProvider />
           <Analytics />
           {!isAdminPage && <Footerr />}
         </ClientProviders>

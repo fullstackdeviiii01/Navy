@@ -50,27 +50,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    // Get the old product to check if category changed
-    const oldProduct = await (Product as any).findById(id);
-    if (!oldProduct) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
-
-    const oldCategoryId = oldProduct.category_id.toString();
-
-    const body = await request.json();
-    const newCategoryId = body.category_id?.toString();
-    
-    body.updated_by = adminUser._id;
-
-    const product = await (Product as any).findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    });
-
+    const product = await (Product as any).findById(id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+
+    const oldCategoryId = product.category_id ? product.category_id.toString() : null;
+    const body = await request.json();
+    const newCategoryId = body.category_id?.toString();
+
+    body.updated_by = adminUser._id;
+    Object.assign(product, body);
+    await product.save();
 
     // Update product counts if category changed
     if (newCategoryId && oldCategoryId !== newCategoryId) {
