@@ -12,7 +12,6 @@ interface CartItemProps {
     product_id: {
       _id: string;
       name: string;
-      short_description?: string;
       images: Array<{ url: string }>;
       videos?: Array<{ url: string; is_primary?: boolean }>;
       inventory?: {
@@ -198,13 +197,6 @@ export default function CartItem({
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
-
-            {/* Short Description */}
-            {item.product_id.short_description && (
-              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
-                {item.product_id.short_description}
-              </p>
-            )}
 
             {/* Variants */}
             {item.variant_attributes && (

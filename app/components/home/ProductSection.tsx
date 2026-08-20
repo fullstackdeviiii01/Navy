@@ -10,7 +10,6 @@ interface Product {
   _id: string;
   name: string;
   description?: string;
-  short_description?: string;
   pricing: {
     price: number;
     compare_at_price?: number;
@@ -25,11 +24,8 @@ interface Product {
   };
   badges?: {
     is_featured?: boolean;
-    is_bestseller?: boolean;
     is_on_sale?: boolean;
-    is_trending?: boolean;
   };
-  unit_of_measure?: string;
 }
 
 interface ProductSectionProps {

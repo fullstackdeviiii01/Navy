@@ -50,19 +50,13 @@ export interface VariantInventory {
 // ============================================================================
 
 export interface IProductDocument extends Document {
-  // ========== Basic Information ==========
   name: string;
   description: string;
-  short_description?: string;
   brand?: string;
-  manufacturer?: string;
 
-  // ========== Categorization ==========
   category_id: mongoose.Types.ObjectId;
   subcategory_ids: mongoose.Types.ObjectId[];
-  tags: string[];
 
-  // ========== Pricing (Simple Products) ==========
   pricing: {
     price: number;
     compare_at_price?: number;
@@ -72,7 +66,6 @@ export interface IProductDocument extends Document {
     currency: string;
   };
 
-  // ========== Inventory (Simple Products) ==========
   inventory: {
     sku: string;
     stock_quantity: number;
@@ -82,39 +75,20 @@ export interface IProductDocument extends Document {
     stock_status: "in_stock" | "low_stock" | "out_of_stock" | "discontinued";
   };
 
-  // ========== Unit of Measure ==========
-  unit_of_measure?: string;
-
-  // ========== Stripe Tax Code ==========
-  stripe_tax_code?: string;
-
-  // ========== Variants Configuration ==========
   hasVariants: boolean;
   variantOptions: VariantOption[];
   variants: ProductVariant[];
 
-  // ========== Computed Fields (Variable Products) ==========
   variantPricing?: VariantPricing;
   variantInventory?: VariantInventory;
 
-  // ========== Media ==========
   images: {
     url: string;
     alt_text?: string;
     is_primary: boolean;
     sort_order: number;
   }[];
-  videos: {
-    url: string;
-    thumbnail?: string;
-    is_primary: boolean;
-    sort_order: number;
-    duration?: number;
-    size?: number;
-  }[];
-  video_url?: string;
 
-  // ========== Shipping ==========
   shipping: {
     weight?: number;
     weight_unit?: "kg" | "lb" | "g" | "oz";
@@ -128,53 +102,34 @@ export interface IProductDocument extends Document {
     is_fragile: boolean;
   };
 
-  // ========== SEO ==========
   seo: {
-    meta_title?: string;
-    meta_description?: string;
-    meta_keywords?: string[];
     slug: string;
-    canonical_url?: string;
   };
 
-  // ========== Product Attributes & Specifications ==========
   attributes: Map<string, any>;
-  specifications: Map<string, string>;
 
-  // ========== Status & Visibility ==========
   status: "draft" | "active" | "archived" | "out_of_stock";
   badges: {
     is_featured: boolean;
-    is_bestseller: boolean;
     is_on_sale: boolean;
-    is_trending: boolean;
   };
   is_visible: boolean;
   visibility: "public" | "hidden" | "members_only";
 
-  // ========== Dates ==========
   published_at?: Date;
   available_from?: Date;
   available_until?: Date;
 
-  // ========== Analytics ==========
   view_count: number;
   purchase_count: number;
   rating_average: number;
   rating_count: number;
 
-  // ========== Related Products ==========
-  related_product_ids: mongoose.Types.ObjectId[];
-  upsell_product_ids: mongoose.Types.ObjectId[];
-  cross_sell_product_ids: mongoose.Types.ObjectId[];
-
-  // ========== Admin ==========
   created_by: mongoose.Types.ObjectId;
   updated_by?: mongoose.Types.ObjectId;
   created_at: Date;
   updated_at: Date;
 
-  // ========== Methods ==========
   syncVariantData?(): Promise<void>;
   getAvailableVariants?(): ProductVariant[];
   getVariantByAttributes?(attrs: Record<string, string>): ProductVariant | null;

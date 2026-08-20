@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
 
     cart = await cart.populate({
       path: "items.product_id",
-      select: "name images videos pricing short_description inventory",
+      select: "name images pricing inventory",
     });
 
     return NextResponse.json({

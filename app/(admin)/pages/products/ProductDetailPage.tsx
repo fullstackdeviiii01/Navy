@@ -153,17 +153,6 @@ export default function ProductDetailPage({
           </div>
         </div>
 
-        {product.short_description && (
-          <div className="mt-4">
-            <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Short Description
-            </label>
-            <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark break-words">
-              {product.short_description}
-            </p>
-          </div>
-        )}
-
         {product.description && (
           <div className="mt-4">
             <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
@@ -171,24 +160,6 @@ export default function ProductDetailPage({
             </label>
             <div className="mt-1">
               <JoditHtmlContent content={product.description} />
-            </div>
-          </div>
-        )}
-
-        {product.tags && product.tags.length > 0 && (
-          <div className="mt-4">
-            <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Tags
-            </label>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {product.tags.map((tag: string, index: number) => (
-                <span
-                  key={index}
-                  className="inline-flex px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded"
-                >
-                  {tag}
-                </span>
-              ))}
             </div>
           </div>
         )}
@@ -216,26 +187,6 @@ export default function ProductDetailPage({
               <p className="mt-1 text-xl font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
                 {product.pricing?.currency}{" "}
                 {product.pricing?.compare_at_price?.toFixed(2)}
-              </p>
-            </div>
-          )}
-          {product.unit_of_measure && (
-            <div>
-              <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                Unit of Measure
-              </label>
-              <p className="mt-1 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                {product.unit_of_measure}
-              </p>
-            </div>
-          )}
-          {product.stripe_tax_code && (
-            <div>
-              <label className="text-sm font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                Stripe Tax Code
-              </label>
-              <p className="mt-1 font-mono text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                {product.stripe_tax_code}
               </p>
             </div>
           )}
@@ -310,19 +261,9 @@ export default function ProductDetailPage({
                 Featured
               </span>
             )}
-            {product.badges.is_bestseller && (
-              <span className="inline-flex px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                Bestseller
-              </span>
-            )}
             {product.badges.is_on_sale && (
               <span className="inline-flex px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
                 On Sale
-              </span>
-            )}
-            {product.badges.is_trending && (
-              <span className="inline-flex px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                Trending
               </span>
             )}
           </div>

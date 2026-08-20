@@ -12,7 +12,6 @@ interface Product {
     price: number;
     compare_at_price?: number;
     currency: string;
-    stripe_tax_code?: string;
   };
   inventory: {
     sku: string;
@@ -27,14 +26,10 @@ interface Product {
   status: string;
   badges?: {
     is_featured?: boolean;
-    is_bestseller?: boolean;
     is_on_sale?: boolean;
-    is_trending?: boolean;
   };
   images: any[];
   created_at: string;
-  unit_of_measure?: string;
-  stripe_tax_code?: string;
   hasVariants?: boolean;
   variantPricing?: {
     minPrice: number;
@@ -58,20 +53,6 @@ interface ProductTableProps {
   };
   onPageChange: (page: number) => void;
 }
-
-const TAX_CODE_LABELS: Record<string, string> = {
-  txcd_99999999: "General Goods",
-  txcd_20030000: "Clothing",
-  txcd_40060003: "Electronics",
-  txcd_34020000: "Food & Grocery",
-  txcd_92010001: "Digital Products",
-  txcd_10103001: "Books (Physical)",
-  txcd_10103000: "Books (Digital)",
-  txcd_20010000: "Footwear",
-  txcd_30060006: "Furniture",
-  txcd_40010000: "Computers",
-  txcd_90000001: "Services",
-};
 
 export default function ProductTable({
   products,
@@ -107,11 +88,6 @@ export default function ProductTable({
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
     }
-  };
-
-  const getTaxCodeLabel = (code?: string) => {
-    if (!code) return "General Goods";
-    return TAX_CODE_LABELS[code] || code;
   };
 
   /**
@@ -182,9 +158,6 @@ export default function ProductTable({
                 Price
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-muted-light dark:text-theme-text-secondary-dark uppercase tracking-wider">
-                Tax Code
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-muted-light dark:text-theme-text-secondary-dark uppercase tracking-wider">
                 Stock
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-muted-light dark:text-theme-text-secondary-dark uppercase tracking-wider">
@@ -222,19 +195,9 @@ export default function ProductTable({
                               Featured
                             </span>
                           )}
-                          {product.badges?.is_bestseller && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                              Bestseller
-                            </span>
-                          )}
                           {product.badges?.is_on_sale && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                               Sale
-                            </span>
-                          )}
-                          {product.badges?.is_trending && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              Trending
                             </span>
                           )}
                         </div>
@@ -246,13 +209,6 @@ export default function ProductTable({
                   </td>
                   <td className="px-6 py-4 max-w-[160px] truncate whitespace-nowrap">
                     {renderPrice(product)}
-                  </td>
-
-                  {/* Stripe Tax Code Column */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                      {getTaxCodeLabel(product.stripe_tax_code)}
-                    </span>
                   </td>
 
                   {/* FIX: Use getStockDisplay which reads variantInventory for variant products */}

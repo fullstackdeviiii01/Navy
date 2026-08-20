@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const products = await (Product as any).find({ category_id: id })
       .select(
         //  " inventory.sku pricing.price "
-         "name status short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory",
+         "name status description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .lean();
 

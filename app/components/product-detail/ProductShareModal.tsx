@@ -11,7 +11,6 @@ interface ProductShareModalProps {
   product: {
     _id: string;
     name: string;
-    short_description?: string;
     images?: Array<{ url: string }>;
     pricing: {
       price: number;
@@ -101,7 +100,7 @@ export default function ProductShareModal({ isOpen, onClose, product }: ProductS
       action: () => {
         const subject = encodeURIComponent(`Check out ${product.name}`);
         const body = encodeURIComponent(
-          `I found this product and thought you might be interested:\n\n${product.name}\n${product.short_description || ""}\n\nPrice: Rs. ${product.pricing.price.toFixed(0)}\n\nView it here: ${getProductUrl()}`
+          `I found this product and thought you might be interested:\n\n${product.name}\n\nPrice: Rs. ${product.pricing.price.toFixed(0)}\n\nView it here: ${getProductUrl()}`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       },

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       await cart.populate({
         path: "items.product_id",
         select:
-          "name images videos short_description pricing inventory hasVariants variants variantOptions",
+          "name images pricing inventory hasVariants variants variantOptions",
       });
 
       if (cart.selected_shipping_service_id) {
@@ -69,8 +69,8 @@ export async function GET(request: NextRequest) {
 
     await cart.populate({
       path: "items.product_id",
-      select:
-        "name images videos short_description pricing inventory hasVariants variants variantOptions",
+        select:
+        "name images pricing inventory hasVariants variants variantOptions",
     });
 
     if (cart.selected_shipping_service_id) {

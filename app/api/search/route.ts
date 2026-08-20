@@ -40,9 +40,7 @@ export async function GET(request: NextRequest) {
         $or: [
           { name: searchRegex },
           { description: searchRegex },
-          { short_description: searchRegex },
           { "inventory.sku": searchRegex },
-          { tags: searchRegex },
           { brand: searchRegex },
         ],
         status: "active",

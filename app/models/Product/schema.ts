@@ -133,25 +133,11 @@ const ProductImageSchema = new Schema(
   { _id: false },
 );
 
-const ProductVideoSchema = new Schema(
-  {
-    url: { type: String, required: true },
-    thumbnail: { type: String },
-    is_primary: { type: Boolean, default: false },
-    sort_order: { type: Number, default: 0 },
-    duration: { type: Number }, // in seconds
-    size: { type: Number }, // in bytes
-  },
-  { _id: false },
-);
-
 // Product Badges Schema
 const ProductBadgesSchema = new Schema(
   {
     is_featured: { type: Boolean, default: false, index: true },
-    is_bestseller: { type: Boolean, default: false, index: true },
     is_on_sale: { type: Boolean, default: false, index: true },
-    is_trending: { type: Boolean, default: false, index: true },
   },
   { _id: false },
 );
@@ -276,15 +262,9 @@ export const ProductSchema = new Schema<IProductDocument>(
       type: String,
       required: true,
     },
-    short_description: {
-      type: String,
-    },
     brand: {
       type: String,
       index: true,
-    },
-    manufacturer: {
-      type: String,
     },
 
     // ========== Categorization ==========
@@ -300,12 +280,6 @@ export const ProductSchema = new Schema<IProductDocument>(
         ref: "Category",
       },
     ],
-    tags: [
-      {
-        type: String,
-        index: true,
-      },
-    ],
 
     // ========== Pricing (Simple Products) ==========
     pricing: {
@@ -317,18 +291,6 @@ export const ProductSchema = new Schema<IProductDocument>(
     inventory: {
       type: InventorySchema,
       required: true,
-    },
-
-    // ========== Unit of Measure ==========
-    unit_of_measure: {
-      type: String,
-    },
-
-    // ========== Stripe Tax Code ==========
-    stripe_tax_code: {
-      type: String,
-      default: "txcd_99999999",
-      trim: true,
     },
 
     // ========== Variants Configuration ==========
@@ -355,13 +317,6 @@ export const ProductSchema = new Schema<IProductDocument>(
       type: [ProductImageSchema],
       default: [],
     },
-    videos: {
-      type: [ProductVideoSchema],
-      default: [],
-    },
-    video_url: {
-      type: String,
-    },
 
     // ========== Shipping ==========
     shipping: {
@@ -379,10 +334,6 @@ export const ProductSchema = new Schema<IProductDocument>(
     attributes: {
       type: Map,
       of: Schema.Types.Mixed,
-    },
-    specifications: {
-      type: Map,
-      of: String,
     },
 
     // ========== Status & Visibility ==========
@@ -441,26 +392,6 @@ export const ProductSchema = new Schema<IProductDocument>(
       min: 0,
     },
 
-    // ========== Related Products ==========
-    related_product_ids: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
-    upsell_product_ids: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
-    cross_sell_product_ids: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
-
     // ========== Admin ==========
     created_by: {
       type: Schema.Types.ObjectId,
@@ -484,7 +415,7 @@ export const ProductSchema = new Schema<IProductDocument>(
 // ============================================================================
 
 // Text search indexes
-ProductSchema.index({ name: "text", description: "text", tags: "text" });
+ProductSchema.index({ name: "text", description: "text" });
 
 // Pricing indexes
 ProductSchema.index({ "pricing.price": 1 });
@@ -501,9 +432,7 @@ ProductSchema.index({ status: 1, is_visible: 1 });
 
 // Badge indexes
 ProductSchema.index({ "badges.is_featured": 1 });
-ProductSchema.index({ "badges.is_bestseller": 1 });
 ProductSchema.index({ "badges.is_on_sale": 1 });
-ProductSchema.index({ "badges.is_trending": 1 });
 
 // Variant indexes
 ProductSchema.index({ "variants.sku": 1 });
@@ -511,8 +440,5 @@ ProductSchema.index({ "variants.isAvailable": 1 });
 
 // Category index
 ProductSchema.index({ category_id: 1, status: 1 });
-
-// Stripe Tax index
-ProductSchema.index({ stripe_tax_code: 1 });
 
 

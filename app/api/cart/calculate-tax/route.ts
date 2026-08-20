@@ -68,12 +68,12 @@ export async function POST(request: NextRequest) {
     if (user) {
       cart = await Cart.findOne({ user_id: user._id }).populate({
         path: "items.product_id",
-        select: "name pricing stripe_tax_code",
+        select: "name pricing",
       });
     } else {
       cart = await Cart.findOne({ session_id: sessionId }).populate({
         path: "items.product_id",
-        select: "name pricing stripe_tax_code",
+        select: "name pricing",
       });
     }
 
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
 
     // ── Line Items ──
     const lineItems = cart.items.map((item: any) => {
-      const taxCode = item.product_id?.stripe_tax_code || "txcd_99999999";
+      const taxCode = "txcd_99999999";
       const amount = Math.round(item.price_at_addition * item.quantity * 100);
 
       console.log(`${LOG_PREFIX}    • Product: "${item.product_id?.name}"`);
       console.log(`${LOG_PREFIX}      Price: $${item.price_at_addition} x ${item.quantity} = $${(item.price_at_addition * item.quantity).toFixed(2)} (${amount} cents)`);
-      console.log(`${LOG_PREFIX}      Tax code: ${taxCode}${!item.product_id?.stripe_tax_code ? " (FALLBACK — field missing on product)" : ""}`);
+      console.log(`${LOG_PREFIX}      Tax code: ${taxCode}`);
 
       return {
         amount,

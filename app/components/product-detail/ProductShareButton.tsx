@@ -9,7 +9,6 @@ interface ProductShareButtonProps {
   product: {
     _id: string;
     name: string;
-    short_description?: string;
     images?: Array<{ url: string }>;
     pricing: {
       price: number;

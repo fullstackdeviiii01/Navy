@@ -33,13 +33,10 @@ interface Product {
   status: string;
   badges?: {
     is_featured?: boolean;
-    is_bestseller?: boolean;
     is_on_sale?: boolean;
-    is_trending?: boolean;
   };
   images: any[];
   created_at: string;
-  unit_of_measure?: string;
 }
 
 export default function ProductListPage() {

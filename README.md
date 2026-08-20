@@ -258,7 +258,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 7: Simplify Product Management (Admin)
-**Status:** IN PROGRESS (dropshipping/bulk upload removed, form simplification pending)
+**Status:** ✅ DONE
 **Description:** Simplify the admin product management system. Remove bulk upload. Create unified product add/edit with variant support.
 **Details:**
 - ~~Remove bulk upload functionality~~ — Removed (CSV/Excel routes + BulkUploadModal + ProductHeader button)
@@ -266,26 +266,36 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 - ~~Remove CJ Dropshipping import functionality~~ — Removed completely in Step 4
 - ~~Remove AliExpress/CJ credentials models and admin pages~~ — Removed in Step 4
 - ~~Clean up Product model: remove dropshipping-specific fields~~ — Cleaned in Step 4
-- Simplify product add/edit form:
-  - Single unified form for all products
-  - Basic fields: name, description, category, images, price
-  - Variant section: add variants with attribute combinations
-  - Each variant can have: different price, SKU, stock quantity, image
-  - Remove complex badge system (keep simple: featured, sale)
-- Simplify admin product list view
-- Remove complex product filtering in admin (keep basic search + category filter)
+- ~~Simplify product add/edit form~~ — Unified into single form
+  - ~~Removed ProductTypeSelector (two big buttons)~~ — Replaced with simple toggle switch
+  - ~~Removed ProductFormBasicInfo component~~ — Inlined name + brand + category + description
+  - ~~Removed ProductFormPricing component~~ — Inlined pricing (PKR only, no Stripe tax code)
+  - ~~Removed ProductFormVideos component~~ — Video upload not needed for this store
+  - ~~Removed SEO section (meta_title, meta_description)~~ — Removed from form, schema, and types
+  - ~~Removed tags field~~ — Removed from form, schema, and types
+  - ~~Removed short_description~~ — Single description field only
+  - ~~Removed bestseller/trending badges~~ — Kept only featured + on_sale
+  - ~~Removed unit_of_measure~~ — Not relevant for lamp store
+  - ~~Removed stripe_tax_code~~ — No Stripe integration
+  - ~~Removed related/upsell/cross-sell product IDs~~ — Not needed
+  - ~~Removed specifications field~~ — Use attributes instead
+  - ~~Variant toggle as simple on/off switch~~ — Admin enables variants if product has options
+  - ~~Variant system preserved: options → auto-generate combos → each combo has price, SKU, stock~~ — Works as before
+- ~~Cleaned Product schema~~ — Removed 12+ unused fields, simplified badges to 2 fields
+- ~~Cleaned Product types~~ — Matched to simplified schema
+- ~~Cleaned 11 API routes~~ — Removed all references to deleted fields
+- ~~Cleaned 8 frontend components~~ — Removed all references to deleted fields
 **Files Affected:**
-- `app/api/products/bulk-upload/*` (remove)
-- `app/admin/products/new/*` (rewrite)
-- `app/admin/products/[id]/*` (rewrite)
-- `app/(admin)/components/products/*` (simplify)
-- `app/models/Product/schema.ts` (remove dropshipping fields)
-- `app/models/AliexpressCredentials.ts` (remove)
-- `app/models/CJCredentials.ts` (remove)
-- `app/admin/dropshipping/*` (remove)
-- `app/(admin)/components/aliexpress/*` (remove)
-- `app/(admin)/components/dropshipping/*` (remove)
-**Verification:** Can create/edit products with variants, no bulk upload, no dropshipping options, clean admin UI
+- `app/(admin)/pages/products/ProductFormPage.tsx` (rewritten — unified form)
+- `app/(admin)/components/products/form/ProductFormBasicInfo.tsx` (deleted)
+- `app/(admin)/components/products/form/ProductFormPricing.tsx` (deleted)
+- `app/(admin)/components/products/form/ProductFormVideos.tsx` (deleted)
+- `app/(admin)/components/products/form/ProductTypeSelector.tsx` (deleted)
+- `app/models/Product/schema.ts` (cleaned — removed 12+ fields)
+- `app/models/Product/types.ts` (cleaned — matched to schema)
+- 11 API routes (cleaned references)
+- 8 frontend components (cleaned references)
+**Verification:** ✅ Build compiles (MongoDB errors expected without .env), TypeScript clean, admin can add/edit products with unified form, variant toggle works
 
 ---
 
@@ -565,7 +575,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 4 | Remove Homepage Management + Dropshipping | DONE |
 | 5 | Simplify Product Cards | DONE |
 | 6 | Implement Cart Sidebar | DONE |
-| 7 | Simplify Product Management (Admin) | PENDING |
+| 7 | Simplify Product Management (Admin) | DONE |
 | 8 | Remove Dynamic Pages & Simplify Site Settings | PENDING |
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | PENDING |
 | 10 | Keep & Adjust Coupon System | PENDING |

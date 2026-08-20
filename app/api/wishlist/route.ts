@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         })
         .populate("category_id", "name slug")
         .select(
-  "name images videos pricing short_description rating_average rating_count inventory hasVariants variantOptions variants variantPricing badges status unit_of_measure"
+  "name images pricing rating_average rating_count inventory hasVariants variantOptions variants variantPricing badges status"
 )
         .lean();
 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
           })
           .populate("category_id", "name slug")
           .select(
-  "name images videos pricing short_description rating_average rating_count inventory hasVariants variantOptions variants variantPricing badges status unit_of_measure"
+  "name images pricing rating_average rating_count inventory hasVariants variantOptions variants variantPricing badges status"
 )
           .lean();
 

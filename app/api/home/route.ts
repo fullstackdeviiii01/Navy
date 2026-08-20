@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         created_at: { $gte: thirtyDaysAgo },
       })
       .select(
-        "name short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory", // ← Add variantPricing variantInventory
+        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ created_at: -1 })
       .limit(12)
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
         "badges.is_featured": true,
       })
       .select(
-        "name short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory", // ← Add variantPricing variantInventory
+        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ rating_average: -1, purchase_count: -1 })
       .limit(12)
@@ -50,22 +50,9 @@ export async function GET(request: NextRequest) {
         purchase_count: { $gt: 0 },
       })
       .select(
-        "name short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory", // ← Add variantPricing variantInventory
+        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ purchase_count: -1 })
-      .limit(12)
-      .lean();
-
-    const trendingProducts = await (Product as any)
-      .find({
-        status: "active",
-        is_visible: true,
-        "badges.is_trending": true,
-      })
-      .select(
-        "name short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory", // ← Add variantPricing variantInventory
-      )
-      .sort({ view_count: -1, rating_average: -1 })
       .limit(12)
       .lean();
 
@@ -76,7 +63,7 @@ export async function GET(request: NextRequest) {
         "badges.is_on_sale": true,
       })
       .select(
-        "name short_description description pricing images videos rating_average rating_count inventory badges unit_of_measure attributes hasVariants variants variantOptions variantPricing variantInventory", // ← Add variantPricing variantInventory
+        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ created_at: -1 })
       .limit(12)
@@ -87,7 +74,6 @@ export async function GET(request: NextRequest) {
       newArrivals,
       featuredProducts,
       bestSellers,
-      trendingProducts,
       onSaleProducts,
     });
   } catch (error) {

@@ -20,18 +20,14 @@ interface ProductInfoProps {
     };
     rating_average: number;
     rating_count: number;
-    short_description?: string;
     inventory: {
       stock_status: string;
       stock_quantity: number;
     };
     badges?: {
       is_featured?: boolean;
-      is_bestseller?: boolean;
       is_on_sale?: boolean;
-      is_trending?: boolean;
     };
-    unit_of_measure?: string;
     hasVariants?: boolean;
   };
 }
@@ -89,7 +85,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-4">
         <Rating rating={product.rating_average} count={product.rating_count} size="sm" />
         
-        {(product.badges?.is_featured || product.badges?.is_bestseller || product.badges?.is_on_sale || product.badges?.is_trending) && (
+        {(product.badges?.is_featured || product.badges?.is_on_sale) && (
           <>
             <span className="hidden sm:inline text-theme-text-muted-light dark:text-theme-text-muted-dark" aria-hidden="true">|</span>
             <div className="flex gap-1.5 sm:gap-2 flex-wrap" role="list" aria-label="Product badges">
@@ -98,19 +94,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                   Featured
                 </span>
               )}
-              {product.badges?.is_bestseller && (
-                <span className="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-[10px] sm:text-xs font-semibold rounded-full" role="listitem">
-                  Bestseller
-                </span>
-              )}
               {product.badges?.is_on_sale && (
                 <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-[10px] sm:text-xs font-semibold rounded-full" role="listitem">
                   Sale
-                </span>
-              )}
-              {product.badges?.is_trending && (
-                <span className="inline-flex items-center px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-[10px] sm:text-xs font-semibold rounded-full" role="listitem">
-                  Trending
                 </span>
               )}
             </div>
@@ -153,12 +139,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         )}
 
         <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 md:gap-3 mt-1.5 sm:mt-2">
-          {product.unit_of_measure && !isVariableProduct && (
-            <p className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Per {product.unit_of_measure}
-            </p>
-          )}
-
           {isOutOfStock && !isVariableProduct && (
             <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10px] sm:text-xs font-semibold rounded-md border border-red-200 dark:border-red-800" role="status" aria-label="Out of stock">
               Out of Stock
@@ -172,13 +152,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           )}
         </div>
       </div>
-
-      {/* Short Description */}
-      {product.short_description && (
-        <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed break-words">
-          {product.short_description}
-        </p>
-      )}
 
     </div>
   );

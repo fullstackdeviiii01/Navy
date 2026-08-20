@@ -43,13 +43,9 @@ export async function GET(request: NextRequest) {
 
     // Badge filters
     const featured = url.searchParams.get("featured") === "true";
-    const bestseller = url.searchParams.get("bestseller") === "true";
-    const trending = url.searchParams.get("trending") === "true";
     const sale = url.searchParams.get("sale") === "true";
 
     if (featured) query["badges.is_featured"] = true;
-    if (bestseller) query["badges.is_bestseller"] = true;
-    if (trending) query["badges.is_trending"] = true;
     if (sale) query["badges.is_on_sale"] = true;
 
     // Search filter
@@ -57,9 +53,7 @@ export async function GET(request: NextRequest) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
-        { short_description: { $regex: search, $options: "i" } },
         { "inventory.sku": { $regex: search, $options: "i" } },
-        { tags: { $in: [new RegExp(search, "i")] } },
         { brand: { $regex: search, $options: "i" } },
       ];
     }
@@ -73,7 +67,7 @@ export async function GET(request: NextRequest) {
         .find(query)
         .populate("category_id", "name slug")
         .populate("created_by", "name email")
-        .select("+videos +images +variantInventory +variantPricing +stripe_tax_code")
+        .select("+images +variantInventory +variantPricing")
         .sort(sort)
         .skip(skip)
         .limit(limit)
@@ -132,11 +126,6 @@ export async function POST(request: NextRequest) {
 
     // Set created_by
     body.created_by = adminUser._id;
-
-    // Default stripe_tax_code if not provided
-    if (!body.stripe_tax_code) {
-      body.stripe_tax_code = "txcd_99999999";
-    }
 
     const product = new Product(body);
     await product.save();
