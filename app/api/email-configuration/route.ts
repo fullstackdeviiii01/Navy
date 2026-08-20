@@ -65,11 +65,6 @@ export async function GET(request: NextRequest) {
             notify_on_delivered: true,
             notify_on_cancelled: true,
           },
-          abandoned_cart: {
-            enabled: true,
-            delay_hours: 24,
-            subject: "You left items in your cart!",
-          },
           // ADD DEFAULT RETURN NOTIFICATIONS CONFIGURATION
           return_notifications: {
             enabled: true,

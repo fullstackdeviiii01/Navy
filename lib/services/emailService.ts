@@ -222,32 +222,6 @@ export class EmailService {
     });
   }
 
-  static async sendAbandonedCartEmail(cart: any, user: any): Promise<void> {
-    const config = await this.getConfiguration();
-
-    if (!config.email_notifications.abandoned_cart.enabled) {
-      console.log("📧 [EMAIL DEBUG] Abandoned cart emails are disabled");
-      return;
-    }
-
-    const canSend = await this.isUserEmailEnabled(user.email);
-    if (!canSend) {
-      console.log(`📧 [EMAIL DEBUG] User has disabled email notifications: ${user.email}`);
-      return;
-    }
-
-    const { abandonedCartTemplate } = await import(
-      "../../lib/emailTemplates/abandonedCart"
-    );
-    const html = abandonedCartTemplate(cart, user);
-
-    await this.sendEmail({
-      to: user.email,
-      subject: config.email_notifications.abandoned_cart.subject,
-      html,
-    });
-  }
-
   static async sendReturnRequestEmail(returnRequest: any, order: any): Promise<void> {
     console.log("📧 [RETURN DEBUG] === SENDING RETURN REQUEST EMAIL ===");
     try {

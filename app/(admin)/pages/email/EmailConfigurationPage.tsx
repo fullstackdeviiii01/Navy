@@ -39,11 +39,6 @@ interface EmailConfig {
       notify_on_delivered: boolean;
       notify_on_cancelled: boolean;
     };
-    abandoned_cart: {
-      enabled: boolean;
-      delay_hours: number;
-      subject: string;
-    };
     return_notifications: {
       enabled: boolean;
       notify_on_request: boolean;
@@ -93,11 +88,6 @@ export default function EmailConfigurationPage() {
         notify_on_shipped: true,
         notify_on_delivered: true,
         notify_on_cancelled: true,
-      },
-      abandoned_cart: {
-        enabled: true,
-        delay_hours: 24,
-        subject: "You left items in your cart!",
       },
       return_notifications: {
         enabled: false,

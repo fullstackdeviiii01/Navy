@@ -22,11 +22,6 @@ interface NotificationsFormProps {
       notify_on_delivered: boolean;
       notify_on_cancelled: boolean;
     };
-    abandoned_cart: {
-      enabled: boolean;
-      delay_hours: number;
-      subject: string;
-    };
     return_notifications: {
       enabled: boolean;
       notify_on_request: boolean;
@@ -200,55 +195,6 @@ export default function NotificationsForm({ emailNotifications, onNotificationsC
             />
             <span className="text-xs sm:text-sm">Notify on Cancelled</span>
           </label>
-        </div>
-      </div>
-
-      {/* Abandoned Cart */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg shadow border border-theme-border-light dark:border-theme-border-dark p-3 sm:p-4 lg:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 sm:mb-4">
-          <h3 className="text-base sm:text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Abandoned Cart Reminders
-          </h3>
-          <label className="flex items-center gap-2 order-first sm:order-last">
-            <input
-              type="checkbox"
-              checked={emailNotifications.abandoned_cart.enabled}
-              onChange={(e) => onNotificationsChange("abandoned_cart", "enabled", e.target.checked)}
-              className="w-4 h-4 text-blue-600 flex-shrink-0"
-            />
-            <span className="text-xs sm:text-sm font-medium">Enabled</span>
-          </label>
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1 sm:mb-2">
-              Delay (Hours)
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="168"
-              value={emailNotifications.abandoned_cart.delay_hours}
-              onChange={(e) => onNotificationsChange("abandoned_cart", "delay_hours", parseInt(e.target.value) || 24)}
-              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary"
-            />
-            <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-1">
-              Send reminder after this many hours of cart inactivity
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1 sm:mb-2">
-              Email Subject
-            </label>
-            <input
-              type="text"
-              value={emailNotifications.abandoned_cart.subject}
-              onChange={(e) => onNotificationsChange("abandoned_cart", "subject", e.target.value)}
-              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary"
-            />
-          </div>
         </div>
       </div>
 

@@ -28,11 +28,6 @@ export interface IEmailConfigurationDocument extends Document {
       notify_on_delivered: boolean;
       notify_on_cancelled: boolean;
     };
-    abandoned_cart: {
-      enabled: boolean;
-      delay_hours: number;
-      subject: string;
-    };
     // ADD RETURN NOTIFICATIONS HERE
     return_notifications: {
       enabled: boolean;
@@ -138,22 +133,6 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
         notify_on_cancelled: {
           type: Boolean,
           default: true,
-        },
-      },
-      abandoned_cart: {
-        enabled: {
-          type: Boolean,
-          default: true,
-        },
-        delay_hours: {
-          type: Number,
-          default: 24,
-          min: 1,
-          max: 168,
-        },
-        subject: {
-          type: String,
-          default: "You left items in your cart!",
         },
       },
       // ADD RETURN NOTIFICATIONS SECTION
