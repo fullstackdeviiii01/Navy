@@ -366,16 +366,20 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 10: Keep & Adjust Coupon System
-**Status:** PENDING
-**Description:** Keep the existing coupon system as-is since the client requires it. Make minor adjustments if needed for PKR-only pricing.
+**Status:** ✅ DONE
+**Description:** Keep the existing coupon system as-is. Fix PKR currency formatting.
 **Details:**
-- Review existing coupon system for compatibility with PKR-only pricing
-- Ensure coupon discounts display in PKR
-- Verify coupon creation/editing in admin works correctly
-- Verify coupon application in cart works correctly
-- No major changes expected — this system is already well-built
-**Files Affected:** Minimal changes expected
-**Verification:** Can create coupons, apply them at checkout, discounts calculate correctly in PKR
+- ~~Review existing coupon system for compatibility with PKR-only pricing~~ — System is currency-agnostic, only UI had hardcoded `$` signs
+- ~~Replace all hardcoded `$` with `Rs.`~~ — Fixed in 5 files (apply-coupon route, CouponSection, CouponsTable, DiscountSettingsForm, ApplicableToForm)
+- ~~Verify coupon creation/editing in admin works correctly~~ — Works
+- ~~Verify coupon application in cart works correctly~~ — Works
+**Files Affected:**
+- `app/api/cart/apply-coupon/route.ts` (fixed error message)
+- `app/components/cart/CouponSection.tsx` (fixed discount display)
+- `app/(admin)/components/coupons/CouponsTable.tsx` (fixed discount/min/max display)
+- `app/(admin)/components/coupons/CouponFormSections/DiscountSettingsForm.tsx` (fixed labels)
+- `app/(admin)/components/coupons/CouponFormSections/ApplicableToForm.tsx` (fixed price display)
+**Verification:** ✅ All coupon amounts display in Rs., coupon creation/application works correctly
 
 ---
 
@@ -566,7 +570,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 7 | Simplify Product Management (Admin) | DONE |
 | 8 | Remove Dynamic Pages & Simplify Site Settings | DONE |
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | DONE |
-| 10 | Keep & Adjust Coupon System | PENDING |
+| 10 | Keep & Adjust Coupon System | DONE |
 | 11 | Simplify Product Attributes | PENDING |
 | 12 | Implement Track Order & Auto Confirmation | PENDING |
 | 13 | Simplify Product Detail Page + Sticky Bar | PENDING |
