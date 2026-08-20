@@ -307,38 +307,37 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 8: Remove Dynamic Pages & Simplify Site Settings
-**Status:** PENDING
-**Description:** Remove the dynamic page creation system. Convert all static pages to hardcoded Next.js pages. Simplify admin site settings.
+**Status:** ✅ DONE
+**Description:** Remove the dynamic page creation system. Simplify admin site settings to company info only.
 **Details:**
-- Remove Page model (`app/models/Page.ts`) — or repurpose for static content
-- Remove dynamic page API routes (`app/api/site-settings/slug/*`)
-- Remove PageContent component (`app/components/pages/PageContent.tsx`)
-- Create static Next.js pages for:
-  - `/contact` — contact form + company info
-  - `/faqs` — FAQ accordion
-  - `/track-order` — order tracking form
-  - `/shipping-delivery` — static shipping info
-  - `/returns-exchanges` — static returns info
-  - `/care-guide` — static care guide
-  - `/warranty` — static warranty info
-  - `/privacy-policy` — static privacy policy
-  - `/terms-conditions` — static terms
-  - `/cookie-policy` — static cookie policy
-  - `/accessibility` — static accessibility statement
-- Simplify SiteSettings model: remove `static_pages` array, keep only company_info
-- Simplify admin SiteSettings page: only company info editing (name, logo, email, phone, address, social links)
-- Remove Jodit rich text editor dependency (no longer needed for pages)
-- Update footer to link to static pages
+- ~~Delete Page model~~ — Was unused dead code, removed
+- ~~Delete PageContent component~~ — Removed
+- ~~Delete dynamic page route `/pages/[slug]`~~ — Removed
+- ~~Delete slug API route~~ — Removed
+- ~~Delete dynamic page CRUD from SiteSettings API~~ — Removed
+- ~~Delete admin components~~ — DynamicPagesSettings, StaticPagesSettings, HomePageSettings, SiteSettingsHeader, SiteSettingsTabs all removed
+- ~~Simplify SiteSettings model~~ — Keep only company_info (removed home_components, static_pages, dynamic page fields)
+- ~~Simplify SiteSettings API~~ — Only company info GET/PUT
+- ~~Simplify admin SiteSettings page~~ — Company Info only, no tabs
+- ~~Simplify footer~~ — 3 columns, hardcoded links, removed newsletter section
+- ~~Simplify siteSettingsApi~~ — Only getCompanyInfo, updateCompanyInfo, uploadCompanyLogo
+- ~~Simplify homeMetadata~~ — checkPageVisibility always returns true
+- ~~Remove checkPageVisibility from all page routes~~ — Pages always visible now
 **Files Affected:**
-- `app/models/Page.ts` (remove)
-- `app/models/SiteSettings.ts` (simplify)
-- `app/api/site-settings/slug/*` (remove)
-- `app/components/pages/*` (remove)
-- `app/(pages)/*` or `app/*` (new static pages)
-- `app/admin/site-settings/*` (simplify)
-- `app/components/Footerr.tsx` (update links)
-- `app/(admin)/components/AdminSidebar.tsx` (remove page management)
-**Verification:** All static pages load correctly, admin can edit company info only, no dynamic page creation
+- `app/models/Page.ts` (deleted)
+- `app/models/SiteSettings.ts` (simplified)
+- `app/components/pages/PageContent.tsx` (deleted)
+- `app/pages/[slug]/page.tsx` (deleted)
+- `app/api/site-settings/route.ts` (simplified)
+- `app/api/site-settings/[id]/route.ts` (deleted)
+- `app/api/site-settings/slug/[slug]/route.ts` (deleted)
+- `app/(admin)/pages/site-settings/SiteSettingsPage.tsx` (simplified)
+- `app/(admin)/components/site-settings/*` (5 files deleted)
+- `app/components/Footerr.tsx` (simplified)
+- `lib/api/siteSettings.ts` (cleaned)
+- `lib/metadata/homeMetadata.ts` (simplified)
+- 7 page routes (removed checkPageVisibility)
+**Verification:** ✅ Build compiles, admin site settings shows company info only, footer shows hardcoded links
 
 ---
 
@@ -583,7 +582,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 5 | Simplify Product Cards | DONE |
 | 6 | Implement Cart Sidebar | DONE |
 | 7 | Simplify Product Management (Admin) | DONE |
-| 8 | Remove Dynamic Pages & Simplify Site Settings | PENDING |
+| 8 | Remove Dynamic Pages & Simplify Site Settings | DONE |
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | PENDING |
 | 10 | Keep & Adjust Coupon System | PENDING |
 | 11 | Simplify Product Attributes | PENDING |
