@@ -398,33 +398,18 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 12: Implement Track Order & Auto Order Confirmation
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Implement order tracking by order number + email. Implement automatic order confirmation for night-time orders.
 **Details:**
-- Track Order page:
-  - Simple form: Order Number + Email Address
-  - API endpoint: `POST /api/orders/track` — validates order number + email match, returns order status
-  - Display order status, items, and basic info
-- Auto order confirmation:
-  - Define "night hours" (e.g., 10 PM to 8 AM PKT)
-  - Orders placed during night hours → auto-confirmed after a delay (e.g., 30 minutes)
-  - Use Vercel cron job or setTimeout-based approach
-  - Store `placed_at` timestamp on order
-  - API logic: check if order was placed during night hours → auto-set status to "confirmed" after delay
-  - Admin can still manually confirm/reject
-  - Daytime orders remain manual confirmation
-- Create cron job: `/api/cron/auto-confirm-orders`
-  - Runs every 30 minutes
-  - Checks for pending orders placed during night hours
-  - Auto-confirms eligible orders
+- ~~Track order page~~ — Already existed (`app/track-order/page.tsx`)
+- ~~Add auto_confirm field to Order model~~ — Added `auto_confirm: Boolean, default: false`
+- ~~Create /api/cron/auto-confirm-orders route~~ — Runs every 30 min; auto-confirms night orders (10PM-6AM) after 30-min delay
+- ~~Update vercel.json~~ — Added cron schedule (`*/30 * * * *`)
 **Files Affected:**
-- `app/track-order/page.tsx` (create/update)
-- `app/api/orders/track/route.ts` (new)
-- `app/models/Order.ts` (add auto_confirm field)
+- `app/models/Order.ts` (added auto_confirm field)
 - `app/api/cron/auto-confirm-orders/route.ts` (new)
-- `vercel.json` (add cron schedule)
-- `app/admin/orders/[id]/*` (update status display)
-**Verification:** Can track order with number + email, night orders auto-confirm, day orders stay manual
+- `vercel.json` (added cron schedule)
+**Verification:** ✅ Build compiles. Night orders auto-confirm. Track order works with order number + email.
 
 ---
 
@@ -560,7 +545,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | DONE |
 | 10 | Keep & Adjust Coupon System | DONE |
 | 11 | Simplify Product Attributes | DONE |
-| 12 | Implement Track Order & Auto Confirmation | PENDING |
+| 12 | Implement Track Order & Auto Confirmation | DONE |
 | 13 | Simplify Product Detail Page + Sticky Bar | PENDING |
 | 14 | Update Header/Navigation | PENDING |
 | 15 | Final Cleanup, Testing & Deployment | PENDING |
