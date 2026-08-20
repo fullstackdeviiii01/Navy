@@ -274,11 +274,14 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
   - ~~Removed SEO section (meta_title, meta_description)~~ — Removed from form, schema, and types
   - ~~Removed tags field~~ — Removed from form, schema, and types
   - ~~Removed short_description~~ — Single description field only
-  - ~~Removed bestseller/trending badges~~ — Kept only featured + on_sale
+  - ~~Removed ALL product badges~~ — No badges at all (removed is_featured, is_on_sale, is_bestseller, is_trending)
   - ~~Removed unit_of_measure~~ — Not relevant for lamp store
   - ~~Removed stripe_tax_code~~ — No Stripe integration
   - ~~Removed related/upsell/cross-sell product IDs~~ — Not needed
   - ~~Removed specifications field~~ — Use attributes instead
+  - ~~Kept video upload~~ — ProductFormVideos restored and working
+  - ~~Removed calculate-tax route~~ — No tax calculation needed
+  - ~~Cleaned checkout of tax logic~~ — CheckoutPage, PaymentSection, OrderSummaryCheckout
   - ~~Variant toggle as simple on/off switch~~ — Admin enables variants if product has options
   - ~~Variant system preserved: options → auto-generate combos → each combo has price, SKU, stock~~ — Works as before
 - ~~Cleaned Product schema~~ — Removed 12+ unused fields, simplified badges to 2 fields
@@ -289,13 +292,17 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 - `app/(admin)/pages/products/ProductFormPage.tsx` (rewritten — unified form)
 - `app/(admin)/components/products/form/ProductFormBasicInfo.tsx` (deleted)
 - `app/(admin)/components/products/form/ProductFormPricing.tsx` (deleted)
-- `app/(admin)/components/products/form/ProductFormVideos.tsx` (deleted)
+- `app/(admin)/components/products/form/ProductFormVideos.tsx` (restored)
 - `app/(admin)/components/products/form/ProductTypeSelector.tsx` (deleted)
-- `app/models/Product/schema.ts` (cleaned — removed 12+ fields)
+- `app/models/Product/schema.ts` (cleaned — removed 12+ fields, no badges)
 - `app/models/Product/types.ts` (cleaned — matched to schema)
-- 11 API routes (cleaned references)
-- 8 frontend components (cleaned references)
-**Verification:** ✅ Build compiles (MongoDB errors expected without .env), TypeScript clean, admin can add/edit products with unified form, variant toggle works
+- `app/api/cart/calculate-tax/route.ts` (deleted)
+- `app/(public)/pages/CheckoutPage.tsx` (cleaned — removed tax logic)
+- `app/components/checkout/PaymentSection.tsx` (cleaned — removed tax props)
+- `app/components/checkout/OrderSummaryCheckout.tsx` (cleaned — removed tax display)
+- 8+ API routes (cleaned references)
+- 8+ frontend components (cleaned references)
+**Verification:** ✅ Build compiles (MongoDB errors expected without .env), TypeScript clean, admin can add/edit products with video upload, no badges, no tax calculation
 
 ---
 
