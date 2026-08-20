@@ -1,13 +1,10 @@
-// Cart.jsx
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useUser } from "../context/UserContext";
 import { ShoppingCart } from "lucide-react";
 
 export default function Cart() {
-  const { cart } = useUser(); // ← read cart directly, not cartItemCount
-  const router = useRouter();
+  const { cart, openCart } = useUser();
 
   const cartItemCount = cart?.items?.reduce(
     (sum: number, item: any) => sum + (item.quantity || 1), 0
@@ -15,7 +12,7 @@ export default function Cart() {
 
   return (
     <button
-      onClick={() => router.push("/cart")}
+      onClick={openCart}
       className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
       aria-label={`Shopping cart, ${cartItemCount} items`}
     >

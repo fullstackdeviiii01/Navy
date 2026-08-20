@@ -22,7 +22,7 @@ export default function AddToCartButton({
   variantId,
   onSuccess,
 }: AddToCartButtonProps) {
-  const { isAuthenticated, refreshCart } = useUser();
+  const { isAuthenticated, refreshCart, openCart } = useUser();
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -39,6 +39,7 @@ export default function AddToCartButton({
       await refreshCart();
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
+      openCart();
       
       if (onSuccess) {
         onSuccess();

@@ -231,24 +231,29 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 6: Implement Cart Sidebar
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Replace the separate cart page with a slide-in sidebar that appears when a product is added to cart.
 **Details:**
-- Create CartSidebar component (slides in from right when item added to cart)
-- Show added product(s) in sidebar with image, name, price, quantity
-- Show cart total at bottom
-- Two buttons at bottom: "View Cart" (goes to full cart page) and "Keep Browsing" (closes sidebar)
-- Auto-open sidebar when "Add to Cart" is clicked on product detail page
-- Keep existing CartPage for the full cart view (accessed via "View Cart" button)
-- Update AddToCartButton to trigger sidebar open
-- Add overlay/backdrop when sidebar is open
-- Sidebar should have close (X) button
+- ~~Create CartSidebar component~~ — Created `app/components/cart/CartSidebar.tsx`
+  - ~~Slides in from right when item added to cart~~ — CSS slide-in animation
+  - ~~Show added product(s) in sidebar with image, name, price, quantity~~ — Shows all cart items
+  - ~~Show cart total at bottom~~ — Shows subtotal
+  - ~~Two buttons: "View Cart" and "Keep Browsing"~~ — Both implemented
+  - ~~Auto-open sidebar when "Add to Cart" is clicked~~ — AddToCartButton calls openCart()
+  - ~~Keep existing CartPage for full cart view~~ — CartPage still exists at /cart
+  - ~~Add overlay/backdrop when sidebar is open~~ — Full-screen dark overlay
+  - ~~Sidebar has close (X) button~~ — Plus Escape key closes
+- ~~Add isCartOpen/openCart/closeCart to UserContext~~ — Added to context
+- ~~Update Cart.tsx (header icon) to open sidebar~~ — Changed from router.push to openCart()
+- ~~Update AddToCartButton to trigger sidebar~~ — Calls openCart() after adding
+- ~~Render CartSidebar in ClientProviders~~ — Available globally
 **Files Affected:**
-- `app/components/cart/CartSidebar.tsx` (new component)
-- `app/components/product-detail/AddToCartButton.tsx` (update to trigger sidebar)
-- `app/components/Cart.tsx` (existing sidebar cart in header — may need updates)
-- `app/context/CartContext.tsx` or similar (add sidebar state)
-**Verification:** Clicking "Add to Cart" opens sidebar with product, "View Cart" goes to cart page, "Keep Browsing" closes sidebar
+- `app/components/cart/CartSidebar.tsx` (new)
+- `app/context/UserContext.js` (added isCartOpen, openCart, closeCart)
+- `app/components/Cart.tsx` (changed to open sidebar)
+- `app/components/product-detail/AddToCartButton.tsx` (opens sidebar after add)
+- `app/ClientProviders.tsx` (renders CartSidebar)
+**Verification:** ✅ Build compiles, clicking cart icon opens sidebar, add-to-cart opens sidebar, View Cart navigates to /cart page
 
 ---
 
@@ -559,7 +564,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 3 | Remove Multi-Currency → PKR Only | DONE |
 | 4 | Remove Homepage Management + Dropshipping | DONE |
 | 5 | Simplify Product Cards | DONE |
-| 6 | Implement Cart Sidebar | PENDING |
+| 6 | Implement Cart Sidebar | DONE |
 | 7 | Simplify Product Management (Admin) | PENDING |
 | 8 | Remove Dynamic Pages & Simplify Site Settings | PENDING |
 | 9 | Simplify Payment Methods (COD + Bank Transfer) | PENDING |

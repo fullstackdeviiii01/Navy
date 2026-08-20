@@ -17,6 +17,7 @@ export function UserProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
   const [cart, setCart] = useState(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const syncInProgress = useRef(false);
@@ -263,6 +264,11 @@ export function UserProvider({ children }) {
     // Cart data
     cart,
     cartItemCount: cart?.items?.length || 0,
+
+    // Cart sidebar
+    isCartOpen,
+    openCart: () => setIsCartOpen(true),
+    closeCart: () => setIsCartOpen(false),
 
     // Authentication state
     isAuthenticated: !!authUser && !!dbUser,

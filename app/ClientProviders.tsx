@@ -3,6 +3,7 @@
 import { DarkModeProvider } from "./context/DarkModeProvider";
 import { UserProvider } from "./context/UserContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import CartSidebar from "./components/cart/CartSidebar";
 
 export default function ClientProviders({
   children,
@@ -14,6 +15,7 @@ export default function ClientProviders({
       <UserProvider>
           <WishlistProvider>
             {children}
+            <CartSidebar />
           </WishlistProvider>
       </UserProvider>
     </DarkModeProvider>
