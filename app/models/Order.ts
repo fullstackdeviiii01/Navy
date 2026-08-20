@@ -88,6 +88,7 @@ export interface IOrderDocument extends Document {
   customer_notes?: string;
   admin_notes?: string;
   placed_at: Date;
+  auto_confirm: boolean;
   confirmed_at?: Date;
   shipped_at?: Date;
   delivered_at?: Date;
@@ -253,6 +254,7 @@ const OrderSchema = new Schema<IOrderDocument>(
     customer_notes: { type: String },
     admin_notes: { type: String },
     placed_at: { type: Date, default: Date.now },
+    auto_confirm: { type: Boolean, default: false },
     confirmed_at: { type: Date },
     shipped_at: { type: Date },
     delivered_at: { type: Date },
