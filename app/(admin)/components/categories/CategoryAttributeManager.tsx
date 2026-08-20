@@ -15,9 +15,6 @@ const ATTRIBUTE_TYPES = [
   { value: 'number', label: 'Number Input' },
   { value: 'select', label: 'Dropdown (Single Select)' },
   { value: 'multiselect', label: 'Multi-Select' },
-  { value: 'checkbox', label: 'Checkbox (Yes/No)' },
-  { value: 'textarea', label: 'Text Area (Long Text)' },
-  { value: 'date', label: 'Date Picker' },
 ];
 
 export default function CategoryAttributeManager({

@@ -9,7 +9,7 @@ export interface ICategoryAttribute {
   _id?: mongoose.Types.ObjectId;
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'textarea' | 'date';
+  type: 'text' | 'number' | 'select' | 'multiselect';
   required: boolean;
   options?: IAttributeOption[];
   placeholder?: string;
@@ -50,7 +50,7 @@ const CategoryAttributeSchema = new Schema<ICategoryAttribute>(
     label: { type: String, required: true },
     type: {
       type: String,
-      enum: ['text', 'number', 'select', 'multiselect', 'checkbox', 'textarea', 'date'],
+      enum: ['text', 'number', 'select', 'multiselect'],
       required: true,
     },
     required: { type: Boolean, default: false },
