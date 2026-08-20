@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     if (cart.subtotal < coupon.min_order_amount) {
       return NextResponse.json(
         {
-          error: `Minimum order amount of $${coupon.min_order_amount} required`,
+          error: `Minimum order amount of Rs. ${coupon.min_order_amount} required`,
         },
         { status: 400 }
       );

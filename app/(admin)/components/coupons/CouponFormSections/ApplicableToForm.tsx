@@ -175,7 +175,7 @@ export default function ApplicableToForm({
                         {product.name}
                       </p>
                       <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                        ${product.pricing.price}
+                        Rs. ${product.pricing.price}
                       </p>
                     </div>
                   </label>

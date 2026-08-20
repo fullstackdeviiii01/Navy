@@ -25,7 +25,7 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
 
     try {
       const data = await cartApi.applyCoupon(code);
-      setMessage(`Saved $${data.discount.toFixed(2)}`);
+      setMessage(`Saved Rs. ${data.discount.toFixed(2)}`);
       setIsError(false);
       setCode("");
       onUpdate();

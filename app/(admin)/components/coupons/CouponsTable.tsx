@@ -105,11 +105,11 @@ export default function CouponsTable({
                           <span className="font-semibold">
                             {coupon.discount_type === "percentage"
                               ? `${coupon.discount_value}%`
-                              : `$${coupon.discount_value}`}
+                              : `Rs. ${coupon.discount_value}`}
                           </span>
                           {coupon.min_order_amount > 0 && (
                             <span className="ml-2 text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                              Min: ${coupon.min_order_amount}
+                              Min: Rs. ${coupon.min_order_amount}
                             </span>
                           )}
                         </div>
@@ -121,16 +121,16 @@ export default function CouponsTable({
                       <span className="font-semibold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {coupon.discount_type === "percentage"
                           ? `${coupon.discount_value}%`
-                          : `$${coupon.discount_value}`}
+                          : `Rs. ${coupon.discount_value}`}
                       </span>
                       {coupon.max_discount && (
                         <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                          Max discount: ${coupon.max_discount}
+                          Max discount: Rs. ${coupon.max_discount}
                         </p>
                       )}
                       {coupon.min_order_amount > 0 && (
                         <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                          Min spend: ${coupon.min_order_amount}
+                          Min spend: Rs. ${coupon.min_order_amount}
                         </p>
                       )}
                     </div>
