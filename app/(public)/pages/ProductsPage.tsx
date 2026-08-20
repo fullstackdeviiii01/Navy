@@ -5,7 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { categoriesApi } from "../../../lib/api/categories";
 import { productsApi } from "../../../lib/api/products";
-import { couponsApi } from "../../../lib/api/coupons";
+
 import { useProductFilters } from "../../hooks/useProductFilters";
 import {
   filtersToApiParams,
@@ -31,7 +31,6 @@ function ProductsPageContent() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [activeCoupons, setActiveCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -63,10 +62,9 @@ function ProductsPageContent() {
     router.push(`/products?${params.toString()}`, { scroll: false });
   }, [productsPerPage, router]);
 
-  // Fetch categories and coupons on mount
+  // Fetch categories on mount
   useEffect(() => {
     fetchCategories();
-    fetchActiveCoupons();
   }, []);
 
   // Fetch products when filters change (reset to page 1)
@@ -132,15 +130,6 @@ function ProductsPageContent() {
       setCategories(data.categories);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
-    }
-  };
-
-  const fetchActiveCoupons = async () => {
-    try {
-      const data = await couponsApi.getActiveCoupons();
-      setActiveCoupons(data.coupons || []);
-    } catch (error) {
-      console.error("Failed to fetch active coupons:", error);
     }
   };
 
@@ -271,7 +260,6 @@ function ProductsPageContent() {
               <ProductGrid 
                 products={displayedProducts} 
                 loading={loading}
-                activeCoupons={activeCoupons}
               />
             </section>
 

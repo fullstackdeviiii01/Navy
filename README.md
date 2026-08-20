@@ -209,22 +209,24 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 5: Simplify Product Cards
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Simplify product cards to show only one image, product name, and price. Add variant count indicator. Remove all hover actions.
 **Details:**
-- Update ProductCard component (`app/components/product/ProductCard.tsx`):
-  - Show only the first product image (no carousel/swiper)
-  - Display product name below image
-  - Display product price below name
-  - Add variant count badge in top corner (e.g., "2 options")
-  - Remove hover effects: no add to cart button, no add to wishlist button, no image swap on hover
-  - Remove quick view functionality
-- Remove ProductMediaCarousel from product cards (keep for detail page only)
-- Update ProductGrid if needed for new card layout
+- ~~Update ProductCard component~~ — Completely rewritten (472 → 80 lines)
+  - ~~Show only the first product image (no carousel/swiper)~~ — Done
+  - ~~Display product name below image~~ — Done
+  - ~~Display product price below name~~ — Done
+  - ~~Add variant count badge in top corner~~ — "X options" badge
+  - ~~Remove hover effects: no add to cart, no wishlist, no image swap~~ — Done
+  - ~~Remove quick view functionality~~ — Done
+- ~~Remove ProductMediaCarousel from product cards~~ — Done (kept in detail page only)
+- ~~Simplify ProductGrid~~ — Removed activeCoupons prop
+- ~~Clean up ProductsPage~~ — Removed coupon fetching
 **Files Affected:**
-- `app/components/product/ProductCard.tsx` (rewrite)
-- `app/components/product/ProductGrid.tsx` (minor updates if needed)
-**Verification:** Product cards show single image + name + price + variant count, no hover actions, clean layout
+- `app/components/product/ProductCard.tsx` (rewritten — 472 → 80 lines)
+- `app/components/product/ProductGrid.tsx` (simplified)
+- `app/(public)/pages/ProductsPage.tsx` (removed coupon logic)
+**Verification:** ✅ Build compiles successfully, product cards show single image + name + price + variant count
 
 ---
 
@@ -556,7 +558,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 2 | Remove Firebase Auth → Simple JWT Auth | DONE |
 | 3 | Remove Multi-Currency → PKR Only | DONE |
 | 4 | Remove Homepage Management + Dropshipping | DONE |
-| 5 | Simplify Product Cards | PENDING |
+| 5 | Simplify Product Cards | DONE |
 | 6 | Implement Cart Sidebar | PENDING |
 | 7 | Simplify Product Management (Admin) | PENDING |
 | 8 | Remove Dynamic Pages & Simplify Site Settings | PENDING |
