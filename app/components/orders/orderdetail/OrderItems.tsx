@@ -1,6 +1,7 @@
 // app/components/orders/OrderItems.tsx
 "use client";
 
+import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface OrderItem {
   product_image: string;

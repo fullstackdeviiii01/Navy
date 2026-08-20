@@ -265,6 +265,9 @@ export const ProductSchema = new Schema<IProductDocument>(
       type: String,
       required: true,
     },
+    care_guide: { type: String },
+    shipping_info: { type: String },
+    return_info: { type: String },
     brand: {
       type: String,
       index: true,

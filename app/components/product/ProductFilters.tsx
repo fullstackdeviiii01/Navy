@@ -191,14 +191,8 @@ export default function ProductFilters({
               />
             </div>
             <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Price in {"PKR"}
+              Price in PKR
             </p>
-            {"PKR" !== "USD" &&
-              (priceRange.min > 0 || priceRange.max > 0) && (
-                <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  ≈${priceRange.min} - ${priceRange.max} USD
-                </p>
-              )}
             <div className="flex gap-1.5 sm:gap-2">
               <button
                 aria-label="Handle price apply for the product"

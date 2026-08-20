@@ -1,15 +1,8 @@
 // app/components/Footerr.tsx
 "use client";
 
-import {
-  Footer,
-  FooterCopyright,
-  FooterIcon,
-  FooterLink,
-  FooterLinkGroup,
-  FooterTitle,
-} from "flowbite-react";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   BsFacebook,
   BsInstagram,
@@ -26,6 +19,9 @@ import { siteSettingsApi } from "../../lib/api/siteSettings";
 
 interface CompanyInfo {
   company_name?: string;
+  company_email?: string;
+  company_phone?: string;
+  company_address?: string;
   social_media?: {
     facebook?: string;
     instagram?: string;
@@ -41,7 +37,7 @@ interface CompanyInfo {
   copyright_text?: string;
 }
 
-const Footerr = () => {
+export default function Footerr() {
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
 
   useEffect(() => {
@@ -120,59 +116,181 @@ const Footerr = () => {
     },
   ].filter((social) => social.url && social.url.trim() !== "");
 
+  const currentYear = new Date().getFullYear();
+
   return (
-    <Footer className="mt-10">
-      <div className="w-full">
-        <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 py-8">
-          {/* Main Menu */}
-          <nav aria-labelledby="footer-main-menu">
-            <FooterTitle title="Main Menu" id="footer-main-menu" />
-            <FooterLinkGroup col>
-              <FooterLink href="/">Home</FooterLink>
-              <FooterLink href="/products">Products</FooterLink>
-              <FooterLink href="/categories">Categories</FooterLink>
-              <FooterLink href="/cart">Cart</FooterLink>
-            </FooterLinkGroup>
-          </nav>
+    <footer className="bg-gray-50 border-t border-gray-200 mt-16 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand & About Column */}
+          <div className="space-y-4 md:col-span-1">
+            <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+              {companyInfo.company_name || "STORE"}
+            </h3>
+            {companyInfo.company_address && (
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                {companyInfo.company_address}
+              </p>
+            )}
+            {companyInfo.company_phone && (
+              <p className="text-xs sm:text-sm text-gray-600">
+                <span className="font-semibold text-gray-700">Phone: </span>
+                <a
+                  href={`tel:${companyInfo.company_phone}`}
+                  className="hover:text-theme-primary transition-colors"
+                >
+                  {companyInfo.company_phone}
+                </a>
+              </p>
+            )}
+            {companyInfo.company_email && (
+              <p className="text-xs sm:text-sm text-gray-600">
+                <span className="font-semibold text-gray-700">Email: </span>
+                <a
+                  href={`mailto:${companyInfo.company_email}`}
+                  className="hover:text-theme-primary transition-colors"
+                >
+                  {companyInfo.company_email}
+                </a>
+              </p>
+            )}
+          </div>
 
-          {/* Help */}
-          <nav aria-labelledby="footer-help">
-            <FooterTitle title="Help" id="footer-help" />
-            <FooterLinkGroup col>
-              <FooterLink href="/contact">Contact</FooterLink>
-              <FooterLink href="/faqs">FAQs</FooterLink>
-              <FooterLink href="/track-order">Track Order</FooterLink>
-            </FooterLinkGroup>
-          </nav>
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Quick Links
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              <li>
+                <Link
+                  href="/"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/categories"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/track-order"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Track Order
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-          {/* Legal */}
-          <nav aria-labelledby="footer-legal">
-            <FooterTitle title="Legal" id="footer-legal" />
-            <FooterLinkGroup col>
-              <FooterLink href="#">Privacy Policy</FooterLink>
-              <FooterLink href="#">Terms & Conditions</FooterLink>
-              <FooterLink href="#">Shipping & Delivery</FooterLink>
-              <FooterLink href="#">Returns & Exchanges</FooterLink>
-            </FooterLinkGroup>
-          </nav>
+          {/* Customer Care */}
+          <div>
+            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Customer Support
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faqs"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/wishlist"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Wishlist
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cart"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Shopping Cart
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal / Policy Links */}
+          <div>
+            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Policy & Legal
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-and-conditions"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/shipping-policy"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/refund-policy"
+                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                >
+                  Return & Refund Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="w-full bg-gray-100 dark:bg-gray-700 px-4 py-6 sm:flex sm:items-center sm:justify-between">
-          {companyInfo.copyright_text ? (
-            <div className="text-sm text-gray-500 dark:text-gray-300">
-              {companyInfo.copyright_text}
-            </div>
-          ) : (
-            <FooterCopyright
-              href="#"
-              by="SYSFOC e-commerce app"
-              year={new Date().getFullYear()}
-            />
-          )}
-          <nav className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center" aria-label="Social media links">
-            {socialIcons.length > 0 ? (
-              socialIcons.map((social) => {
+        {/* Bottom Bar: Copyright & Socials */}
+        <div className="border-t border-gray-200 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-500">
+            {companyInfo.copyright_text ||
+              `© ${currentYear} ${companyInfo.company_name || "Store"}. All Rights Reserved.`}
+          </p>
+
+          {/* Social Icons */}
+          {socialIcons.length > 0 && (
+            <div className="flex items-center gap-3">
+              {socialIcons.map((social) => {
                 const Icon = social.icon;
                 return (
                   <a
@@ -180,27 +298,17 @@ const Footerr = () => {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
-                    aria-label={`Visit our ${social.label} page`}
-                    style={{ minWidth: '44px', minHeight: '44px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                    aria-label={social.label}
+                    className="text-gray-500 hover:text-theme-primary transition-colors"
                   >
-                    <Icon className="h-5 w-5"/>
+                    <Icon className="w-4 h-4" />
                   </a>
                 );
-              })
-            ) : (
-              <>
-                <FooterIcon href="#" icon={BsFacebook} aria-label="Facebook" />
-                <FooterIcon href="#" icon={BsInstagram} aria-label="Instagram" />
-                <FooterIcon href="#" icon={BsTwitterX} aria-label="Twitter/X" />
-                <FooterIcon href="#" icon={BsGithub} aria-label="GitHub" />
-              </>
-            )}
-          </nav>
+              })}
+            </div>
+          )}
         </div>
       </div>
-    </Footer>
+    </footer>
   );
-};
-
-export default Footerr;
+}

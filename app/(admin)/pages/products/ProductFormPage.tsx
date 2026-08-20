@@ -42,6 +42,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    care_guide: "",
+    shipping_info: "",
+    return_info: "",
     brand: "",
     category_id: "",
     price: "",
@@ -109,6 +112,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       setFormData({
         name: product.name || "",
         description: product.description || "",
+        care_guide: product.care_guide || "",
+        shipping_info: product.shipping_info || "",
+        return_info: product.return_info || "",
         brand: product.brand || "",
         category_id: product.category_id?._id || product.category_id || "",
         price: product.pricing?.price?.toString() || "",
@@ -246,6 +252,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       const productData: any = {
         name: formData.name.trim(),
         description: formData.description,
+        care_guide: formData.care_guide?.trim() || undefined,
+        shipping_info: formData.shipping_info?.trim() || undefined,
+        return_info: formData.return_info?.trim() || undefined,
         brand: formData.brand?.trim() || undefined,
         category_id: formData.category_id,
         subcategory_ids: [],
@@ -424,6 +433,45 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
                 value={formData.description}
                 config={joditConfig}
                 onBlur={(newContent) => updateFormData({ description: newContent })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+                Care Guide
+              </label>
+              <textarea
+                value={formData.care_guide}
+                onChange={(e) => updateFormData({ care_guide: e.target.value })}
+                rows={3}
+                placeholder="e.g., Wipe with a soft dry cloth. Avoid harsh chemicals."
+                className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+                Shipping Info
+              </label>
+              <textarea
+                value={formData.shipping_info}
+                onChange={(e) => updateFormData({ shipping_info: e.target.value })}
+                rows={3}
+                placeholder="e.g., Free shipping on orders over Rs. 5000."
+                className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+                Return Info
+              </label>
+              <textarea
+                value={formData.return_info}
+                onChange={(e) => updateFormData({ return_info: e.target.value })}
+                rows={3}
+                placeholder="e.g., 7-day return policy for unused items."
+                className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-sm"
               />
             </div>
           </div>

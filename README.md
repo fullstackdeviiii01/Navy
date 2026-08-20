@@ -414,69 +414,49 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 ---
 
 ### Step 13: Simplify Product Detail Page
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Simplify the product detail page to show essential information only. Add sticky product bar at bottom.
 **Details:**
-- Simplify product detail layout:
-  - Product images (gallery/carousel)
-  - Product name + price
-  - Variant selector (if product has variants)
-  - Quantity selector
-  - Add to Cart button
-  - Short description
-- Product information tabs/sections:
-  - Description — product description text
-  - Specifications — admin-defined spec name/value pairs
-  - Care Guide — text field (admin provides per product)
-  - Shipping Info — text field (admin provides per product)
-  - Return Info — text field (admin provides per product)
-- Sticky product bar at bottom:
-  - Full-width horizontal bar that appears when user scrolls past product info
-  - Left side: variant selector + quantity + Add to Cart
-  - Right side: product price
-  - Always visible while scrolling through product page
-- Remove complex elements:
-  - Remove Buy Now button (use Add to Cart only)
-  - Remove social share button (can add later if needed)
-  - Remove complex badge display
-  - Simplify breadcrumbs
-- Update Product model: add care_guide, shipping_info, return_info text fields
+- ~~Simplify product detail layout~~ — Media gallery, name, PKR pricing, variant selector, quantity, Add to Cart, breadcrumbs
+- ~~Product information tabs/sections~~ — Description, Specifications/Attributes, Care Guide, Shipping Info, Return Info, Reviews
+- ~~Sticky product bar at bottom~~ — Created `StickyProductBar.tsx` with responsive thumbnail, variant badge, quantity, price, and Add to Cart trigger that appears when scrolled past the main purchase box
+- ~~Remove complex elements~~ — Deleted unused `BuyNowButton.tsx`, `ProductShareButton.tsx`, `ProductShareModal.tsx`, `AddToWishlistButton.tsx`, `SelectOptionsButton.tsx`, `VariantSelectionModal.tsx`
+- ~~Update Product model~~ — `care_guide`, `shipping_info`, and `return_info` fields in Schema, Types, and Admin product form
 **Files Affected:**
-- `app/(public)/pages/ProductDetailPage.tsx` (rewrite)
-- `app/components/product-detail/*` (simplify/rewrite)
+- `app/(public)/pages/ProductDetailPage.tsx` (updated with sticky bar & tab sections)
 - `app/components/product-detail/StickyProductBar.tsx` (new)
-- `app/models/Product/schema.ts` (add new fields)
-**Verification:** Product detail page shows all required info, sticky bar appears on scroll, all sections work
+- `app/components/product-detail/ProductTabs.tsx` (supports care guide, shipping, returns, specs)
+- `app/components/product-detail/BuyNowButton.tsx` (deleted)
+- `app/components/product-detail/ProductShareButton.tsx` (deleted)
+- `app/components/product-detail/ProductShareModal.tsx` (deleted)
+- `app/components/product-detail/AddToWishlistButton.tsx` (deleted)
+- `app/components/product-detail/SelectOptionsButton.tsx` (deleted)
+- `app/components/product-detail/VariantSelectionModal.tsx` (deleted)
+**Verification:** ✅ Build & TypeScript compile with 0 errors (`npx tsc --noEmit` passed), sticky bar appears on scroll, all sections work correctly
 
 ---
 
 ### Step 14: Update Header/Navigation
-**Status:** PENDING
+**Status:** ✅ DONE
 **Description:** Update the header to match the client's layout: center logo, navbar before logo, no background on navbar.
 **Details:**
-- Update Header component (`app/components/Header.tsx`):
-  - New layout order: [Navbar Links] [Logo (center)] [Cart/User icons]
-  - Navbar: simple text links with dropdowns for categories
-  - No background color on navbar — transparent/minimal
-  - Logo centered and prominent
-  - Remove top bar (phone number, promotional text)
-  - Keep: search, cart icon, user menu
-- Update footer:
-  - Simple footer with static page links
-  - Company info
-  - Social links
-  - Copyright
-  - Remove newsletter section (not required)
-- Remove Dark Mode toggle (not required)
-- Remove CategoryNavigation component (integrate into header nav)
-- Update mobile navigation to match
+- ~~Update Header component~~ — Rewritten `app/components/Header.tsx` with clean 3-part layout: Left [Nav links + Categories dropdown + Track order], Center [Prominent Logo + Name], Right [Search, Wishlist, Cart icon, User dropdown/sign-in]
+- ~~Remove top bar~~ — Phone number and promo text banner removed
+- ~~Remove background color on navbar~~ — Transparent/minimal clean aesthetic
+- ~~Update footer~~ — Simplified `app/components/Footerr.tsx` with 4-column static navigation, contact info, social links, and copyright
+- ~~Remove Dark Mode toggle & provider~~ — Deleted `Darkmode.jsx` & `DarkModeProvider.js`, removed from `ClientProviders.tsx`, `ConditionalLayout.jsx`, and `app/layout.tsx`
+- ~~Integrate CategoryNavigation~~ — Categories fetched dynamically inside Header with clean dropdown and mobile drawer accordion
+- ~~Update mobile navigation~~ — Responsive drawer menu with full search, navigation, category accordion, wishlist, track order, and auth actions
 **Files Affected:**
-- `app/components/Header.tsx` (rewrite)
-- `app/components/Footerr.tsx` (simplify)
-- `app/components/Darkmode.jsx` (remove)
-- `app/components/shared/CategoryNavigation.tsx` (remove or integrate)
-- `app/layout.tsx` (update providers — remove DarkMode)
-**Verification:** Header shows centered logo with nav links, no background on nav, footer has static links, mobile responsive
+- `app/components/Header.tsx` (rewritten)
+- `app/components/Footerr.tsx` (simplified)
+- `app/components/Darkmode.jsx` (deleted)
+- `app/context/DarkModeProvider.js` (deleted)
+- `app/components/shared/CategoryNavigation.tsx` (deleted — integrated into Header)
+- `app/ClientProviders.tsx` (removed DarkModeProvider)
+- `app/ConditionalLayout.jsx` (removed DarkModeProvider)
+- `app/layout.tsx` (clean styling)
+**Verification:** ✅ Build & TypeScript compile with 0 errors (`npx tsc --noEmit` passed), header is centered with clean nav, footer is simplified, mobile responsive
 
 ---
 
@@ -546,8 +526,8 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 | 10 | Keep & Adjust Coupon System | DONE |
 | 11 | Simplify Product Attributes | DONE |
 | 12 | Implement Track Order & Auto Confirmation | DONE |
-| 13 | Simplify Product Detail Page + Sticky Bar | PENDING |
-| 14 | Update Header/Navigation | PENDING |
+| 13 | Simplify Product Detail Page + Sticky Bar | DONE |
+| 14 | Update Header/Navigation | DONE |
 | 15 | Final Cleanup, Testing & Deployment | PENDING |
 
 ---

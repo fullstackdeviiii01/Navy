@@ -52,6 +52,9 @@ export interface VariantInventory {
 export interface IProductDocument extends Document {
   name: string;
   description: string;
+  care_guide?: string;
+  shipping_info?: string;
+  return_info?: string;
   brand?: string;
 
   category_id: mongoose.Types.ObjectId;

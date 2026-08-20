@@ -1,4 +1,3 @@
-// app/components/product-detail/ProductTabs.tsx
 import { useState } from "react";
 import ProductSpecs from "./ProductSpecs";
 import ProductReviewSection from "./ProductReviewSection";
@@ -8,23 +7,29 @@ interface ProductTabsProps {
   productId: string;
   description: string;
   specifications?: Map<string, string> | { [key: string]: string };
+  careGuide?: string;
+  shippingInfo?: string;
+  returnInfo?: string;
 }
 
 export default function ProductTabs({
   productId,
   description,
   specifications,
+  careGuide,
+  shippingInfo,
+  returnInfo,
 }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState<"description" | "specifications" | "reviews">("description");
+  const [activeTab, setActiveTab] = useState<string>("description");
 
-  const hasSpecifications =
-    specifications && Object.keys(specifications).length > 0;
+  const hasSpecifications = specifications && Object.keys(specifications).length > 0;
 
   const tabs = [
     { id: "description", label: "Description" },
-    ...(hasSpecifications
-      ? [{ id: "specifications", label: "Specifications" }]
-      : []),
+    ...(hasSpecifications ? [{ id: "specifications", label: "Specifications" }] : []),
+    ...(careGuide ? [{ id: "care-guide", label: "Care Guide" }] : []),
+    ...(shippingInfo ? [{ id: "shipping", label: "Shipping" }] : []),
+    ...(returnInfo ? [{ id: "returns", label: "Returns" }] : []),
     { id: "reviews", label: "Reviews" },
   ];
 
@@ -37,7 +42,7 @@ export default function ProductTabs({
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id)}
                   role="tab"
                   aria-selected={activeTab === tab.id}
                   aria-controls={`${tab.id}-panel`}
@@ -47,7 +52,7 @@ export default function ProductTabs({
                       ? "text-theme-text-primary-light dark:text-theme-text-primary-dark"
                       : "text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark"
                   }`}
-                  style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}
+                  style={{ minHeight: "44px", display: "inline-flex", alignItems: "center" }}
                 >
                   {tab.label}
                   {activeTab === tab.id && (
@@ -68,6 +73,30 @@ export default function ProductTabs({
             {activeTab === "specifications" && hasSpecifications && (
               <div role="tabpanel" id="specifications-panel" aria-labelledby="specifications-tab">
                 <ProductSpecs specifications={specifications} />
+              </div>
+            )}
+
+            {activeTab === "care-guide" && careGuide && (
+              <div role="tabpanel" id="care-guide-panel" aria-labelledby="care-guide-tab">
+                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <p className="whitespace-pre-wrap">{careGuide}</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "shipping" && shippingInfo && (
+              <div role="tabpanel" id="shipping-panel" aria-labelledby="shipping-tab">
+                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <p className="whitespace-pre-wrap">{shippingInfo}</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "returns" && returnInfo && (
+              <div role="tabpanel" id="returns-panel" aria-labelledby="returns-tab">
+                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <p className="whitespace-pre-wrap">{returnInfo}</p>
+                </div>
               </div>
             )}
 

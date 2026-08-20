@@ -13,9 +13,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata = {
-  title: "Ecommerce Auth",
-  description: "Minimal ecommerce authentication system",
-  generator: "v0.app",
+  title: "Ecommerce Store",
+  description: "Minimal ecommerce store",
 };
 
 export default async function RootLayout({ 
@@ -31,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${robotoMono.variable} bg-white dark:bg-gray-900 dark:text-gray-300 text-black transition-colors duration-300`}
+        className={`${inter.variable} ${robotoMono.variable} bg-white text-gray-900 antialiased`}
       >
         <ClientProviders>
           {!isAdminPage && <Header />}

@@ -1,23 +1,17 @@
-// // app/product/[productId]/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { productsApi } from "../../../lib/api/products";
-import ProductImages from "../../components/product-detail/ProductImages";
 import ProductInfo from "../../components/product-detail/ProductInfo";
 import ProductQuantity from "../../components/product-detail/ProductQuantity";
 import AddToCartButton from "../../components/product-detail/AddToCartButton";
 import ProductTabs from "../../components/product-detail/ProductTabs";
 import RelatedProducts from "../../components/product-detail/RelatedProducts";
 import ProductBreadcrumb from "../../components/product-detail/ProductBreadcrumb";
-import AddToWishlistButton from "../../components/product-detail/AddToWishlistButton";
-import BuyNowButton from "../../components/product-detail/BuyNowButton";
-import VariantSelectionModal from "../../components/product-detail/VariantSelectionModal";
-import SelectOptionsButton from "../../components/product-detail/SelectOptionsButton";
-import ProductShareButton from "../../components/product-detail/ProductShareButton";
 import Loader from "../../components/shared/Loader";
 import ProductMediaCarousel from "../../components/product/ProductMediaCarousel";
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
+import StickyProductBar from "../../components/product-detail/StickyProductBar";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface Props {
@@ -42,17 +36,15 @@ interface ProductVariant {
 }
 
 export default function ProductDetailPageContent({ productId }: Props) {
-    const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [variantModalOpen, setVariantModalOpen] = useState(false);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-    null,
-  );
-  const [pendingAction, setPendingAction] = useState<
-    "add-to-cart" | "buy-now" | null
-  >(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [isStickyVisible, setIsStickyVisible] = useState(false);
+
+  const mainActionRef = useRef<HTMLDivElement>(null);
+  const variantSelectorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (productId) {
@@ -65,6 +57,26 @@ export default function ProductDetailPageContent({ productId }: Props) {
       fetchRelatedProducts();
     }
   }, [product]);
+
+  // Observer to toggle sticky product bar when user scrolls past the main buy box
+  useEffect(() => {
+    const target = mainActionRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When main action box is visible at top of viewport, sticky bar should be hidden
+        setIsStickyVisible(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [product, loading]);
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -92,11 +104,17 @@ export default function ProductDetailPageContent({ productId }: Props) {
     }
   };
 
-  const handleVariantSelection = (variant: ProductVariant) => {
-  setSelectedVariant(variant);
-  setVariantModalOpen(false);
-  setPendingAction(null);
-};
+  const handleVariantSelection = (selection: any, variant: ProductVariant | null) => {
+    setSelectedVariant(variant);
+  };
+
+  const handleScrollToOptions = () => {
+    if (variantSelectorRef.current) {
+      variantSelectorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (mainActionRef.current) {
+      mainActionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   if (loading) {
     return (
@@ -131,6 +149,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
   }
 
   const breadcrumbItems = [
+    { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
     {
       label: product.category_id?.name || "Category",
@@ -142,39 +161,35 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const isVariableProduct =
     product.hasVariants && product.variants && product.variants.length > 0;
   const isOutOfStock = isVariableProduct
-    ? false // Don't check stock before variant is selected
+    ? false
     : product.inventory?.stock_status === "out_of_stock";
 
-  // Get current price based on variant or base product
   const currentPrice = selectedVariant?.price || product.pricing?.price || 0;
   const currentComparePrice =
     selectedVariant?.compareAtPrice || product.pricing?.compare_at_price;
-  // const currentStock =
-  //   selectedVariant?.stockQuantity || product.inventory?.stock_quantity || 0;
 
   const currentStock = isVariableProduct
     ? (product.variants as ProductVariant[]).reduce(
         (sum, v) => sum + (v.stockQuantity || 0),
-        0,
+        0
       )
     : product.inventory?.stock_quantity || 0;
 
   const totalPrice = currentPrice * quantity;
+  const variantOutOfStock = selectedVariant ? selectedVariant.stockQuantity === 0 : false;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-theme-bg-dark">
+    <div className="min-h-screen bg-white dark:bg-theme-bg-dark pb-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb navigation">
           <ProductBreadcrumb items={breadcrumbItems} />
         </nav>
 
-        {/* MOBILE LAYOUT: Images → Info → Actions → Tabs (Vertical Stack) */}
-        {/* DESKTOP LAYOUT: Images/Tabs (Left) | Info/Actions (Right Sticky) */}
+        {/* 2-column grid: images left, info right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          {/* LEFT COLUMN (Desktop) / TOP SECTION (Mobile) - Product Images */}
+          {/* LEFT COLUMN: Product media + Desktop tabs */}
           <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
-            {/* Product Images/Media Carousel */}
             <section aria-label={`${product.name} product media gallery`}>
               <ProductMediaCarousel
                 media={[
@@ -200,7 +215,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
               />
             </section>
 
-            {/* Product Tabs - Hidden on Mobile, shown on Desktop below images */}
+            {/* Desktop tabs */}
             <section
               className="hidden lg:block"
               aria-label="Product details and specifications"
@@ -208,34 +223,37 @@ export default function ProductDetailPageContent({ productId }: Props) {
               <ProductTabs
                 productId={product._id}
                 description={product.description}
-                specifications={product.specifications}
+                specifications={product.specifications || product.attributes}
+                careGuide={product.care_guide}
+                shippingInfo={product.shipping_info}
+                returnInfo={product.return_info}
               />
             </section>
           </div>
 
-          {/* RIGHT COLUMN (Desktop) / MIDDLE SECTION (Mobile) - Product Info & Actions */}
+          {/* RIGHT COLUMN: Sticky info + actions */}
           <div className="lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-2 scrollbar-hide [&::-webkit-scrollbar]:hidden">
             <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-              {/* Product Info */}
               <section aria-label={`${product.name} product information`}>
                 <ProductInfo product={product} />
               </section>
 
-              {/* Direct On-Page Variant Swatch Selector */}
+              {/* Variant selector */}
               {isVariableProduct && (
-                <div className="py-3 border-y border-theme-border-light dark:border-theme-border-dark">
+                <div
+                  ref={variantSelectorRef}
+                  className="py-3 border-y border-theme-border-light dark:border-theme-border-dark"
+                >
                   <ProductVariantSelector
                     variants={product.variants || []}
                     variantAttributes={product.variantOptions || []}
-                    onSelectionChange={(selection, variant) => {
-                      setSelectedVariant(variant);
-                    }}
+                    onSelectionChange={handleVariantSelection}
                     selectedVariant={selectedVariant}
                   />
                 </div>
               )}
 
-              {/* Selected Variant Price Display */}
+              {/* Selected variant price */}
               {selectedVariant && (
                 <div
                   className="p-2.5 sm:p-3 md:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
@@ -269,88 +287,74 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 </div>
               )}
 
-              {/* Quantity Selector */}
-              {!isOutOfStock && !isVariableProduct && (
-                <div
-                  className="space-y-1.5 sm:space-y-2"
-                  role="region"
-                  aria-label="Quantity and pricing"
-                >
-                  <ProductQuantity
-                    quantity={quantity}
-                    onQuantityChange={setQuantity}
-                    max={currentStock}
-                  />
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                      Total Price:
-                    </span>
-                    <span
-                      className="text-base sm:text-lg md:text-xl font-bold text-theme-primary"
-                      aria-label={`Total price: ${formatPrice(totalPrice)}`}
-                    >
-                      {formatPrice(totalPrice)}
-                    </span>
+              {/* Main action block: Quantity + Price + Add to Cart */}
+              <div ref={mainActionRef} className="space-y-3">
+                {/* Quantity + total (non-variable or variant selected) */}
+                {!isOutOfStock && (!isVariableProduct || selectedVariant) && (
+                  <div
+                    className="space-y-1.5 sm:space-y-2"
+                    role="region"
+                    aria-label="Quantity and pricing"
+                  >
+                    <ProductQuantity
+                      quantity={quantity}
+                      onQuantityChange={setQuantity}
+                      max={currentStock}
+                    />
+                    <div className="flex items-center justify-between text-xs sm:text-sm">
+                      <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                        Total Price:
+                      </span>
+                      <span
+                        className="text-base sm:text-lg md:text-xl font-bold text-theme-primary"
+                        aria-label={`Total price: ${formatPrice(totalPrice)}`}
+                      >
+                        {formatPrice(totalPrice)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Stock Warning */}
-              {selectedVariant && selectedVariant.stockQuantity === 0 && (
+                {/* Stock warning for selected variant */}
+                {variantOutOfStock && (
+                  <div
+                    className="p-2 sm:p-2.5 md:p-3 w-fit bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <p className="text-xs sm:text-sm text-red-800 dark:text-red-200 font-medium">
+                      This variant is currently out of stock
+                    </p>
+                  </div>
+                )}
+
+                {/* Add to Cart or Select Options prompt */}
                 <div
-                  className="p-2 sm:p-2.5 md:p-3 w-fit bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
-                  role="alert"
-                  aria-live="polite"
+                  className="pt-2"
+                  role="region"
+                  aria-label="Product actions"
                 >
-                  <p className="text-xs sm:text-sm text-red-800 dark:text-red-200 font-medium">
-                    This variant is currently out of stock
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons Container - Sticky on Mobile */}
-              <div
-                className="sticky bottom-0 bg-theme-surface-light dark:bg-theme-bg-dark border-t border-theme-border-light dark:border-theme-border-dark pt-2.5 sm:pt-3 md:pt-4 pb-2.5 sm:pb-3 md:pb-4 -mx-3 px-3 sm:-mx-4 sm:px-4 md:-mx-6 md:px-6 lg:mx-0 lg:px-0 lg:border-0 lg:pb-0 lg:pt-4 z-10"
-                role="region"
-                aria-label="Product actions"
-              >
-                {isVariableProduct && !selectedVariant ? (
-                  <SelectOptionsButton
-                    onClick={() => setVariantModalOpen(true)}
-                    disabled={isOutOfStock}
-                  />
-                ) : (
-                  <div className="flex gap-2 sm:gap-2.5 md:gap-3">
+                  {isVariableProduct && !selectedVariant ? (
+                    <div className="text-center p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                      <p className="text-sm sm:text-base font-medium text-amber-800 dark:text-amber-200">
+                        Please select your options above to continue
+                      </p>
+                    </div>
+                  ) : (
                     <AddToCartButton
                       productId={product._id}
                       quantity={quantity}
                       variantId={selectedVariant?._id}
-                      disabled={
-                        isOutOfStock ||
-                        (selectedVariant && selectedVariant.stockQuantity === 0)
-                      }
+                      disabled={isOutOfStock || variantOutOfStock || false}
                     />
-                    <BuyNowButton
-                      productId={product._id}
-                      quantity={quantity}
-                      variantId={selectedVariant?._id}
-                      disabled={
-                        isOutOfStock ||
-                        (selectedVariant && selectedVariant.stockQuantity === 0)
-                      }
-                    />
-                    <div className="hidden lg:block">
-                      <AddToWishlistButton productId={product._id} />
-                    </div>
-                    <ProductShareButton product={product} />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Product Tabs - Visible on Mobile Only (below actions) */}
+        {/* Mobile tabs */}
         <section
           className="lg:hidden mb-8 sm:mb-10 md:mb-12"
           aria-label="Product details and specifications"
@@ -358,11 +362,14 @@ export default function ProductDetailPageContent({ productId }: Props) {
           <ProductTabs
             productId={product._id}
             description={product.description}
-            specifications={product.specifications}
+            specifications={product.specifications || product.attributes}
+            careGuide={product.care_guide}
+            shippingInfo={product.shipping_info}
+            returnInfo={product.return_info}
           />
         </section>
 
-        {/* Related Products - Full Width */}
+        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section aria-label="Related products you may like">
             <RelatedProducts products={relatedProducts} />
@@ -370,19 +377,20 @@ export default function ProductDetailPageContent({ productId }: Props) {
         )}
       </div>
 
-      {/* Variant Selection Modal */}
-      {isVariableProduct && (
-        <VariantSelectionModal
-          isOpen={variantModalOpen}
-          onClose={() => {
-            setVariantModalOpen(false);
-            setPendingAction(null);
-          }}
-          onConfirm={handleVariantSelection}
-          product={product}
-          pendingAction={pendingAction}
-        />
-      )}
+      {/* Full-width Sticky Product Bar */}
+      <StickyProductBar
+        product={product}
+        selectedVariant={selectedVariant}
+        quantity={quantity}
+        onQuantityChange={setQuantity}
+        isOutOfStock={isOutOfStock}
+        variantOutOfStock={variantOutOfStock}
+        isVariableProduct={isVariableProduct}
+        currentStock={currentStock}
+        totalPrice={totalPrice}
+        isVisible={isStickyVisible}
+        onScrollToOptions={handleScrollToOptions}
+      />
     </div>
   );
 }
