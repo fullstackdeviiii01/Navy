@@ -31,10 +31,6 @@ interface Product {
     slug: string;
   };
   status: string;
-  badges?: {
-    is_featured?: boolean;
-    is_on_sale?: boolean;
-  };
   images: any[];
   created_at: string;
 }

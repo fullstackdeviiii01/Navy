@@ -88,6 +88,14 @@ export interface IProductDocument extends Document {
     is_primary: boolean;
     sort_order: number;
   }[];
+  videos: {
+    url: string;
+    thumbnail?: string;
+    is_primary: boolean;
+    sort_order: number;
+    duration?: number;
+    size?: number;
+  }[];
 
   shipping: {
     weight?: number;
@@ -109,10 +117,6 @@ export interface IProductDocument extends Document {
   attributes: Map<string, any>;
 
   status: "draft" | "active" | "archived" | "out_of_stock";
-  badges: {
-    is_featured: boolean;
-    is_on_sale: boolean;
-  };
   is_visible: boolean;
   visibility: "public" | "hidden" | "members_only";
 

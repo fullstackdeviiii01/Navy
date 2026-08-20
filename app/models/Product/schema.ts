@@ -133,11 +133,14 @@ const ProductImageSchema = new Schema(
   { _id: false },
 );
 
-// Product Badges Schema
-const ProductBadgesSchema = new Schema(
+const ProductVideoSchema = new Schema(
   {
-    is_featured: { type: Boolean, default: false, index: true },
-    is_on_sale: { type: Boolean, default: false, index: true },
+    url: { type: String, required: true },
+    thumbnail: { type: String },
+    is_primary: { type: Boolean, default: false },
+    sort_order: { type: Number, default: 0 },
+    duration: { type: Number },
+    size: { type: Number },
   },
   { _id: false },
 );
@@ -317,6 +320,10 @@ export const ProductSchema = new Schema<IProductDocument>(
       type: [ProductImageSchema],
       default: [],
     },
+    videos: {
+      type: [ProductVideoSchema],
+      default: [],
+    },
 
     // ========== Shipping ==========
     shipping: {
@@ -342,10 +349,6 @@ export const ProductSchema = new Schema<IProductDocument>(
       enum: ["draft", "active", "archived", "out_of_stock"],
       default: "draft",
       index: true,
-    },
-    badges: {
-      type: ProductBadgesSchema,
-      required: true,
     },
     is_visible: {
       type: Boolean,
@@ -429,10 +432,6 @@ ProductSchema.index({ "variantInventory.totalStock": 1 });
 // Status & visibility indexes
 ProductSchema.index({ created_at: -1 });
 ProductSchema.index({ status: 1, is_visible: 1 });
-
-// Badge indexes
-ProductSchema.index({ "badges.is_featured": 1 });
-ProductSchema.index({ "badges.is_on_sale": 1 });
 
 // Variant indexes
 ProductSchema.index({ "variants.sku": 1 });

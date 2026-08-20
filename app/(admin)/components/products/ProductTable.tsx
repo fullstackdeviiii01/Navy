@@ -24,10 +24,6 @@ interface Product {
     slug: string;
   };
   status: string;
-  badges?: {
-    is_featured?: boolean;
-    is_on_sale?: boolean;
-  };
   images: any[];
   created_at: string;
   hasVariants?: boolean;
@@ -189,18 +185,7 @@ export default function ProductTable({
                         <div className="text-sm font-medium max-w-[180px] truncate text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {product.name}
                         </div>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {product.badges?.is_featured && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                              Featured
-                            </span>
-                          )}
-                          {product.badges?.is_on_sale && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              Sale
-                            </span>
-                          )}
-                        </div>
+
                       </div>
                     </div>
                   </td>

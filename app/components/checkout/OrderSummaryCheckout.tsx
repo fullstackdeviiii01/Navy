@@ -1,7 +1,7 @@
-// // app/components/checkout/OrderSummaryCheckout.tsx - UPDATED WITH STRIPE TAX
+// // app/components/checkout/OrderSummaryCheckout.tsx
 "use client";
 
-import { Tag, Truck, User, Loader2 } from "lucide-react";
+import { Tag, Truck, User } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface OrderSummaryCheckoutProps {
@@ -15,9 +15,6 @@ interface OrderSummaryCheckoutProps {
   billingAddress: any;
   onPlaceOrder: () => void;
   processing: boolean;
-  taxAmount?: number;       // NEW: Stripe Tax amount
-  taxLoading?: boolean;     // NEW: Tax calculation loading state
-  displayTotal?: number;    // NEW: Total including dynamic tax
 }
 
 export default function OrderSummaryCheckout({
@@ -27,13 +24,7 @@ export default function OrderSummaryCheckout({
   billingAddress,
   onPlaceOrder,
   processing,
-  taxAmount = 0,
-  taxLoading = false,
-  displayTotal,
 }: OrderSummaryCheckoutProps) {
-  
-  // Use dynamic displayTotal if provided, otherwise fall back to cart.total
-  const finalTotal = displayTotal !== undefined ? displayTotal : cart?.total || 0;
 
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -99,25 +90,6 @@ export default function OrderSummaryCheckout({
           </div>
         )}
 
-        {/* Tax — Dynamic Stripe Tax */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Tax</span>
-          <span className="font-semibold text-gray-900 dark:text-white">
-            {taxLoading ? (
-              <span className="flex items-center gap-1 text-gray-400 dark:text-gray-500">
-                <Loader2 className="w-3 h-3 animate-spin" />
-                Calculating...
-              </span>
-            ) : taxAmount > 0 ? (
-              formatPrice(taxAmount)
-            ) : (
-              <span className="text-gray-400 dark:text-gray-500 text-xs">
-                —
-              </span>
-            )}
-          </span>
-        </div>
-
         {/* Shipping */}
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
@@ -140,20 +112,14 @@ export default function OrderSummaryCheckout({
               Total
             </span>
             <span className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {taxLoading ? (
-                <span className="flex items-center gap-1">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                </span>
-              ) : (
-                formatPrice(finalTotal)
-              )}
+              {formatPrice(cart?.total || 0)}
             </span>
           </div>
 
           {/* Desktop Place Order Button */}
           <button
             onClick={onPlaceOrder}
-            disabled={processing || taxLoading}
+            disabled={processing}
             className="w-full px-4 sm:px-5 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hidden lg:block active:scale-[0.98]"
           >
             {processing ? "Processing..." : "Continue to Payment"}

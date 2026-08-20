@@ -36,11 +36,6 @@ export default function CheckoutPage() {
   const [selectedShippingService, setSelectedShippingService] = useState<string | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
 
-  // Stripe Tax state
-  const [taxAmount, setTaxAmount] = useState<number>(0);
-  const [taxCalculationId, setTaxCalculationId] = useState<string | null>(null);
-  const [taxLoading, setTaxLoading] = useState(false);
-
   // Ban state
   const [isEmailBanned, setIsEmailBanned] = useState(false);
 
@@ -54,13 +49,6 @@ export default function CheckoutPage() {
       }
     }
   }, [userLoading, dbUser]);
-
-  // Recalculate tax whenever shipping address changes
-  useEffect(() => {
-    if (shippingAddress && shippingAddress.country) {
-      calculateTax(shippingAddress);
-    }
-  }, [shippingAddress]);
 
   const fetchCart = async () => {
     try {
@@ -121,35 +109,6 @@ export default function CheckoutPage() {
       }
     }
   };
-
-  // Calculate Stripe Tax based on shipping address
-  const calculateTax = useCallback(async (address: any) => {
-    if (!address || !address.country) return;
-
-    setTaxLoading(true);
-    try {
-      const response = await fetch("/api/cart/calculate-tax", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            authUser ? await authUser.getIdToken() : ""
-          }`,
-        },
-        body: JSON.stringify({ shipping_address: address }),
-      });
-
-      const data = await response.json();
-      setTaxAmount(data.tax_amount || 0);
-      setTaxCalculationId(data.tax_calculation_id || null);
-    } catch (err) {
-      console.error("Tax calculation failed:", err);
-      setTaxAmount(0);
-      setTaxCalculationId(null);
-    } finally {
-      setTaxLoading(false);
-    }
-  }, [authUser]);
 
   const handleShippingSelect = async (serviceId: string) => {
     setShippingLoading(true);
@@ -264,8 +223,6 @@ export default function CheckoutPage() {
       billing_address: sameAsShipping ? shippingAddress : billingAddress,
       same_as_shipping: sameAsShipping,
       customer_notes: customerNotes,
-      tax_calculation_id: taxCalculationId,
-      tax_amount: taxAmount,
       ...(isGuestCheckout && { guest_info: guestInfo }),
     };
 
@@ -278,7 +235,6 @@ export default function CheckoutPage() {
             checkoutData={checkoutData}
             onBack={() => setShowPayment(false)}
             onSuccess={handlePaymentSuccess}
-            taxAmount={taxAmount}
           />
         </main>
       </div>
@@ -287,7 +243,7 @@ export default function CheckoutPage() {
 
   // Calculate display total including tax
   const displayTotal = cart
-    ? cart.subtotal - cart.discount_amount + taxAmount + cart.shipping_cost
+    ? cart.subtotal - cart.discount_amount + cart.shipping_cost
     : 0;
 
   return (
@@ -386,8 +342,6 @@ export default function CheckoutPage() {
                 billingAddress={sameAsShipping ? shippingAddress : billingAddress}
                 onPlaceOrder={handleContinueToPayment}
                 processing={false}
-                taxAmount={taxAmount}
-                taxLoading={taxLoading}
                 displayTotal={displayTotal}
               />
             </div>

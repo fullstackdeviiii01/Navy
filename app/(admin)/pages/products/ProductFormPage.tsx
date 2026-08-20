@@ -7,6 +7,7 @@ import { categoriesApi } from "../../../../lib/api/categories";
 import { productsApi } from "../../../../lib/api/products";
 import ProductAttributeFields from "../../components/products/ProductAttributeFields";
 import ProductFormImages from "../../components/products/form/ProductFormImages";
+import ProductFormVideos from "../../components/products/form/ProductFormVideos";
 import VariantConfiguration from "../../components/products/form/VariantConfiguration";
 import dynamic from "next/dynamic";
 import Loader from "../../../components/shared/Loader";
@@ -31,6 +32,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadingVideos, setUploadingVideos] = useState(false);
+  const [videos, setVideos] = useState<any[]>([]);
+  const [newVideos, setNewVideos] = useState<File[]>([]);
   const [productAttributes, setProductAttributes] = useState<{ [key: string]: any }>({});
 
   const [hasVariants, setHasVariants] = useState(false);
@@ -48,8 +52,6 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
     stock_quantity: "",
     low_stock_threshold: "10",
     status: "draft",
-    is_featured: false,
-    is_on_sale: false,
   });
 
   const [images, setImages] = useState<any[]>([]);
@@ -117,11 +119,10 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
         stock_quantity: product.inventory?.stock_quantity?.toString() || "",
         low_stock_threshold: product.inventory?.low_stock_threshold?.toString() || "10",
         status: product.status || "draft",
-        is_featured: product.badges?.is_featured || false,
-        is_on_sale: product.badges?.is_on_sale || false,
       });
 
       setImages(product.images || []);
+      setVideos(product.videos || []);
       setProductAttributes(product.attributes || {});
       setHasVariants(product.hasVariants || false);
       setVariantOptions(product.variantOptions || []);
@@ -154,6 +155,31 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       setUploadingImages(false);
     }
     return uploadedImages;
+  };
+
+  const uploadVideos = async (): Promise<any[]> => {
+    if (newVideos.length === 0) return [];
+    setUploadingVideos(true);
+    const uploadedVideos: any[] = [];
+    try {
+      for (const file of newVideos) {
+        const data = await productsApi.uploadVideo(file);
+        uploadedVideos.push({
+          url: data.url,
+          thumbnail: data.thumbnail,
+          is_primary: videos.length === 0 && uploadedVideos.length === 0,
+          sort_order: videos.length + uploadedVideos.length,
+          duration: data.duration,
+          size: data.compressedSize,
+        });
+      }
+    } catch (error) {
+      console.error("Video upload failed:", error);
+      alert("Some videos failed to upload");
+    } finally {
+      setUploadingVideos(false);
+    }
+    return uploadedVideos;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,7 +232,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
 
     try {
       const uploadedImages = await uploadImages();
+      const uploadedVideos = await uploadVideos();
       const allImages = [...images, ...uploadedImages];
+      const allVideos = [...videos, ...uploadedVideos];
 
       const baseSlug = formData.name
         .toLowerCase()
@@ -230,13 +258,10 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
           meta_description: "",
         },
         status: formData.status,
-        badges: {
-          is_featured: formData.is_featured,
-          is_on_sale: formData.is_on_sale,
-        },
         is_visible: true,
         visibility: "public",
         images: allImages,
+        videos: allVideos,
         attributes: productAttributes,
         hasVariants,
       };
@@ -346,6 +371,17 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
               }
               setNewImages(newImages.filter((_, i) => i !== index));
             }}
+          />
+        </div>
+
+        {/* Videos */}
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
+          <ProductFormVideos
+            videos={videos}
+            newVideos={newVideos}
+            onVideoSelect={(files) => setNewVideos([...newVideos, ...files])}
+            onRemoveExisting={(index) => setVideos(videos.filter((_, i) => i !== index))}
+            onRemoveNew={(index) => setNewVideos(newVideos.filter((_, i) => i !== index))}
           />
         </div>
 
@@ -565,53 +601,26 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
           </div>
         )}
 
-        {/* Status & Visibility */}
+        {/* Status */}
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6 space-y-4">
           <h4 className="text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark border-b border-theme-border-light dark:border-theme-border-dark pb-2">
-            Status & Visibility
+            Status
           </h4>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-                Status *
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => updateFormData({ status: e.target.value })}
-                required
-                className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary"
-              >
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.is_featured}
-                onChange={(e) => updateFormData({ is_featured: e.target.checked })}
-                className="rounded"
-              />
-              <span className="text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Featured
-              </span>
+          <div>
+            <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+              Status *
             </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.is_on_sale}
-                onChange={(e) => updateFormData({ is_on_sale: e.target.checked })}
-                className="rounded"
-              />
-              <span className="text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                On Sale
-              </span>
-            </label>
+            <select
+              value={formData.status}
+              onChange={(e) => updateFormData({ status: e.target.value })}
+              required
+              className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary"
+            >
+              <option value="draft">Draft</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
+            </select>
           </div>
         </div>
 
@@ -626,14 +635,16 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
           </button>
           <button
             type="submit"
-            disabled={loading || uploadingImages}
+            disabled={loading || uploadingImages || uploadingVideos}
             className="px-6 py-2 bg-theme-primary text-white rounded-lg hover:bg-theme-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading
               ? mode === "edit" ? "Updating..." : "Creating..."
               : uploadingImages
                 ? "Uploading Images..."
-                : mode === "edit" ? "Update Product" : "Create Product"}
+                : uploadingVideos
+                  ? "Uploading Videos..."
+                  : mode === "edit" ? "Update Product" : "Create Product"}
           </button>
         </div>
       </form>

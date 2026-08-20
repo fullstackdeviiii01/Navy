@@ -1,4 +1,4 @@
-// // app/components/checkout/PaymentSection.tsx - UPDATED WITH STRIPE TAX
+// // app/components/checkout/PaymentSection.tsx
 "use client";
 
 import { useState } from "react";
@@ -14,7 +14,6 @@ interface PaymentSectionProps {
   checkoutData: any;
   onBack: () => void;
   onSuccess: (orderId: string) => void;
-  taxAmount?: number; // NEW: Stripe Tax amount
 }
 
 export default function PaymentSection({
@@ -22,16 +21,10 @@ export default function PaymentSection({
   checkoutData,
   onBack,
   onSuccess,
-  taxAmount = 0,
 }: PaymentSectionProps) {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState(false);
-  
-  // Calculate total including tax for Stripe payments
-  const stripeTotal = cart?.total
-    ? cart.total - (cart.tax_amount || 0) + taxAmount
-    : cart?.total || 0;
 
   const createOrder = async (paymentMethod: string, paymentData?: any) => {
     setProcessing(true);
@@ -45,9 +38,6 @@ export default function PaymentSection({
 
       if (paymentMethod === "stripe" && paymentData?.payment_intent_id) {
         orderData.payment_intent_id = paymentData.payment_intent_id;
-        // NEW: Include tax data for Stripe orders
-        orderData.tax_calculation_id = checkoutData.tax_calculation_id || null;
-        orderData.tax_amount = taxAmount || 0;
       } else if (paymentMethod === "paypal" && paymentData?.paypal_order_id) {
         orderData.paypal_order_id = paymentData.paypal_order_id;
       }
@@ -96,18 +86,9 @@ export default function PaymentSection({
             <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white block">
               Amount to Pay
             </span>
-            {/* NEW: Show tax breakdown if tax exists and method is stripe */}
-            {selectedMethod === "stripe" && taxAmount > 0 && (
-              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-                Includes {formatPrice(taxAmount)} tax
-              </span>
-            )}
           </div>
           <span className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
-            {/* Show tax-inclusive total for Stripe, regular total for others */}
-            {selectedMethod === "stripe"
-              ? formatPrice(stripeTotal)
-              : formatPrice(cart?.total || 0)}
+            {formatPrice(cart?.total || 0)}
           </span>
         </div>
 
@@ -132,9 +113,8 @@ export default function PaymentSection({
             {selectedMethod === "stripe" && (
               <StripePaymentForm
                 checkoutData={checkoutData}
-                amount={stripeTotal} // NEW: use tax-inclusive amount for Stripe
+                amount={cart?.total || 0}
                 currency={cart.currency || "USD"}
-                taxCalculationId={checkoutData.tax_calculation_id} // NEW: pass tax calc ID
                 onSuccess={handleStripeSuccess}
                 onError={handlePaymentError}
               />

@@ -41,13 +41,6 @@ export async function GET(request: NextRequest) {
       query["inventory.stock_status"] = { $ne: "out_of_stock" };
     }
 
-    // Badge filters
-    const featured = url.searchParams.get("featured") === "true";
-    const sale = url.searchParams.get("sale") === "true";
-
-    if (featured) query["badges.is_featured"] = true;
-    if (sale) query["badges.is_on_sale"] = true;
-
     // Search filter
     if (search) {
       query.$or = [

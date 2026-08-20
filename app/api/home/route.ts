@@ -24,22 +24,9 @@ export async function GET(request: NextRequest) {
         created_at: { $gte: thirtyDaysAgo },
       })
       .select(
-        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
+        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ created_at: -1 })
-      .limit(12)
-      .lean();
-
-    const featuredProducts = await (Product as any)
-      .find({
-        status: "active",
-        is_visible: true,
-        "badges.is_featured": true,
-      })
-      .select(
-        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
-      )
-      .sort({ rating_average: -1, purchase_count: -1 })
       .limit(12)
       .lean();
 
@@ -50,31 +37,16 @@ export async function GET(request: NextRequest) {
         purchase_count: { $gt: 0 },
       })
       .select(
-        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
+        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory",
       )
       .sort({ purchase_count: -1 })
-      .limit(12)
-      .lean();
-
-    const onSaleProducts = await (Product as any)
-      .find({
-        status: "active",
-        is_visible: true,
-        "badges.is_on_sale": true,
-      })
-      .select(
-        "name description pricing images rating_average rating_count inventory badges attributes hasVariants variants variantOptions variantPricing variantInventory",
-      )
-      .sort({ created_at: -1 })
       .limit(12)
       .lean();
 
     return NextResponse.json({
       categories,
       newArrivals,
-      featuredProducts,
       bestSellers,
-      onSaleProducts,
     });
   } catch (error) {
     console.error("Home data fetch failed:", error);

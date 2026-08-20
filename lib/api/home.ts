@@ -28,10 +28,7 @@ export const getHomeDataSSR = async () => {
     return {
       categories: [],
       newArrivals: [],
-      featuredProducts: [],
       bestSellers: [],
-      trendingProducts: [],
-      onSaleProducts: [],
     };
   }
 };

@@ -24,10 +24,6 @@ interface ProductInfoProps {
       stock_status: string;
       stock_quantity: number;
     };
-    badges?: {
-      is_featured?: boolean;
-      is_on_sale?: boolean;
-    };
     hasVariants?: boolean;
   };
 }
@@ -81,27 +77,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         {product.name}
       </h1>
 
-      {/* Rating & Badges */}
+      {/* Rating */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-4">
         <Rating rating={product.rating_average} count={product.rating_count} size="sm" />
-        
-        {(product.badges?.is_featured || product.badges?.is_on_sale) && (
-          <>
-            <span className="hidden sm:inline text-theme-text-muted-light dark:text-theme-text-muted-dark" aria-hidden="true">|</span>
-            <div className="flex gap-1.5 sm:gap-2 flex-wrap" role="list" aria-label="Product badges">
-              {product.badges?.is_featured && (
-                <span className="inline-flex items-center px-2 py-0.5 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 text-[10px] sm:text-xs font-semibold rounded-full" role="listitem">
-                  Featured
-                </span>
-              )}
-              {product.badges?.is_on_sale && (
-                <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-[10px] sm:text-xs font-semibold rounded-full" role="listitem">
-                  Sale
-                </span>
-              )}
-            </div>
-          </>
-        )}
       </div>
 
       {/* Price Section */}

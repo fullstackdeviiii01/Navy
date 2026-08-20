@@ -249,27 +249,6 @@ export default function ProductDetailPage({
         </div>
       )}
 
-      {/* Badges */}
-      {product.badges && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-4 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Badges
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {product.badges.is_featured && (
-              <span className="inline-flex px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                Featured
-              </span>
-            )}
-            {product.badges.is_on_sale && (
-              <span className="inline-flex px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
-                On Sale
-              </span>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* SEO */}
       {product.seo && (
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg p-6">

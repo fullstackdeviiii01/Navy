@@ -20,10 +20,7 @@ export default async function HomePage() {
   const {
     categories,
     newArrivals,
-    featuredProducts,
     bestSellers,
-    trendingProducts,
-    onSaleProducts,
   } = await getHomeDataSSR();
   
   // Get component visibility settings
@@ -47,16 +44,6 @@ export default async function HomePage() {
       />
     ) : null,
     features_section: <FeaturesSection key="features_section" />,
-    featured_products: featuredProducts.length > 0 ? (
-      <ProductSection
-        key="featured_products"
-        title="Featured Products"
-        subtitle="Hand-picked favorites just for you"
-        products={featuredProducts}
-        viewAllLink="/products?featured=true"
-        bgClass="bg-gray-50 dark:bg-gray-800/50"
-      />
-    ) : null,
     best_sellers: bestSellers.length > 0 ? (
       <ProductSection
         key="best_sellers"
@@ -64,26 +51,6 @@ export default async function HomePage() {
         subtitle="Most loved by our customers"
         products={bestSellers}
         viewAllLink="/products?sort=popular"
-        bgClass="bg-white dark:bg-gray-900"
-      />
-    ) : null,
-    trending_products: trendingProducts.length > 0 ? (
-      <ProductSection
-        key="trending_products"
-        title="Trending Now"
-        subtitle="What's hot right now"
-        products={trendingProducts}
-        viewAllLink="/products?trending=true"
-        bgClass="bg-gray-50 dark:bg-gray-800/50"
-      />
-    ) : null,
-    on_sale_products: onSaleProducts.length > 0 ? (
-      <ProductSection
-        key="on_sale_products"
-        title="Special Offers"
-        subtitle="Limited time deals you don't want to miss"
-        products={onSaleProducts}
-        viewAllLink="/products?sale=true"
         bgClass="bg-white dark:bg-gray-900"
       />
     ) : null,

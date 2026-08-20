@@ -22,10 +22,7 @@ interface Product {
     stock_status: string;
     stock_quantity: number;
   };
-  badges?: {
-    is_featured?: boolean;
-    is_on_sale?: boolean;
-  };
+
 }
 
 interface ProductSectionProps {
