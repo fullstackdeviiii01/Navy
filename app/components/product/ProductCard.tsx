@@ -27,6 +27,7 @@ interface ProductCardProps {
     inventory?: {
       stock_status: string;
     };
+    purchase_count?: number;
     category_id?: {
       name?: string;
       slug?: string;
@@ -100,6 +101,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             {variantCount} OPTIONS
           </span>
         )}
+
+        {/* Sold Count Badge (for bestsellers) */}
+        {Boolean(product.purchase_count && product.purchase_count > 0) && (
+          <span className="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-sm text-white text-[9px] font-mono tracking-wider px-1.5 py-0.5">
+            {product.purchase_count} SOLD
+          </span>
+        )}
       </div>
 
       {/* Product Details */}
@@ -117,20 +125,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </div>
 
-        <div className="flex items-center gap-2 mt-1.5">
-          <span className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {hasVariants && variantCount > 1 && (
-              <span className="font-normal text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mr-0.5">
-                From{" "}
+        <div className="flex items-center justify-between gap-2 mt-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              {hasVariants && variantCount > 1 && (
+                <span className="font-normal text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mr-0.5">
+                  From{" "}
+                </span>
+              )}
+              {formatPrice(price)}
+            </span>
+            {comparePrice && comparePrice > price && (
+              <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
+                {formatPrice(comparePrice)}
               </span>
             )}
-            {formatPrice(price)}
-          </span>
-          {comparePrice && comparePrice > price && (
-            <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
-              {formatPrice(comparePrice)}
-            </span>
-          )}
+          </div>
         </div>
       </div>
     </Link>

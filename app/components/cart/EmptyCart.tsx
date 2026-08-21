@@ -1,34 +1,36 @@
 // app/components/cart/EmptyCart.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Package, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Package, ChevronsRight } from "lucide-react";
 
 export default function EmptyCart() {
-  const router = useRouter();
-
   return (
-    <div className="min-h-[70vh] bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center py-16 px-4">
-      <div className="text-center max-w-md w-full border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-12">
-        <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
-          YOUR BASKET
+    <div className="border border-dashed border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-12 sm:p-16 text-center space-y-6">
+      <div className="inline-flex items-center justify-center w-16 h-16 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/50 dark:bg-theme-card-dark/30 text-theme-hover-light dark:text-theme-hover-dark">
+        <Package className="w-8 h-8" strokeWidth={1.5} />
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
+          BAG IS EMPTY
         </p>
-
-        <h1 className="text-3xl sm:text-4xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-4">
-          Your basket is empty
-        </h1>
-
-        <p className="text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-8 leading-relaxed">
-          Discover our handcrafted, heirloom-quality solid timber lighting and candlelight pieces.
+        <h2 className="text-2xl sm:text-3xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          Your cart contains no pieces
+        </h2>
+        <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto leading-relaxed">
+          Discover our handcrafted luminaires, solid wood table lamps, and architectural lighting fixtures.
         </p>
+      </div>
 
-        <button
-          onClick={() => router.push("/products")}
-          className="inline-flex items-center gap-3 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300 group"
+      <div className="pt-2">
+        <Link
+          href="/products"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors group"
         >
-          <span>EXPLORE THE COLLECTION</span>
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-        </button>
+          <span>CONTINUE EXPLORING</span>
+          <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );

@@ -14,35 +14,31 @@ export async function GET(request: NextRequest) {
       .limit(12)
       .lean();
 
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const productFields =
+      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo";
 
+    // New Arrivals (most recently created active products)
     const newArrivals = await (Product as any)
       .find({
         status: "active",
         is_visible: true,
-        created_at: { $gte: thirtyDaysAgo },
       })
-      .select(
-        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id",
-      )
+      .select(productFields)
       .populate("category_id", "name slug")
       .sort({ created_at: -1 })
-      .limit(12)
+      .limit(8)
       .lean();
 
+    // Best Sellers (highest sales volume active products)
     const bestSellers = await (Product as any)
       .find({
         status: "active",
         is_visible: true,
-        purchase_count: { $gt: 0 },
       })
-      .select(
-        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id",
-      )
+      .select(productFields)
       .populate("category_id", "name slug")
-      .sort({ purchase_count: -1 })
-      .limit(12)
+      .sort({ purchase_count: -1, created_at: -1 })
+      .limit(8)
       .lean();
 
     return NextResponse.json({

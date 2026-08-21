@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import ClientProviders from "./ClientProviders";
 import Header from "./components/Header";
 import Footerr from "./components/Footerr";
+import WhatsAppButton from "./components/shared/WhatsAppButton";
 import { Analytics } from "@vercel/analytics/next";
 import { ReactNode } from "react";
 
@@ -13,8 +14,8 @@ const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata = {
-  title: "Ecommerce Store",
-  description: "Minimal ecommerce store",
+  title: "Lamp & Glow Atelier | Handcrafted Architectural Lighting",
+  description: "Artisanal solid-wood lighting and bespoke architectural luminaires.",
 };
 
 export default async function RootLayout({ 
@@ -35,6 +36,7 @@ export default async function RootLayout({
         <ClientProviders>
           {!isAdminPage && <Header />}
           {children}
+          {!isAdminPage && <WhatsAppButton />}
           <Analytics />
           {!isAdminPage && <Footerr />}
         </ClientProviders>

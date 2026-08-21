@@ -2,17 +2,19 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { categoriesApi } from "../../../lib/api/categories";
 import CategoryGrid from "../../components/category/CategoryGrid";
 import CategorySearchBar from "../../components/category/CategorySearchBar";
-import { FaSearch } from "react-icons/fa";
 import Loader from "../../components/shared/Loader";
+import { LayoutGrid, List, ChevronRight, Search } from "lucide-react";
 
 function CategoriesPageContent() {
   const [allCategories, setAllCategories] = useState<any[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     fetchData();
@@ -26,9 +28,9 @@ function CategoriesPageContent() {
     setLoading(true);
     try {
       const categoriesData = await categoriesApi.getAll(false);
-      setAllCategories(categoriesData.categories);
+      setAllCategories(categoriesData.categories || []);
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      console.error("Failed to fetch categories:", error);
     } finally {
       setLoading(false);
     }
@@ -50,50 +52,118 @@ function CategoriesPageContent() {
     setFilteredCategories(filtered);
   };
 
-  const handleSearch = (search: string) => {
-    setSearchQuery(search);
-  };
+  const totalPieces = allCategories.reduce(
+    (acc, cat) => acc + (cat.product_count || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
-      {/* Editorial Hero Header */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8 sm:pt-16 sm:pb-12 border-b border-theme-border-light dark:border-theme-border-dark">
-        <div className="max-w-3xl">
-          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
-            COLLECTIONS
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-4 leading-tight">
-            The <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">categories</span>
-          </h1>
-          <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed mb-8">
-            Explore our solid-wood lighting and decor collections, sculpted and finished entirely by hand for distinctive living spaces.
-          </p>
+      {/* Top Breadcrumb & Hero Header */}
+      <header className="border-b border-theme-border-light dark:border-theme-border-dark py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] mb-8" aria-label="Breadcrumb">
+            <Link
+              href="/"
+              className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
+            >
+              HOME
+            </Link>
+            <ChevronRight className="w-3 h-3 text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+            <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
+              COLLECTIONS
+            </span>
+          </nav>
 
-          {/* Search Bar */}
-          <CategorySearchBar
-            value={searchQuery}
-            onSearch={handleSearch}
-            placeholder="Search categories by name or description..."
-          />
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
+                  ARCHITECTURAL ARCHETYPES
+                </span>
+                <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono">
+                  • {allCategories.length} CATEGORIES ({totalPieces} PIECES)
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
+                Curated <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Categories</span>
+              </h1>
+              <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-3 leading-relaxed max-w-2xl">
+                Explore our distinct luminaire families, from monumental arc floor lamps and hand-carved timber table lights to authentic Louis Comfort Tiffany stained glass works.
+              </p>
+            </div>
+
+            {/* View Switcher Controls */}
+            <div className="flex items-center gap-2 self-start lg:self-end">
+              <div className="inline-flex border border-theme-border-light dark:border-theme-border-dark p-1 bg-theme-surface-light dark:bg-theme-surface-dark">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] font-medium transition-colors ${
+                    viewMode === "grid"
+                      ? "bg-theme-primary text-theme-btn-text"
+                      : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light"
+                  }`}
+                  aria-label="Mosaic Gallery Grid View"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">MOSAIC</span>
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] font-medium transition-colors ${
+                    viewMode === "list"
+                      ? "bg-theme-primary text-theme-btn-text"
+                      : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light"
+                  }`}
+                  aria-label="Minimal Index List View"
+                >
+                  <List className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">INDEX</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Search & Category Pills */}
+          <div className="mt-8 pt-8 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <CategorySearchBar
+              value={searchQuery}
+              onSearch={setSearchQuery}
+              placeholder="Search collections (e.g. table lamp, floor lamp, tiffany)..."
+            />
+
+            {/* Quick Jumps */}
+            {!loading && allCategories.length > 0 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-hide text-xs">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark whitespace-nowrap mr-1">
+                  JUMP TO:
+                </span>
+                {allCategories.map((cat) => (
+                  <Link
+                    key={cat._id}
+                    href={`/products?category=${cat.slug}`}
+                    className="px-3 py-1.5 border border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-[0.15em] text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:border-theme-hover-light hover:text-theme-text-primary-light whitespace-nowrap transition-colors bg-theme-surface-light dark:bg-theme-surface-dark"
+                  >
+                    {cat.name} ({cat.product_count})
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Results Summary */}
+      {/* Main Content Showcase */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        {/* Results Counter */}
         <div className="mb-8 flex items-center justify-between">
           <div role="status" aria-live="polite">
-            {loading ? (
-              <div className="relative h-6">
-                <Loader size="sm" />
-              </div>
-            ) : (
-              <p className="text-xs sm:text-sm uppercase tracking-[0.15em] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-medium">
-                <span>{filteredCategories.length}</span>{" "}
-                {filteredCategories.length === 1 ? "CATEGORY" : "CATEGORIES"}
+            {!loading && (
+              <p className="text-xs uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono">
+                SHOWING {filteredCategories.length} OF {allCategories.length} COLLECTIONS
                 {searchQuery && (
-                  <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                    {" "}
+                  <span className="text-theme-hover-light dark:text-theme-hover-dark font-sans ml-2">
                     MATCHING &ldquo;{searchQuery}&rdquo;
                   </span>
                 )}
@@ -104,36 +174,40 @@ function CategoriesPageContent() {
           {searchQuery && !loading && (
             <button
               onClick={() => setSearchQuery("")}
-              className="text-xs uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors px-2 py-1"
-              aria-label="Clear search filters"
+              className="text-xs uppercase tracking-[0.18em] font-medium text-theme-hover-light dark:text-theme-hover-dark hover:underline"
             >
-              Clear filters
+              CLEAR SEARCH
             </button>
           )}
         </div>
 
-        {/* Categories Grid */}
-        <CategoryGrid categories={filteredCategories} loading={loading} />
+        {/* Categories Presentation */}
+        <CategoryGrid
+          categories={filteredCategories}
+          loading={loading}
+          viewMode={viewMode}
+        />
 
-        {/* Empty State for Search */}
+        {/* Empty Search Result Fallback */}
         {!loading && filteredCategories.length === 0 && searchQuery && (
-          <div className="text-center py-16 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 max-w-lg mx-auto" role="status">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark mb-4" aria-hidden="true">
-              <FaSearch className="text-xl text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+          <div className="text-center py-20 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 max-w-lg mx-auto space-y-4" role="status">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark">
+              <Search className="w-6 h-6 text-theme-text-muted-light dark:text-theme-text-muted-dark" />
             </div>
-            <h2 className="font-serif italic text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-              No categories found
+            <h2 className="font-serif italic text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              No matching collections
             </h2>
-            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6 max-w-md mx-auto">
-              We couldn&apos;t find any categories matching &ldquo;{searchQuery}&rdquo;. Try adjusting your search query.
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto leading-relaxed">
+              We couldn&apos;t find any collections matching &ldquo;{searchQuery}&rdquo;. Try another search term or explore all pieces.
             </p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="inline-flex items-center px-6 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
-              aria-label="View all categories"
-            >
-              VIEW ALL CATEGORIES
-            </button>
+            <div className="pt-2">
+              <button
+                onClick={() => setSearchQuery("")}
+                className="px-6 py-3 bg-theme-primary hover:bg-theme-hover-light text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
+              >
+                SHOW ALL COLLECTIONS
+              </button>
+            </div>
           </div>
         )}
       </main>
@@ -146,12 +220,7 @@ export default function CategoriesPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center">
-          <div className="text-center">
-            <Loader />
-            <p className="text-xs uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-4">
-              Loading categories...
-            </p>
-          </div>
+          <Loader text="LOADING COLLECTIONS..." />
         </div>
       }
     >

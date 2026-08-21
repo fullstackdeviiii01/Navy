@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaSearch, FaTimes } from "react-icons/fa";
+import { Search, X } from "lucide-react";
 
 interface CategorySearchBarProps {
   value: string;
@@ -13,7 +13,7 @@ interface CategorySearchBarProps {
 export default function CategorySearchBar({
   value,
   onSearch,
-  placeholder = "Search by category name and description",
+  placeholder = "Search collections by name or description...",
 }: CategorySearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
@@ -33,32 +33,29 @@ export default function CategorySearchBar({
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-      <div className="relative">
+      <div className="relative flex items-center">
+        <Search className="absolute left-4 w-4 h-4 text-theme-text-muted-light dark:text-theme-text-muted-dark pointer-events-none" />
+
         <input
           type="text"
           aria-label="Search categories by name or description"
           value={localValue}
-          onChange={(e) => setLocalValue(e.target.value)}
+          onChange={(e) => {
+            setLocalValue(e.target.value);
+            onSearch(e.target.value);
+          }}
           placeholder={placeholder}
-          className="w-full px-4 py-3.5 pl-11 pr-11 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark placeholder:text-theme-text-muted-light dark:placeholder:text-theme-text-muted-dark text-xs sm:text-sm transition-colors"
+          className="w-full pl-11 pr-11 py-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark placeholder:text-theme-text-muted-light dark:placeholder:text-theme-text-muted-dark text-xs sm:text-sm tracking-wide transition-colors"
         />
-
-        <button
-          type="submit"
-          aria-label="Search categories"
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
-        >
-          <FaSearch className="text-sm"/>
-        </button>
 
         {localValue && (
           <button
             type="button"
             onClick={handleClear}
-            aria-label="Clear search"
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
+            aria-label="Clear search query"
+            className="absolute right-3.5 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
           >
-            <FaTimes className="text-sm"/>
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>

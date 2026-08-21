@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ChevronsRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -42,7 +42,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-3 px-7 sm:px-9 py-3.5 sm:py-4 border border-[#A8752B] bg-[#241910]/80 hover:bg-[#A8752B] text-[#F3EBDC] hover:text-white hover:border-[#A8752B] text-xs sm:text-sm font-medium tracking-[0.2em] uppercase transition-all duration-300 group backdrop-blur-sm shadow-xl active:scale-95"
             >
               <span>SHOP THE COLLECTIONS</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-[#D4A359] group-hover:text-white" />
+              <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-[#D4A359] group-hover:text-white" />
             </Link>
 
             {/* Subtle Scroll Cue */}

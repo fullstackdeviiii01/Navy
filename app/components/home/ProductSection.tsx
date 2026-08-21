@@ -1,10 +1,10 @@
 // app/components/home/ProductSection.tsx
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import ProductCard from "../product/ProductCard";
-import { ArrowRight } from "lucide-react";
+import { ChevronsRight } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -13,12 +13,13 @@ interface Product {
   pricing: {
     price: number;
     compare_at_price?: number;
-    currency: string;
+    currency?: string;
   };
   images: { url: string; alt_text?: string }[];
-  rating_average: number;
-  rating_count: number;
-  inventory: {
+  rating_average?: number;
+  rating_count?: number;
+  purchase_count?: number;
+  inventory?: {
     stock_status: string;
     stock_quantity: number;
   };
@@ -42,26 +43,29 @@ export default function ProductSection({
   viewAllLink,
   bgClass = "bg-theme-bg-light dark:bg-theme-bg-dark",
 }: ProductSectionProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
 
   if (!products || products.length === 0) return null;
 
-  const mobileDisplayProducts = showAll ? products : products.slice(0, 4);
+  // By default, display 2 rows (8 products on desktop / 4 on mobile)
+  const displayedProducts = showAll ? products : products.slice(0, 8);
 
   return (
-    <section className={`py-16 sm:py-20 md:py-24 ${bgClass}`}>
+    <section className={`py-16 sm:py-20 md:py-24 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-14">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-12">
           <div>
             {label && (
-              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
+              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
                 {label}
               </p>
             )}
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-              {title}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
+              {title.split(" ")[0]}{" "}
+              <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
+                {title.split(" ").slice(1).join(" ")}
+              </span>
             </h2>
             {subtitle && (
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-2">
@@ -73,48 +77,31 @@ export default function ProductSection({
             href={viewAllLink}
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
           >
-            SHOP ALL PIECES
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+            VIEW ALL PIECES
+            <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
           </Link>
         </div>
 
-        {/* MOBILE: Grid Layout (2 columns) */}
-        <div className="md:hidden">
-          <div className="grid grid-cols-2 gap-4">
-            {mobileDisplayProducts.map((product) => (
-              <div key={product._id}>
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
+        {/* 2-Row Responsive Grid: 4 cols on desktop (8 items), 3 on tablet, 2 on mobile */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          {displayedProducts.map((product) => (
+            <div key={product._id} className="h-full">
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
 
-          {products.length > 4 && !showAll && (
+        {/* Action Button if more products exist */}
+        {products.length > 8 && (
+          <div className="mt-10 sm:mt-12 text-center">
             <button
-              onClick={() => setShowAll(true)}
-              className="w-full mt-6 px-4 py-3 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark font-medium text-xs tracking-[0.15em] uppercase transition-colors"
+              onClick={() => setShowAll(!showAll)}
+              className="px-8 py-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.2em] font-medium transition-colors"
             >
-              Show More ({products.length - 4} more)
+              {showAll ? "SHOW LESS" : `SHOW ALL (${products.length - 8} MORE)`}
             </button>
-          )}
-        </div>
-
-        {/* DESKTOP: Horizontal scroll */}
-        <div className="hidden md:block relative">
-          <div
-            ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {products.map((product) => (
-              <div
-                key={product._id}
-                className="flex-none w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)]"
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

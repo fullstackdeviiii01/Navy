@@ -2,7 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronsRight, Lamp } from "lucide-react";
 
 interface Category {
   _id: string;
@@ -10,90 +11,102 @@ interface Category {
   slug: string;
   image_url?: string;
   product_count: number;
+  description?: string;
 }
 
 interface CategoryCarouselProps {
   categories: Category[];
 }
 
-// Short editorial blurbs keyed by index — fallback for any category
-const blurbs = [
-  "The oldest light, held in turned solid wood.",
-  "The first hello your home gives.",
-  "Sculptural presence for the corner that anchors the room.",
-  "Where warmth meets the craft of the hand.",
-  "A quiet glow shaped from the grain.",
-  "Form follows light, finished by hand.",
-  "Statement pieces carved for living spaces.",
-  "Illumination drawn from natural texture.",
-];
-
 export default function CategoryCarousel({ categories }: CategoryCarouselProps) {
   if (!categories || categories.length === 0) return null;
 
+  // Curate top 4 featured categories for the homepage
+  const featuredCategories = categories.slice(0, 4);
+
   return (
-    <section className="bg-theme-card-light/40 dark:bg-theme-card-dark/30 border-y border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark py-16 sm:py-20 md:py-24 transition-colors">
+    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-16 sm:py-20 md:py-24 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 sm:mb-16">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-8 border-b border-theme-border-light dark:border-theme-border-dark mb-10 sm:mb-12">
           <div>
-            <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
-              SHOP BY CATEGORY
+            <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+              CURATED COLLECTIONS
             </p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-              Shop the full collection
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Shop by <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Category</span>
             </h2>
           </div>
+
           <Link
             href="/categories"
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
           >
-            ALL PIECES
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+            VIEW ALL CATEGORIES
+            <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
           </Link>
         </div>
 
-        {/* Category Grid */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-theme-border-light dark:border-theme-border-dark"
-        >
-          {categories.map((category, index) => {
-            const num = String(index + 1).padStart(2, "0");
-            const shortName = category.name.split(" ")[0].toUpperCase();
+        {/* 4 Curated Category Cards Grid (4 columns desktop, 2 columns tablet/mobile) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 lg:gap-8">
+          {featuredCategories.map((category, index) => {
+            const indexFormatted = String(index + 1).padStart(2, "0");
 
             return (
-              <div
+              <Link
                 key={category._id}
-                className="relative border-b sm:border-r border-theme-border-light dark:border-theme-border-dark px-6 sm:px-8 py-10 sm:py-14 group overflow-hidden hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40 transition-colors"
+                href={`/products?category=${category.slug}`}
+                className="group relative flex flex-col bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark transition-all duration-300 overflow-hidden"
               >
-                {/* Large Watermark Number */}
-                <span
-                  className="absolute -top-4 right-2 text-[120px] sm:text-[140px] font-serif italic leading-none text-theme-text-primary-light/[0.05] dark:text-theme-text-primary-dark/[0.05] select-none pointer-events-none"
-                  aria-hidden="true"
-                >
-                  {num}
-                </span>
+                {/* Image Container with Editorial Aspect Ratio (4:5) */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-theme-card-light dark:bg-theme-card-dark border-b border-theme-border-light dark:border-theme-border-dark">
+                  {category.image_url ? (
+                    <>
+                      <Image
+                        src={category.image_url}
+                        alt={category.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                      {/* Gradient for text contrast */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-60 transition-opacity" />
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-theme-card-light/40 to-theme-card-light dark:from-theme-card-dark/40 dark:to-theme-card-dark relative overflow-hidden">
+                      <div className="w-12 h-12 border border-theme-border-light dark:border-theme-border-dark flex items-center justify-center mb-3 bg-theme-surface-light dark:bg-theme-surface-dark group-hover:border-theme-hover-light transition-colors">
+                        <Lamp className="w-6 h-6 text-theme-hover-light dark:text-theme-hover-dark" strokeWidth={1.5} />
+                      </div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                        HANDCRAFTED
+                      </span>
+                    </div>
+                  )}
 
-                {/* Content */}
-                <div className="relative z-10">
-                  <span className="text-xs font-medium tracking-widest text-theme-hover-light dark:text-theme-hover-dark mb-4 block">
-                    {num}
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors mb-2 leading-snug">
-                    {category.name}
-                  </h3>
-                  <p className="text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6 max-w-xs leading-relaxed">
-                    {blurbs[index % blurbs.length]}
-                  </p>
-                  <Link
-                    href={`/products?category=${category.slug}`}
-                    className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] uppercase text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors group/link"
-                  >
-                    SHOP {shortName}
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1 duration-300" />
-                  </Link>
+                  {/* Top Meta Badges */}
+                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+                    <span className="px-2 py-0.5 bg-black/75 backdrop-blur-xs text-white font-mono text-[10px] uppercase tracking-[0.15em]">
+                      N° {indexFormatted}
+                    </span>
+                    <span className="px-2 py-0.5 bg-black/75 backdrop-blur-xs text-white font-mono text-[10px] uppercase tracking-[0.15em]">
+                      {category.product_count} {category.product_count === 1 ? "PIECE" : "PIECES"}
+                    </span>
+                  </div>
+
+                  {/* Floating Title on Image Bottom */}
+                  <div className="absolute bottom-4 left-4 right-4 z-10">
+                    <h3 className="text-xl sm:text-2xl font-serif text-white group-hover:text-theme-hover-light transition-colors leading-tight">
+                      {category.name}
+                    </h3>
+                  </div>
                 </div>
-              </div>
+
+                {/* Bottom Footer Strip */}
+                <div className="p-4 bg-theme-surface-light dark:bg-theme-surface-dark flex items-center justify-between text-xs uppercase tracking-[0.2em] font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors">
+                  <span>DISCOVER</span>
+                  <ChevronsRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5 duration-300" />
+                </div>
+              </Link>
             );
           })}
         </div>
