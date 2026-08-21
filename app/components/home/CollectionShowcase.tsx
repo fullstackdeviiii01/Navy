@@ -7,7 +7,7 @@ import { ChevronsRight, Sparkles, Compass, Layers } from "lucide-react";
 
 export default function CollectionShowcase() {
   return (
-    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-16 sm:py-20 md:py-24 transition-colors overflow-hidden">
+    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           

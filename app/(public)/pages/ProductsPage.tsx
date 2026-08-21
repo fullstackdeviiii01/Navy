@@ -54,12 +54,20 @@ function ProductsPageContent() {
     clearFilters,
   } = useProductFilters();
 
-  // Update URL when productsPerPage changes
-  useEffect(() => {
+  const handleProductsPerPageChange = (newPerPage: number) => {
+    setProductsPerPage(newPerPage);
     const params = new URLSearchParams(searchParams.toString());
-    params.set("perPage", productsPerPage.toString());
+    params.set("perPage", newPerPage.toString());
     router.push(`/products?${params.toString()}`, { scroll: false });
-  }, [productsPerPage, router, searchParams]);
+  };
+
+  // Sync state if perPage in URL changes externally
+  useEffect(() => {
+    const urlPerPage = searchParams.get("perPage");
+    if (urlPerPage && parseInt(urlPerPage) !== productsPerPage) {
+      setProductsPerPage(parseInt(urlPerPage));
+    }
+  }, [searchParams]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -254,7 +262,7 @@ function ProductsPageContent() {
               <div className="flex items-center gap-6">
                 <ProductsPerPageSelector
                   value={productsPerPage}
-                  onChange={setProductsPerPage}
+                  onChange={handleProductsPerPageChange}
                 />
                 <ProductSort sortBy={filters.sortBy} onSortChange={setSortBy} />
               </div>

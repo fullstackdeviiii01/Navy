@@ -25,7 +25,7 @@ export default function CategoryCarousel({ categories }: CategoryCarouselProps) 
   const featuredCategories = categories.slice(0, 4);
 
   return (
-    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-16 sm:py-20 md:py-24 transition-colors">
+    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-8 border-b border-theme-border-light dark:border-theme-border-dark mb-10 sm:mb-12">

@@ -51,7 +51,7 @@ export default function ProductSection({
   const displayedProducts = showAll ? products : products.slice(0, 8);
 
   return (
-    <section className={`py-16 sm:py-20 md:py-24 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
+    <section className={`py-8 sm:py-10 md:py-12 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-12">

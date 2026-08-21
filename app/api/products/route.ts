@@ -41,14 +41,21 @@ export async function GET(request: NextRequest) {
       query["inventory.stock_status"] = { $ne: "out_of_stock" };
     }
 
+    const titleOnly = url.searchParams.get("titleOnly") === "true";
+
     // Search filter
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-        { "inventory.sku": { $regex: search, $options: "i" } },
-        { brand: { $regex: search, $options: "i" } },
-      ];
+      const cleanSearch = search.trim();
+      if (titleOnly) {
+        query.name = { $regex: cleanSearch, $options: "i" };
+      } else {
+        query.$or = [
+          { name: { $regex: cleanSearch, $options: "i" } },
+          { "inventory.sku": { $regex: cleanSearch, $options: "i" } },
+          { brand: { $regex: cleanSearch, $options: "i" } },
+          { description: { $regex: cleanSearch, $options: "i" } },
+        ];
+      }
     }
 
     const skip = (page - 1) * limit;

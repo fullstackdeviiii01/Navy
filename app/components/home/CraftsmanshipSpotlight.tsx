@@ -108,7 +108,7 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
   ];
 
   return (
-    <section className="bg-theme-card-light/50 dark:bg-theme-card-dark/40 border-y border-theme-border-light dark:border-theme-border-dark py-16 sm:py-20 md:py-24 transition-colors">
+    <section className="bg-theme-card-light/50 dark:bg-theme-card-dark/40 border-y border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
           {/* Left Editorial Narrative Column (5 Cols) */}
