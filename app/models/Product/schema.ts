@@ -118,6 +118,14 @@ const VariantOptionSchema = new Schema<VariantOption>(
       type: Number,
       default: 0,
     },
+    colorHexCodes: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    colorImages: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
   },
   { _id: false },
 );

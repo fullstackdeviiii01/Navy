@@ -39,34 +39,43 @@ export default function OrderSummaryCheckout({
       {/* Items Preview */}
       <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark">
         <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-          {cart.items.map((item: any) => (
-            <div key={item._id} className="flex gap-3">
-              <div className="flex-shrink-0 w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark relative overflow-hidden">
-                {item.product_id?.images?.[0]?.url && (
-                  <Image
-                    src={item.product_id.images[0].url}
-                    alt={item.product_id.name}
-                    fill
-                    className="object-cover"
-                    sizes="56px"
-                  />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
-                  {item.product_id?.name}
-                </p>
-                <div className="flex items-baseline justify-between mt-1 gap-2">
-                  <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                    Qty: {item.quantity}
+          {cart.items.map((item: any) => {
+            const matchedVariant = item.variant_id && item.product_id?.variants?.find((v: any) => v._id === item.variant_id);
+            const itemImageUrl = matchedVariant?.imageUrl || item.product_id?.images?.[0]?.url;
+
+            return (
+              <div key={item._id} className="flex gap-3">
+                <div className="flex-shrink-0 w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark relative overflow-hidden">
+                  {itemImageUrl ? (
+                    <Image
+                      src={itemImageUrl}
+                      alt={item.product_id?.name || "Product"}
+                      fill
+                      className="object-cover"
+                      sizes="56px"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[9px] text-theme-text-muted-light">
+                      No Img
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                    {item.product_id?.name}
                   </p>
-                  <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {formatPrice(item.price_at_addition * item.quantity)}
-                  </p>
+                  <div className="flex items-baseline justify-between mt-1 gap-2">
+                    <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                      Qty: {item.quantity}
+                    </p>
+                    <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      {formatPrice(item.price_at_addition * item.quantity)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

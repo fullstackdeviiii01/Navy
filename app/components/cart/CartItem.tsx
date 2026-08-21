@@ -58,12 +58,16 @@ export default function CartItem({
   const isOutOfStock = availableStock === 0;
   const isLowStock = availableStock > 0 && availableStock <= 5;
 
-  const hasImages = item.product_id.images && item.product_id.images.length > 0;
+  const matchedVariant = item.variant_id
+    ? item.product_id.variants?.find((v: any) => v._id === item.variant_id)
+    : null;
+  const variantImageUrl = (matchedVariant as any)?.imageUrl;
+  const primaryImage = variantImageUrl ? { url: variantImageUrl } : item.product_id.images?.[0];
+  const hasImages = Boolean(primaryImage || (item.product_id.images && item.product_id.images.length > 0));
   const hasVideos = item.product_id.videos && item.product_id.videos.length > 0;
   const primaryVideo =
     item.product_id.videos?.find((v) => v.is_primary) ||
     item.product_id.videos?.[0];
-  const primaryImage = item.product_id.images?.[0];
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) return;

@@ -60,7 +60,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const newCategoryId = body.category_id?.toString();
 
     body.updated_by = adminUser._id;
-    Object.assign(product, body);
+    product.set(body);
+    product.markModified("variantOptions");
+    product.markModified("variants");
+    product.markModified("images");
+    product.markModified("videos");
     await product.save();
 
     // Update product counts if category changed

@@ -42,6 +42,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (productId) {
@@ -81,8 +82,17 @@ export default function ProductDetailPageContent({ productId }: Props) {
     }
   };
 
-  const handleVariantSelection = (selection: any, variant: ProductVariant | null) => {
+  const handleVariantSelection = (
+    selection: any,
+    variant: ProductVariant | null,
+    previewImg?: string
+  ) => {
     setSelectedVariant(variant);
+    if (previewImg) {
+      setPreviewImageUrl(previewImg);
+    } else if (variant?.imageUrl) {
+      setPreviewImageUrl(variant.imageUrl);
+    }
   };
 
   if (loading) {
@@ -158,28 +168,95 @@ export default function ProductDetailPageContent({ productId }: Props) {
           {/* LEFT COLUMN: Product media + Desktop tabs */}
           <div className="flex flex-col gap-2 sm:gap-3">
             <section aria-label={`${product.name} product media gallery`}>
-              <ProductMediaCarousel
-                media={[
-                  ...(selectedVariant?.imageUrl
-                    ? [{ type: "image" as const, url: selectedVariant.imageUrl, alt_text: `${product.name} selected variant image` }]
-                    : []),
-                  ...(product.images || []).map((img: any) => ({
-                    type: "image" as const,
-                    url: img.url,
-                    alt_text: img.alt_text || `${product.name} product image`,
-                  })),
-                  ...(product.videos || []).map((video: any) => ({
-                    type: "video" as const,
-                    url: video.url,
-                    thumbnail: video.thumbnail,
-                  })),
-                ]}
-                productName={product.name}
-                autoPlay={false}
-                showThumbnails={true}
-                variant="detail"
-                activeVariantImageUrl={selectedVariant?.imageUrl}
-              />
+              {(() => {
+                const activePreviewUrl = selectedVariant?.imageUrl || previewImageUrl || undefined;
+
+                // Collect all color finish images
+                const allColorImages: string[] = [];
+                const colorOpt = product.variantOptions?.find(
+                  (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
+                );
+                if (colorOpt?.colorImages) {
+                  Object.values(colorOpt.colorImages).forEach((val: any) => {
+                    if (Array.isArray(val)) {
+                      val.forEach((url) => {
+                        if (url && typeof url === "string" && !allColorImages.includes(url)) {
+                          allColorImages.push(url);
+                        }
+                      });
+                    }
+                  });
+                }
+                // Also check variants for images
+                if (product.variants && Array.isArray(product.variants)) {
+                  product.variants.forEach((v: any) => {
+                    if (v.imageUrl && !allColorImages.includes(v.imageUrl)) {
+                      allColorImages.push(v.imageUrl);
+                    }
+                  });
+                }
+
+                // Build complete deduplicated media list
+                const mediaItems: Array<{ type: "image" | "video"; url: string; alt_text?: string; thumbnail?: string }> = [];
+                const seenUrls = new Set<string>();
+
+                // 1. If an active color/variant image is chosen, put it first
+                if (activePreviewUrl) {
+                  mediaItems.push({
+                    type: "image",
+                    url: activePreviewUrl,
+                    alt_text: `${product.name} selected finish`,
+                  });
+                  seenUrls.add(activePreviewUrl);
+                }
+
+                // 2. Top-level product images (if user added them)
+                (product.images || []).forEach((img: any) => {
+                  if (img.url && !seenUrls.has(img.url)) {
+                    mediaItems.push({
+                      type: "image",
+                      url: img.url,
+                      alt_text: img.alt_text || `${product.name} product photo`,
+                    });
+                    seenUrls.add(img.url);
+                  }
+                });
+
+                // 3. All color finish photos
+                allColorImages.forEach((cUrl) => {
+                  if (cUrl && !seenUrls.has(cUrl)) {
+                    mediaItems.push({
+                      type: "image",
+                      url: cUrl,
+                      alt_text: `${product.name} finish photo`,
+                    });
+                    seenUrls.add(cUrl);
+                  }
+                });
+
+                // 4. Product videos
+                (product.videos || []).forEach((video: any) => {
+                  if (video.url && !seenUrls.has(video.url)) {
+                    mediaItems.push({
+                      type: "video",
+                      url: video.url,
+                      thumbnail: video.thumbnail,
+                    });
+                    seenUrls.add(video.url);
+                  }
+                });
+
+                return (
+                  <ProductMediaCarousel
+                    media={mediaItems}
+                    productName={product.name}
+                    autoPlay={false}
+                    showThumbnails={true}
+                    variant="detail"
+                    activeVariantImageUrl={activePreviewUrl}
+                  />
+                );
+              })()}
             </section>
 
             {/* Desktop tabs (Description, Specifications, Shipping, Care) */}

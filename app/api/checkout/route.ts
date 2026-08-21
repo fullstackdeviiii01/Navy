@@ -171,11 +171,18 @@ export async function POST(request: NextRequest) {
         await product.save();
       }
 
+      const matchedVariant = product.hasVariants && item.variant_id
+        ? product.variants.find(
+            (v: any) => v._id?.toString() === item.variant_id?.toString()
+          )
+        : null;
+      const resolvedItemImage = matchedVariant?.imageUrl || product.images?.[0]?.url || "";
+
       orderItems.push({
         product_id: product._id,
         variant_id: item.variant_id || null,
         product_name: product.name,
-        product_image: product.images?.[0]?.url || "",
+        product_image: resolvedItemImage,
         quantity: item.quantity,
         price: itemPrice,
         subtotal: itemPrice * item.quantity,

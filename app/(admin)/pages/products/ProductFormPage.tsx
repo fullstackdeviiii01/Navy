@@ -38,7 +38,19 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const [hasVariants, setHasVariants] = useState(false);
   const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [colorItems, setColorItems] = useState<any[]>([]);
   const [existingProduct, setExistingProduct] = useState<any>(null);
+
+  const LUXURY_PALETTE_PRESETS = [
+    { name: "Walnut", hex: "#5D4037" },
+    { name: "Warm Brass", hex: "#A8752B" },
+    { name: "Amber Gold", hex: "#D4A359" },
+    { name: "Smoked Oak", hex: "#3E2723" },
+    { name: "Matte Black", hex: "#1A1A1A" },
+    { name: "Ivory White", hex: "#F5F5F0" },
+    { name: "Forest Green", hex: "#1B382B" },
+    { name: "Deep Navy", hex: "#0A192F" },
+  ];
 
   const [formData, setFormData] = useState({
     name: "",
@@ -131,6 +143,45 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       setHasVariants(product.hasVariants || false);
       setVariantOptions(product.variantOptions || []);
       setVariants(product.variants || []);
+
+      const colorOpt = product.variantOptions?.find(
+        (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
+      );
+      if (colorOpt && Array.isArray(colorOpt.values)) {
+        const rawHex = colorOpt.colorHexCodes || {};
+        const rawImgs = colorOpt.colorImages || {};
+
+        const initialColors = colorOpt.values.map((val: string, idx: number) => {
+          // Extract hex code (with fallback to presets)
+          const hexVal =
+            (typeof rawHex.get === "function" ? rawHex.get(val) : rawHex[val]) ||
+            LUXURY_PALETTE_PRESETS.find((p) => p.name.toLowerCase() === val.toLowerCase())?.hex ||
+            "#5D4037";
+
+          // Extract existing images (with fallback to variant imageUrl)
+          let existingImgList: string[] =
+            (typeof rawImgs.get === "function" ? rawImgs.get(val) : rawImgs[val]) || [];
+
+          if (existingImgList.length === 0 && product.variants) {
+            const matchedVar = product.variants.find((v: any) =>
+              v.attributes?.some((a: any) => a.name === "color" && a.value === val)
+            );
+            if (matchedVar?.imageUrl) {
+              existingImgList = [matchedVar.imageUrl];
+            }
+          }
+
+          return {
+            id: `color-${idx}-${Date.now()}`,
+            name: val,
+            hex: hexVal,
+            existingImages: existingImgList,
+            newFiles: [],
+          };
+        });
+        setColorItems(initialColors);
+      }
+
       setExistingProduct(product);
     } catch (error) {
       console.error("Failed to fetch product:", error);
@@ -142,62 +193,68 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
   const uploadImages = async (): Promise<any[]> => {
     if (newImages.length === 0) return [];
     setUploadingImages(true);
-    const uploadedImages: any[] = [];
     try {
-      for (const file of newImages) {
+      const uploadPromises = newImages.map(async (file, index) => {
         const data = await productsApi.uploadImage(file);
-        uploadedImages.push({
+        return {
           url: data.url,
-          alt_text: file.name,
-          is_primary: images.length === 0 && uploadedImages.length === 0,
-          sort_order: images.length + uploadedImages.length,
-        });
-      }
+          alt_text: `${formData.name} - Image ${images.length + index + 1}`,
+          is_primary: images.length === 0 && index === 0,
+          sort_order: images.length + index,
+        };
+      });
+      const uploaded = await Promise.all(uploadPromises);
+      return uploaded;
     } catch (error) {
-      console.error("Image upload failed:", error);
-      alert("Some images failed to upload");
+      console.error("Failed to upload images:", error);
+      throw error;
     } finally {
       setUploadingImages(false);
     }
-    return uploadedImages;
   };
 
   const uploadVideos = async (): Promise<any[]> => {
     if (newVideos.length === 0) return [];
     setUploadingVideos(true);
-    const uploadedVideos: any[] = [];
     try {
-      for (const file of newVideos) {
+      const uploadPromises = newVideos.map(async (file, index) => {
         const data = await productsApi.uploadVideo(file);
-        uploadedVideos.push({
+        return {
           url: data.url,
           thumbnail: data.thumbnail,
-          is_primary: videos.length === 0 && uploadedVideos.length === 0,
-          sort_order: videos.length + uploadedVideos.length,
-          duration: data.duration,
-          size: data.compressedSize,
-        });
-      }
+          is_primary: videos.length === 0 && index === 0,
+          sort_order: videos.length + index,
+        };
+      });
+      const uploaded = await Promise.all(uploadPromises);
+      return uploaded;
     } catch (error) {
-      console.error("Video upload failed:", error);
-      alert("Some videos failed to upload");
+      console.error("Failed to upload videos:", error);
+      throw error;
     } finally {
       setUploadingVideos(false);
     }
-    return uploadedVideos;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check if we have either top images or color-specific images
+    const hasTopImages = images.length > 0 || newImages.length > 0;
+    const hasColorImages = colorItems.some(
+      (c) => (c.existingImages && c.existingImages.length > 0) || (c.newFiles && c.newFiles.length > 0)
+    );
+
+    if (!hasTopImages && !hasColorImages) {
+      alert("Please upload at least one product image (either in Product Images or in the Color & Finish section)");
+      return;
+    }
+
     if (!formData.name.trim()) {
       alert("Product name is required");
       return;
     }
-    if (images.length === 0 && newImages.length === 0) {
-      alert("At least one product image is required");
-      return;
-    }
+
     if (!formData.category_id) {
       alert("Category is required");
       return;
@@ -236,10 +293,57 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
     setLoading(true);
 
     try {
+      // 1. Upload top-level images and videos (kept strictly separate from color section)
       const uploadedImages = await uploadImages();
       const uploadedVideos = await uploadVideos();
       const allImages = [...images, ...uploadedImages];
       const allVideos = [...videos, ...uploadedVideos];
+
+      // 2. Upload any new color-specific images and build final color maps
+      const finalColorImages: Record<string, string[]> = {};
+      const finalColorHexCodes: Record<string, string> = {};
+
+      for (const color of colorItems) {
+        const colorKey = color.name.trim();
+        if (!colorKey) continue;
+
+        const uploadedForColor: string[] = [];
+        if (color.newFiles && color.newFiles.length > 0) {
+          for (const file of color.newFiles) {
+            const uploadRes = await productsApi.uploadImage(file);
+            uploadedForColor.push(uploadRes.url);
+          }
+        }
+        finalColorImages[colorKey] = [
+          ...(color.existingImages || []),
+          ...uploadedForColor,
+        ];
+        finalColorHexCodes[colorKey] = color.hex;
+      }
+
+      // 3. Update variant options with final color images & hex codes
+      const finalVariantOptions = variantOptions.map((opt) => {
+        if (opt.name === "color" || opt.displayName?.toLowerCase() === "color") {
+          return {
+            ...opt,
+            colorHexCodes: finalColorHexCodes,
+            colorImages: finalColorImages,
+          };
+        }
+        return opt;
+      });
+
+      // 4. Update variants matrix with color images
+      const finalVariants = variants.map((v) => {
+        const colorAttr = v.attributes.find((a) => a.name === "color");
+        if (colorAttr && finalColorImages[colorAttr.value]?.length > 0) {
+          return {
+            ...v,
+            imageUrl: finalColorImages[colorAttr.value][0],
+          };
+        }
+        return v;
+      });
 
       const baseSlug = formData.name
         .toLowerCase()
@@ -282,8 +386,8 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
       };
 
       if (hasVariants) {
-        productData.variantOptions = variantOptions;
-        productData.variants = variants;
+        productData.variantOptions = finalVariantOptions;
+        productData.variants = finalVariants;
         const uniqueBaseSku = `${formData.sku || `PROD-${Date.now()}`}-BASE`;
 
         const variantPrices = variants
@@ -390,17 +494,9 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
             newImages={newImages}
             onImageSelect={(files) => setNewImages([...newImages, ...files])}
             onRemoveExisting={(index) => {
-              if (images.length + newImages.length <= 1) {
-                alert("At least one image is required.");
-                return;
-              }
               setImages(images.filter((_, i) => i !== index));
             }}
             onRemoveNew={(index) => {
-              if (images.length + newImages.length <= 1) {
-                alert("At least one image is required.");
-                return;
-              }
               setNewImages(newImages.filter((_, i) => i !== index));
             }}
           />
@@ -657,6 +753,8 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
               basePrice={parseFloat(formData.price) || 0}
               baseSku={formData.sku || "PROD"}
               productCurrency="PKR"
+              colorItems={colorItems}
+              onColorItemsChange={setColorItems}
             />
           </div>
         )}

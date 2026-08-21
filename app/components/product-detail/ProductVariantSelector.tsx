@@ -25,6 +25,8 @@ interface VariantOption {
   name: string;
   displayName: string;
   values: string[];
+  colorHexCodes?: Record<string, string>;
+  colorImages?: Record<string, string[]>;
   position: number;
 }
 
@@ -38,6 +40,7 @@ interface ProductVariantSelectorProps {
   onSelectionChange: (
     selection: VariantSelection,
     variant: ProductVariant | null,
+    previewImageUrl?: string,
   ) => void;
   selectedVariant?: ProductVariant | null;
 }
@@ -130,8 +133,28 @@ export default function ProductVariantSelector({
       [attributeName]: value,
     };
     setCurrentSelection(newSelection);
+
+    // Immediately resolve image for this option (especially color)
+    let previewImg: string | undefined = undefined;
+    const isColor =
+      attributeName.toLowerCase() === "color";
+    if (isColor) {
+      const colorOpt = variantAttributes.find(
+        (opt) => opt.name.toLowerCase() === "color" || opt.displayName.toLowerCase() === "color"
+      );
+      previewImg =
+        colorOpt?.colorImages?.[value]?.[0] ||
+        variantImageMap[attributeName]?.[value];
+    } else {
+      previewImg = variantImageMap[attributeName]?.[value];
+    }
+
     const matchingVariant = findMatchingVariant(newSelection);
-    onSelectionChange(newSelection, matchingVariant);
+    if (!previewImg && matchingVariant?.imageUrl) {
+      previewImg = matchingVariant.imageUrl;
+    }
+
+    onSelectionChange(newSelection, matchingVariant, previewImg);
   };
 
   const getMissingSelections = (): string[] => {
@@ -161,6 +184,9 @@ export default function ProductVariantSelector({
           const selectedValue = currentSelection[attributeOption.name];
           const swatchMap = variantImageMap[attributeOption.name] || {};
           const hasSwatches = Object.keys(swatchMap).length > 0;
+          const isColorOption =
+            attributeOption.name.toLowerCase() === "color" ||
+            attributeOption.displayName.toLowerCase() === "color";
 
           return (
             <div key={attributeOption.name} className="space-y-1">
@@ -186,40 +212,49 @@ export default function ProductVariantSelector({
                   {availableValues.map(({ value, inStock }) => {
                     const isSelected = selectedValue === value;
                     const isDisabled = !inStock;
-                    const swatchUrl = swatchMap[value];
+                    const swatchUrl =
+                      swatchMap[value] ||
+                      attributeOption.colorImages?.[value]?.[0];
 
                     const hexMatch = value.match(/#(?:[0-9a-fA-F]{3}){1,2}\b/);
-                    const hexCode = hexMatch ? hexMatch[0] : null;
-                    const cleanDisplayName = hexCode ? value.replace(hexMatch[0], "").trim() : value;
+                    const hexCode =
+                      attributeOption.colorHexCodes?.[value] ||
+                      (hexMatch ? hexMatch[0] : null);
+                    const cleanDisplayName = hexMatch ? value.replace(hexMatch[0], "").trim() : value;
 
-                    // Hex Color Swatch (Square)
-                    if (hexCode) {
+                    // Color Option: Circular Drops (Pure elegant color circles with ring highlight)
+                    if (isColorOption) {
+                      const colorBg = hexCode || "#5D4037";
                       return (
                         <button
                           key={value}
+                          type="button"
                           onClick={() =>
                             !isDisabled && handleSelect(attributeOption.name, value)
                           }
                           disabled={isDisabled}
-                          title={cleanDisplayName || value}
+                          title={`${cleanDisplayName || value}${!inStock ? " (Out of stock)" : ""}`}
                           className={`
-                            relative w-9 h-9 border transition-all flex items-center justify-center
+                            relative w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 flex items-center justify-center p-[2px]
                             ${
                               isSelected
-                                ? "border-theme-hover-light dark:border-theme-hover-dark ring-1 ring-theme-hover-light shadow-sm"
+                                ? "ring-2 ring-offset-2 ring-[#A8752B] dark:ring-[#D4A359] dark:ring-offset-theme-bg-dark scale-105"
                                 : inStock
-                                  ? "border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light"
-                                  : "border-theme-border-light/40 dark:border-theme-border-dark/40 opacity-40 cursor-not-allowed"
+                                  ? "hover:scale-110 ring-1 ring-black/10 dark:ring-white/20"
+                                  : "opacity-35 cursor-not-allowed ring-1 ring-black/10"
                             }
                           `}
-                          style={{ backgroundColor: hexCode }}
                           aria-label={`${cleanDisplayName || value}${isSelected ? " (selected)" : ""}${!inStock ? " (sold out)" : ""}`}
                           aria-pressed={isSelected}
                         >
+                          <span
+                            className="w-full h-full rounded-full border border-black/15 shadow-inner"
+                            style={{ backgroundColor: colorBg }}
+                          />
                           {!inStock && (
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <span className="text-[8px] font-bold text-white">X</span>
-                            </div>
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <span className="w-full h-[1.5px] bg-red-500/80 -rotate-45" />
+                            </span>
                           )}
                         </button>
                       );
@@ -230,6 +265,7 @@ export default function ProductVariantSelector({
                       return (
                         <button
                           key={value}
+                          type="button"
                           onClick={() =>
                             !isDisabled && handleSelect(attributeOption.name, value)
                           }
@@ -260,9 +296,7 @@ export default function ProductVariantSelector({
                               className="absolute inset-0 bg-black/50 flex items-center justify-center"
                               aria-hidden="true"
                             >
-                              <span className="text-[8px] font-bold text-white">
-                                SOLD
-                              </span>
+                              <span className="text-[9px] text-white font-medium">Out</span>
                             </div>
                           )}
                         </button>

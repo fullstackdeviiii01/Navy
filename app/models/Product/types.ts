@@ -31,6 +31,8 @@ export interface VariantOption {
   name: string;
   displayName: string;
   values: string[];
+  colorHexCodes?: Record<string, string>;
+  colorImages?: Record<string, string[]>;
   position: number;
 }
 
