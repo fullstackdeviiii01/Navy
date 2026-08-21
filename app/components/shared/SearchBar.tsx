@@ -241,7 +241,8 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                       <div className="flex items-center gap-2 mt-1">
                         <p className="text-sm font-semibold text-theme-primary">
                           {formatPrice(
-                            product.pricing.price)}
+                            product.pricing?.price || (product as any).variantPricing?.minPrice || 0
+                          )}
                         </p>
                         {product.category_id && (
                           <>

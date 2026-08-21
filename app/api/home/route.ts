@@ -24,8 +24,9 @@ export async function GET(request: NextRequest) {
         created_at: { $gte: thirtyDaysAgo },
       })
       .select(
-        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory",
+        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id",
       )
+      .populate("category_id", "name slug")
       .sort({ created_at: -1 })
       .limit(12)
       .lean();
@@ -37,8 +38,9 @@ export async function GET(request: NextRequest) {
         purchase_count: { $gt: 0 },
       })
       .select(
-        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory",
+        "name description pricing images rating_average rating_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id",
       )
+      .populate("category_id", "name slug")
       .sort({ purchase_count: -1 })
       .limit(12)
       .lean();

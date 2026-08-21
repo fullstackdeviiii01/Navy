@@ -1,4 +1,4 @@
-// app/(admin)/components/orders/orderdetails/AdminOrderDetailView.tsx
+// app/(admin)/components/orders/orderdetail/AdminOrderDetailView.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -94,33 +94,53 @@ export default function AdminOrderDetailView({
           <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
             {/* Status Banner */}
             <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
+                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1.5">
                     Order Status
                   </p>
                   <OrderStatusBadge status={order.status} />
                 </div>
                 <div>
-                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
+                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1.5">
                     Payment Status
                   </p>
                   <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full capitalize ${
                       order.payment_status === "paid"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                        : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        ? "bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-200"
+                        : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-200"
                     }`}
                   >
                     {order.payment_status}
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
+                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1.5">
+                    Payment Method
+                  </p>
+                  <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-100 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
+                    {order.payment_method === "cod"
+                      ? "Cash on Delivery (COD)"
+                      : order.payment_method === "jazzcash"
+                      ? "JazzCash"
+                      : order.payment_method === "bank_transfer"
+                      ? "Meezan Bank Transfer"
+                      : order.payment_method || "N/A"}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1.5">
                     Order Date
                   </p>
                   <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {new Date(order.placed_at).toLocaleDateString()}
+                    {new Date(order.placed_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
               </div>
@@ -229,194 +249,209 @@ export default function AdminOrderDetailView({
         </div>
 
         {/* Sidebar - Right Side */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4 space-y-6">
-            {/* Order Summary */}
-            <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
-                <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  Order Summary
-                </h3>
+        <div className="space-y-6">
+          {/* Order Summary */}
+          <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
+            <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
+              <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                Order Summary
+              </h3>
+            </div>
+            <div className="p-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                  Subtotal
+                </span>
+                <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  Rs. {order.pricing.subtotal.toLocaleString()}
+                </span>
               </div>
-              <div className="p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                    Subtotal
-                  </span>
-                  <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    ${order.pricing.subtotal.toFixed(2)}
-                  </span>
+              {order.pricing.discount_amount > 0 && (
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Discount</span>
+                  <span>-Rs. {order.pricing.discount_amount.toLocaleString()}</span>
                 </div>
-                {order.pricing.discount_amount > 0 && (
-                  <div className="flex justify-between text-green-600 dark:text-green-400">
-                    <span>Discount</span>
-                    <span>-${order.pricing.discount_amount.toFixed(2)}</span>
-                  </div>
-                )}
+              )}
+              {order.pricing.tax_amount > 0 && (
                 <div className="flex justify-between">
                   <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                     Tax
                   </span>
                   <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    ${order.pricing.tax_amount.toFixed(2)}
+                    Rs. {order.pricing.tax_amount.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                    Shipping
-                  </span>
-                  <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {order.pricing.shipping_cost === 0
-                      ? "FREE"
-                      : `$${order.pricing.shipping_cost.toFixed(2)}`}
-                  </span>
-                </div>
-                <div className="border-t border-theme-border-light dark:border-theme-border-dark pt-2 flex justify-between font-semibold">
-                  <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    Total
-                  </span>
-                  <span className="text-xl text-theme-primary">
-                    ${order.pricing.total.toFixed(2)}
-                  </span>
-                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                  Shipping
+                </span>
+                <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
+                  {order.pricing.shipping_cost === 0
+                    ? "FREE"
+                    : `Rs. ${order.pricing.shipping_cost.toLocaleString()}`}
+                </span>
+              </div>
+              <div className="border-t border-theme-border-light dark:border-theme-border-dark pt-3 flex justify-between font-bold">
+                <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark text-base">
+                  Total
+                </span>
+                <span className="text-xl text-[#A8752B]">
+                  Rs. {order.pricing.total.toLocaleString()}
+                </span>
               </div>
             </div>
+          </div>
 
-            {/* Bank Transfer Payment Proof */}
-            {(order.payment_proof_url || order.bank_reference) && (
-              <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
-                  <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-                    <CreditCard size={18} />
-                    Payment Proof
-                  </h3>
-                </div>
-                <div className="p-4 space-y-3 text-sm">
-                  {order.bank_reference && (
-                    <div>
-                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Bank Reference
-                      </p>
-                      <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
-                        {order.bank_reference}
-                      </p>
-                    </div>
-                  )}
-                  {order.payment_proof_url && (
-                    <div>
-                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-                        Payment Screenshot
-                      </p>
-                      <a
-                        href={order.payment_proof_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={order.payment_proof_url}
-                          alt="Payment proof"
-                          className="w-full rounded-lg border border-theme-border-light dark:border-theme-border-dark cursor-pointer hover:opacity-80 transition-opacity"
-                        />
-                      </a>
-                    </div>
-                  )}
-                </div>
+          {/* Payment Proof Card (Bank Transfer & JazzCash) */}
+          {(order.payment_proof_url || order.bank_reference || order.payment_method !== "cod") && (
+            <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden shadow-sm">
+              <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 flex items-center justify-between">
+                <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 text-sm">
+                  <CreditCard size={18} className="text-[#A8752B]" />
+                  Payment Verification Proof
+                </h3>
+                <span className="text-[11px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200">
+                  {order.payment_method === "jazzcash"
+                    ? "JazzCash"
+                    : order.payment_method === "bank_transfer"
+                    ? "Meezan Bank"
+                    : "COD"}
+                </span>
               </div>
-            )}
+              <div className="p-4 space-y-3 text-sm">
+                {order.bank_reference && (
+                  <div className="p-2.5 bg-white dark:bg-[#342611] rounded-lg border border-theme-border-light dark:border-theme-border-dark">
+                    <p className="text-[11px] uppercase font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark mb-0.5">
+                      Transaction / Reference ID
+                    </p>
+                    <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono font-bold">
+                      {order.bank_reference}
+                    </p>
+                  </div>
+                )}
+                {order.payment_proof_url ? (
+                  <div>
+                    <p className="font-medium text-xs uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
+                      Submitted Screenshot / Receipt:
+                    </p>
+                    <a
+                      href={order.payment_proof_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block group relative overflow-hidden rounded-lg border border-theme-border-light dark:border-theme-border-dark"
+                    >
+                      <img
+                        src={order.payment_proof_url}
+                        alt="Payment verification proof"
+                        className="w-full max-h-72 object-contain bg-black/5 dark:bg-black/20 group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity">
+                        Click to view full image ↗
+                      </div>
+                    </a>
+                  </div>
+                ) : order.payment_method !== "cod" ? (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    No screenshot attached
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          )}
 
-            {/* Timeline */}
+          {/* Timeline */}
+          <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
+            <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
+              <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+                <Calendar size={18} />
+                Timeline
+              </h3>
+            </div>
+            <div className="p-4 space-y-3 text-sm">
+              <div>
+                <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  Placed
+                </p>
+                <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                  {new Date(order.placed_at).toLocaleString()}
+                </p>
+              </div>
+              {order.confirmed_at && (
+                <div>
+                  <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Confirmed
+                  </p>
+                  <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    {new Date(order.confirmed_at).toLocaleString()}
+                  </p>
+                </div>
+              )}
+              {order.shipped_at && (
+                <div>
+                  <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Shipped
+                  </p>
+                  <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    {new Date(order.shipped_at).toLocaleString()}
+                  </p>
+                </div>
+              )}
+              {order.delivered_at && (
+                <div>
+                  <p className="font-medium text-green-600 dark:text-green-400">
+                    Delivered
+                  </p>
+                  <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    {new Date(order.delivered_at).toLocaleString()}
+                  </p>
+                </div>
+              )}
+              {order.cancelled_at && (
+                <div>
+                  <p className="font-medium text-red-600 dark:text-red-400">
+                    Cancelled
+                  </p>
+                  <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    {new Date(order.cancelled_at).toLocaleString()}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Notes */}
+          {(order.customer_notes || order.admin_notes) && (
             <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
               <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
-                <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-                  <Calendar size={18} />
-                  Timeline
+                <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  Notes
                 </h3>
               </div>
               <div className="p-4 space-y-3 text-sm">
-                <div>
-                  <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    Placed
-                  </p>
-                  <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                    {new Date(order.placed_at).toLocaleString()}
-                  </p>
-                </div>
-                {order.confirmed_at && (
+                {order.customer_notes && (
                   <div>
                     <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                      Confirmed
+                      Customer Notes
                     </p>
-                    <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                      {new Date(order.confirmed_at).toLocaleString()}
+                    <p className="text-theme-text-secondary-light break-words dark:text-theme-text-secondary-dark">
+                      {order.customer_notes}
                     </p>
                   </div>
                 )}
-                {order.shipped_at && (
+                {order.admin_notes && (
                   <div>
                     <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                      Shipped
+                      Admin Notes
                     </p>
-                    <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                      {new Date(order.shipped_at).toLocaleString()}
-                    </p>
-                  </div>
-                )}
-                {order.delivered_at && (
-                  <div>
-                    <p className="font-medium text-green-600 dark:text-green-400">
-                      Delivered
-                    </p>
-                    <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                      {new Date(order.delivered_at).toLocaleString()}
-                    </p>
-                  </div>
-                )}
-                {order.cancelled_at && (
-                  <div>
-                    <p className="font-medium text-red-600 dark:text-red-400">
-                      Cancelled
-                    </p>
-                    <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                      {new Date(order.cancelled_at).toLocaleString()}
+                    <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                      {order.admin_notes}
                     </p>
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Notes */}
-            {(order.customer_notes || order.admin_notes) && (
-              <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
-                  <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    Notes
-                  </h3>
-                </div>
-                <div className="p-4 space-y-3 text-sm">
-                  {order.customer_notes && (
-                    <div>
-                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Customer Notes
-                      </p>
-                      <p className="text-theme-text-secondary-light break-words dark:text-theme-text-secondary-dark">
-                        {order.customer_notes}
-                      </p>
-                    </div>
-                  )}
-                  {order.admin_notes && (
-                    <div>
-                      <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Admin Notes
-                      </p>
-                      <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                        {order.admin_notes}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 

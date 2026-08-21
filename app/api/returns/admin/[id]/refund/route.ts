@@ -56,13 +56,13 @@ export async function POST(
     
     // Get order details safely
     let orderNumber = "Unknown";
-    let orderCurrency = "USD";
+    let orderCurrency = "PKR";
     let orderId: string | Types.ObjectId = returnRequest.order_id;
     
     if (returnRequest.order_id) {
       if (typeof returnRequest.order_id === 'object' && returnRequest.order_id.order_number) {
         orderNumber = returnRequest.order_id.order_number;
-        orderCurrency = returnRequest.order_id.pricing?.currency || "USD";
+        orderCurrency = returnRequest.order_id.pricing?.currency || "PKR";
         orderId = returnRequest.order_id._id;
       } else if (returnRequest.order_id && returnRequest.order_id.toString) {
         orderNumber = `ObjectId(${returnRequest.order_id.toString()})`;

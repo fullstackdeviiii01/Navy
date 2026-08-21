@@ -179,7 +179,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const variantOutOfStock = selectedVariant ? selectedVariant.stockQuantity === 0 : false;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-theme-bg-dark pb-20">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark pb-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb navigation">

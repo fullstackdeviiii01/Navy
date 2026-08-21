@@ -10,71 +10,119 @@ interface ProductCardProps {
     pricing: {
       price: number;
       compare_at_price?: number;
-      currency: string;
+      currency?: string;
     };
     images: { url: string; alt_text?: string }[];
     hasVariants?: boolean;
-    variants?: { stockQuantity: number; isAvailable: boolean }[];
+    variants?: any[];
+    variantPricing?: {
+      minPrice: number;
+      maxPrice: number;
+      priceVaries: boolean;
+    };
     variantInventory?: {
       totalStock: number;
       availableVariantCount: number;
     };
-    inventory: {
+    inventory?: {
       stock_status: string;
     };
+    category_id?: {
+      name?: string;
+      slug?: string;
+    };
+    [key: string]: any;
   };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
   const hasVariants =
-    product.hasVariants &&
-    product.variants &&
-    product.variants.length > 0;
+    Boolean(product.hasVariants) &&
+    ((product.variants && product.variants.length > 0) || Boolean(product.variantPricing));
 
-  const variantCount = hasVariants ? product.variants!.length : 0;
+  const variantCount = product.variants?.length || 0;
   const firstImage = product.images?.[0]?.url;
-  const price = product.pricing?.price || 0;
-  const comparePrice = hasVariants ? undefined : product.pricing?.compare_at_price;
+  const categoryName = product.category_id?.name || "";
+
+  // Calculate lowest price and compare price
+  let price = product.pricing?.price || 0;
+  let comparePrice = product.pricing?.compare_at_price;
+
+  if (hasVariants) {
+    if (product.variants && product.variants.length > 0) {
+      const variantPrices = product.variants
+        .map((v: any) => v.price ?? v.pricing?.price)
+        .filter((p: any) => typeof p === "number" && !isNaN(p) && p > 0);
+
+      if (variantPrices.length > 0) {
+        price = Math.min(...variantPrices);
+      } else if (product.variantPricing?.minPrice) {
+        price = product.variantPricing.minPrice;
+      }
+
+      const variantComparePrices = product.variants
+        .map((v: any) => v.compareAtPrice ?? v.compare_at_price ?? v.pricing?.compare_at_price)
+        .filter((p: any) => typeof p === "number" && !isNaN(p) && p > 0);
+
+      if (variantComparePrices.length > 0) {
+        comparePrice = Math.max(...variantComparePrices);
+      }
+    } else if (product.variantPricing?.minPrice) {
+      price = product.variantPricing.minPrice;
+    }
+  } else if (product.variantPricing?.minPrice && price === 0) {
+    price = product.variantPricing.minPrice;
+  }
 
   return (
     <Link
       href={`/product/${product._id}`}
-      className="group block bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden rounded-lg transition-shadow hover:shadow-lg"
+      className="group block"
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#2E2214]">
         {firstImage ? (
           <img
             src={firstImage}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
+          <div className="w-full h-full flex items-center justify-center text-[#D7D3CF]/40 text-sm">
             No Image
           </div>
         )}
 
         {/* Variant Count Badge */}
         {hasVariants && variantCount > 0 && (
-          <span className="absolute top-2 left-2 bg-black/70 text-white text-[10px] sm:text-xs font-medium px-2 py-1 rounded">
-            {variantCount} options
+          <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] sm:text-[11px] font-medium tracking-[0.15em] uppercase px-2.5 py-1">
+            {variantCount} OPTIONS
           </span>
         )}
       </div>
 
       {/* Info */}
-      <div className="p-3">
-        <h3 className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark line-clamp-2 leading-snug mb-1">
+      <div className="pt-4 pb-2">
+        {/* Category Label */}
+        {categoryName && (
+          <p className="text-[10px] sm:text-[11px] font-medium tracking-[0.2em] uppercase text-[#A8752B] mb-1.5">
+            {categoryName}
+          </p>
+        )}
+
+        <h3 className="text-sm sm:text-base font-medium text-[#F3EBDC] leading-snug mb-1 line-clamp-2 group-hover:text-[#D4A359] transition-colors">
           {product.name}
         </h3>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm sm:text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <span className="text-sm text-[#D7D3CF]/80">
+            {hasVariants && variantCount > 1 && (
+              <span className="mr-0.5">From </span>
+            )}
             {formatPrice(price)}
           </span>
           {comparePrice && comparePrice > price && (
-            <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
+            <span className="text-xs text-[#D7D3CF]/40 line-through">
               {formatPrice(comparePrice)}
             </span>
           )}

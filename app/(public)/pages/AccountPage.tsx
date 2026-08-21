@@ -78,7 +78,7 @@ export default function AccountPage() {
 
   if (userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-theme-bg-light dark:bg-theme-bg-dark">
         <Loader />
       </div>
     );
@@ -89,7 +89,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
       <NotificationBanner error={error} success={success} />
       
       <AccountHeader

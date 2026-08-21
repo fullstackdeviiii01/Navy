@@ -285,14 +285,31 @@ export default function ProductFormPage({ mode, productId }: ProductFormPageProp
         productData.variantOptions = variantOptions;
         productData.variants = variants;
         const uniqueBaseSku = `${formData.sku || `PROD-${Date.now()}`}-BASE`;
-        productData.pricing = { price: 0, currency: "PKR" };
+
+        const variantPrices = variants
+          .map((v: any) => Number(v.price ?? v.pricing?.price))
+          .filter((p: number) => !isNaN(p) && p > 0);
+        const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : 0;
+
+        const variantComparePrices = variants
+          .map((v: any) => Number(v.compareAtPrice ?? v.compare_at_price ?? v.pricing?.compare_at_price))
+          .filter((p: number) => !isNaN(p) && p > 0);
+        const maxComparePrice = variantComparePrices.length > 0 ? Math.max(...variantComparePrices) : undefined;
+
+        const totalStock = variants.reduce((sum, v) => sum + (Number(v.stockQuantity) || 0), 0);
+
+        productData.pricing = {
+          price: minPrice,
+          compare_at_price: maxComparePrice,
+          currency: "PKR",
+        };
         productData.inventory = {
           sku: uniqueBaseSku,
-          stock_quantity: 0,
+          stock_quantity: totalStock,
           low_stock_threshold: 10,
           track_inventory: true,
           allow_backorder: false,
-          stock_status: "in_stock",
+          stock_status: totalStock > 0 ? "in_stock" : "out_of_stock",
         };
       } else {
         const stockQty = parseInt(formData.stock_quantity) || 0;

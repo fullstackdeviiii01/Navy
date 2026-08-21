@@ -4,27 +4,27 @@ import type { NextRequest } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Add pathname to headers for server-side access
+  // Add pathname to headers for server-side layout access (e.g. hiding header/footer on admin)
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-pathname', pathname);
+  requestHeaders.set("x-pathname", pathname);
 
-  // Only protect /account routes
+  // Protect /account routes
   if (pathname.startsWith("/account")) {
     try {
-      // Check for Firebase auth token in cookies
-      const sessionCookie = request.cookies.get("__session");
+      const sessionCookie =
+        request.cookies.get("__session")?.value ||
+        request.cookies.get("auth_token")?.value;
 
-      // If no session cookie, redirect to sign-in
       if (!sessionCookie) {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
+        const signInUrl = new URL("/sign-in", request.url);
+        signInUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(signInUrl);
       }
-
-      // For additional security, we could verify the session here
-      // but for simplicity, we'll rely on client-side auth state
-      // and API route protection
     } catch (error) {
-      console.error("Middleware auth check failed:", error);
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      console.error("Proxy auth check failed:", error);
+      const signInUrl = new URL("/sign-in", request.url);
+      signInUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(signInUrl);
     }
   }
 
@@ -37,13 +37,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|images).*)",
   ],
 };

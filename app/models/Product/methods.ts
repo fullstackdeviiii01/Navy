@@ -44,24 +44,39 @@ ProductSchema.methods.syncVariantData = async function () {
     return;
   }
 
-  const availableVariants = this.getAvailableVariants();
-  const prices = availableVariants.map((v: ProductVariant) => v.price);
-  const stocks = this.variants.map((v: ProductVariant) => v.stockQuantity);
+  const allVariants = this.variants || [];
+  const prices = allVariants
+    .map((v: ProductVariant) => v.price)
+    .filter((p: number) => typeof p === "number" && !isNaN(p) && p > 0);
+  const comparePrices = allVariants
+    .map((v: ProductVariant) => v.compareAtPrice)
+    .filter((p: any) => typeof p === "number" && !isNaN(p) && p > 0);
+  const stocks = allVariants.map((v: ProductVariant) => v.stockQuantity || 0);
 
   // Calculate pricing aggregates
   if (prices.length > 0) {
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
     this.variantPricing = {
-      minPrice: Math.min(...prices),
-      maxPrice: Math.max(...prices),
+      minPrice,
+      maxPrice,
       priceVaries: new Set(prices).size > 1,
     };
+
+    if (this.pricing) {
+      this.pricing.price = minPrice;
+      if (comparePrices.length > 0) {
+        this.pricing.compare_at_price = Math.max(...comparePrices);
+      }
+    }
   }
 
   const totalStock = stocks.reduce((a: number, b: number) => a + b, 0);
+  const availableCount = allVariants.filter((v: ProductVariant) => v.isAvailable !== false && (v.stockQuantity || 0) > 0).length;
 
   this.variantInventory = {
     totalStock,
-    availableVariantCount: availableVariants.length,
+    availableVariantCount: availableCount,
   };
 
   // Keep inventory.stock_quantity in sync so all existing UI reads are correct

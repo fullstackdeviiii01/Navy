@@ -309,44 +309,59 @@ export default function UserOrderDetailView({
                 </div>
               </div>
 
-              {/* Bank Transfer Payment Proof */}
-              {(order.payment_proof_url || order.bank_reference) && (
-                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden">
-                  <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
-                    <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-                      <CreditCard size={18} aria-hidden="true" />
-                      Payment Proof
+              {/* Payment Proof (Bank Transfer / JazzCash) */}
+              {(order.payment_proof_url || order.bank_reference || order.payment_method !== "cod") && (
+                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-xl overflow-hidden shadow-sm">
+                  <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 flex items-center justify-between">
+                    <h3 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 text-sm">
+                      <CreditCard size={18} className="text-[#A8752B]" aria-hidden="true" />
+                      Payment Verification Proof
                     </h3>
+                    <span className="text-[11px] uppercase font-semibold px-2.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200">
+                      {order.payment_method === "jazzcash"
+                        ? "JazzCash"
+                        : order.payment_method === "bank_transfer"
+                        ? "Meezan Bank"
+                        : "COD"}
+                    </span>
                   </div>
                   <div className="p-4 space-y-3 text-sm">
                     {order.bank_reference && (
-                      <div>
-                        <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                          Bank Reference
+                      <div className="p-2.5 bg-white dark:bg-[#342611] rounded-lg border border-theme-border-light dark:border-theme-border-dark">
+                        <p className="text-[11px] uppercase font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark mb-0.5">
+                          Transaction / Reference ID
                         </p>
-                        <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
+                        <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono font-bold">
                           {order.bank_reference}
                         </p>
                       </div>
                     )}
-                    {order.payment_proof_url && (
+                    {order.payment_proof_url ? (
                       <div>
-                        <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-                          Payment Screenshot
+                        <p className="font-medium text-xs uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
+                          Your Uploaded Receipt Screenshot:
                         </p>
                         <a
                           href={order.payment_proof_url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="block group relative overflow-hidden rounded-lg border border-theme-border-light dark:border-theme-border-dark"
                         >
                           <img
                             src={order.payment_proof_url}
-                            alt="Payment proof"
-                            className="w-full rounded-lg border border-theme-border-light dark:border-theme-border-dark cursor-pointer hover:opacity-80 transition-opacity"
+                            alt="Payment receipt proof"
+                            className="w-full max-h-72 object-contain bg-black/5 dark:bg-black/20 group-hover:scale-105 transition-transform duration-300"
                           />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity">
+                            Click to view full image ↗
+                          </div>
                         </a>
                       </div>
-                    )}
+                    ) : order.payment_method !== "cod" ? (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                        No receipt screenshot attached
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               )}

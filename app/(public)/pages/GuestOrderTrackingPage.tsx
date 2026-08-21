@@ -104,7 +104,7 @@ export default function GuestOrderTrackingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8 md:py-12">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-6 sm:py-8 md:py-12">
       <main className="container mx-auto px-4 max-w-6xl">
         <h1 className="sr-only">Guest Order Tracking</h1>
         

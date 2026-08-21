@@ -227,7 +227,7 @@ export default function CheckoutPage() {
     };
 
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
         <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6">
           <h1 className="sr-only">Payment Information</h1>
           <PaymentSection
@@ -242,7 +242,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
       <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6">
         <h1 className="sr-only">Checkout</h1>
 

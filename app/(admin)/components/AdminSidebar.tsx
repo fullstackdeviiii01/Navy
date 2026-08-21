@@ -163,12 +163,6 @@ export default function AdminSidebar() {
     },
     {
       type: "link",
-      href: "/admin/payment-gateways",
-      label: "Payment Gateways",
-      icon: FaCreditCard,
-    },
-    {
-      type: "link",
       href: "/admin/activity",
       label: "Activity",
       icon: FaChartLine,

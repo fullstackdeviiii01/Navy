@@ -51,7 +51,7 @@ export class InvoiceService {
         order_id: orderId,
         user_id: (order as any).user_id || null,
         guest_email: (order as any).guest_info?.email,
-        currency: (order as any).pricing?.currency || "USD",
+        currency: (order as any).pricing?.currency || "PKR",
         status: "issued",
         issued_at: new Date(),
       });

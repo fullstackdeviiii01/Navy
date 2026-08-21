@@ -1,6 +1,7 @@
 // app/page.tsx
 import { Metadata } from "next";
 import React from "react";
+import HeroSection from "./components/home/HeroSection";
 import CategoryCarousel from "./components/home/CategoryCarousel";
 import ProductSection from "./components/home/ProductSection";
 import FeaturesSection from "./components/home/FeaturesSection";
@@ -21,7 +22,8 @@ export default async function HomePage() {
   } = await getHomeDataSSR();
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">
+    <main className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
+      <HeroSection />
       {categories.length > 0 && <CategoryCarousel categories={categories} />}
       {newArrivals.length > 0 && (
         <ProductSection
@@ -29,7 +31,7 @@ export default async function HomePage() {
           subtitle="Discover our latest collection"
           products={newArrivals}
           viewAllLink="/products?sort=newest"
-          bgClass="bg-white dark:bg-gray-900"
+          bgClass="bg-theme-bg-light dark:bg-theme-bg-dark"
         />
       )}
       <FeaturesSection />
@@ -39,7 +41,7 @@ export default async function HomePage() {
           subtitle="Most loved by our customers"
           products={bestSellers}
           viewAllLink="/products?sort=popular"
-          bgClass="bg-white dark:bg-gray-900"
+          bgClass="bg-theme-bg-light dark:bg-theme-bg-dark"
         />
       )}
     </main>

@@ -119,7 +119,7 @@ export default function Footerr() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 mt-16 transition-colors">
+    <footer className="bg-[#EAE1D1] dark:bg-[#2C210E] border-t border-[#E0D4C3] dark:border-[#554220] mt-16 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & About Column */}

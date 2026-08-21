@@ -98,7 +98,7 @@ if (loading || userLoading) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
        <ExitIntentPopup 
         isGuestUser={!isAuthenticated}
         hasItems={cart.items.length > 0}

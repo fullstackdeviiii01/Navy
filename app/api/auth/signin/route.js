@@ -68,7 +68,7 @@ export async function POST(request) {
     // Generate JWT
     const token = generateToken(user)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token,
       user: {
@@ -78,6 +78,24 @@ export async function POST(request) {
         role: user.role,
       },
     })
+
+    // Set auth cookie for SSR and middleware
+    const isProd = process.env.NODE_ENV === "production"
+    response.cookies.set("__session", token, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      secure: isProd,
+      sameSite: "lax",
+    })
+    response.cookies.set("auth_token", token, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: false,
+      secure: isProd,
+      sameSite: "lax",
+    })
+
+    return response
   } catch (error) {
     console.error("Signin error:", error)
     return NextResponse.json(

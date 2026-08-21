@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No token provided" }, { status: 401 });
     }
 
-    console.log("[Build Trigger] Verifying Firebase token...");
+    console.log("[Build Trigger] Verifying auth token...");
     const decodedToken = await verifyIdToken(token);
     if (!decodedToken) {
       console.warn("[Build Trigger] Token verification failed.");

@@ -55,7 +55,7 @@ function CategoriesPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
       {/* Hero Section */}
       <header className="max-w-7xl mx-auto px-4 py-12 md:py-10">
         <div className="max-w-3xl">
@@ -142,7 +142,7 @@ export default function CategoriesPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-theme-primary mb-4" role="status" aria-label="Loading"></div>
             <p className="text-gray-600 dark:text-gray-400">

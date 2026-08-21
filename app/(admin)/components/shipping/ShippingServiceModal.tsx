@@ -34,7 +34,7 @@ export default function ShippingServiceModal({
     display_name: "",
     description: "",
     base_price: undefined,
-    currency: "USD",
+    currency: "PKR",
     estimated_days_min: undefined,
     estimated_days_max: undefined,
     is_active: true,
@@ -151,26 +151,26 @@ export default function ShippingServiceModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                  Base Price (USD) *
+                  Base Price (PKR) *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-                    $
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm font-medium">
+                    Rs.
                   </span>
                   <input
                     type="number"
                     name="base_price"
-                    value={formData.base_price || ""}
+                    value={formData.base_price ?? ""}
                     onChange={handleChange}
                     required
                     min="0"
-                    step="0.01"
-                    placeholder="0.00"
-                    className="w-full pl-7 sm:pl-8 pr-3 sm:pr-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    step="1"
+                    placeholder="0"
+                    className="w-full pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Displays in user's selected currency
+                  Shipping charge in PKR
                 </p>
               </div>
 

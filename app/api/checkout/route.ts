@@ -34,9 +34,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["cod", "bank_transfer"].includes(payment_method)) {
+    if (!["cod", "bank_transfer", "jazzcash"].includes(payment_method)) {
       return NextResponse.json(
         { error: "Invalid payment method" },
+        { status: 400 }
+      );
+    }
+
+    if ((payment_method === "bank_transfer" || payment_method === "jazzcash") && !proof_url) {
+      return NextResponse.json(
+        {
+          error: `Payment screenshot / receipt is required for ${
+            payment_method === "bank_transfer" ? "Bank Transfer" : "JazzCash"
+          } orders`,
+        },
         { status: 400 }
       );
     }
@@ -226,7 +237,7 @@ export async function POST(request: NextRequest) {
       status: "pending",
     };
 
-    if (payment_method === "bank_transfer") {
+    if (payment_method === "bank_transfer" || payment_method === "jazzcash") {
       if (proof_url) paymentRecordData.proof_url = proof_url;
       if (bank_reference) paymentRecordData.bank_reference = bank_reference;
     }

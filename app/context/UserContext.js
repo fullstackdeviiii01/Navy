@@ -300,11 +300,11 @@ export function UserProvider({ children }) {
     updateUserProfile,
 
     // User properties
-    uid: dbUser?.uid || dbUser?._id,
-    email: dbUser?.email,
-    name: dbUser?.name,
-    role: dbUser?.role,
-    avatar: dbUser?.avatar_url,
+    uid: dbUser?.uid || dbUser?._id || authUser?.uid || authUser?.id,
+    email: dbUser?.email || authUser?.email,
+    name: dbUser?.name || authUser?.name,
+    role: dbUser?.role || authUser?.role,
+    avatar: dbUser?.avatar_url || authUser?.avatar_url || authUser?.picture,
     phone: dbUser?.phone,
     wishlist: dbUser?.wishlist || [],
     addresses: dbUser?.addresses || [],

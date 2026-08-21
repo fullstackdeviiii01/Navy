@@ -22,12 +22,12 @@ const PaymentSchema = new mongoose.Schema(
     },
     payment_gateway: {
       type: String,
-      enum: ["cod", "bank_transfer"],
+      enum: ["cod", "bank_transfer", "jazzcash"],
       required: true,
     },
     payment_method: {
       type: String,
-      enum: ["cod", "bank_transfer"],
+      enum: ["cod", "bank_transfer", "jazzcash"],
       required: true,
     },
     transaction_id: {

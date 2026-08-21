@@ -28,6 +28,7 @@ interface Product {
   images: any[];
   created_at: string;
   hasVariants?: boolean;
+  variants?: any[];
   variantPricing?: {
     minPrice: number;
     maxPrice: number;
@@ -106,29 +107,45 @@ export default function ProductTable({
   };
 
   const renderPrice = (product: Product) => {
-    if (product.hasVariants && product.variantPricing) {
-      const { minPrice, maxPrice, priceVaries } = product.variantPricing;
-      return (
-        <div className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-          <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mr-1">
-            From
-          </span>
-          {formatPrice(minPrice)}
-          {priceVaries && (
-            <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              – {formatPrice(maxPrice)}
-            </div>
-          )}
-        </div>
-      );
+    if (product.hasVariants) {
+      let minPrice = product.variantPricing?.minPrice;
+      let maxPrice = product.variantPricing?.maxPrice;
+      let priceVaries = product.variantPricing?.priceVaries;
+
+      if ((minPrice === undefined || minPrice === 0) && product.variants && product.variants.length > 0) {
+        const prices = product.variants
+          .map((v: any) => v.price)
+          .filter((p: any) => typeof p === "number" && p > 0);
+        if (prices.length > 0) {
+          minPrice = Math.min(...prices);
+          maxPrice = Math.max(...prices);
+          priceVaries = minPrice !== maxPrice;
+        }
+      }
+
+      if (minPrice !== undefined && minPrice > 0) {
+        return (
+          <div className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mr-1">
+              From
+            </span>
+            {formatPrice(minPrice)}
+            {priceVaries && maxPrice && (
+              <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                – {formatPrice(maxPrice)}
+              </div>
+            )}
+          </div>
+        );
+      }
     }
 
     return (
       <div>
         <div className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-          {formatPrice(product.pricing.price)}
+          {formatPrice(product.pricing?.price || 0)}
         </div>
-        {product.pricing.compare_at_price && (
+        {product.pricing?.compare_at_price && (
           <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
             {formatPrice(product.pricing.compare_at_price)}
           </div>

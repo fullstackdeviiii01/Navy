@@ -2,6 +2,7 @@
 "use client";
 
 import { Edit3, Trash2, CheckCircle, XCircle, Truck } from "lucide-react";
+import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface ShippingService {
   _id: string;
@@ -101,7 +102,7 @@ export default function ShippingServicesTable({
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                    ${service.base_price.toFixed(2)}
+                    {formatPrice(service.base_price)}
                   </p>
                 </td>
                 <td className="px-6 py-4">
@@ -197,7 +198,7 @@ export default function ShippingServicesTable({
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Price</p>
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  ${service.base_price.toFixed(2)}
+                  {formatPrice(service.base_price)}
                 </p>
               </div>
               <div>

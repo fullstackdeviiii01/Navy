@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   FaBars,
   FaTimes,
@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
   FaShieldAlt,
   FaBox,
+  FaGlobe,
 } from "react-icons/fa";
 import Cart from "./Cart";
 import SearchBar from "./shared/SearchBar";
@@ -38,7 +39,10 @@ export default function Header() {
     useUser();
   const { wishlistCount } = useWishlist();
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
+  const [isScrolled, setIsScrolled] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -52,6 +56,14 @@ export default function Header() {
   useEffect(() => {
     fetchCompanyInfo();
     fetchCategories();
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const fetchCompanyInfo = async () => {
@@ -104,8 +116,35 @@ export default function Header() {
     }
   };
 
+  const isTransparent = isHome && !isScrolled;
+
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-gray-200 transition-colors">
+    <header
+      className={`sticky top-0 z-30 transition-all duration-300 ${
+        isTransparent
+          ? "bg-transparent border-transparent text-[#F3EBDC]"
+          : "bg-[#F3EBDC]/95 dark:bg-[#3A2C13]/95 backdrop-blur border-b border-[#E0D4C3] dark:border-[#554220] text-[#241910] dark:text-[#D7D3CF] shadow-md"
+      }`}
+    >
+      {/* Top Announcement Bar */}
+      <div
+        className={`w-full py-1.5 px-4 sm:px-8 text-[11px] sm:text-xs tracking-wider transition-colors duration-300 flex items-center justify-between border-b ${
+          isTransparent
+            ? "bg-black/30 border-white/10 text-[#F3EBDC]/90"
+            : "bg-[#241910] text-[#F3EBDC] border-[#3A2C13]"
+        }`}
+      >
+        <div className="hidden sm:block w-20" />
+        <div className="flex-1 text-center font-medium tracking-widest uppercase">
+          ENJOY 8% OFF YOUR FIRST ORDER VIA CARD — USE CODE <span className="font-bold text-[#D4A359]">WELCOME8</span>
+        </div>
+        <div className="flex items-center gap-1 text-[11px] font-semibold text-[#D4A359] hover:text-white transition-colors cursor-pointer">
+          <FaGlobe className="text-[10px]" />
+          <span>PKR</span>
+          <FaChevronDown className="text-[8px] ml-0.5" />
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
           
@@ -113,13 +152,21 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-6 lg:gap-8 flex-1">
             <Link
               href="/"
-              className="text-sm font-medium text-gray-700 hover:text-theme-primary transition-colors"
+              className={`text-xs sm:text-sm font-medium tracking-widest uppercase transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC]/90 hover:text-[#D4A359]"
+                  : "text-[#241910] dark:text-[#D7D3CF] hover:text-[#A8752B]"
+              }`}
             >
               Home
             </Link>
             <Link
               href="/products"
-              className="text-sm font-medium text-gray-700 hover:text-theme-primary transition-colors"
+              className={`text-xs sm:text-sm font-medium tracking-widest uppercase transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC]/90 hover:text-[#D4A359]"
+                  : "text-[#241910] dark:text-[#D7D3CF] hover:text-[#A8752B]"
+              }`}
             >
               All Products
             </Link>
@@ -128,7 +175,11 @@ export default function Header() {
             <div className="relative" ref={categoryDropdownRef}>
               <button
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-theme-primary transition-colors py-2"
+                className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium tracking-widest uppercase transition-colors py-2 ${
+                  isTransparent
+                    ? "text-[#F3EBDC]/90 hover:text-[#D4A359]"
+                    : "text-[#241910] dark:text-[#D7D3CF] hover:text-[#A8752B]"
+                }`}
                 aria-expanded={isCategoryOpen}
                 aria-haspopup="true"
               >
@@ -172,7 +223,11 @@ export default function Header() {
 
             <Link
               href="/track-order"
-              className="text-sm font-medium text-gray-700 hover:text-theme-primary transition-colors"
+              className={`text-xs sm:text-sm font-medium tracking-widest uppercase transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC]/90 hover:text-[#D4A359]"
+                  : "text-[#241910] dark:text-[#D7D3CF] hover:text-[#A8752B]"
+              }`}
             >
               Track Order
             </Link>
@@ -182,7 +237,11 @@ export default function Header() {
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC] hover:bg-white/10"
+                  : "text-[#241910] dark:text-[#D7D3CF] hover:bg-gray-100 dark:hover:bg-white/10"
+              }`}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
@@ -207,7 +266,11 @@ export default function Header() {
                   />
                 </div>
               ) : null}
-              <span className="font-bold text-lg sm:text-2xl text-gray-900 tracking-tight">
+              <span className={`font-bold text-lg sm:text-2xl tracking-tight transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC]"
+                  : "text-[#241910] dark:text-[#D7D3CF]"
+              }`}>
                 {companyInfo.company_name || "STORE"}
               </span>
             </Link>
@@ -223,7 +286,11 @@ export default function Header() {
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative p-2 text-gray-700 hover:text-theme-primary hover:bg-gray-100 rounded-lg transition-colors"
+              className={`relative p-2 rounded-lg transition-colors ${
+                isTransparent
+                  ? "text-[#F3EBDC] hover:text-[#D4A359] hover:bg-white/10"
+                  : "text-[#241910] dark:text-[#D7D3CF] hover:text-[#A8752B] hover:bg-gray-100 dark:hover:bg-white/10"
+              }`}
               aria-label={`Wishlist (${wishlistCount} items)`}
             >
               <FaRegHeart className="w-5 h-5" />

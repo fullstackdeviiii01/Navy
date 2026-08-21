@@ -429,7 +429,7 @@ export default function VariantConfigurationPanel({
             <VariantTable
               variants={variantData.variants}
               onUpdate={handleVariantUpdate}
-              productCurrency="USD"
+              productCurrency="PKR"
             />
           )}
 

@@ -43,7 +43,7 @@ export async function POST(request) {
     let user = await User.findOne({ email: decodedToken.email });
 
     if (user) {
-      // Existing user - update only Firebase fields
+      // Existing user - update fields
       user.email = decodedToken.email;
       user.email_verified = decodedToken.email_verified || false;
       user.avatar_url = decodedToken.picture || user.avatar_url;

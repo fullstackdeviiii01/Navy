@@ -1,10 +1,10 @@
-// app/components/home/ProductSection.tsx - FULLY RESPONSIVE
+// app/components/home/ProductSection.tsx
 "use client";
 
 import { useRef, useState } from "react";
 import Link from "next/link";
 import ProductCard from "../product/ProductCard";
-import { FaChevronLeft, FaChevronRight, FaArrowRight } from "react-icons/fa";
+import { ArrowRight } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -22,12 +22,13 @@ interface Product {
     stock_status: string;
     stock_quantity: number;
   };
-
+  [key: string]: any;
 }
 
 interface ProductSectionProps {
   title: string;
   subtitle?: string;
+  label?: string;
   products: Product[];
   viewAllLink: string;
   bgClass?: string;
@@ -36,126 +37,71 @@ interface ProductSectionProps {
 export default function ProductSection({
   title,
   subtitle,
+  label,
   products,
   viewAllLink,
-  bgClass = "bg-white dark:bg-gray-900",
+  bgClass = "bg-[#241910]",
 }: ProductSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 320;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
+  if (!products || products.length === 0) return null;
 
-  if (!products || products.length === 0) {
-    return null;
-  }
-
-  // Mobile: Show 4 initially, expandable
   const mobileDisplayProducts = showAll ? products : products.slice(0, 4);
-  // Desktop: Show all in carousel
-  const desktopProducts = products;
 
   return (
-    <section className={`py-5 sm:py-2 lg:py-5 ${bgClass}`}>
-      <div className="container mx-auto px-3 sm:px-4 md:px-6">
+    <section className={`py-16 sm:py-20 md:py-24 ${bgClass}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-4 sm:mb-5 md:mb-6">
-          <div className="mb-3 md:mb-0">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1 sm:mb-2">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-sm sm:text-base md:text-lg">
-                {subtitle}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-14">
+          <div>
+            {label && (
+              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-[#A8752B] mb-3">
+                {label}
               </p>
             )}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-[#F3EBDC] leading-tight">
+              {title}
+            </h2>
           </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-3 lg:gap-4">
-            <div className="flex gap-2">
-              <button
-                onClick={() => scroll("left")}
-                className="p-2.5 lg:p-3 bg-white dark:bg-gray-800 border border-theme-border-light dark:border-theme-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm active:scale-95"
-                aria-label="Previous products"
-              >
-                <FaChevronLeft
-                  className="w-4 h-4 text-theme-text-secondary-light dark:text-theme-text-secondary-dark"
-                  
-                />
-              </button>
-              <button
-                onClick={() => scroll("right")}
-                className="p-2.5 lg:p-3 bg-white dark:bg-gray-800 border border-theme-border-light dark:border-theme-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm active:scale-95"
-                aria-label="Next products"
-              >
-                <FaChevronRight
-                  className="w-4 h-4 text-theme-text-secondary-light dark:text-theme-text-secondary-dark"
-                
-                />
-              </button>
-            </div>
-
-            <Link
-              href={viewAllLink}
-              className="inline-flex items-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 bg-theme-primary hover:bg-theme-primary-hover text-white font-semibold rounded-lg transition-all shadow-sm hover:shadow-md text-sm lg:text-base active:scale-95"
-            >
-              View All
-              <FaArrowRight className="text-xs lg:text-sm" />
-            </Link>
-          </div>
+          <Link
+            href={viewAllLink}
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-[#D4A359] hover:text-white transition-colors group shrink-0"
+          >
+            SHOP ALL PIECES
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+          </Link>
         </div>
 
         {/* MOBILE: Grid Layout (2 columns) */}
         <div className="md:hidden">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {mobileDisplayProducts.map((product) => (
-              <div key={product._id} className="w-full">
+              <div key={product._id}>
                 <ProductCard product={product} />
               </div>
             ))}
           </div>
 
-          {/* Mobile Controls */}
-          <div className="flex flex-col gap-3 mt-4 sm:mt-5">
-            {products.length > 4 && !showAll && (
-              <button
-                onClick={() => setShowAll(true)}
-                className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold rounded-lg transition-colors text-sm active:scale-95"
-              >
-                Show More Products ({products.length - 4} more)
-              </button>
-            )}
-
-            <Link
-              href={viewAllLink}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-theme-primary hover:bg-theme-primary-hover text-white font-semibold rounded-lg transition-all shadow-sm text-sm active:scale-95"
+          {products.length > 4 && !showAll && (
+            <button
+              onClick={() => setShowAll(true)}
+              className="w-full mt-6 px-4 py-3 border border-[#F3EBDC]/20 text-[#F3EBDC] hover:bg-[#F3EBDC]/10 font-medium text-xs tracking-[0.15em] uppercase transition-colors"
             >
-              View All Products
-              <FaArrowRight className="text-xs" />
-            </Link>
-          </div>
+              Show More ({products.length - 4} more)
+            </button>
+          )}
         </div>
 
-        {/* DESKTOP: Horizontal Carousel */}
+        {/* DESKTOP: Horizontal scroll */}
         <div className="hidden md:block relative">
           <div
-            role="region"
-            aria-label="Product carousel"
-            aria-live="polite"
             ref={scrollRef}
-            className="flex gap-4 lg:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {desktopProducts.map((product) => (
-              <div key={product._id} className="flex-none w-64 lg:w-72 xl:w-80">
+            {products.map((product) => (
+              <div key={product._id} className="flex-none w-[calc(33.333%-16px)] xl:w-[calc(33.333%-16px)]">
                 <ProductCard product={product} />
               </div>
             ))}

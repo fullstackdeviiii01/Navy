@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
@@ -10,6 +10,7 @@ import { ReactNode } from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata = {
   title: "Ecommerce Store",
@@ -29,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${robotoMono.variable} bg-white text-gray-900 antialiased`}
+        className={`${inter.variable} ${robotoMono.variable} ${playfair.variable} bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark antialiased min-h-screen`}
       >
         <ClientProviders>
           {!isAdminPage && <Header />}

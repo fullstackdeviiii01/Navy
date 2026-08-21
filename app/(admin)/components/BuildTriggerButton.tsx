@@ -61,11 +61,11 @@ export default function BuildTriggerButton() {
     setStatus("loading");
 
     try {
-      console.log("[BuildButton] Getting Firebase ID token...");
+      console.log("[BuildButton] Getting auth token...");
       const token = await authUser?.getIdToken();
 
       if (!token) {
-        console.error("[BuildButton] No Firebase token available. Is user logged in?");
+        console.error("[BuildButton] No auth token available. Is user logged in?");
         throw new Error("Not authenticated");
       }
 

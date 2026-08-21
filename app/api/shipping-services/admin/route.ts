@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       display_name,
       description,
       base_price,
-      currency: currency || "USD",
+      currency: currency || "PKR",
       estimated_days_min,
       estimated_days_max,
       is_active: is_active !== undefined ? is_active : true,
