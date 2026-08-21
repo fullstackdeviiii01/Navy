@@ -13,8 +13,8 @@ export default function ProductGrid({ products, loading }: ProductGridProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg overflow-hidden animate-pulse">
-            <div className="aspect-square bg-gray-200 dark:bg-gray-700" />
+          <div key={i} className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden animate-pulse">
+            <div className="aspect-[4/5] bg-gray-200 dark:bg-gray-700" />
             <div className="p-3 space-y-2">
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />

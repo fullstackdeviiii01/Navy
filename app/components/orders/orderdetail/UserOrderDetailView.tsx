@@ -41,7 +41,7 @@ export default function UserOrderDetailView({
           {/* Main Content - Left Side */}
           <div className="lg:col-span-2">
             {/* Single Card Container for Order Details */}
-            <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
+            <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
               {/* Header Banner */}
               <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -83,7 +83,7 @@ export default function UserOrderDetailView({
                         isAdmin={false}
                       />
                       {order.has_active_return ? (
-                        <div className="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg text-xs font-medium text-blue-800 dark:text-blue-200">
+                        <div className="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-xs font-medium text-blue-800 dark:text-blue-200">
                           Return {order.return_status}
                         </div>
                       ) : (
@@ -98,7 +98,7 @@ export default function UserOrderDetailView({
                       <button
                         onClick={onCancel}
                         aria-label={`Cancel order ${order.order_number}`}
-                        className="flex items-center gap-2 px-3 py-2 text-xs text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600"
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-white bg-red-600 transition-colors hover:bg-red-700"
                       >
                         Cancel Order
                       </button>

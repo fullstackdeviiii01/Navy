@@ -1,10 +1,9 @@
-// app/components/checkout/AddressSelection.tsx - FULLY RESPONSIVE
+// app/components/checkout/AddressSelection.tsx
 "use client";
 
 import { useState } from "react";
-import { MapPin, CreditCard, Plus, Check } from "lucide-react";
+import { MapPin, CreditCard, Edit2 } from "lucide-react";
 import AddressForm from "./AddressForm";
-import SavedAddressList from "./SavedAddressList";
 
 interface AddressSelectionProps {
   shippingAddress: any;
@@ -25,207 +24,152 @@ export default function AddressSelection({
   onSameAsShippingChange,
   savedAddresses,
 }: AddressSelectionProps) {
-  const [showShippingForm, setShowShippingForm] = useState(false);
-  const [showBillingForm, setShowBillingForm] = useState(false);
-
-  const shippingAddresses = savedAddresses.filter(
-    (addr) => addr.type === "shipping",
+  const [showShippingForm, setShowShippingForm] = useState(
+    !shippingAddress || !shippingAddress.line1
   );
-  const billingAddresses = savedAddresses.filter(
-    (addr) => addr.type === "billing",
+  const [showBillingForm, setShowBillingForm] = useState(
+    !sameAsShipping && (!billingAddress || !billingAddress.line1)
   );
 
-  const handleSelectShippingAddress = (address: any) => {
-    onShippingChange({
-      full_name: address.full_name,
-      phone: address.phone,
-      line1: address.line1,
-      line2: address.line2 || "",
-      city: address.city,
-      state: address.state,
-      postal_code: address.postal_code,
-      country: address.country,
-    });
-    setShowShippingForm(false);
-  };
-
-  const handleSelectBillingAddress = (address: any) => {
-    onBillingChange({
-      full_name: address.full_name,
-      phone: address.phone,
-      line1: address.line1,
-      line2: address.line2 || "",
-      city: address.city,
-      state: address.state,
-      postal_code: address.postal_code,
-      country: address.country,
-    });
-    setShowBillingForm(false);
-  };
-
-  const handleShippingFormSubmit = (data: any) => {
+  const handleShippingSubmit = (data: any) => {
     onShippingChange(data);
     setShowShippingForm(false);
   };
 
-  const handleBillingFormSubmit = (data: any) => {
+  const handleBillingSubmit = (data: any) => {
     onBillingChange(data);
     setShowBillingForm(false);
   };
 
   return (
-    <div className="space-y-3 sm:space-y-4">
-      {/* Shipping Address */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-        <div className="px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white flex items-center gap-1.5 sm:gap-2">
-            <MapPin className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-            Shipping Address
+    <div className="space-y-4">
+      {/* ── 1. Shipping Address ────────────────────────────────────────── */}
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
+        <div className="px-4 py-3 bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+          <h3 className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-wider flex items-center gap-2">
+            <MapPin size={16} className="text-[#A8752B]" />
+            Shipping Destination
           </h3>
+          {shippingAddress?.line1 && !showShippingForm && (
+            <button
+              onClick={() => setShowShippingForm(true)}
+              className="text-xs text-[#A8752B] hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
+            >
+              <Edit2 size={12} />
+              Change
+            </button>
+          )}
         </div>
 
-        <div className="p-3 sm:p-4 md:p-5">
-          {shippingAddress && !showShippingForm ? (
-            <div className="p-3 sm:p-3.5 md:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-              <div className="flex items-start justify-between mb-1.5 sm:mb-2 gap-2">
-                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-                  <Check className="w-4 h-4 sm:w-[18px] sm:h-[18px] flex-shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true"/>
-                  <p className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base truncate">
-                    {shippingAddress.full_name}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowShippingForm(true)}
-                  aria-label="Change shipping address"
-                  className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline flex-shrink-0 active:scale-95"
-                >
-                  Change
-                </button>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 ml-5 sm:ml-6 md:ml-7 leading-relaxed">
+        <div className="p-4 sm:p-5">
+          {shippingAddress?.line1 && !showShippingForm ? (
+            <div className="space-y-1.5 text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <p className="font-semibold text-base">
+                {shippingAddress.full_name}
+              </p>
+              <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 {shippingAddress.line1}
-                {shippingAddress.line2 && `, ${shippingAddress.line2}`}
-                <br />
+                {shippingAddress.line2 ? `, ${shippingAddress.line2}` : ""}
+              </p>
+              <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 {shippingAddress.city}, {shippingAddress.state}{" "}
                 {shippingAddress.postal_code}
-                <br />
-                {shippingAddress.country}
-                <br />
-                <span className="text-gray-600 dark:text-gray-400">
-                  {shippingAddress.phone}
-                </span>
               </p>
+              <p className="text-[#A8752B] font-semibold uppercase text-xs">
+                {shippingAddress.country || "Pakistan"}
+              </p>
+              {shippingAddress.phone && (
+                <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark pt-1">
+                  📞 {shippingAddress.phone}
+                </p>
+              )}
             </div>
           ) : (
-            <>
-              <SavedAddressList
-                addresses={shippingAddresses}
-                onSelect={handleSelectShippingAddress}
-              />
-
-              {!showShippingForm ? (
-                <button
-                  onClick={() => setShowShippingForm(true)}
-                  className="flex items-center gap-1.5 sm:gap-2 text-blue-600 dark:text-blue-400 hover:underline text-xs sm:text-sm font-medium active:scale-95"
-                >
-                  <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4"/>
-                  Add New Address
-                </button>
-              ) : (
-                <AddressForm
-                  type="shipping"
-                  onSubmit={handleShippingFormSubmit}
-                  onCancel={() => setShowShippingForm(false)}
-                />
-              )}
-            </>
+            <AddressForm
+              type="shipping"
+              initialData={shippingAddress}
+              onSubmit={handleShippingSubmit}
+              onCancel={
+                shippingAddress?.line1
+                  ? () => setShowShippingForm(false)
+                  : undefined
+              }
+            />
           )}
         </div>
       </div>
 
-      {/* Billing Address */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-        <div className="px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white flex items-center gap-1.5 sm:gap-2">
-            <CreditCard className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-            Billing Address
+      {/* ── 2. Billing Address ─────────────────────────────────────────── */}
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
+        <div className="px-4 py-3 bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 border-b border-theme-border-light dark:border-theme-border-dark">
+          <h3 className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-wider flex items-center gap-2">
+            <CreditCard size={16} className="text-[#A8752B]" />
+            Billing Details
           </h3>
         </div>
 
-        <div className="p-3 sm:p-4 md:p-5">
-          <label className="flex items-center gap-2 sm:gap-2.5 md:gap-3 p-2.5 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors mb-3 sm:mb-4 active:scale-[0.98]">
+        <div className="p-4 sm:p-5 space-y-4">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={sameAsShipping}
               onChange={(e) => {
-                onSameAsShippingChange(e.target.checked);
-                setShowBillingForm(false);
+                const checked = e.target.checked;
+                onSameAsShippingChange(checked);
+                if (checked) {
+                  onBillingChange(shippingAddress);
+                } else {
+                  setShowBillingForm(true);
+                }
               }}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0"
+              className="w-4 h-4 accent-[#A8752B]"
             />
-            <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
-              Same as shipping address
+            <span className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Billing address is same as shipping address
             </span>
           </label>
 
           {!sameAsShipping && (
-            <>
-              {billingAddress && !showBillingForm ? (
-                <div className="p-3 sm:p-3.5 md:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-                  <div className="flex items-start justify-between mb-1.5 sm:mb-2 gap-2">
-                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-                      <Check className="w-4 h-4 sm:w-[18px] sm:h-[18px] flex-shrink-0 text-blue-600 dark:text-blue-400" />
-                      <p className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base truncate">
-                        {billingAddress.full_name}
-                      </p>
-                    </div>
+            <div className="pt-3 border-t border-theme-border-light dark:border-theme-border-dark">
+              {billingAddress?.line1 && !showBillingForm ? (
+                <div className="space-y-1.5 text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-semibold text-base">
+                      {billingAddress.full_name}
+                    </p>
                     <button
-                      aria-label="Change billing address"
                       onClick={() => setShowBillingForm(true)}
-                      className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline flex-shrink-0 active:scale-95"
+                      className="text-xs text-[#A8752B] hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
                     >
+                      <Edit2 size={12} />
                       Change
                     </button>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 ml-5 sm:ml-6 md:ml-7 leading-relaxed">
+                  <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                     {billingAddress.line1}
-                    {billingAddress.line2 && `, ${billingAddress.line2}`}
-                    <br />
+                    {billingAddress.line2 ? `, ${billingAddress.line2}` : ""}
+                  </p>
+                  <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                     {billingAddress.city}, {billingAddress.state}{" "}
                     {billingAddress.postal_code}
-                    <br />
-                    {billingAddress.country}
-                    <br />
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {billingAddress.phone}
-                    </span>
+                  </p>
+                  <p className="text-[#A8752B] font-semibold uppercase text-xs">
+                    {billingAddress.country || "Pakistan"}
                   </p>
                 </div>
               ) : (
-                <>
-                  <SavedAddressList
-                    addresses={billingAddresses}
-                    onSelect={handleSelectBillingAddress}
-                  />
-
-                  {!showBillingForm ? (
-                    <button
-                      onClick={() => setShowBillingForm(true)}
-                      className="flex items-center gap-1.5 sm:gap-2 text-blue-600 dark:text-blue-400 hover:underline text-xs sm:text-sm font-medium active:scale-95"
-                    >
-                      <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      Add New Address
-                    </button>
-                  ) : (
-                    <AddressForm
-                      type="billing"
-                      onSubmit={handleBillingFormSubmit}
-                      onCancel={() => setShowBillingForm(false)}
-                    />
-                  )}
-                </>
+                <AddressForm
+                  type="billing"
+                  initialData={billingAddress}
+                  onSubmit={handleBillingSubmit}
+                  onCancel={
+                    billingAddress?.line1
+                      ? () => setShowBillingForm(false)
+                      : undefined
+                  }
+                />
               )}
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -41,15 +41,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if ((payment_method === "bank_transfer" || payment_method === "jazzcash") && !proof_url) {
-      return NextResponse.json(
-        {
-          error: `Payment screenshot / receipt is required for ${
-            payment_method === "bank_transfer" ? "Bank Transfer" : "JazzCash"
-          } orders`,
-        },
-        { status: 400 }
-      );
+    if ((payment_method === "bank_transfer" || payment_method === "jazzcash")) {
+      if (
+        !proof_url ||
+        typeof proof_url !== "string" ||
+        proof_url.trim().length < 5 ||
+        (!proof_url.startsWith("/uploads/payment-proofs/") && !proof_url.startsWith("http"))
+      ) {
+        return NextResponse.json(
+          {
+            error: `A valid payment receipt screenshot is strictly required for ${
+              payment_method === "bank_transfer" ? "Bank Transfer" : "JazzCash"
+            } orders. Please upload your transfer receipt.`,
+          },
+          { status: 400 }
+        );
+      }
     }
 
     await connectDB();
@@ -219,6 +226,11 @@ export async function POST(request: NextRequest) {
       orderData.session_id = sessionId;
     } else {
       orderData.user_id = user._id;
+    }
+
+    if (payment_method === "bank_transfer" || payment_method === "jazzcash") {
+      if (proof_url) orderData.payment_proof_url = proof_url;
+      if (bank_reference) orderData.bank_reference = bank_reference;
     }
 
     const order = new Order(orderData);

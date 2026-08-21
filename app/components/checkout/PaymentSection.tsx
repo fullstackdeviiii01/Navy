@@ -494,13 +494,19 @@ export default function PaymentSection({
         <button
           type="button"
           onClick={handleSubmitOrder}
-          disabled={processing || uploadingProof}
-          className="w-full py-4 px-6 bg-[#241910] hover:bg-[#A8752B] text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 active:scale-[0.99]"
+          disabled={processing || uploadingProof || !proofFile}
+          className={`w-full py-4 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-md ${
+            !proofFile
+              ? "bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-400 cursor-not-allowed opacity-70"
+              : "bg-[#241910] hover:bg-[#A8752B] text-white hover:shadow-lg active:scale-[0.99]"
+          }`}
         >
           {processing
             ? "Creating Order..."
             : uploadingProof
             ? "Uploading Payment Receipt..."
+            : !proofFile
+            ? `Upload Screenshot Above to Place Order`
             : `Place Order via ${methodLabel}`}
         </button>
       </div>

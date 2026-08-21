@@ -1,9 +1,8 @@
 // app/components/account/AddressesTab.tsx
 "use client";
 
-import { useState } from "react";
-import { MapPin, Plus, Edit2, Trash2, Phone } from "lucide-react";
-import AddressModal from "./AddressModal";
+import { useState, useEffect } from "react";
+import { MapPin, CreditCard, Save } from "lucide-react";
 
 interface AddressesTabProps {
   dbUser: any;
@@ -17,179 +16,388 @@ interface AddressesTabProps {
 
 export default function AddressesTab({
   dbUser,
-  authUser,
   refreshUser,
   setError,
   setSuccess,
   updating,
   setUpdating,
 }: AddressesTabProps) {
-  const [showAddressModal, setShowAddressModal] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<any>(null);
+  const [sameAsShipping, setSameAsShipping] = useState(true);
 
-  const handleAddAddress = () => {
-    setEditingAddress(null);
-    setShowAddressModal(true);
-  };
+  const [shipping, setShipping] = useState({
+    full_name: "",
+    phone: "",
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "Pakistan",
+  });
 
-  const handleEditAddress = (address: any) => {
-    setEditingAddress(address);
-    setShowAddressModal(true);
-  };
+  const [billing, setBilling] = useState({
+    full_name: "",
+    phone: "",
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "Pakistan",
+  });
 
-  const handleDeleteAddress = async (addressId: string) => {
-    if (!confirm("Are you sure you want to delete this address?")) return;
+  useEffect(() => {
+    if (dbUser?.addresses && dbUser.addresses.length > 0) {
+      const ship = dbUser.addresses.find((a: any) => a.type === "shipping");
+      const bill = dbUser.addresses.find((a: any) => a.type === "billing");
 
+      if (ship) {
+        setShipping({
+          full_name: ship.full_name || dbUser.name || "",
+          phone: ship.phone || dbUser.phone || "",
+          line1: ship.line1 || "",
+          line2: ship.line2 || "",
+          city: ship.city || "",
+          state: ship.state || "",
+          postal_code: ship.postal_code || "",
+          country: ship.country || "Pakistan",
+        });
+      } else {
+        setShipping((prev) => ({
+          ...prev,
+          full_name: dbUser.name || "",
+          phone: dbUser.phone || "",
+        }));
+      }
+
+      if (bill) {
+        setBilling({
+          full_name: bill.full_name || dbUser.name || "",
+          phone: bill.phone || dbUser.phone || "",
+          line1: bill.line1 || "",
+          line2: bill.line2 || "",
+          city: bill.city || "",
+          state: bill.state || "",
+          postal_code: bill.postal_code || "",
+          country: bill.country || "Pakistan",
+        });
+        setSameAsShipping(false);
+      } else {
+        setSameAsShipping(true);
+      }
+    } else if (dbUser) {
+      setShipping((prev) => ({
+        ...prev,
+        full_name: dbUser.name || "",
+        phone: dbUser.phone || "",
+      }));
+    }
+  }, [dbUser]);
+
+  const handleSaveAddresses = async (e: React.FormEvent) => {
+    e.preventDefault();
     setUpdating(true);
     setError("");
+    setSuccess("");
 
     try {
-      const token = await authUser.getIdToken();
-      const response = await fetch(`/api/users/addresses/${addressId}`, {
-        method: "DELETE",
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch("/api/users/addresses", {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          shippingAddress: shipping,
+          billingAddress: sameAsShipping ? shipping : billing,
+          sameAsShipping,
+        }),
       });
 
-      if (response.ok) {
-        await refreshUser();
-        setSuccess("Address deleted successfully");
-      } else {
-        throw new Error("Failed to delete address");
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save address details");
       }
-    } catch (error: any) {
-      setError(error.message);
+
+      setSuccess("Delivery & Billing addresses updated successfully.");
+      await refreshUser();
+    } catch (err: any) {
+      setError(err.message || "Failed to update address details");
     } finally {
       setUpdating(false);
     }
   };
 
   return (
-    <>
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 gap-3">
-          <div>
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-              Saved Addresses
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Manage your shipping and billing addresses
-            </p>
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 pb-4 border-b border-[#3D2C15]">
+        <MapPin size={18} className="text-[#D4A359]" />
+        <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-[#F3EBDC]">
+          DELIVERY & BILLING ADDRESSES
+        </h2>
+      </div>
+
+      <form onSubmit={handleSaveAddresses} className="space-y-8">
+        {/* ── 1. SHIPPING ADDRESS ────────────────────────────────────────── */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D4A359]">
+              1. SHIPPING ADDRESS
+            </span>
           </div>
-          <button
-            onClick={handleAddAddress}
-            className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg transition-colors w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4" />
-            Add Address
-          </button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                RECIPIENT FULL NAME *
+              </label>
+              <input
+                type="text"
+                value={shipping.full_name}
+                onChange={(e) =>
+                  setShipping({ ...shipping, full_name: e.target.value })
+                }
+                required
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                PHONE NUMBER *
+              </label>
+              <input
+                type="tel"
+                value={shipping.phone}
+                onChange={(e) =>
+                  setShipping({ ...shipping, phone: e.target.value })
+                }
+                required
+                placeholder="+92 300 0000000"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                STREET ADDRESS *
+              </label>
+              <input
+                type="text"
+                value={shipping.line1}
+                onChange={(e) =>
+                  setShipping({ ...shipping, line1: e.target.value })
+                }
+                required
+                placeholder="House / Apartment #, Street, Area"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                APARTMENT, SUITE, LANDMARK (OPTIONAL)
+              </label>
+              <input
+                type="text"
+                value={shipping.line2}
+                onChange={(e) =>
+                  setShipping({ ...shipping, line2: e.target.value })
+                }
+                placeholder="Near landmark or apartment name"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                CITY *
+              </label>
+              <input
+                type="text"
+                value={shipping.city}
+                onChange={(e) =>
+                  setShipping({ ...shipping, city: e.target.value })
+                }
+                required
+                placeholder="e.g. Lahore, Karachi, Islamabad"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                PROVINCE / STATE *
+              </label>
+              <input
+                type="text"
+                value={shipping.state}
+                onChange={(e) =>
+                  setShipping({ ...shipping, state: e.target.value })
+                }
+                required
+                placeholder="e.g. Punjab, Sindh"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                POSTAL CODE *
+              </label>
+              <input
+                type="text"
+                value={shipping.postal_code}
+                onChange={(e) =>
+                  setShipping({ ...shipping, postal_code: e.target.value })
+                }
+                required
+                placeholder="e.g. 54000"
+                className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                COUNTRY
+              </label>
+              <input
+                type="text"
+                value={shipping.country}
+                disabled
+                className="w-full bg-[#150D04] border border-[#3D2C15]/60 px-4 py-3 text-xs sm:text-sm text-[#D7D3CF]/60 cursor-not-allowed"
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="p-4 sm:p-6">
-          {dbUser?.addresses && dbUser.addresses.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {dbUser.addresses.map((address: any, index: number) => (
-                <div
-                  key={address._id || index}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex flex-wrap gap-2">
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          address.type === "shipping"
-                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
-                            : "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400"
-                        }`}
-                      >
-                        {address.type === "shipping" ? "Shipping" : "Billing"}
-                      </span>
-                      {address.label && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                          {address.label}
-                        </span>
-                      )}
-                      {address.is_default_shipping && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                          Default
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => handleEditAddress(address)}
-                        className="p-2.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-                        title="Edit"
-                        aria-label="Edit address"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteAddress(address._id)}
-                        className="p-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                        title="Delete"
-                        aria-label="Delete address"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+        {/* ── 2. BILLING ADDRESS TOGGLE ──────────────────────────────────── */}
+        <div className="pt-4 border-t border-[#3D2C15] space-y-4">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={sameAsShipping}
+              onChange={(e) => setSameAsShipping(e.target.checked)}
+              className="w-4 h-4 accent-[#A8752B] bg-[#180F05] border-[#3D2C15]"
+            />
+            <span className="text-xs sm:text-sm text-[#F3EBDC] tracking-wide">
+              Use shipping address as billing address
+            </span>
+          </label>
 
-                  <div className="space-y-2">
-                    <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white">
-                      {address.full_name}
-                    </p>
-                    
-                    {address.phone && (
-                      <p className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        <Phone className="w-3.5 h-3.5" />
-                        {address.phone}
-                      </p>
-                    )}
-                    
-                    <div className="flex items-start gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p>{address.line1}</p>
-                        {address.line2 && <p>{address.line2}</p>}
-                        <p>{address.city}, {address.state} {address.postal_code}</p>
-                        <p>{address.country}</p>
-                      </div>
-                    </div>
-                  </div>
+          {/* If separate billing address */}
+          {!sameAsShipping && (
+            <div className="pt-4 space-y-4 animate-in fade-in duration-200">
+              <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D4A359]">
+                2. BILLING ADDRESS
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    BILLING FULL NAME *
+                  </label>
+                  <input
+                    type="text"
+                    value={billing.full_name}
+                    onChange={(e) =>
+                      setBilling({ ...billing, full_name: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
-                <MapPin className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+
+                <div>
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    PHONE NUMBER *
+                  </label>
+                  <input
+                    type="tel"
+                    value={billing.phone}
+                    onChange={(e) =>
+                      setBilling({ ...billing, phone: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    placeholder="+92 300 0000000"
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    STREET ADDRESS *
+                  </label>
+                  <input
+                    type="text"
+                    value={billing.line1}
+                    onChange={(e) =>
+                      setBilling({ ...billing, line1: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    CITY *
+                  </label>
+                  <input
+                    type="text"
+                    value={billing.city}
+                    onChange={(e) =>
+                      setBilling({ ...billing, city: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    PROVINCE / STATE *
+                  </label>
+                  <input
+                    type="text"
+                    value={billing.state}
+                    onChange={(e) =>
+                      setBilling({ ...billing, state: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-semibold tracking-[0.18em] uppercase text-[#D7D3CF]/70 mb-1.5">
+                    POSTAL CODE *
+                  </label>
+                  <input
+                    type="text"
+                    value={billing.postal_code}
+                    onChange={(e) =>
+                      setBilling({ ...billing, postal_code: e.target.value })
+                    }
+                    required={!sameAsShipping}
+                    className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-xs sm:text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                  />
+                </div>
               </div>
-              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No Addresses Saved
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                Add your addresses for faster checkout
-              </p>
             </div>
           )}
         </div>
-      </div>
 
-      {showAddressModal && (
-        <AddressModal
-          address={editingAddress}
-          dbUser={dbUser}
-          authUser={authUser}
-          onClose={() => setShowAddressModal(false)}
-          refreshUser={refreshUser}
-          setError={setError}
-          setSuccess={setSuccess}
-          updating={updating}
-          setUpdating={setUpdating}
-        />
-      )}
-    </>
+        {/* Save Button */}
+        <button
+          type="submit"
+          disabled={updating}
+          className="px-8 py-3.5 bg-[#A8752B] hover:bg-[#C08A38] text-white text-xs font-semibold tracking-[0.2em] uppercase transition-colors disabled:opacity-50"
+        >
+          {updating ? "Saving Addresses..." : "Save Addresses"}
+        </button>
+      </form>
+    </div>
   );
 }

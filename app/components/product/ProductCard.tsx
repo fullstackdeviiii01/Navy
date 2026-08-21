@@ -77,52 +77,57 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/product/${product._id}`}
-      className="group block"
+      className="group flex flex-col h-full overflow-hidden"
     >
-      {/* Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#2E2214]">
+      {/* Sharp, Square-Edged Image Container */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60">
         {firstImage ? (
           <img
             src={firstImage}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-[#D7D3CF]/40 text-sm">
+          <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs sm:text-sm">
             No Image
           </div>
         )}
 
         {/* Variant Count Badge */}
         {hasVariants && variantCount > 0 && (
-          <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] sm:text-[11px] font-medium tracking-[0.15em] uppercase px-2.5 py-1">
+          <span className="absolute top-2.5 left-2.5 bg-theme-primary/80 dark:bg-theme-primary-dark/80 backdrop-blur-sm text-theme-btn-text text-[9px] sm:text-[10px] font-medium tracking-[0.12em] uppercase px-2 py-0.5">
             {variantCount} OPTIONS
           </span>
         )}
       </div>
 
-      {/* Info */}
-      <div className="pt-4 pb-2">
-        {/* Category Label */}
-        {categoryName && (
-          <p className="text-[10px] sm:text-[11px] font-medium tracking-[0.2em] uppercase text-[#A8752B] mb-1.5">
-            {categoryName}
-          </p>
-        )}
+      {/* Product Details */}
+      <div className="pt-3 pb-1 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Category Label */}
+          {categoryName && (
+            <p className="text-[10px] sm:text-[11px] font-medium tracking-[0.18em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1 truncate">
+              {categoryName}
+            </p>
+          )}
 
-        <h3 className="text-sm sm:text-base font-medium text-[#F3EBDC] leading-snug mb-1 line-clamp-2 group-hover:text-[#D4A359] transition-colors">
-          {product.name}
-        </h3>
+          <h3 className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-snug line-clamp-2 group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors">
+            {product.name}
+          </h3>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-[#D7D3CF]/80">
+        <div className="flex items-center gap-2 mt-1.5">
+          <span className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {hasVariants && variantCount > 1 && (
-              <span className="mr-0.5">From </span>
+              <span className="font-normal text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mr-0.5">
+                From{" "}
+              </span>
             )}
             {formatPrice(price)}
           </span>
           {comparePrice && comparePrice > price && (
-            <span className="text-xs text-[#D7D3CF]/40 line-through">
+            <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark line-through">
               {formatPrice(comparePrice)}
             </span>
           )}

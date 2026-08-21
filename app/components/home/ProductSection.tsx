@@ -40,7 +40,7 @@ export default function ProductSection({
   label,
   products,
   viewAllLink,
-  bgClass = "bg-[#241910]",
+  bgClass = "bg-theme-bg-light dark:bg-theme-bg-dark",
 }: ProductSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
@@ -56,17 +56,22 @@ export default function ProductSection({
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-14">
           <div>
             {label && (
-              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-[#A8752B] mb-3">
+              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
                 {label}
               </p>
             )}
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-[#F3EBDC] leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
               {title}
             </h2>
+            {subtitle && (
+              <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-2">
+                {subtitle}
+              </p>
+            )}
           </div>
           <Link
             href={viewAllLink}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-[#D4A359] hover:text-white transition-colors group shrink-0"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
           >
             SHOP ALL PIECES
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
@@ -86,7 +91,7 @@ export default function ProductSection({
           {products.length > 4 && !showAll && (
             <button
               onClick={() => setShowAll(true)}
-              className="w-full mt-6 px-4 py-3 border border-[#F3EBDC]/20 text-[#F3EBDC] hover:bg-[#F3EBDC]/10 font-medium text-xs tracking-[0.15em] uppercase transition-colors"
+              className="w-full mt-6 px-4 py-3 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark font-medium text-xs tracking-[0.15em] uppercase transition-colors"
             >
               Show More ({products.length - 4} more)
             </button>
@@ -101,7 +106,10 @@ export default function ProductSection({
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {products.map((product) => (
-              <div key={product._id} className="flex-none w-[calc(33.333%-16px)] xl:w-[calc(33.333%-16px)]">
+              <div
+                key={product._id}
+                className="flex-none w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)]"
+              >
                 <ProductCard product={product} />
               </div>
             ))}
