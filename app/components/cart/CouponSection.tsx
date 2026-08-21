@@ -1,9 +1,9 @@
-// app/components/cart/CouponSection.tsx - PROFESSIONAL DESIGN
+// app/components/cart/CouponSection.tsx
 "use client";
 
 import { useState } from "react";
 import { cartApi } from "../../../lib/api/cart";
-import { Tag, X, Check, Loader2 } from "lucide-react";
+import { X, Check, Loader2 } from "lucide-react";
 
 interface CouponSectionProps {
   cart: any;
@@ -55,48 +55,48 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
-        Coupon Code
+      <label
+        htmlFor="coupon-code"
+        className="block text-[11px] uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark"
+      >
+        PROMOTIONAL CODE
       </label>
 
       {cart.applied_coupon_id ? (
-        <div className="flex items-center justify-between p-2 sm:p-2.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <div className="flex items-center gap-1.5">
-            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" />
-            <span className="text-xs sm:text-sm font-medium text-green-800 dark:text-green-200">
-              Applied
+        <div className="flex items-center justify-between p-3 border border-green-600/30 bg-green-500/10 text-green-700 dark:text-green-300">
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+            <span className="text-xs uppercase tracking-wider font-medium">
+              Coupon Applied
             </span>
           </div>
           <button
             onClick={handleRemoveCoupon}
             disabled={loading}
-            className="p-2 sm:p-1 text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200 transition-colors disabled:opacity-50"
+            className="p-1 text-green-700 dark:text-green-300 hover:text-red-500 transition-colors disabled:opacity-50"
             aria-label="Remove applied coupon code"
           >
-            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <form onSubmit={handleApplyCoupon} className="flex gap-1.5 sm:gap-2">
-          <div className="relative flex-1">
-            <Tag className="absolute left-2 sm:left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            <input
-              id="coupon-code"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="SAVE10"
-              className="w-full pl-7 sm:pl-8 pr-2 sm:pr-2.5 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <form onSubmit={handleApplyCoupon} className="flex gap-2">
+          <input
+            id="coupon-code"
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="Enter code"
+            className="flex-1 px-3 py-2.5 text-xs bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder:text-theme-text-muted-light dark:placeholder:text-theme-text-muted-dark uppercase tracking-wider font-mono focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark transition-colors"
+          />
           <button
             type="submit"
-            aria-label="Apply coupon code"
+            aria-label="Apply promotional code"
             disabled={loading || !code.trim()}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 whitespace-nowrap"
+            className="px-4 py-2.5 text-xs uppercase tracking-[0.15em] font-medium bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap flex items-center justify-center min-w-[70px]"
           >
             {loading ? (
-              <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
               "Apply"
             )}
@@ -106,7 +106,7 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
 
       {message && (
         <p
-          className={`text-[10px] sm:text-xs flex items-center gap-1 ${
+          className={`text-xs mt-1.5 ${
             isError
               ? "text-red-600 dark:text-red-400"
               : "text-green-600 dark:text-green-400"

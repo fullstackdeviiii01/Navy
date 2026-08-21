@@ -1,4 +1,4 @@
-// // app/(public)/pages/GuestOrderTrackingPage.tsx
+// app/(public)/pages/GuestOrderTrackingPage.tsx
 "use client";
 
 import { useState } from "react";
@@ -73,11 +73,6 @@ export default function GuestOrderTrackingPage() {
     rating: number;
     title: string;
     comment: string;
-    detailed_ratings: {
-      quality: number;
-      durability: number;
-      matches_description: number;
-    };
     images?: Array<{ url: string; caption?: string }>;
     videos?: Array<{ url: string; thumbnail?: string; caption?: string }>;
   }) => {
@@ -104,95 +99,71 @@ export default function GuestOrderTrackingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-6 sm:py-8 md:py-12">
-      <main className="container mx-auto px-4 max-w-6xl">
-        <h1 className="sr-only">Guest Order Tracking</h1>
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-12 sm:py-16 transition-colors">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="sr-only">Order Tracking</h1>
         
         {/* Search Section */}
         {!order && (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm max-w-2xl mx-auto">
-            <div className="p-6 sm:p-8 border-b border-gray-200 dark:border-gray-700">
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full mb-4" aria-hidden="true">
-                  <Package className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  Track Your Order
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                  View order status and write product reviews
-                </p>
-              </div>
-
-              <form onSubmit={handleSearch} className="space-y-4">
-                <div>
-                  <label htmlFor="order-number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Order Number *
-                  </label>
-                  <input
-                    id="order-number"
-                    type="text"
-                    value={orderNumber}
-                    onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
-                    placeholder="ORD-XXXXX-XXXXX"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                    aria-describedby="order-number-hint"
-                  />
-                  <p id="order-number-hint" className="sr-only">Enter your order number in the format ORD-XXXXX-XXXXX</p>
-                </div>
-
-                <div>
-                  <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    id="email-address"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your.email@example.com"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                    aria-describedby="email-hint"
-                  />
-                  <p id="email-hint" className="sr-only">Enter the email address used for the order</p>
-                </div>
-
-                {error && (
-                  <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg" role="alert">
-                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
-                  aria-label={loading ? "Searching for order" : "Search for order"}
-                >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      <span>Searching...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-5 h-5" />
-                      Track Order
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg" role="note">
-                <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
-                  <strong>Tip:</strong> You can find your order number in the
-                  confirmation email we sent you.
-                </p>
-              </div>
+          <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-10 shadow-sm max-w-xl mx-auto">
+            <div className="text-center mb-8 pb-6 border-b border-theme-border-light dark:border-theme-border-dark">
+              <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+                ORDER LOOKUP
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+                Track <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your piece</span>
+              </h2>
+              <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                Follow the progress of your handcrafted order from our workshop to your door.
+              </p>
             </div>
+
+            <form onSubmit={handleSearch} className="space-y-4">
+              <div>
+                <label htmlFor="order-number" className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+                  Order Number *
+                </label>
+                <input
+                  id="order-number"
+                  type="text"
+                  value={orderNumber}
+                  onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
+                  placeholder="ORD-XXXXX-XXXXX"
+                  className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono text-xs sm:text-sm uppercase focus:outline-none focus:border-theme-hover-light"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email-address" className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+                  Email Address *
+                </label>
+                <input
+                  id="email-address"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your.email@example.com"
+                  className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
+                  required
+                />
+              </div>
+
+              {error && (
+                <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs" role="alert">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <p>{error}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40"
+              >
+                {loading ? "SEARCHING..." : "TRACK ORDER"}
+              </button>
+            </form>
           </div>
         )}
 
@@ -200,7 +171,6 @@ export default function GuestOrderTrackingPage() {
         {loading && (
           <div className="relative py-12" role="status" aria-live="polite">
             <Loader />
-            <span className="sr-only">Loading order details</span>
           </div>
         )}
 
@@ -208,11 +178,10 @@ export default function GuestOrderTrackingPage() {
           <div>
             <button
               onClick={resetSearch}
-              className="mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline font-medium min-h-[44px] px-2"
-              aria-label="Track a different order"
+              className="mb-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Track Another Order
+              <span>Track Another Order</span>
             </button>
             
             <UserOrderDetailView
@@ -236,12 +205,12 @@ export default function GuestOrderTrackingPage() {
 
         {/* No Results */}
         {!order && !loading && searched && !error && (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl max-w-2xl mx-auto" role="status">
-            <Package className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" aria-hidden="true" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          <div className="text-center py-12 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark max-w-xl mx-auto mt-6" role="status">
+            <Package className="w-8 h-8 text-theme-hover-light dark:text-theme-hover-dark mx-auto mb-3" aria-hidden="true" />
+            <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
               No Order Found
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Please check your order number and email address
             </p>
           </div>
@@ -251,14 +220,12 @@ export default function GuestOrderTrackingPage() {
       {/* Review Modal */}
       {showReviewModal && reviewingProduct && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="review-modal-title"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-            <h2 id="review-modal-title" className="sr-only">Write a review for {reviewingProduct.product_name}</h2>
-            <div className="overflow-y-auto max-h-[90vh]">
+          <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+            <div className="overflow-y-auto max-h-[90vh] p-6">
               <ReviewForm
                 productId={reviewingProduct.product_id}
                 onSubmit={handleSubmitReview}

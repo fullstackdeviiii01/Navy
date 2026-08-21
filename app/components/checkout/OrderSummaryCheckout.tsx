@@ -1,7 +1,8 @@
-// // app/components/checkout/OrderSummaryCheckout.tsx
+// app/components/checkout/OrderSummaryCheckout.tsx
 "use client";
 
-import { Tag, Truck, User } from "lucide-react";
+import { Tag, Truck, User, ShoppingBag } from "lucide-react";
+import Image from "next/image";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface OrderSummaryCheckoutProps {
@@ -20,44 +21,46 @@ interface OrderSummaryCheckoutProps {
 export default function OrderSummaryCheckout({
   cart,
   guestInfo,
-  shippingAddress,
-  billingAddress,
   onPlaceOrder,
   processing,
 }: OrderSummaryCheckoutProps) {
-
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark transition-colors">
       {/* Header */}
-      <div className="px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+      <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+        <h2 className="text-base font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Order Summary
         </h2>
+        <span className="text-[11px] uppercase tracking-[0.15em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+          {cart.items?.length || 0} {cart.items?.length === 1 ? "piece" : "pieces"}
+        </span>
       </div>
 
       {/* Items Preview */}
-      <div className="p-3 sm:p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
-        <div className="space-y-2.5 sm:space-y-3 max-h-48 sm:max-h-56 md:max-h-64 overflow-y-auto">
+      <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark">
+        <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
           {cart.items.map((item: any) => (
-            <div key={item._id} className="flex gap-2 sm:gap-2.5 md:gap-3">
-              <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
+            <div key={item._id} className="flex gap-3">
+              <div className="flex-shrink-0 w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark relative overflow-hidden">
                 {item.product_id?.images?.[0]?.url && (
-                  <img
+                  <Image
                     src={item.product_id.images[0].url}
                     alt={item.product_id.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="56px"
                   />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                <p className="text-xs font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                   {item.product_id?.name}
                 </p>
-                <div className="flex items-center justify-between mt-0.5 sm:mt-1 gap-2">
-                  <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-baseline justify-between mt-1 gap-2">
+                  <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
                     Qty: {item.quantity}
                   </p>
-                  <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                  <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {formatPrice(item.price_at_addition * item.quantity)}
                   </p>
                 </div>
@@ -68,37 +71,39 @@ export default function OrderSummaryCheckout({
       </div>
 
       {/* Pricing Details */}
-      <div className="p-3 sm:p-4 md:p-5 space-y-2 sm:space-y-2.5 md:space-y-3">
+      <div className="p-5 space-y-3">
         {/* Subtotal */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
-          <span className="font-semibold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between text-xs">
+          <span className="uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Subtotal
+          </span>
+          <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {formatPrice(cart.subtotal)}
           </span>
         </div>
 
         {/* Discount */}
         {cart.discount_amount > 0 && (
-          <div className="flex items-center justify-between text-xs sm:text-sm text-green-600 dark:text-green-400">
-            <span className="flex items-center gap-1">
-              <Tag className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
-              Discount
+          <div className="flex items-center justify-between text-xs text-green-600 dark:text-green-400">
+            <span className="flex items-center gap-1 uppercase tracking-wider">
+              <Tag className="w-3 h-3" aria-hidden="true" />
+              Promotion
             </span>
-            <span className="font-semibold">
+            <span className="font-medium">
               -{formatPrice(cart.discount_amount)}
             </span>
           </div>
         )}
 
         {/* Shipping */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-          <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-            <Truck className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
-            Shipping
+        <div className="flex items-center justify-between text-xs">
+          <span className="flex items-center gap-1 uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            <Truck className="w-3 h-3" aria-hidden="true" />
+            Delivery
           </span>
-          <span className="font-semibold text-gray-900 dark:text-white">
+          <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {cart.shipping_cost === 0 ? (
-              <span className="text-green-600 dark:text-green-400">FREE</span>
+              <span className="text-green-600 dark:text-green-400 uppercase tracking-wider text-[11px]">FREE</span>
             ) : (
               formatPrice(cart.shipping_cost)
             )}
@@ -106,42 +111,40 @@ export default function OrderSummaryCheckout({
         </div>
 
         {/* Total */}
-        <div className="pt-2 sm:pt-2.5 md:pt-3 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
-              Total
+        <div className="pt-3 border-t border-theme-border-light dark:border-theme-border-dark">
+          <div className="flex items-baseline justify-between mb-4">
+            <span className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Estimated Total
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
               {formatPrice(cart?.total || 0)}
             </span>
           </div>
 
-          {/* Desktop Place Order Button */}
+          {/* Desktop Proceed Button */}
           <button
             onClick={onPlaceOrder}
             disabled={processing}
-            className="w-full px-4 sm:px-5 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hidden lg:block active:scale-[0.98]"
+            className="w-full py-3.5 px-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40 shadow-sm hidden lg:block"
           >
-            {processing ? "Processing..." : "Continue to Payment"}
+            {processing ? "PROCESSING..." : "CONTINUE TO PAYMENT"}
           </button>
         </div>
       </div>
 
       {/* Guest Info Display */}
       {guestInfo && (
-        <div className="px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5 sm:mb-2 flex items-center gap-1">
-            <User className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
-            Guest Checkout
+        <div className="p-4 bg-theme-card-light/30 dark:bg-theme-card-dark/20 border-t border-theme-border-light dark:border-theme-border-dark">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-hover-light dark:text-theme-hover-dark mb-1.5 flex items-center gap-1.5">
+            <User className="w-3 h-3" aria-hidden="true" />
+            Delivering To
           </p>
-          <div className="space-y-0.5 sm:space-y-1 text-xs sm:text-sm">
-            <p className="text-gray-900 dark:text-white font-medium truncate">
+          <div className="space-y-0.5 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
               {guestInfo.name}
             </p>
-            <p className="text-gray-600 dark:text-gray-400 truncate">
-              {guestInfo.email}
-            </p>
-            <p className="text-gray-600 dark:text-gray-400">{guestInfo.phone}</p>
+            <p className="truncate text-theme-text-muted-light dark:text-theme-text-muted-dark">{guestInfo.email}</p>
+            <p>{guestInfo.phone}</p>
           </div>
         </div>
       )}

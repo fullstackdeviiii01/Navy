@@ -1,4 +1,4 @@
-// // app/products/page.tsx
+// app/(public)/pages/ProductsPage.tsx
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
@@ -20,8 +20,7 @@ import ProductsPerPageSelector from "../../components/product/ProductsPerPageSel
 import ProductProgressBar from "../../components/product/ProductProgressBar";
 import ActiveFilters from "../../components/product/ActiveFilters";
 import LoadMoreButton from "../../components/product/LoadMoreButton";
-import ScrollToTopButton from "../../components/product/ScrollToTopButton";
-import { FaFilter } from "react-icons/fa";
+import { SlidersHorizontal } from "lucide-react";
 
 function ProductsPageContent() {
   const router = useRouter();
@@ -60,7 +59,7 @@ function ProductsPageContent() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("perPage", productsPerPage.toString());
     router.push(`/products?${params.toString()}`, { scroll: false });
-  }, [productsPerPage, router]);
+  }, [productsPerPage, router, searchParams]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -88,7 +87,6 @@ function ProductsPageContent() {
     const filtered = applyClientSideFilters(allProducts, filters);
     setFilteredProducts(filtered);
 
-    // Extract brands from all products (not filtered)
     const brands = extractUniqueBrands(allProducts);
     setAvailableBrands(brands);
   }, [allProducts, filters]);
@@ -111,10 +109,9 @@ function ProductsPageContent() {
       const apiParams = {
         ...filtersToApiParams(filters),
         page: 1,
-        limit: 1000, // Fetch all products
+        limit: 1000,
       };
       const data = await productsApi.getAll(apiParams);
-
       setAllProducts(data.products);
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -164,20 +161,26 @@ function ProductsPageContent() {
   };
 
   return (
-    <div className="min-h-screen user-bg">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header with Search */}
-        <header className="mb-8">
-          <h1 className="user-text-primary text-3xl font-bold mb-4">
-            All Products
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+        {/* Editorial Header */}
+        <header className="mb-10 sm:mb-12 border-b border-theme-border-light dark:border-theme-border-dark pb-8 sm:pb-10">
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
+            SHOP
+          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-4 leading-tight">
+            The <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">fine pieces</span>
           </h1>
+          <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-2xl leading-relaxed">
+            Sculptural lighting, turned and finished entirely by hand. Filter, search and find the piece for your space.
+          </p>
 
           {/* Search Bar */}
-          <div className="mb-6" role="search" aria-label="Product search">
+          <div className="mt-8 mb-6" role="search" aria-label="Product search">
             <ProductSearchBar
               value={filters.search}
               onSearch={setSearch}
-              placeholder="Search by name, brand, SKU, or description..."
+              placeholder="Search by name, category, or description..."
             />
           </div>
 
@@ -193,20 +196,22 @@ function ProductsPageContent() {
         </header>
 
         {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-4">
+        <div className="lg:hidden mb-6 flex items-center justify-between gap-4">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center gap-2 px-4 py-2 border user-border rounded-lg user-text-secondary hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark transition-colors min-h-[44px] min-w-[44px]"
+            className="flex items-center gap-2 px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
             aria-label={showMobileFilters ? "Hide product filters" : "Show product filters"}
             aria-expanded={showMobileFilters}
             aria-controls="mobile-filters"
           >
-            <FaFilter />
-            <span>{showMobileFilters ? "Hide Filters" : "Show Filters"}</span>
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>{showMobileFilters ? "Hide Filters" : "Filters"}</span>
           </button>
+
+          <ProductSort sortBy={filters.sortBy} onSortChange={setSortBy} />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Filters Sidebar */}
           <aside
             id="mobile-filters"
@@ -236,17 +241,17 @@ function ProductsPageContent() {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1" role="main" aria-label="Product listing">
+          <main className="flex-1 min-w-0" role="main" aria-label="Product listing">
             {/* Sort & Results Count */}
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-              <p className="user-text-secondary" role="status" aria-live="polite" aria-atomic="true">
+            <div className="hidden lg:flex items-center justify-between mb-8 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+              <p className="text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark" role="status" aria-live="polite">
                 {loading
-                  ? "Loading..."
+                  ? "Loading collection..."
                   : `Showing ${displayedProducts.length} of ${filteredProducts.length} ${
-                      filteredProducts.length === 1 ? "product" : "products"
+                      filteredProducts.length === 1 ? "piece" : "pieces"
                     }`}
               </p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
                 <ProductsPerPageSelector
                   value={productsPerPage}
                   onChange={setProductsPerPage}
@@ -265,31 +270,25 @@ function ProductsPageContent() {
 
             {/* Load More Button */}
             {!loading && hasMore && (
-              <>
-                <div className="mt-8">
-                  <LoadMoreButton
-                    onClick={handleLoadMore}
-                    loading={loadingMore}
-                    remainingCount={filteredProducts.length - displayedProducts.length}
-                  />
-                </div>
-                {/* Progress Bar */}
-                <div className="mt-8 flex justify-center" role="status" aria-label="Loading progress">
-                  <div className="w-1/3">
+              <div className="mt-12 space-y-6">
+                <LoadMoreButton
+                  onClick={handleLoadMore}
+                  loading={loadingMore}
+                  remainingCount={filteredProducts.length - displayedProducts.length}
+                />
+                <div className="flex justify-center" role="status" aria-label="Loading progress">
+                  <div className="w-full max-w-xs">
                     <ProductProgressBar
                       current={displayedProducts.length}
                       total={filteredProducts.length}
                     />
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </main>
         </div>
       </div>
-
-      {/* Scroll to Top Button */}
-      {/* <ScrollToTopButton /> */}
     </div>
   );
 }
@@ -298,8 +297,10 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen user-bg flex items-center justify-center" role="status" aria-live="polite">
-          <p className="user-text-primary">Loading products...</p>
+        <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center" role="status" aria-live="polite">
+          <p className="text-xs uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            Loading pieces...
+          </p>
         </div>
       }
     >

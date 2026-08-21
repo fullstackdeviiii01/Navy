@@ -256,16 +256,16 @@ export default function ProductDetailPageContent({ productId }: Props) {
               {/* Selected variant price */}
               {selectedVariant && (
                 <div
-                  className="p-2.5 sm:p-3 md:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+                  className="p-3 bg-green-500/10 border border-green-500/30 text-xs"
                   role="region"
                   aria-label="Selected variant pricing"
                 >
-                  <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                    <span className="text-xs sm:text-sm font-medium text-green-800 dark:text-green-200">
-                      Selected Variant Price:
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-medium uppercase tracking-wider text-green-800 dark:text-green-200">
+                      Variant Price:
                     </span>
                     <span
-                      className="text-base sm:text-lg md:text-xl font-bold text-green-700 dark:text-green-300"
+                      className="text-base sm:text-lg font-serif text-green-800 dark:text-green-200 font-semibold"
                       aria-label={`Price: ${formatPrice(currentPrice)}`}
                     >
                       {formatPrice(currentPrice)}
@@ -273,11 +273,11 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   </div>
                   {currentComparePrice && (
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] sm:text-xs text-green-700 dark:text-green-300">
-                        Original Price:
+                      <span className="text-[10px] text-green-700/80 dark:text-green-300/80">
+                        Original:
                       </span>
                       <span
-                        className="text-xs sm:text-sm text-green-600 dark:text-green-400 line-through"
+                        className="text-xs text-green-700/80 dark:text-green-300/80 line-through"
                         aria-label={`Original price: ${formatPrice(currentComparePrice)}`}
                       >
                         {formatPrice(currentComparePrice)}
@@ -288,11 +288,11 @@ export default function ProductDetailPageContent({ productId }: Props) {
               )}
 
               {/* Main action block: Quantity + Price + Add to Cart */}
-              <div ref={mainActionRef} className="space-y-3">
+              <div ref={mainActionRef} className="space-y-4">
                 {/* Quantity + total (non-variable or variant selected) */}
                 {!isOutOfStock && (!isVariableProduct || selectedVariant) && (
                   <div
-                    className="space-y-1.5 sm:space-y-2"
+                    className="space-y-3"
                     role="region"
                     aria-label="Quantity and pricing"
                   >
@@ -301,12 +301,12 @@ export default function ProductDetailPageContent({ productId }: Props) {
                       onQuantityChange={setQuantity}
                       max={currentStock}
                     />
-                    <div className="flex items-center justify-between text-xs sm:text-sm">
-                      <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                    <div className="flex items-baseline justify-between pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs sm:text-sm">
+                      <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                         Total Price:
                       </span>
                       <span
-                        className="text-base sm:text-lg md:text-xl font-bold text-theme-primary"
+                        className="text-lg sm:text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark"
                         aria-label={`Total price: ${formatPrice(totalPrice)}`}
                       >
                         {formatPrice(totalPrice)}
@@ -318,12 +318,12 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 {/* Stock warning for selected variant */}
                 {variantOutOfStock && (
                   <div
-                    className="p-2 sm:p-2.5 md:p-3 w-fit bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
+                    className="p-3 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs"
                     role="alert"
                     aria-live="polite"
                   >
-                    <p className="text-xs sm:text-sm text-red-800 dark:text-red-200 font-medium">
-                      This variant is currently out of stock
+                    <p className="font-medium">
+                      This variant is currently out of stock.
                     </p>
                   </div>
                 )}
@@ -335,9 +335,9 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   aria-label="Product actions"
                 >
                   {isVariableProduct && !selectedVariant ? (
-                    <div className="text-center p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                      <p className="text-sm sm:text-base font-medium text-amber-800 dark:text-amber-200">
-                        Please select your options above to continue
+                    <div className="text-center p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark">
+                      <p className="text-xs uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
+                        Please select your options above
                       </p>
                     </div>
                   ) : (

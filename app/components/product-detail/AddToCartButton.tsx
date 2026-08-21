@@ -2,8 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaShoppingCart, FaCheck } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { Check, ShoppingBag, Loader2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
 
@@ -22,8 +21,7 @@ export default function AddToCartButton({
   variantId,
   onSuccess,
 }: AddToCartButtonProps) {
-  const { isAuthenticated, refreshCart, openCart } = useUser();
-  const router = useRouter();
+  const { refreshCart, openCart } = useUser();
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -56,18 +54,26 @@ export default function AddToCartButton({
     <button
       onClick={handleAddToCart}
       disabled={disabled || isAdding}
-      className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-theme-primary hover:bg-theme-primary-hover text-white font-semibold text-xs sm:text-sm md:text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.99]"
       aria-label={isAdded ? "Item added to cart" : isAdding ? "Adding item to cart" : "Add item to cart"}
       aria-live="polite"
       aria-atomic="true"
     >
       {isAdded ? (
         <>
-          <FaCheck className="text-xs sm:text-sm md:text-base"/>
-          <span className="whitespace-nowrap">Added!</span>
+          <Check className="w-4 h-4 text-white"/>
+          <span>ADDED TO BASKET</span>
+        </>
+      ) : isAdding ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin text-white" />
+          <span>ADDING TO BASKET...</span>
         </>
       ) : (
-        <span className="whitespace-nowrap">{isAdding ? "Adding..." : "Add to Cart"}</span>
+        <>
+          <ShoppingBag className="w-4 h-4" />
+          <span>ADD TO BASKET</span>
+        </>
       )}
     </button>
   );

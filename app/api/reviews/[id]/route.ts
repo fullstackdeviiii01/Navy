@@ -68,16 +68,6 @@ export async function PUT(
       );
     }
 
-    if (detailed_ratings) {
-      const { quality, durability, matches_description } = detailed_ratings;
-      if (quality < 1 || quality > 5 || durability < 1 || durability > 5 || matches_description < 1 || matches_description > 5) {
-        return NextResponse.json(
-          { error: "All detailed ratings must be between 1 and 5" },
-          { status: 400 }
-        );
-      }
-    }
-
     // Validate images
     if (images && images.length > 5) {
       return NextResponse.json(

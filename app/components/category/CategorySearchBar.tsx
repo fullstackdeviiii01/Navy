@@ -40,15 +40,15 @@ export default function CategorySearchBar({
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 pl-12 pr-12 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary placeholder:text-theme-text-muted-light dark:placeholder:text-theme-text-muted-dark"
+          className="w-full px-4 py-3.5 pl-11 pr-11 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark placeholder:text-theme-text-muted-light dark:placeholder:text-theme-text-muted-dark text-xs sm:text-sm transition-colors"
         />
 
         <button
           type="submit"
           aria-label="Search categories"
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 dark:text-gray-500 hover:text-theme-primary dark:hover:text-theme-primary transition-colors"
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
         >
-          <FaSearch className="text-lg"/>
+          <FaSearch className="text-sm"/>
         </button>
 
         {localValue && (
@@ -56,9 +56,9 @@ export default function CategorySearchBar({
             type="button"
             onClick={handleClear}
             aria-label="Clear search"
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
           >
-            <FaTimes className="text-lg"/>
+            <FaTimes className="text-sm"/>
           </button>
         )}
       </div>

@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { FaChevronRight, FaHome } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 
 interface BreadcrumbItem {
   label: string;
@@ -15,25 +15,23 @@ interface ProductBreadcrumbProps {
 
 export default function ProductBreadcrumb({ items }: ProductBreadcrumbProps) {
   return (
-    <nav className="flex items-center gap-1 sm:gap-1.5 md:gap-2 text-xs sm:text-sm mb-1 overflow-x-auto scrollbar-hide pb-1" aria-label="Breadcrumb">
+    <nav className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] overflow-x-auto scrollbar-hide py-2" aria-label="Breadcrumb">
       <Link 
         href="/" 
-        className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark transition-colors flex-shrink-0"
+        className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors flex-shrink-0"
         aria-label="Go to home page"
-        style={{ minWidth: '44px', minHeight: '44px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <FaHome className="text-xs sm:text-sm" />
+        HOME
       </Link>
 
       {items.map((item, index) => (
-        <div key={index} className="flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
-          <FaChevronRight className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-[8px] sm:text-[10px]" />
+        <div key={index} className="flex items-center gap-2 flex-shrink-0">
+          <ChevronRight className="w-3 h-3 text-theme-text-muted-light dark:text-theme-text-muted-dark" />
           {item.href ? (
             <Link 
               href={item.href} 
-              className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark transition-colors whitespace-nowrap"
+              className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors whitespace-nowrap"
               aria-label={`Go to ${item.label}`}
-              style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}
             >
               {item.label}
             </Link>

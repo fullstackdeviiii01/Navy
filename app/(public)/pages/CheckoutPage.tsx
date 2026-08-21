@@ -1,7 +1,7 @@
-// // app/(public)/pages/CheckoutPage.tsx - UPDATED WITH EMAIL NOTIFICATION MODAL
+// app/(public)/pages/CheckoutPage.tsx
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
@@ -35,8 +35,6 @@ export default function CheckoutPage() {
 
   const [selectedShippingService, setSelectedShippingService] = useState<string | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
-
-  // Ban state
   const [isEmailBanned, setIsEmailBanned] = useState(false);
 
   const isGuestCheckout = !authUser;
@@ -127,7 +125,7 @@ export default function CheckoutPage() {
   const validateCheckoutForm = (): boolean => {
     if (isGuestCheckout) {
       if (!guestInfo.email || !guestInfo.name || !guestInfo.phone) {
-        setError("Please fill in all required guest information");
+        setError("Please fill in all required contact details");
         window.scrollTo(0, 0);
         return false;
       }
@@ -139,13 +137,13 @@ export default function CheckoutPage() {
     }
 
     if (!selectedShippingService) {
-      setError("Please select a shipping method");
+      setError("Please select a delivery method");
       window.scrollTo(0, 0);
       return false;
     }
 
     if (!shippingAddress) {
-      setError("Please provide a shipping address");
+      setError("Please provide a valid delivery address");
       window.scrollTo(0, 0);
       return false;
     }
@@ -164,7 +162,6 @@ export default function CheckoutPage() {
 
     setError("");
 
-    // Show modal only for logged-in users with notifications explicitly disabled
     if (!isGuestCheckout && dbUser?.email_notifications === false) {
       setShowEmailModal(true);
       return;
@@ -209,7 +206,7 @@ export default function CheckoutPage() {
 
   if (loading || userLoading) {
     return (
-      <div className="relative h-48 sm:h-56 md:h-64">
+      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center">
         <Loader />
       </div>
     );
@@ -227,9 +224,18 @@ export default function CheckoutPage() {
     };
 
     return (
-      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
-        <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6">
-          <h1 className="sr-only">Payment Information</h1>
+      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          {/* Header */}
+          <div className="mb-8 border-b border-theme-border-light dark:border-theme-border-dark pb-6">
+            <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+              STEP 2 OF 2
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Payment <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">& verification</span>
+            </h1>
+          </div>
+
           <PaymentSection
             cart={cart}
             checkoutData={checkoutData}
@@ -242,24 +248,33 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6">
-        <h1 className="sr-only">Checkout</h1>
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        {/* Editorial Header */}
+        <div className="mb-10 border-b border-theme-border-light dark:border-theme-border-dark pb-8">
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+            CHECKOUT
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
+            Finalize <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your order</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Complete your delivery details to ensure handcrafted care from workshop to your room.
+          </p>
+        </div>
 
         {error && (
           <div
-            className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
+            className="mb-6 p-4 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs"
             role="alert"
           >
-            <p className="text-xs sm:text-sm text-red-800 dark:text-red-200">
-              {error}
-            </p>
+            <p>{error}</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Left Column - Forms */}
-          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+          <div className="lg:col-span-2 space-y-6">
             {isGuestCheckout && (
               <GuestInfoForm
                 guestInfo={guestInfo}
@@ -288,48 +303,41 @@ export default function CheckoutPage() {
             />
 
             {/* Order Notes */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 md:p-5">
+            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
               <label
                 htmlFor="order-notes"
-                className="block text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-2 sm:mb-2.5 md:mb-3"
+                className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2"
               >
-                Order Notes (Optional)
+                Special Delivery Instructions (Optional)
               </label>
               <textarea
                 id="order-notes"
                 value={customerNotes}
                 onChange={(e) => setCustomerNotes(e.target.value)}
                 rows={3}
-                placeholder="Any special instructions for your order..."
-                className="w-full px-3 sm:px-3.5 md:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-xs sm:text-sm"
-                aria-describedby="order-notes-hint"
+                placeholder="Gate code, landmark notes, or packaging preferences..."
+                className="w-full p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder:text-theme-text-muted-light focus:outline-none focus:border-theme-hover-light resize-none text-xs sm:text-sm"
               />
-              <p id="order-notes-hint" className="sr-only">
-                Add any special instructions or notes for your order
-              </p>
             </div>
 
-            {/* Place Order Button - Mobile */}
+            {/* Mobile Proceed Button */}
             <div className="lg:hidden">
               <button
                 onClick={handleContinueToPayment}
-                className="w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors shadow-sm active:scale-[0.98] min-h-[44px]"
+                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all"
                 aria-label="Continue to payment information"
               >
-                Continue to Payment
+                CONTINUE TO PAYMENT
               </button>
             </div>
           </div>
 
           {/* Right Column - Order Summary */}
           <aside
-            className="lg:col-span-1 order-first lg:order-last mb-3 sm:mb-4 lg:mb-0"
+            className="lg:col-span-1"
             aria-labelledby="order-summary-heading"
           >
-            <h2 id="order-summary-heading" className="sr-only">
-              Order Summary
-            </h2>
-            <div className="lg:sticky lg:top-6">
+            <div className="lg:sticky lg:top-24">
               <OrderSummaryCheckout
                 cart={cart}
                 guestInfo={isGuestCheckout ? guestInfo : undefined}

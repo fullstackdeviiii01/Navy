@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { FaSearchPlus, FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { Search, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface ProductImagesProps {
   images: { url: string; alt_text?: string }[];
@@ -16,92 +16,114 @@ export default function ProductImages({ images, productName }: ProductImagesProp
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-        <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">No images available</span>
+      <div className="aspect-[4/3] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-center">
+        <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs uppercase tracking-widest">No images available</span>
       </div>
     );
   }
 
-  const scrollThumbnails = (direction: "up" | "down") => {
-    if (direction === "up" && selectedImage > 0) {
-      setSelectedImage(selectedImage - 1);
-    } else if (direction === "down" && selectedImage < images.length - 1) {
-      setSelectedImage(selectedImage + 1);
-    }
+  const prevImage = () => {
+    setSelectedImage((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  };
+
+  const nextImage = () => {
+    setSelectedImage((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   };
 
   return (
-    <div className="flex gap-3">
-      {/* Vertical Thumbnails */}
+    <div className="space-y-4">
+      {/* Main Image Container */}
+      <div className="relative aspect-[4/3] sm:aspect-[4/3] lg:aspect-[16/11] w-full bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group">
+        <Image
+          src={images[selectedImage].url}
+          alt={images[selectedImage].alt_text || productName}
+          fill
+          className="object-cover transition-transform duration-500 ease-out"
+          priority
+          sizes="(max-width: 1024px) 100vw, 55vw"
+        />
+
+        {/* Counter Badge */}
+        <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-xs text-white text-[11px] font-mono uppercase tracking-widest px-2.5 py-1">
+          {selectedImage + 1} / {images.length}
+        </div>
+
+        {/* Zoom trigger */}
+        <button
+          onClick={() => setIsZoomed(true)}
+          className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="Zoom image"
+        >
+          <Search className="w-4 h-4" />
+        </button>
+
+        {/* Quick Nav Arrows on Hover */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnails Row */}
       {images.length > 1 && (
-        <div className="flex flex-col gap-2 w-20">
-          {images.length > 4 && (
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          {images.map((img, index) => (
             <button
-              onClick={() => scrollThumbnails("up")}
-              disabled={selectedImage === 0}
-              className="p-1 border border-theme-border-light dark:border-theme-border-dark rounded hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark disabled:opacity-30 transition-colors"
+              key={index}
+              onClick={() => setSelectedImage(index)}
+              className={`relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border transition-all ${
+                selectedImage === index
+                  ? "border-theme-hover-light dark:border-theme-hover-dark ring-1 ring-theme-hover-light"
+                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 opacity-70 hover:opacity-100 hover:border-theme-hover-light/50"
+              }`}
+              aria-label={`View image ${index + 1}`}
             >
-              <FaChevronUp className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark mx-auto" />
+              <Image
+                src={img.url}
+                alt={img.alt_text || `${productName} thumbnail ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="96px"
+              />
             </button>
-          )}
-          <div className="flex flex-col gap-2 flex-1 overflow-y-auto scrollbar-hide">
-            {images.map((img, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(index)}
-                className={`relative aspect-square rounded border-2 transition-all flex-shrink-0 ${
-                  selectedImage === index
-                    ? "border-theme-primary"
-                    : "border-theme-border-light dark:border-theme-border-dark hover:border-theme-secondary"
-                }`}
-              >
-                <Image src={img.url} alt={img.alt_text || `${productName} ${index + 1}`} fill className="object-cover rounded" />
-              </button>
-            ))}
-          </div>
-          {images.length > 4 && (
-            <button
-              onClick={() => scrollThumbnails("down")}
-              disabled={selectedImage === images.length - 1}
-              className="p-1 border border-theme-border-light dark:border-theme-border-dark rounded hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark disabled:opacity-30 transition-colors"
-            >
-              <FaChevronDown className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark mx-auto" />
-            </button>
-          )}
+          ))}
         </div>
       )}
 
-      {/* Main Image */}
-      <div className="flex-1">
-        <div className="relative w-full h-[450px] bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg overflow-hidden group">
-          <Image
-            src={images[selectedImage].url}
-            alt={images[selectedImage].alt_text || productName}
-            fill
-            className="object-contain"
-            priority
-          />
-          <button
-            onClick={() => setIsZoomed(true)}
-            className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-gray-800/90 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <FaSearchPlus className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark" />
-          </button>
-        </div>
-      </div>
-
-      {/* Zoom Modal */}
+      {/* Fullscreen Zoom Modal */}
       {isZoomed && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
           onClick={() => setIsZoomed(false)}
         >
-          <div className="relative max-w-6xl max-h-[90vh] w-full h-full">
+          <button
+            onClick={() => setIsZoomed(false)}
+            className="absolute top-6 right-6 text-white/80 hover:text-white p-2"
+            aria-label="Close fullscreen image"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <div className="relative max-w-5xl max-h-[85vh] w-full h-full">
             <Image
               src={images[selectedImage].url}
               alt={images[selectedImage].alt_text || productName}
               fill
               className="object-contain"
+              sizes="90vw"
             />
           </div>
         </div>

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Rating from "../shared/Rating";
 
 interface ProductFiltersProps {
@@ -34,9 +34,7 @@ export default function ProductFilters({
   onBrandChange,
   availableBrands,
 }: ProductFiltersProps) {
-    const [expandedSection, setExpandedSection] = useState<string>("categories");
-
-  // Local state for price inputs
+  const [expandedSection, setExpandedSection] = useState<string>("categories");
   const [localPriceRange, setLocalPriceRange] = useState({ min: 0, max: 0 });
 
   useEffect(() => {
@@ -63,72 +61,61 @@ export default function ProductFilters({
   };
 
   return (
-    <div
-      className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg p-2.5 sm:p-3 md:p-4 space-y-1.5 sm:space-y-2 lg:sticky lg:top-4 max-h-[calc(100vh-2rem)] overflow-y-auto"
-      style={{
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
-      }}
-    >
-      <style jsx>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-      <h3 className="text-theme-text-primary-light dark:text-theme-text-primary-dark text-base sm:text-lg md:text-xl font-semibold sticky top-0 bg-theme-surface-light dark:bg-theme-surface-dark pb-1 z-10">
-        Filters
-      </h3>
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-5 space-y-4 lg:sticky lg:top-24 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide transition-colors">
+      <div className="pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
+        <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          Filter Pieces
+        </h3>
+      </div>
 
       {/* Categories */}
-      <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-1.5 sm:pb-2">
+      <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60 pb-3">
         <button
           onClick={() => toggleSection("categories")}
           aria-expanded={expandedSection === "categories"}
           aria-controls="categories-section"
           aria-label="Product Categories"
-          className="flex items-center justify-between w-full text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-sm sm:text-base mb-1.5 sm:mb-2 hover:text-theme-primary transition-colors"
+          className="flex items-center justify-between w-full text-left font-serif text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors py-1"
         >
           <span>Categories</span>
           {expandedSection === "categories" ? (
-            <FaChevronUp className="text-xs sm:text-sm" />
+            <ChevronUp className="w-3.5 h-3.5" />
           ) : (
-            <FaChevronDown className="text-xs sm:text-sm" />
+            <ChevronDown className="w-3.5 h-3.5" />
           )}
         </button>
         <div
           id="categories-section"
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             expandedSection === "categories"
-              ? "max-h-64 opacity-100"
+              ? "max-h-64 opacity-100 mt-2"
               : "max-h-0 opacity-0"
           }`}
         >
-          <div className="space-y-0.5 sm:space-y-1 max-h-48 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
-            <label className="flex items-center gap-1.5 sm:gap-2 cursor-pointer hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark p-1 rounded transition-colors">
+          <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+            <label className="flex items-center gap-2.5 cursor-pointer py-1 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors">
               <input
                 type="radio"
                 name="category"
                 checked={selectedCategory === ""}
                 onChange={() => onCategoryChange("")}
-                className="text-theme-primary focus:ring-theme-primary w-3.5 h-3.5 sm:w-4 sm:h-4"
+                className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
               />
-              <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs sm:text-sm">
-                All Categories
-              </span>
+              <span>All Categories</span>
             </label>
             {categories.map((cat) => (
               <label
                 key={cat._id}
-                className="flex items-center gap-1.5 sm:gap-2 cursor-pointer hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark p-1 rounded transition-colors"
+                className="flex items-center gap-2.5 cursor-pointer py-1 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
               >
                 <input
                   type="radio"
                   name="category"
                   onChange={() => onCategoryChange(cat.slug)}
                   checked={selectedCategory === cat.slug}
-                  className="text-theme-primary focus:ring-theme-primary w-3.5 h-3.5 sm:w-4 sm:h-4"
+                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
                 />
-                <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs sm:text-sm">
+                <span className="truncate">
                   {cat.name} ({cat.product_count})
                 </span>
               </label>
@@ -137,29 +124,29 @@ export default function ProductFilters({
         </div>
       </div>
 
-      {/* Price Range with Currency Conversion */}
-      <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-1.5 sm:pb-2">
+      {/* Price Range */}
+      <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60 pb-3">
         <button
           aria-label="Price range of the product"
           onClick={() => toggleSection("price")}
-          className="flex items-center justify-between w-full text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-sm sm:text-base mb-1.5 sm:mb-2 hover:text-theme-primary transition-colors"
+          className="flex items-center justify-between w-full text-left font-serif text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors py-1"
         >
           <span>Price Range</span>
           {expandedSection === "price" ? (
-            <FaChevronUp className="text-xs sm:text-sm" />
+            <ChevronUp className="w-3.5 h-3.5" />
           ) : (
-            <FaChevronDown className="text-xs sm:text-sm" />
+            <ChevronDown className="w-3.5 h-3.5" />
           )}
         </button>
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             expandedSection === "price"
-              ? "max-h-40 opacity-100"
+              ? "max-h-48 opacity-100 mt-2"
               : "max-h-0 opacity-0"
           }`}
         >
-          <div className="space-y-1.5 sm:space-y-2">
-            <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <input
                 type="number"
                 placeholder="Min"
@@ -171,9 +158,9 @@ export default function ProductFilters({
                     min: parseFloat(e.target.value) || 0,
                   })
                 }
-                className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:ring-2 focus:ring-theme-primary"
+                className="w-full px-2.5 py-1.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs focus:outline-none focus:border-theme-hover-light"
               />
-              <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs sm:text-sm">
+              <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs">
                 -
               </span>
               <input
@@ -187,24 +174,21 @@ export default function ProductFilters({
                     max: parseFloat(e.target.value) || 0,
                   })
                 }
-                className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:ring-2 focus:ring-theme-primary"
+                className="w-full px-2.5 py-1.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs focus:outline-none focus:border-theme-hover-light"
               />
             </div>
-            <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Price in PKR
-            </p>
-            <div className="flex gap-1.5 sm:gap-2">
+            <div className="flex gap-2 pt-1">
               <button
                 aria-label="Handle price apply for the product"
                 onClick={handlePriceApply}
-                className="flex-1 px-2.5 sm:px-3 py-1.5 bg-theme-primary text-white rounded text-xs sm:text-sm hover:opacity-90 transition-opacity"
+                className="flex-1 py-1.5 px-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-[11px] uppercase tracking-wider font-medium transition-colors"
               >
                 Apply
               </button>
               <button
                 aria-label="Handle price clear for the product"
                 onClick={handlePriceClear}
-                className="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark border border-theme-border-light dark:border-theme-border-dark rounded transition-colors"
+                className="py-1.5 px-3 text-[11px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark border border-theme-border-light dark:border-theme-border-dark transition-colors"
               >
                 Clear
               </button>
@@ -213,32 +197,32 @@ export default function ProductFilters({
         </div>
       </div>
 
-      {/* Rating Filter */}
-      <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-1.5 sm:pb-2">
+      {/* Customer Rating */}
+      <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60 pb-3">
         <button
           aria-label="Handle toggle section for customer rating"
           onClick={() => toggleSection("rating")}
-          className="flex items-center justify-between w-full text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-sm sm:text-base mb-1.5 sm:mb-2 hover:text-theme-primary transition-colors"
+          className="flex items-center justify-between w-full text-left font-serif text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors py-1"
         >
           <span>Customer Rating</span>
           {expandedSection === "rating" ? (
-            <FaChevronUp className="text-xs sm:text-sm" />
+            <ChevronUp className="w-3.5 h-3.5" />
           ) : (
-            <FaChevronDown className="text-xs sm:text-sm" />
+            <ChevronDown className="w-3.5 h-3.5" />
           )}
         </button>
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             expandedSection === "rating"
-              ? "max-h-48 opacity-100"
+              ? "max-h-48 opacity-100 mt-2"
               : "max-h-0 opacity-0"
           }`}
         >
-          <div className="space-y-0.5 sm:space-y-1">
+          <div className="space-y-1">
             {[4, 3, 2, 1].map((rating) => (
               <label
                 key={rating}
-                className="flex items-center gap-1.5 sm:gap-2 cursor-pointer hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark p-1 rounded transition-colors"
+                className="flex items-center gap-2 cursor-pointer py-1 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
               >
                 <input
                   type="radio"
@@ -246,7 +230,7 @@ export default function ProductFilters({
                   aria-label="product rating"
                   checked={selectedRating === rating}
                   onChange={() => onRatingChange(rating)}
-                  className="text-theme-primary focus:ring-theme-primary w-3.5 h-3.5 sm:w-4 sm:h-4"
+                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
                 />
                 <div className="flex items-center gap-1">
                   <Rating
@@ -255,9 +239,7 @@ export default function ProductFilters({
                     size="sm"
                     showCount={false}
                   />
-                  <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs sm:text-sm">
-                    & Up
-                  </span>
+                  <span>& Up</span>
                 </div>
               </label>
             ))}
@@ -265,9 +247,9 @@ export default function ProductFilters({
               <button
                 aria-label="Clear product filters"
                 onClick={() => onRatingChange(0)}
-                className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark transition-colors"
+                className="text-[11px] uppercase tracking-wider text-theme-hover-light dark:text-theme-hover-dark hover:underline pt-1 block"
               >
-                Clear
+                Clear Rating
               </button>
             )}
           </div>
@@ -276,31 +258,31 @@ export default function ProductFilters({
 
       {/* Brands Filter */}
       {availableBrands.length > 0 && (
-        <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-1.5 sm:pb-2">
+        <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60 pb-3">
           <button
             aria-label="Toggle product brands"
             onClick={() => toggleSection("brands")}
-            className="flex items-center justify-between w-full text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-sm sm:text-base mb-1.5 sm:mb-2 hover:text-theme-primary transition-colors"
+            className="flex items-center justify-between w-full text-left font-serif text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors py-1"
           >
             <span>Brands</span>
             {expandedSection === "brands" ? (
-              <FaChevronUp className="text-xs sm:text-sm" />
+              <ChevronUp className="w-3.5 h-3.5" />
             ) : (
-              <FaChevronDown className="text-xs sm:text-sm" />
+              <ChevronDown className="w-3.5 h-3.5" />
             )}
           </button>
           <div
             className={`transition-all duration-300 ease-in-out overflow-hidden ${
               expandedSection === "brands"
-                ? "max-h-56 opacity-100"
+                ? "max-h-56 opacity-100 mt-2"
                 : "max-h-0 opacity-0"
             }`}
           >
-            <div className="space-y-0.5 sm:space-y-1 max-h-48 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
+            <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
               {availableBrands.map((brand) => (
                 <label
                   key={brand}
-                  className="flex items-center gap-1.5 sm:gap-2 cursor-pointer hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark p-1 rounded transition-colors"
+                  className="flex items-center gap-2 cursor-pointer py-1 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -315,11 +297,9 @@ export default function ProductFilters({
                         );
                       }
                     }}
-                    className="rounded text-theme-primary focus:ring-theme-primary w-3.5 h-3.5 sm:w-4 sm:h-4"
+                    className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
                   />
-                  <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs sm:text-sm">
-                    {brand}
-                  </span>
+                  <span>{brand}</span>
                 </label>
               ))}
             </div>
@@ -327,69 +307,19 @@ export default function ProductFilters({
         </div>
       )}
 
-      {/* Availability */}
-      <div className="pb-1">
-        <button
-          aria-label="product availability check"
-          onClick={() => toggleSection("availability")}
-          className="flex items-center justify-between w-full text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-sm sm:text-base mb-1.5 sm:mb-2 hover:text-theme-primary transition-colors"
-        >
-          <span>Availability</span>
-          {expandedSection === "availability" ? (
-            <FaChevronUp className="text-xs sm:text-sm" />
-          ) : (
-            <FaChevronDown className="text-xs sm:text-sm" />
-          )}
-        </button>
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            expandedSection === "availability"
-              ? "max-h-16 opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <label className="flex items-center gap-1.5 sm:gap-2 cursor-pointer hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark p-1 rounded transition-colors">
-            <input
-              type="checkbox"
-              aria-label="Products in the stock"
-              checked={inStock}
-              onChange={(e) => onStockChange(e.target.checked)}
-              className="rounded text-theme-primary focus:ring-theme-primary w-3.5 h-3.5 sm:w-4 sm:h-4"
-            />
-            <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs sm:text-sm">
-              In Stock Only
-            </span>
-          </label>
-        </div>
+      {/* In Stock Filter */}
+      <div className="pt-1">
+        <label className="flex items-center gap-2 cursor-pointer py-1 text-xs uppercase tracking-wider font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors">
+          <input
+            type="checkbox"
+            aria-label="Products in the stock"
+            checked={inStock}
+            onChange={(e) => onStockChange(e.target.checked)}
+            className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
+          />
+          <span>In Stock Only</span>
+        </label>
       </div>
-
-      {/* Custom Scrollbar Styles */}
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        @media (min-width: 640px) {
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-          }
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e0;
-          border-radius: 3px;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #4a5568;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #a0aec0;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #718096;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// app/categories/page.tsx
+// app/(public)/pages/CategoriesPage.tsx
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
@@ -55,42 +55,46 @@ function CategoriesPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark">
-      {/* Hero Section */}
-      <header className="max-w-7xl mx-auto px-4 py-12 md:py-10">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
+      {/* Editorial Hero Header */}
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8 sm:pt-16 sm:pb-12 border-b border-theme-border-light dark:border-theme-border-dark">
         <div className="max-w-3xl">
-          <h1 className="user-text-primary text-3xl font-bold mb-4">
-            Explore Our Categories
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
+            COLLECTIONS
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-4 leading-tight">
+            The <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">categories</span>
           </h1>
+          <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed mb-8">
+            Explore our solid-wood lighting and decor collections, sculpted and finished entirely by hand for distinctive living spaces.
+          </p>
 
           {/* Search Bar */}
           <CategorySearchBar
             value={searchQuery}
             onSearch={handleSearch}
-            placeholder="Search by category name and description"
+            placeholder="Search categories by name or description..."
           />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Results Summary */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between">
           <div role="status" aria-live="polite">
             {loading ? (
               <div className="relative h-6">
                 <Loader size="sm" />
               </div>
             ) : (
-              <p className="text-gray-600 dark:text-gray-400 text-base">
-                <span className="font-semibold text-gray-900 dark:text-white">
-                  {filteredCategories.length}
-                </span>{" "}
-                {filteredCategories.length === 1 ? "category" : "categories"}
+              <p className="text-xs sm:text-sm uppercase tracking-[0.15em] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-medium">
+                <span>{filteredCategories.length}</span>{" "}
+                {filteredCategories.length === 1 ? "CATEGORY" : "CATEGORIES"}
                 {searchQuery && (
-                  <span className="text-gray-500 dark:text-gray-500">
+                  <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
                     {" "}
-                    matching "{searchQuery}"
+                    MATCHING &ldquo;{searchQuery}&rdquo;
                   </span>
                 )}
               </p>
@@ -100,7 +104,7 @@ function CategoriesPageContent() {
           {searchQuery && !loading && (
             <button
               onClick={() => setSearchQuery("")}
-              className="text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors min-h-[44px] px-3"
+              className="text-xs uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors px-2 py-1"
               aria-label="Clear search filters"
             >
               Clear filters
@@ -113,23 +117,22 @@ function CategoriesPageContent() {
 
         {/* Empty State for Search */}
         {!loading && filteredCategories.length === 0 && searchQuery && (
-          <div className="text-center py-16" role="status">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full mb-6" aria-hidden="true">
-              <FaSearch className="text-3xl text-gray-400 dark:text-gray-600" />
+          <div className="text-center py-16 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 max-w-lg mx-auto" role="status">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark mb-4" aria-hidden="true">
+              <FaSearch className="text-xl text-theme-text-muted-light dark:text-theme-text-muted-dark" />
             </div>
-            <h2 className="text-gray-900 dark:text-white text-xl font-semibold mb-2">
+            <h2 className="font-serif italic text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
               No categories found
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              We couldn't find any categories matching "{searchQuery}". Try
-              adjusting your search terms.
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6 max-w-md mx-auto">
+              We couldn&apos;t find any categories matching &ldquo;{searchQuery}&rdquo;. Try adjusting your search query.
             </p>
             <button
               onClick={() => setSearchQuery("")}
-              className="inline-flex items-center px-6 py-3 bg-theme-primary hover:bg-theme-primary/90 text-white font-medium rounded-lg transition-colors min-h-[44px]"
+              className="inline-flex items-center px-6 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
               aria-label="View all categories"
             >
-              View All Categories
+              VIEW ALL CATEGORIES
             </button>
           </div>
         )}
@@ -144,8 +147,8 @@ export default function CategoriesPage() {
       fallback={
         <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-theme-primary mb-4" role="status" aria-label="Loading"></div>
-            <p className="text-gray-600 dark:text-gray-400">
+            <Loader />
+            <p className="text-xs uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-4">
               Loading categories...
             </p>
           </div>

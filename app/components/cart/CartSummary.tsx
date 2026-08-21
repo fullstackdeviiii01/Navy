@@ -1,8 +1,8 @@
-// app/components/cart/CartSummary.tsx - UPDATED WITH SHIPPING SERVICE
+// app/components/cart/CartSummary.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ShoppingBag, Tag, Truck, Receipt } from "lucide-react";
+import { Truck } from "lucide-react";
 import CouponSection from "./CouponSection";
 import SaveCartEmail from "./SaveCartEmail";
 import { useUser } from "../../context/UserContext";
@@ -18,49 +18,71 @@ export default function CartSummary({
   onCouponUpdate,
 }: CartSummaryProps) {
   const router = useRouter();
-    const { isAuthenticated } = useUser();
+  const { isAuthenticated } = useUser();
 
   const shippingService = cart.selected_shipping_service_id;
+  const FREE_SHIPPING_THRESHOLD = 15000;
+  const amountToFreeShipping = FREE_SHIPPING_THRESHOLD - (cart.subtotal || 0);
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-      <div className="px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1.5 sm:gap-2">
-          <Receipt className="w-4 h-4 sm:w-5 sm:h-5" />
-          Order Summary
-        </h2>
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
+      <h2 className="text-xl sm:text-2xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark pb-4 border-b border-theme-border-light dark:border-theme-border-dark mb-6">
+        Order Summary
+      </h2>
+
+      {/* Free Shipping Tracker */}
+      <div className="mb-6 p-3 bg-theme-card-light/60 dark:bg-theme-card-dark/40 border border-theme-border-light/60 dark:border-theme-border-dark/60">
+        <div className="flex items-center gap-2 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+          <span>
+            {amountToFreeShipping > 0 ? (
+              <>
+                ADD <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{formatPrice(amountToFreeShipping)}</strong> MORE FOR FREE SHIPPING
+              </>
+            ) : (
+              <span className="text-green-600 dark:text-green-400 font-medium">YOU QUALIFY FOR FREE SHIPPING</span>
+            )}
+          </span>
+        </div>
+        <div className="w-full bg-theme-border-light dark:bg-theme-border-dark h-1.5 overflow-hidden">
+          <div
+            className="bg-theme-hover-light dark:bg-theme-hover-dark h-full transition-all duration-500"
+            style={{
+              width: `${Math.min(100, Math.max(0, ((cart.subtotal || 0) / FREE_SHIPPING_THRESHOLD) * 100))}%`,
+            }}
+          />
+        </div>
       </div>
 
-      <div className="p-3 sm:p-4 md:p-5 space-y-2.5 sm:space-y-3 md:space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Subtotal ({cart.items.length})
+      <div className="space-y-4">
+        {/* Subtotal */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Subtotal ({cart.items.length} {cart.items.length === 1 ? "item" : "items"})
           </span>
-          <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 dark:text-white">
+          <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {formatPrice(cart.subtotal)}
           </span>
         </div>
 
+        {/* Discount */}
         {cart.discount_amount > 0 && (
-          <div className="flex items-center justify-between text-green-600 dark:text-green-400">
-            <span className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Discount
-            </span>
-            <span className="text-xs sm:text-sm md:text-base font-semibold">
+          <div className="flex items-center justify-between text-sm text-green-600 dark:text-green-400">
+            <span>Discount</span>
+            <span className="font-semibold">
               -{formatPrice(cart.discount_amount)}
             </span>
           </div>
         )}
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Shipping
+
+        {/* Shipping */}
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Estimated Shipping
           </span>
-          <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 dark:text-white">
+          <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {!cart.selected_shipping_service_id ? (
-              <span className="text-gray-400 dark:text-gray-500 text-xs">
+              <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs font-normal">
                 Calculated at checkout
               </span>
             ) : cart.shipping_cost === 0 ? (
@@ -72,50 +94,45 @@ export default function CartSummary({
         </div>
 
         {shippingService && (
-          <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-xs text-blue-800 dark:text-blue-200">
+          <div className="p-2.5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
+            <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {shippingService.display_name}
             </p>
             {shippingService.description && (
-              <p className="text-xs text-blue-600 dark:text-blue-300 mt-0.5">
+              <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
                 {shippingService.description}
               </p>
             )}
           </div>
         )}
 
-        <div className="pt-2 sm:pt-2.5 md:pt-3 border-t border-gray-200 dark:border-gray-700">
+        {/* Promotional Code */}
+        <div className="pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
           <CouponSection cart={cart} onUpdate={onCouponUpdate} />
         </div>
 
         {!isAuthenticated && cart.items.length > 0 && (
-          <div className="pt-2 sm:pt-2.5 md:pt-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
             <SaveCartEmail source="cart_sidebar" />
           </div>
         )}
 
-        <div className="pt-2 sm:pt-2.5 md:pt-3 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <span className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+        {/* Total & Action */}
+        <div className="pt-5 border-t border-theme-border-light dark:border-theme-border-dark space-y-4">
+          <div className="flex items-baseline justify-between">
+            <span className="text-base font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Total
             </span>
-            <span className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-xl sm:text-2xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {formatPrice(cart.total)}
             </span>
           </div>
 
           <button
             onClick={() => router.push("/checkout")}
-            className="w-full px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg transition-colors shadow-sm hover:shadow-md"
+            className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text uppercase tracking-[0.2em] text-xs font-medium transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2"
           >
-            Proceed to Checkout
-          </button>
-
-          <button
-            onClick={() => router.push("/")}
-            className="w-full mt-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm md:text-base font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            Continue Shopping
+            PROCEED TO CHECKOUT
           </button>
         </div>
       </div>

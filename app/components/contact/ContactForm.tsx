@@ -1,7 +1,8 @@
+// app/components/contact/ContactForm.tsx
 "use client";
 
 import { useState } from "react";
-import { FaPaperPlane } from "react-icons/fa";
+import { Send, Loader2 } from "lucide-react";
 import { contactApi } from "../../../lib/api/contact";
 
 interface ContactFormProps {
@@ -32,7 +33,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
       await contactApi.submitForm(formData);
       setSubmitStatus({
         type: "success",
-        message: "Thank you for contacting us! We'll get back to you soon.",
+        message: "Thank you for reaching out. We will respond within one business day.",
       });
       setFormData({
         name: "",
@@ -53,8 +54,8 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
   };
 
   return (
-    <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg border border-theme-border-light dark:border-theme-border-dark p-6 md:p-8">
-      <h3 className="text-xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-6">
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 sm:p-8">
+      <h3 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-6">
         Send Us a Message
       </h3>
 
@@ -62,20 +63,20 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
         <div
           role="alert"
           aria-live="polite"
-          className={`mb-6 p-4 rounded-lg ${
+          className={`mb-6 p-4 text-xs font-medium ${
             submitStatus.type === "success"
-              ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800"
-              : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800"
+              ? "bg-green-500/10 text-green-700 dark:text-green-300 border border-green-500/30"
+              : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30"
           }`}
         >
           {submitStatus.message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+            <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
               Name *
             </label>
             <input
@@ -85,13 +86,13 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }
               required
-              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Your name"
+              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
+              placeholder="Your full name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+            <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
               Email *
             </label>
             <input
@@ -101,16 +102,16 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
                 setFormData((prev) => ({ ...prev, email: e.target.value }))
               }
               required
-              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
               placeholder="your@email.com"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Phone
+            <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+              Phone (Optional)
             </label>
             <input
               type="tel"
@@ -118,13 +119,13 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, phone: e.target.value }))
               }
-              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="+1 (555) 123-4567"
+              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
+              placeholder="+92 300 1234567"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+            <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
               Subject
             </label>
             <input
@@ -133,14 +134,14 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, subject: e.target.value }))
               }
-              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="How can we help?"
+              className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
+              placeholder="Custom dimensions, order question, etc."
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
             Message *
           </label>
           <textarea
@@ -149,9 +150,9 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
               setFormData((prev) => ({ ...prev, message: e.target.value }))
             }
             required
-            rows={6}
-            className="w-full px-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            placeholder="Tell us more about your inquiry..."
+            rows={5}
+            className="w-full p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light resize-none"
+            placeholder="Please detail your question or request..."
           />
         </div>
 
@@ -159,17 +160,17 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
           type="submit"
           disabled={submitting}
           aria-label={submitting ? "Sending your message" : "Send message"}
-          className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50"
         >
           {submitting ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Sending...
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>SENDING...</span>
             </>
           ) : (
             <>
-              <FaPaperPlane/>
-              Send Message
+              <Send className="w-4 h-4" />
+              <span>SEND MESSAGE</span>
             </>
           )}
         </button>

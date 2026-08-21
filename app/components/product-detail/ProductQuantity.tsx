@@ -1,7 +1,7 @@
 // app/components/product-detail/ProductQuantity.tsx
 "use client";
 
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { Minus, Plus } from "lucide-react";
 
 interface ProductQuantityProps {
   quantity: number;
@@ -36,19 +36,18 @@ export default function ProductQuantity({
   };
 
   return (
-    <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-      <span className="text-xs sm:text-sm md:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-medium" id="quantity-label">
+    <div className="flex items-center gap-4">
+      <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark" id="quantity-label">
         Quantity:
       </span>
-      <div className="flex items-center border border-theme-border-light dark:border-theme-border-dark rounded-md sm:rounded-lg" role="group" aria-labelledby="quantity-label">
+      <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark" role="group" aria-labelledby="quantity-label">
         <button
           onClick={handleDecrease}
           disabled={quantity <= 1}
-          className="p-2 sm:p-2.5 md:p-3 hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-10 h-10 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Decrease quantity"
-          style={{ minWidth: '44px', minHeight: '44px' }}
         >
-          <FaMinus className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-[10px] sm:text-xs md:text-sm" />
+          <Minus className="w-3.5 h-3.5" />
         </button>
         <input
           type="number"
@@ -56,7 +55,7 @@ export default function ProductQuantity({
           onChange={handleInputChange}
           min={1}
           max={max}
-          className="w-12 sm:w-16 md:w-20 text-center text-xs sm:text-sm md:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium border-x border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark focus:outline-none"
+          className="w-14 h-10 text-center text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark border-x border-theme-border-light dark:border-theme-border-dark bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           aria-label={`Quantity, ${quantity} of ${max} available`}
           aria-valuemin={1}
           aria-valuemax={max}
@@ -65,15 +64,14 @@ export default function ProductQuantity({
         <button
           onClick={handleIncrease}
           disabled={quantity >= max}
-          className="p-2 sm:p-2.5 md:p-3 hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-10 h-10 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Increase quantity"
-          style={{ minWidth: '44px', minHeight: '44px' }}
         >
-          <FaPlus className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-[10px] sm:text-xs md:text-sm" />
+          <Plus className="w-3.5 h-3.5" />
         </button>
       </div>
-      <span className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark whitespace-nowrap" aria-live="polite">
-        {max} available
+      <span className="text-[11px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark" aria-live="polite">
+        ({max} AVAILABLE)
       </span>
     </div>
   );

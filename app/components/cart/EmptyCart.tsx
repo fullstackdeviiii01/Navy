@@ -1,33 +1,33 @@
-// app/components/cart/EmptyCart.tsx - PROFESSIONAL DESIGN
+// app/components/cart/EmptyCart.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Package } from "lucide-react";
+import { Package, ArrowRight } from "lucide-react";
 
 export default function EmptyCart() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center py-8 sm:py-12 md:py-16 px-4">
-      <div className="text-center max-w-md w-full">
-        <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gray-100 dark:bg-gray-800 rounded-full mb-4 sm:mb-5 md:mb-6">
-          <ShoppingCart className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-theme-text-muted-light dark:text-theme-text-muted-dark" aria-hidden="true"/>
-        </div>
+    <div className="min-h-[70vh] bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center py-16 px-4">
+      <div className="text-center max-w-md w-full border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-12">
+        <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-3">
+          YOUR BASKET
+        </p>
 
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2 sm:mb-3">
-          Your Cart is Empty
+        <h1 className="text-3xl sm:text-4xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-4">
+          Your basket is empty
         </h1>
 
-        <p className="text-xs sm:text-sm md:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-5 sm:mb-6 md:mb-8 px-4">
-          Start shopping to fill it up with amazing products!
+        <p className="text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-8 leading-relaxed">
+          Discover our handcrafted, heirloom-quality solid timber lighting and candlelight pieces.
         </p>
 
         <button
-          onClick={() => router.push("/")}
-          className="inline-flex items-center gap-1.5 sm:gap-2 px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 bg-theme-primary text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg hover:bg-theme-primary-hover transition-colors"
+          onClick={() => router.push("/products")}
+          className="inline-flex items-center gap-3 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300 group"
         >
-          <Package className="w-4 h-4 sm:w-5 sm:h-5" />
-          Start Shopping
+          <span>EXPLORE THE COLLECTION</span>
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
     </div>

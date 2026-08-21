@@ -1,4 +1,4 @@
-// app/components/cart/CartItem.tsx - PROFESSIONAL CART DESIGN
+// app/components/cart/CartItem.tsx
 "use client";
 
 import { useState } from "react";
@@ -41,7 +41,7 @@ export default function CartItem({
   onRemove,
   updating,
 }: CartItemProps) {
-    const [localQuantity, setLocalQuantity] = useState(item.quantity);
+  const [localQuantity, setLocalQuantity] = useState(item.quantity);
   const [showVideo, setShowVideo] = useState(false);
 
   const getAvailableStock = (): number => {
@@ -105,84 +105,75 @@ export default function CartItem({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow">
-      <div className="p-4">
-        <div className="flex gap-4">
-          {/* Product Image - Left Side */}
-          <Link
-            href={`/product/${item.product_id._id}`}
-            className="flex-shrink-0"
-          >
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden group">
-              {showVideo && hasVideos && primaryVideo ? (
-                <>
-                  <video
-                    aria-label={`${item.product_id.name} product video`}
-                    src={primaryVideo.url}
-                    className="w-full h-full object-cover"
-                    muted
-                    loop
-                    playsInline
-                    onMouseEnter={(e) => e.currentTarget.play()}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.pause();
-                      e.currentTarget.currentTime = 0;
-                    }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                    <PlayCircle className="text-white w-6 h-6" />
-                  </div>
-                </>
-              ) : hasImages && primaryImage ? (
-                <img
-                  aria-label={`View ${item.product_id.name} details`}
-                  src={primaryImage.url}
-                  alt={item.product_id.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                    No media
-                  </span>
-                </div>
-              )}
-
-              {hasImages && hasVideos && (
-                <button
-                  aria-label={
-                    showVideo
-                      ? "Switch to product image"
-                      : "Switch to product video"
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowVideo(!showVideo);
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-5 transition-colors">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+        {/* Product Image */}
+        <Link
+          href={`/product/${item.product_id._id}`}
+          className="flex-shrink-0"
+        >
+          <div className="relative aspect-[4/5] w-24 sm:w-28 md:w-32 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden group">
+            {showVideo && hasVideos && primaryVideo ? (
+              <>
+                <video
+                  aria-label={`${item.product_id.name} product video`}
+                  src={primaryVideo.url}
+                  className="w-full h-full object-cover"
+                  muted
+                  loop
+                  playsInline
+                  onMouseEnter={(e) => e.currentTarget.play()}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
                   }}
-                  className="absolute bottom-1 right-1 p-1 bg-black/70 hover:bg-black/90 text-white rounded transition-colors"
-                  title={showVideo ? "Show image" : "Show video"}
-                >
-                  {showVideo ? (
-                    <span className="text-[10px] font-semibold px-0.5">
-                      IMG
-                    </span>
-                  ) : (
-                    <Video className="w-3 h-3" />
-                  )}
-                </button>
-              )}
-            </div>
-          </Link>
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                  <PlayCircle className="text-white w-6 h-6" />
+                </div>
+              </>
+            ) : hasImages && primaryImage ? (
+              <img
+                aria-label={`View ${item.product_id.name} details`}
+                src={primaryImage.url}
+                alt={item.product_id.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs">
+                No media
+              </div>
+            )}
 
-          {/* Product Details - Right Side */}
-          <div className="flex-1 min-w-0 flex flex-col">
-            {/* Product Name and Remove Button */}
-            <div className="flex justify-between gap-3 mb-1.5">
+            {hasImages && hasVideos && (
+              <button
+                aria-label={
+                  showVideo
+                    ? "Switch to product image"
+                    : "Switch to product video"
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowVideo(!showVideo);
+                }}
+                className="absolute bottom-1 right-1 p-1 bg-black/70 hover:bg-black/90 text-white text-[10px] uppercase font-medium transition-colors"
+                title={showVideo ? "Show image" : "Show video"}
+              >
+                {showVideo ? "IMG" : <Video className="w-3 h-3" />}
+              </button>
+            )}
+          </div>
+        </Link>
+
+        {/* Product Details */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between">
+          <div>
+            <div className="flex items-start justify-between gap-4 mb-2">
               <Link
                 href={`/product/${item.product_id._id}`}
-                className="flex-1 min-w-0"
+                className="group/title flex-1 min-w-0"
               >
-                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2">
+                <h3 className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover/title:text-theme-hover-light dark:group-hover/title:text-theme-hover-dark transition-colors line-clamp-2">
                   {item.product_id.name}
                 </h3>
               </Link>
@@ -190,91 +181,87 @@ export default function CartItem({
               <button
                 onClick={() => onRemove(item._id)}
                 disabled={updating}
-                className="flex-shrink-0 h-fit p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors disabled:opacity-50"
-                title="Remove"
+                className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors disabled:opacity-50"
+                title="Remove item"
                 aria-label="Remove item from cart"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Variants */}
-            {item.variant_attributes && (
-              <div className="flex flex-wrap gap-1.5 mb-2">
+            {/* Variant Attributes */}
+            {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 {Object.entries(item.variant_attributes).map(([key, value]) => (
-                  <span
-                    key={key}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded"
-                  >
-                    <span className="font-medium">{key}:</span>
-                    <span>{value}</span>
+                  <span key={key}>
+                    <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">{key}:</span> {value}
                   </span>
                 ))}
               </div>
             )}
 
-            {/* Stock Status */}
+            {/* Stock Alerts */}
             {(isOutOfStock || isLowStock) && (
               <div className="mb-2">
                 {isOutOfStock ? (
-                  <span className="inline-block px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-semibold rounded">
+                  <span className="text-[11px] uppercase tracking-wider text-red-600 dark:text-red-400 font-medium">
                     Out of Stock
                   </span>
                 ) : (
-                  <span className="inline-block px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs font-semibold rounded">
-                    Only {availableStock} left
+                  <span className="text-[11px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-medium">
+                    Only {availableStock} left in stock
                   </span>
                 )}
               </div>
             )}
 
-            {/* Bottom Section: Quantity & Price */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-auto">
-              {/* Modern Quantity Selector */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={decrementQuantity}
-                  disabled={updating || localQuantity <= 1 || isOutOfStock}
-                  className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
-                  aria-label="Decrease"
-                >
-                  <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700 dark:text-gray-300" />
-                </button>
+            <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              {formatPrice(item.price_at_addition)} each
+            </p>
+          </div>
 
-                <div className="relative">
-                  <input
-                    type="number"
-                    aria-label="Product quantity"
-                    min="1"
-                    max={availableStock}
-                    value={localQuantity}
-                    onChange={handleDirectInput}
-                    disabled={updating || isOutOfStock}
-                    className="w-12 sm:w-14 h-7 sm:h-8 text-center bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent disabled:opacity-40 transition-all"
-                  />
-                </div>
+          {/* Quantity and Total */}
+          <div className="flex items-center justify-between gap-4 mt-4 pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+            {/* Square Quantity Selector */}
+            <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark">
+              <button
+                onClick={decrementQuantity}
+                disabled={updating || localQuantity <= 1 || isOutOfStock}
+                className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Decrease quantity"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
 
-                <button
-                  onClick={incrementQuantity}
-                  disabled={
-                    updating || localQuantity >= availableStock || isOutOfStock
-                  }
-                  className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
-                  aria-label="Increase"
-                >
-                  <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700 dark:text-gray-300" />
-                </button>
-              </div>
+              <input
+                type="number"
+                aria-label="Product quantity"
+                min="1"
+                max={availableStock}
+                value={localQuantity}
+                onChange={handleDirectInput}
+                disabled={updating || isOutOfStock}
+                className="w-12 h-8 text-center bg-transparent border-x border-theme-border-light dark:border-theme-border-dark text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
 
-              {/* Price */}
-              <div className="ml-auto">
-                <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                  {formatPrice(item.price_at_addition * localQuantity)}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
-                  {formatPrice(item.price_at_addition)} each
-                </p>
-              </div>
+              <button
+                onClick={incrementQuantity}
+                disabled={updating || localQuantity >= availableStock || isOutOfStock}
+                className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Increase quantity"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Total price */}
+            <div className="text-right">
+              <span className="block text-[10px] uppercase tracking-[0.2em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                ITEM TOTAL
+              </span>
+              <span className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                {formatPrice(item.price_at_addition * localQuantity)}
+              </span>
             </div>
           </div>
         </div>

@@ -1,4 +1,8 @@
+// app/components/product-detail/ProductTabs.tsx
+"use client";
+
 import { useState } from "react";
+import { Plus, Minus, Hammer, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import ProductSpecs from "./ProductSpecs";
 import ProductReviewSection from "./ProductReviewSection";
 import JoditHtmlContent from "../shared/JoditHtmlContent";
@@ -20,103 +24,121 @@ export default function ProductTabs({
   shippingInfo,
   returnInfo,
 }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState<string>("description");
+  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
+    description: true,
+  });
+
+  const toggleSection = (id: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const hasSpecifications = specifications && Object.keys(specifications).length > 0;
 
-  const tabs = [
-    { id: "description", label: "Description" },
-    ...(hasSpecifications ? [{ id: "specifications", label: "Specifications" }] : []),
-    ...(careGuide ? [{ id: "care-guide", label: "Care Guide" }] : []),
-    ...(shippingInfo ? [{ id: "shipping", label: "Shipping" }] : []),
-    ...(returnInfo ? [{ id: "returns", label: "Returns" }] : []),
-    { id: "reviews", label: "Reviews" },
+  const sections = [
+    { id: "description", label: "Description", content: "description" },
+    ...(hasSpecifications ? [{ id: "specifications", label: "Specifications", content: "specifications" }] : []),
+    ...(shippingInfo || returnInfo ? [{ id: "shipping", label: "Shipping & returns", content: "shipping" }] : []),
+    ...(careGuide ? [{ id: "care", label: "Care", content: "care" }] : []),
+    { id: "reviews", label: "Reviews & Ratings", content: "reviews" },
   ];
 
   return (
-    <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-12">
-      {tabs.length > 1 && (
-        <>
-          <div className="border-b border-theme-border-light dark:border-theme-border-dark">
-            <div className="flex gap-4 sm:gap-6 md:gap-8 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Product information tabs">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  role="tab"
-                  aria-selected={activeTab === tab.id}
-                  aria-controls={`${tab.id}-panel`}
-                  id={`${tab.id}-tab`}
-                  className={`pb-2.5 sm:pb-3 md:pb-4 font-medium transition-colors relative whitespace-nowrap text-xs sm:text-sm md:text-base ${
-                    activeTab === tab.id
-                      ? "text-theme-text-primary-light dark:text-theme-text-primary-dark"
-                      : "text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark"
-                  }`}
-                  style={{ minHeight: "44px", display: "inline-flex", alignItems: "center" }}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-theme-primary"></span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="py-5">
-            {activeTab === "description" && (
-              <div role="tabpanel" id="description-panel" aria-labelledby="description-tab">
-                <JoditHtmlContent content={description} />
-              </div>
-            )}
-
-            {activeTab === "specifications" && hasSpecifications && (
-              <div role="tabpanel" id="specifications-panel" aria-labelledby="specifications-tab">
-                <ProductSpecs specifications={specifications} />
-              </div>
-            )}
-
-            {activeTab === "care-guide" && careGuide && (
-              <div role="tabpanel" id="care-guide-panel" aria-labelledby="care-guide-tab">
-                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  <p className="whitespace-pre-wrap">{careGuide}</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "shipping" && shippingInfo && (
-              <div role="tabpanel" id="shipping-panel" aria-labelledby="shipping-tab">
-                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  <p className="whitespace-pre-wrap">{shippingInfo}</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "returns" && returnInfo && (
-              <div role="tabpanel" id="returns-panel" aria-labelledby="returns-tab">
-                <div className="prose prose-sm max-w-none text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  <p className="whitespace-pre-wrap">{returnInfo}</p>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "reviews" && (
-              <div role="tabpanel" id="reviews-panel" aria-labelledby="reviews-tab">
-                <ProductReviewSection productId={productId} />
-              </div>
-            )}
-          </div>
-        </>
-      )}
-
-      {tabs.length === 1 && (
-        <div className="py-5">
-          <JoditHtmlContent content={description} />
-          <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-12">
-            <ProductReviewSection productId={productId} />
-          </div>
+    <div className="mt-8 pt-6 border-t border-theme-border-light dark:border-theme-border-dark space-y-8">
+      {/* Brand Value Pillars */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y border-theme-border-light/60 dark:border-theme-border-dark/60">
+        <div className="flex items-center gap-2.5">
+          <Hammer className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+          <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Handmade in solid wood
+          </span>
         </div>
-      )}
+        <div className="flex items-center gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+          <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Lifetime structural warranty
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+          <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            Insured shipping
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <RotateCcw className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+          <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            14-day returns
+          </span>
+        </div>
+      </div>
+
+      {/* Accordion List */}
+      <div className="divide-y divide-theme-border-light dark:divide-theme-border-dark border-b border-theme-border-light dark:border-theme-border-dark">
+        {sections.map((section) => {
+          const isOpen = openSections[section.id];
+
+          return (
+            <div key={section.id} className="py-4">
+              <button
+                onClick={() => toggleSection(section.id)}
+                className="w-full flex items-center justify-between text-left py-2 font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors group"
+                aria-expanded={isOpen}
+              >
+                <span>{section.label}</span>
+                {isOpen ? (
+                  <Minus className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark transition-transform" />
+                ) : (
+                  <Plus className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark transition-transform" />
+                )}
+              </button>
+
+              {isOpen && (
+                <div className="pt-4 pb-2 text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+                  {section.content === "description" && (
+                    <JoditHtmlContent content={description} />
+                  )}
+
+                  {section.content === "specifications" && hasSpecifications && (
+                    <ProductSpecs specifications={specifications} />
+                  )}
+
+                  {section.content === "shipping" && (
+                    <div className="space-y-4">
+                      {shippingInfo && (
+                        <div>
+                          <h4 className="text-xs uppercase tracking-wider font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
+                            Shipping Information
+                          </h4>
+                          <p className="whitespace-pre-wrap">{shippingInfo}</p>
+                        </div>
+                      )}
+                      {returnInfo && (
+                        <div>
+                          <h4 className="text-xs uppercase tracking-wider font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
+                            Returns & Exchanges
+                          </h4>
+                          <p className="whitespace-pre-wrap">{returnInfo}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {section.content === "care" && careGuide && (
+                    <p className="whitespace-pre-wrap">{careGuide}</p>
+                  )}
+
+                  {section.content === "reviews" && (
+                    <ProductReviewSection productId={productId} />
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -67,7 +67,7 @@ export default function StickyProductBar({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-theme-bg-dark/95 backdrop-blur border-t border-theme-border-light dark:border-theme-border-dark shadow-[0_-4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 transform ${
+      className={`fixed bottom-0 left-0 right-0 z-40 bg-theme-surface-light/95 dark:bg-theme-surface-dark/95 backdrop-blur-md border-t border-theme-border-light dark:border-theme-border-dark shadow-2xl transition-all duration-300 transform ${
         isVisible
           ? "translate-y-0 opacity-100"
           : "translate-y-full opacity-0 pointer-events-none"
@@ -75,11 +75,11 @@ export default function StickyProductBar({
       role="region"
       aria-label="Sticky product action bar"
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3">
-        <div className="flex items-center justify-between gap-3 sm:gap-4 md:gap-6">
-          {/* Left: Product Info Thumbnail + Name */}
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 sm:flex-initial">
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-4">
+          {/* Left: Product Thumbnail + Details */}
+          <div className="flex items-center gap-3 min-w-0 flex-1 sm:flex-initial">
+            <div className="relative w-12 h-12 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
               <Image
                 src={primaryImage}
                 alt={product.name}
@@ -89,36 +89,20 @@ export default function StickyProductBar({
               />
             </div>
             <div className="min-w-0">
-              <h4 className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate max-w-[150px] sm:max-w-xs md:max-w-md">
+              <h4 className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate max-w-[160px] sm:max-w-xs md:max-w-md">
                 {product.name}
               </h4>
-              {selectedVariant ? (
-                <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark truncate">
-                  {selectedVariant.attributes.map((a) => a.value).join(" / ")}
-                </p>
-              ) : isVariableProduct ? (
-                <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-                  Options required
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          {/* Right: Quantity + Price + Add to Cart Button */}
-          <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
-            {/* Price display */}
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                Total
-              </p>
-              <p className="text-sm sm:text-base md:text-lg font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark whitespace-nowrap">
+              <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {formatPrice(totalPrice)}
               </p>
             </div>
+          </div>
 
-            {/* Quantity Selector (when ready to buy) */}
+          {/* Right: Quantity + Action */}
+          <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+            {/* Quantity Selector */}
             {isReadyToBuy && !isOutOfStock && !variantOutOfStock && (
-              <div className="hidden md:flex items-center">
+              <div className="hidden sm:flex items-center">
                 <ProductQuantity
                   quantity={quantity}
                   onQuantityChange={onQuantityChange}
@@ -127,16 +111,16 @@ export default function StickyProductBar({
               </div>
             )}
 
-            {/* Button */}
+            {/* Action */}
             {isVariableProduct && !selectedVariant ? (
               <button
                 onClick={onScrollToOptions}
-                className="px-3 sm:px-4 py-2 bg-theme-primary text-white font-semibold text-xs sm:text-sm rounded-lg hover:bg-theme-primary-hover transition-colors whitespace-nowrap"
+                className="px-6 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs uppercase tracking-[0.15em] transition-colors whitespace-nowrap"
               >
-                Select Options
+                SELECT OPTIONS
               </button>
             ) : (
-              <div className="min-w-[120px] sm:min-w-[140px]">
+              <div className="min-w-[140px] sm:min-w-[180px]">
                 <AddToCartButton
                   productId={product._id}
                   quantity={quantity}

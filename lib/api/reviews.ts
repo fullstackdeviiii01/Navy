@@ -1,4 +1,4 @@
-// // lib/api/reviews.ts
+// lib/api/reviews.ts
 import { getAuthToken, handleResponse } from "./helpers";
 
 export const reviewsApi = {
@@ -123,16 +123,16 @@ export const reviewsApi = {
     return handleResponse(response);
   },
 
-  // Create a review
+  // Create a review (simplified)
   createReview: async (data: {
     product_id: string;
     rating: number;
     title: string;
     comment: string;
-    detailed_ratings: {
-      quality: number;
-      durability: number;
-      matches_description: number;
+    detailed_ratings?: {
+      quality?: number;
+      durability?: number;
+      matches_description?: number;
     };
     images?: Array<{ url: string; caption?: string }>;
     videos?: Array<{ url: string; thumbnail?: string; caption?: string }>;

@@ -1,9 +1,8 @@
-// app/components/cart/ExitIntentPopup.tsx - NEW FILE
-
+// app/components/cart/ExitIntentPopup.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, ShoppingCart } from "lucide-react";
+import { X } from "lucide-react";
 import SaveCartEmail from "./SaveCartEmail";
 
 interface ExitIntentPopupProps {
@@ -19,19 +18,15 @@ export default function ExitIntentPopup({
   const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
-    // Don't show if not guest user or no items
     if (!isGuestUser || !hasItems) return;
 
-    // Check if already shown this session
     const alreadyShown = sessionStorage.getItem('exit_intent_shown');
     if (alreadyShown) return;
 
-    // Check if email already saved
     const emailSaved = sessionStorage.getItem('guest_cart_email');
     if (emailSaved) return;
 
     const handleMouseLeave = (e: MouseEvent) => {
-      // Only trigger if mouse leaves from top
       if (e.clientY <= 0 && !hasShown) {
         setShowPopup(true);
         setHasShown(true);
@@ -39,7 +34,6 @@ export default function ExitIntentPopup({
       }
     };
 
-    // Add listener after 2 seconds to avoid immediate triggers
     const timer = setTimeout(() => {
       document.addEventListener('mouseleave', handleMouseLeave);
     }, 2000);
@@ -55,7 +49,6 @@ export default function ExitIntentPopup({
   };
 
   const handleEmailSaved = () => {
-    // Auto-close after email saved
     setTimeout(() => {
       setShowPopup(false);
     }, 2000);
@@ -67,34 +60,34 @@ export default function ExitIntentPopup({
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/50 z-50 animate-fade-in"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 animate-fade-in"
         onClick={handleClose}
       />
 
       {/* Popup */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md animate-slide-up">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-6 sm:p-8 shadow-2xl relative">
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-3 right-3 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            className="absolute top-4 right-4 p-1 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
             aria-label="Close popup"
           >
             <X className="w-5 h-5"/>
           </button>
 
           {/* Content */}
-         <div className="text-center mb-4">
-  <div className="flex justify-center mb-3">
-    <ShoppingCart className="w-10 h-10 text-gray-400 dark:text-gray-500" aria-hidden="true" />
-  </div>
-  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
-    Don't lose your items!
-  </h3>
-  <p className="text-sm text-gray-600 dark:text-gray-400">
-    Save your cart and get reminders
-  </p>
-</div>
+          <div className="text-center mb-6">
+            <p className="text-[10px] uppercase tracking-[0.25em] font-medium text-theme-hover-light dark:text-theme-hover-dark mb-2">
+              SAVE YOUR ORDER
+            </p>
+            <h3 className="text-2xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+              Save your basket
+            </h3>
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+              Keep your selected handcrafted pieces safe and receive reminders.
+            </p>
+          </div>
 
           {/* Email Form */}
           <SaveCartEmail 
@@ -102,22 +95,13 @@ export default function ExitIntentPopup({
             source="exit_intent"
           />
 
-          {/* No Thanks */}
+          {/* Dismiss button */}
           <button
             onClick={handleClose}
-            className="w-full mt-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+            className="w-full mt-4 text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors text-center"
           >
-            No thanks, I'll risk it
+            No thanks, continue without saving
           </button>
-
-          {/* Benefits */}
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-              <p>✓ Free reminders if you leave items</p>
-              <p>✓ No account needed</p>
-              <p>✓ Unsubscribe anytime</p>
-            </div>
-          </div>
         </div>
       </div>
 

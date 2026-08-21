@@ -5,7 +5,6 @@ import { useState } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
-  CreditCard,
   Upload,
   Building2,
   Phone,
@@ -13,6 +12,7 @@ import {
   Check,
   QrCode,
   Truck,
+  Loader2,
 } from "lucide-react";
 import PaymentMethodSelector, {
   STATIC_PAYMENT_METHODS,
@@ -97,7 +97,7 @@ export default function PaymentSection({
     if (selectedMethod === "bank_transfer" || selectedMethod === "jazzcash") {
       if (!proofFile) {
         setError(
-          `Payment screenshot / receipt is mandatory for ${
+          `Payment screenshot / receipt is required for ${
             selectedMethod === "bank_transfer" ? "Bank Transfer" : "JazzCash"
           }. Please upload your transfer receipt to proceed.`
         );
@@ -119,32 +119,26 @@ export default function PaymentSection({
     }
   };
 
-  const selectedMethodObj = STATIC_PAYMENT_METHODS.find(
-    (m) => m.id === selectedMethod
-  );
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {error && (
-        <div className="p-4 bg-red-100/80 dark:bg-red-950/60 border border-red-300 dark:border-red-800 rounded-xl">
-          <p className="text-xs sm:text-sm text-red-800 dark:text-red-200 leading-relaxed font-medium">
-            {error}
-          </p>
+        <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs">
+          <p>{error}</p>
         </div>
       )}
 
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors space-y-6">
         {/* Amount to Pay */}
-        <div className="flex items-center justify-between p-4 bg-[#E9DFCE] dark:bg-[#48381A] border border-theme-border-light dark:border-theme-border-dark rounded-xl mb-6">
+        <div className="flex items-center justify-between p-4 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark">
           <div>
-            <span className="text-xs uppercase font-semibold tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark block">
+            <span className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark block">
               Total Amount to Pay
             </span>
-            <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              Including taxes and shipping
+            <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              Including taxes and delivery fee
             </span>
           </div>
-          <span className="text-2xl sm:text-3xl font-bold text-[#A8752B]">
+          <span className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
             {formatPrice(cart?.total || 0)}
           </span>
         </div>
@@ -160,21 +154,21 @@ export default function PaymentSection({
         />
 
         {/* Selected Method Details Panel */}
-        <div className="mt-6 pt-6 border-t border-theme-border-light dark:border-theme-border-dark">
+        <div className="pt-6 border-t border-theme-border-light dark:border-theme-border-dark">
           {/* 1. Cash On Delivery */}
           {selectedMethod === "cod" && (
             <div className="space-y-5">
-              <div className="p-4 sm:p-5 bg-[#E9DFCE]/60 dark:bg-[#48381A]/60 border border-theme-border-light dark:border-theme-border-dark rounded-xl">
-                <div className="flex items-center gap-2.5 mb-2 text-[#241910] dark:text-[#F3EBDC]">
-                  <Truck className="w-5 h-5 text-[#A8752B]" />
-                  <h4 className="font-serif font-medium text-base sm:text-lg">
-                    Cash on Delivery Details
+              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
+                <div className="flex items-center gap-2 mb-2 text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+                  <h4 className="font-serif italic text-base">
+                    Cash on Delivery Terms
                   </h4>
                 </div>
-                <ul className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark space-y-1.5 pl-6 list-disc">
+                <ul className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark space-y-1.5 pl-5 list-disc">
                   <li>Payment will be collected in cash at your doorstep upon delivery.</li>
                   <li>Please keep the exact amount ({formatPrice(cart?.total || 0)}) ready for the courier.</li>
-                  <li>You will receive an order confirmation email and tracking link immediately.</li>
+                  <li>You will receive an order confirmation email with your tracking link immediately.</li>
                 </ul>
               </div>
 
@@ -182,101 +176,100 @@ export default function PaymentSection({
                 type="button"
                 onClick={handleSubmitOrder}
                 disabled={processing}
-                className="w-full py-4 px-6 bg-[#241910] hover:bg-[#A8752B] text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 active:scale-[0.99]"
+                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40"
               >
-                {processing ? "Confirming Order..." : "Confirm Cash on Delivery Order"}
+                {processing ? "CONFIRMING ORDER..." : "PLACE ORDER WITH CASH ON DELIVERY"}
               </button>
             </div>
           )}
 
           {/* 2. Direct Bank Transfer (Meezan Bank) */}
           {selectedMethod === "bank_transfer" && (
-            <div className="space-y-5">
-              <div className="p-4 sm:p-6 bg-[#E9DFCE]/60 dark:bg-[#48381A]/60 border border-theme-border-light dark:border-theme-border-dark rounded-xl space-y-5">
+            <div className="space-y-6">
+              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
-                  <div className="flex items-center gap-2.5">
-                    <Building2 className="w-5 h-5 text-[#A8752B]" />
-                    <h4 className="font-serif font-medium text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                      Meezan Bank Account Information
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+                    <h4 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      Meezan Bank Details
                     </h4>
                   </div>
-                  <span className="text-xs uppercase font-semibold text-[#A8752B] tracking-wider">
-                    Official Account
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-semibold">
+                    OFFICIAL ACCOUNT
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-                  {/* Account Text Credentials */}
                   <div className="space-y-3">
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark">
-                      <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                         Bank Name
                       </span>
-                      <span className="font-semibold text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Meezan Bank
                       </span>
                     </div>
 
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark">
-                      <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
-                        Account Title / Recipient Name
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Account Title
                       </span>
-                      <span className="font-semibold text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Rehan Ahmad
                       </span>
                     </div>
 
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
                       <div>
-                        <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
+                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Account Number
                         </span>
-                        <span className="font-bold text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-wider">
+                        <span className="font-mono text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
                           00300112798032
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => copyToClipboard("00300112798032", "bank_acc")}
-                        className="px-3 py-1.5 text-xs bg-[#241910] hover:bg-[#A8752B] text-white rounded-lg font-medium transition-colors flex items-center gap-1.5"
+                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1"
                       >
                         {copiedField === "bank_acc" ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-green-400" />
-                            <span>Copied</span>
+                            <Check className="w-3 h-3 text-green-400" />
+                            <span>COPIED</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Copy</span>
+                            <Copy className="w-3 h-3" />
+                            <span>COPY</span>
                           </>
                         )}
                       </button>
                     </div>
 
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
                       <div className="min-w-0 pr-2">
-                        <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
+                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           IBAN
                         </span>
-                        <span className="font-bold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-wider break-all">
+                        <span className="font-mono text-[11px] sm:text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold break-all">
                           PK00300112798032
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => copyToClipboard("PK00300112798032", "bank_iban")}
-                        className="px-3 py-1.5 text-xs bg-[#241910] hover:bg-[#A8752B] text-white rounded-lg font-medium transition-colors flex items-center gap-1.5 flex-shrink-0"
+                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 flex-shrink-0"
                       >
                         {copiedField === "bank_iban" ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-green-400" />
-                            <span>Copied</span>
+                            <Check className="w-3 h-3 text-green-400" />
+                            <span>COPIED</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Copy</span>
+                            <Copy className="w-3 h-3" />
+                            <span>COPY</span>
                           </>
                         )}
                       </button>
@@ -284,115 +277,114 @@ export default function PaymentSection({
                   </div>
 
                   {/* Bank QR Code */}
-                  <div className="flex flex-col items-center justify-center p-4 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark text-center">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-[#A8752B] mb-2 uppercase tracking-wider">
-                      <QrCode className="w-4 h-4" />
+                  <div className="flex flex-col items-center justify-center p-4 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-center">
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-theme-hover-light dark:text-theme-hover-dark mb-2 uppercase tracking-wider">
+                      <QrCode className="w-3.5 h-3.5" />
                       <span>Scan Bank QR Code</span>
                     </div>
-                    <div className="relative w-44 h-44 sm:w-48 sm:h-48 border border-theme-border-light dark:border-theme-border-dark rounded-lg overflow-hidden p-2 bg-white">
+                    <div className="relative w-40 h-40 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
                       <img
                         src="/QR/BankQR.png"
                         alt="Meezan Bank Transfer QR Code"
                         className="w-full h-full object-contain"
                       />
                     </div>
-                    <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
-                      Scan with any 1Link / Raast supported banking app
+                    <span className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
+                      Scan with Raast or 1Link banking app
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Upload Receipt Section */}
+              {/* Upload Receipt */}
               {renderProofUploadSection("Meezan Bank")}
             </div>
           )}
 
           {/* 3. JazzCash */}
           {selectedMethod === "jazzcash" && (
-            <div className="space-y-5">
-              <div className="p-4 sm:p-6 bg-[#E9DFCE]/60 dark:bg-[#48381A]/60 border border-theme-border-light dark:border-theme-border-dark rounded-xl space-y-5">
+            <div className="space-y-6">
+              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
-                  <div className="flex items-center gap-2.5">
-                    <Phone className="w-5 h-5 text-[#A8752B]" />
-                    <h4 className="font-serif font-medium text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                      JazzCash Account Information
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+                    <h4 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      JazzCash Mobile Account
                     </h4>
                   </div>
-                  <span className="text-xs uppercase font-semibold text-[#A8752B] tracking-wider">
-                    Mobile Wallet
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-semibold">
+                    MOBILE WALLET
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-                  {/* Account Text Credentials */}
                   <div className="space-y-3">
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark">
-                      <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
-                        Account Title / Recipient Name
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Account Title
                       </span>
-                      <span className="font-semibold text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Rehan Ahmad
                       </span>
                     </div>
 
-                    <div className="p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
                       <div>
-                        <span className="text-[11px] uppercase tracking-wider text-[#A8752B] font-semibold block">
-                          JazzCash Mobile Number
+                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                          Mobile Number
                         </span>
-                        <span className="font-bold text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-wider">
+                        <span className="font-mono text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
                           03130538686
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => copyToClipboard("03130538686", "jazz_num")}
-                        className="px-3 py-1.5 text-xs bg-[#241910] hover:bg-[#A8752B] text-white rounded-lg font-medium transition-colors flex items-center gap-1.5"
+                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1"
                       >
                         {copiedField === "jazz_num" ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-green-400" />
-                            <span>Copied</span>
+                            <Check className="w-3 h-3 text-green-400" />
+                            <span>COPIED</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3.5 h-3.5" />
-                            <span>Copy</span>
+                            <Copy className="w-3 h-3" />
+                            <span>COPY</span>
                           </>
                         )}
                       </button>
                     </div>
 
-                    <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-                      <p className="font-semibold mb-1">How to pay via JazzCash:</p>
-                      <p>1. Open your JazzCash app and select <strong>Send Money → To JazzCash Account</strong></p>
-                      <p>2. Enter mobile number: <strong>03130538686</strong> and amount: <strong>{formatPrice(cart?.total || 0)}</strong></p>
-                      <p>3. Take a screenshot of the confirmation and upload below.</p>
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+                      <p className="font-medium mb-1 uppercase tracking-wider text-[10px] text-theme-hover-light dark:text-theme-hover-dark">How to pay:</p>
+                      <p>1. Open JazzCash App → <strong>Send Money → JazzCash Account</strong></p>
+                      <p>2. Enter: <strong>03130538686</strong> and amount: <strong>{formatPrice(cart?.total || 0)}</strong></p>
+                      <p>3. Upload receipt screenshot below.</p>
                     </div>
                   </div>
 
                   {/* JazzCash QR Code */}
-                  <div className="flex flex-col items-center justify-center p-4 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark text-center">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-[#A8752B] mb-2 uppercase tracking-wider">
-                      <QrCode className="w-4 h-4" />
-                      <span>Scan JazzCash QR Code</span>
+                  <div className="flex flex-col items-center justify-center p-4 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-center">
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-theme-hover-light dark:text-theme-hover-dark mb-2 uppercase tracking-wider">
+                      <QrCode className="w-3.5 h-3.5" />
+                      <span>Scan JazzCash QR</span>
                     </div>
-                    <div className="relative w-44 h-44 sm:w-48 sm:h-48 border border-theme-border-light dark:border-theme-border-dark rounded-lg overflow-hidden p-2 bg-white">
+                    <div className="relative w-40 h-40 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
                       <img
                         src="/QR/JazzCashQR.png"
                         alt="JazzCash Payment QR Code"
                         className="w-full h-full object-contain"
                       />
                     </div>
-                    <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
-                      Scan directly inside your JazzCash App
+                    <span className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
+                      Scan directly in your JazzCash App
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Upload Receipt Section */}
+              {/* Upload Receipt */}
               {renderProofUploadSection("JazzCash")}
             </div>
           )}
@@ -404,10 +396,10 @@ export default function PaymentSection({
         type="button"
         onClick={onBack}
         disabled={processing || uploadingProof}
-        className="flex items-center gap-2 px-4 py-2.5 text-xs uppercase tracking-widest font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors disabled:opacity-50"
+        className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors disabled:opacity-50"
       >
         <ChevronLeft className="w-4 h-4" />
-        <span>Back to Shipping Details</span>
+        <span>Back to Delivery Details</span>
       </button>
     </div>
   );
@@ -416,35 +408,29 @@ export default function PaymentSection({
     return (
       <div className="space-y-4">
         {/* Upload Box */}
-        <div
-          className={`p-4 bg-theme-surface-light dark:bg-theme-surface-dark border ${
-            !proofFile
-              ? "border-amber-300 dark:border-amber-700"
-              : "border-green-400 dark:border-green-600"
-          } rounded-2xl space-y-3`}
-        >
+        <div className="p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-3">
           <div className="flex items-center justify-between">
-            <label className="block text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Upload {methodLabel} Receipt / Screenshot <span className="text-red-500">*</span>
+            <label className="block text-xs uppercase tracking-wider font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Upload {methodLabel} Receipt *
             </label>
-            <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">
-              Mandatory to verify order
+            <span className="text-[10px] uppercase tracking-wider font-medium text-theme-hover-light dark:text-theme-hover-dark">
+              Required for verification
             </span>
           </div>
 
           {proofFile ? (
-            <div className="flex items-center justify-between p-3 bg-white dark:bg-[#342611] rounded-xl border border-theme-border-light dark:border-theme-border-dark">
+            <div className="flex items-center justify-between p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/40 dark:bg-theme-card-dark/30">
               <div className="flex items-center gap-3 min-w-0">
                 <img
                   src={URL.createObjectURL(proofFile)}
                   alt="Receipt Preview"
-                  className="w-14 h-14 object-cover rounded-lg border border-theme-border-light dark:border-theme-border-dark flex-shrink-0"
+                  className="w-12 h-12 object-cover border border-theme-border-light dark:border-theme-border-dark flex-shrink-0"
                 />
                 <div className="min-w-0">
-                  <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                  <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                     {proofFile.name}
                   </p>
-                  <p className="text-[11px] text-green-600 dark:text-green-400 font-medium mt-0.5">
+                  <p className="text-[10px] text-green-600 dark:text-green-400 font-medium">
                     ✓ Attached ({(proofFile.size / 1024).toFixed(1)} KB)
                   </p>
                 </div>
@@ -452,19 +438,19 @@ export default function PaymentSection({
               <button
                 type="button"
                 onClick={() => setProofFile(null)}
-                className="px-3 py-1.5 text-xs text-red-600 hover:text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-medium transition-colors"
+                className="text-xs uppercase tracking-wider font-semibold text-theme-hover-light dark:text-theme-hover-dark hover:underline"
               >
                 Change
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-[#A8752B] rounded-xl cursor-pointer bg-white dark:bg-[#342611] transition-all text-center group">
-              <Upload className="w-6 h-6 text-[#A8752B] group-hover:scale-110 transition-transform" />
-              <span className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Click or drag to upload transaction screenshot
+            <label className="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light cursor-pointer bg-theme-bg-light dark:bg-theme-bg-dark transition-all text-center group">
+              <Upload className="w-5 h-5 text-theme-hover-light dark:text-theme-hover-dark group-hover:scale-110 transition-transform" />
+              <span className="text-xs uppercase tracking-wider font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                Click or drag transaction screenshot
               </span>
-              <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                Supports PNG, JPG, WEBP from your banking app or JazzCash receipt
+              <span className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                PNG, JPG, or WEBP from your banking app
               </span>
               <input
                 type="file"
@@ -478,36 +464,44 @@ export default function PaymentSection({
 
         {/* Optional Reference ID */}
         <div>
-          <label className="block text-xs font-semibold tracking-wider uppercase text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1.5">
-            Transaction ID / TID (optional)
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+            Transaction / Reference ID (Optional)
           </label>
           <input
             type="text"
             value={referenceNumber}
             onChange={(e) => setReferenceNumber(e.target.value)}
-            placeholder="e.g. 2389148729 or Reference ID"
-            className="w-full px-4 py-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-[#A8752B]"
+            placeholder="e.g. 2389148729"
+            className="w-full px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
 
-        {/* Submit Order Button */}
+        {/* Submit Button */}
         <button
           type="button"
           onClick={handleSubmitOrder}
           disabled={processing || uploadingProof || !proofFile}
-          className={`w-full py-4 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-md ${
+          className={`w-full py-4 px-6 text-xs uppercase tracking-[0.2em] font-medium transition-all ${
             !proofFile
-              ? "bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-400 cursor-not-allowed opacity-70"
-              : "bg-[#241910] hover:bg-[#A8752B] text-white hover:shadow-lg active:scale-[0.99]"
+              ? "bg-theme-border-light dark:bg-theme-border-dark text-theme-text-muted-light dark:text-theme-text-muted-dark cursor-not-allowed opacity-60"
+              : "bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text shadow-sm"
           }`}
         >
-          {processing
-            ? "Creating Order..."
-            : uploadingProof
-            ? "Uploading Payment Receipt..."
-            : !proofFile
-            ? `Upload Screenshot Above to Place Order`
-            : `Place Order via ${methodLabel}`}
+          {processing ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>CREATING ORDER...</span>
+            </span>
+          ) : uploadingProof ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>UPLOADING RECEIPT...</span>
+            </span>
+          ) : !proofFile ? (
+            `UPLOAD SCREENSHOT ABOVE TO PROCEED`
+          ) : (
+            `PLACE ORDER VIA ${methodLabel.toUpperCase()}`
+          )}
         </button>
       </div>
     );

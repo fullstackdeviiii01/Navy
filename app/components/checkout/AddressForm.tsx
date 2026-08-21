@@ -11,7 +11,6 @@ interface AddressFormProps {
 }
 
 export default function AddressForm({
-  type,
   initialData,
   onSubmit,
   onCancel,
@@ -48,10 +47,10 @@ export default function AddressForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
             Recipient Full Name *
           </label>
           <input
@@ -62,26 +61,26 @@ export default function AddressForm({
               setFormData({ ...formData, full_name: e.target.value })
             }
             required
-            className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
         <div>
-          <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
             Phone Number *
           </label>
           <input
             type="tel"
-            placeholder="+92 300 0000000"
+            placeholder="+92 300 1234567"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
-            className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+        <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
           Street Address *
         </label>
         <input
@@ -90,26 +89,26 @@ export default function AddressForm({
           value={formData.line1}
           onChange={(e) => setFormData({ ...formData, line1: e.target.value })}
           required
-          className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+          className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
         />
       </div>
 
       <div>
-        <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-          Landmark / Suite (Optional)
+        <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+          Apartment, Suite, Landmark (Optional)
         </label>
         <input
           type="text"
-          placeholder="Apartment, suite, landmark, etc."
+          placeholder="e.g. Near City Center"
           value={formData.line2}
           onChange={(e) => setFormData({ ...formData, line2: e.target.value })}
-          className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+          className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
         />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
             City *
           </label>
           <input
@@ -118,12 +117,12 @@ export default function AddressForm({
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
             required
-            className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
         <div>
-          <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-            Province / State *
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+            Province *
           </label>
           <input
             type="text"
@@ -131,11 +130,11 @@ export default function AddressForm({
             value={formData.state}
             onChange={(e) => setFormData({ ...formData, state: e.target.value })}
             required
-            className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
         <div className="col-span-2 sm:col-span-1">
-          <label className="block text-[10px] font-semibold tracking-wider uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+          <label className="block text-xs uppercase tracking-[0.15em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
             Postal Code *
           </label>
           <input
@@ -146,7 +145,7 @@ export default function AddressForm({
               setFormData({ ...formData, postal_code: e.target.value })
             }
             required
-            className="w-full px-3 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-[#A8752B]"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
       </div>
@@ -156,14 +155,14 @@ export default function AddressForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-5 py-2.5 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-wider font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="px-5 py-3 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
           >
             Cancel
           </button>
         )}
         <button
           type="submit"
-          className="flex-1 py-2.5 bg-[#241910] hover:bg-[#A8752B] text-white text-xs uppercase tracking-[0.18em] font-semibold transition-colors shadow-sm"
+          className="flex-1 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.18em] font-medium transition-colors"
         >
           Confirm Address
         </button>

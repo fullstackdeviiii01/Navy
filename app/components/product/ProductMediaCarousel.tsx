@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
+import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
 
 interface MediaItem {
   type: "image" | "video";
@@ -100,28 +100,6 @@ export default function ProductMediaCarousel({
     }
   }, [currentIndex, showThumbnails, isCard]);
 
-  const indicatorScrollRef = useRef<HTMLDivElement>(null);
-
-  // Replace the useEffect with this:
-  useEffect(() => {
-    if (media.length > 1 && indicatorScrollRef.current) {
-      const container = indicatorScrollRef.current;
-      const activeIndicator = container.children[currentIndex] as HTMLElement;
-      if (activeIndicator) {
-        const containerWidth = container.offsetWidth;
-        const indicatorLeft = activeIndicator.offsetLeft;
-        const indicatorWidth = activeIndicator.offsetWidth;
-        const scrollPosition =
-          indicatorLeft - containerWidth / 2 + indicatorWidth / 2;
-
-        container.scrollTo({
-          left: scrollPosition,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [currentIndex, media.length]);
-
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
     setIsPlaying(false);
@@ -166,7 +144,6 @@ export default function ProductMediaCarousel({
     }
   };
 
-  // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -186,8 +163,8 @@ export default function ProductMediaCarousel({
 
   if (!media || media.length === 0) {
     return (
-      <div className="w-full aspect-square bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-        <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs sm:text-sm">
+      <div className="w-full aspect-[4/3] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-center">
+        <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs uppercase tracking-widest">
           No media available
         </span>
       </div>
@@ -204,9 +181,9 @@ export default function ProductMediaCarousel({
         aria-label={`${productName} media gallery`}
         className={`relative w-full ${
           isCard
-            ? "aspect-square max-h-[150px] sm:max-h-[180px] md:max-h-[200px]"
-            : "aspect-square max-h-[450px]"
-        } bg-gray-100 dark:bg-gray-900 overflow-hidden group cursor-pointer`}
+            ? "aspect-[4/5]"
+            : "aspect-[4/3] sm:aspect-[4/3] lg:aspect-[16/11]"
+        } bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group cursor-pointer`}
         onMouseEnter={() => {
           setIsVideoHovered(true);
           setShowControls(true);
@@ -226,7 +203,7 @@ export default function ProductMediaCarousel({
             alt={currentMedia.alt_text || productName}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 55vw"
             priority={currentIndex === 0}
           />
         ) : (
@@ -243,39 +220,41 @@ export default function ProductMediaCarousel({
           />
         )}
 
+        {/* Counter Badge */}
+        {!isCard && media.length > 1 && (
+          <div className="absolute bottom-3 right-3 bg-black/80 text-white text-[11px] font-mono tracking-widest px-2.5 py-1 z-10 pointer-events-none">
+            {currentIndex + 1} / {media.length}
+          </div>
+        )}
+
         {/* Navigation Arrows */}
         {media.length > 1 && (
           <>
             <button
               onClick={goToPrevious}
-              className={`absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg transition-opacity z-10 hover:bg-white dark:hover:bg-gray-800 ${
+              className={`absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 ${
                 isCard ? "opacity-0 group-hover:opacity-100" : "opacity-100"
               }`}
               aria-label="Previous media"
             >
-              <FaChevronLeft
-                className="text-gray-800 dark:text-gray-200 text-xs sm:text-sm md:text-base"
-              />
+              <ChevronLeft className="w-4 h-4 text-white" />
             </button>
             <button
               onClick={goToNext}
-              className={`absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg transition-opacity z-10 hover:bg-white dark:hover:bg-gray-800 ${
+              className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 ${
                 isCard ? "opacity-0 group-hover:opacity-100" : "opacity-100"
               }`}
               aria-label="Next media"
             >
-              <FaChevronRight
-                className="text-gray-800 dark:text-gray-200 text-xs sm:text-sm md:text-base"
-                
-              />
+              <ChevronRight className="w-4 h-4 text-white" />
             </button>
           </>
         )}
 
-        {/* Video Controls (Detail variant only) */}
+        {/* Video Controls (Detail variant) */}
         {currentMedia.type === "video" && !isCard && (
           <div
-            className={`absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3 bg-black/70 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-opacity ${
+            className={`absolute bottom-3 left-3 flex items-center gap-2 bg-black/75 px-3 py-1.5 transition-opacity z-10 ${
               showControls ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -284,85 +263,44 @@ export default function ProductMediaCarousel({
                 e.stopPropagation();
                 togglePlayPause();
               }}
-              className="text-white hover:text-gray-300 transition-colors"
+              className="text-white hover:text-theme-hover-light transition-colors"
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <FaPause className="text-sm sm:text-base" />
+                <Pause className="w-4 h-4" />
               ) : (
-                <FaPlay className="text-sm sm:text-base" />
+                <Play className="w-4 h-4" />
               )}
             </button>
           </div>
         )}
-
-        {/* Video Badge (Card variant) */}
-        {isCard && currentMedia.type === "video" && (
-          <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-black/70 text-white text-[10px] sm:text-xs font-medium rounded flex items-center gap-0.5 sm:gap-1">
-            <FaPlay className="text-[8px] sm:text-[10px]" aria-hidden="true" />
-            <span>Video</span>
-          </div>
-        )}
-
-        {/* Slide Indicators */}
-        {media.length > 1 && (
-          <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[80%]">
-            <div
-              ref={indicatorScrollRef}
-              className="flex gap-1 sm:gap-1.5 px-3 py-1.5 bg-black/20 backdrop-blur-sm rounded-full overflow-x-auto scrollbar-hide scroll-smooth"
-            >
-              {media.map((_, index) => (
-                <button
-                aria-current={index === currentIndex ? "true" : "false"}
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    goToSlide(index);
-                  }}
-                  className={`h-1.5 sm:h-2 rounded-full transition-all flex-shrink-0 ${
-                    index === currentIndex
-                      ? "bg-white w-4 sm:w-6"
-                      : "bg-white/50 hover:bg-white/75 w-1.5 sm:w-2"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Thumbnail Navigation (Detail variant only) */}
+      {/* Thumbnails Row (Detail variant) */}
       {showThumbnails && media.length > 1 && !isCard && (
-        <div className="relative mt-3 sm:mt-4 group">
-          {/* Left Arrow */}
+        <div className="relative mt-3 group">
           <button
             onClick={() => scrollThumbnails("left")}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 sm:p-2 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-black/70 hover:bg-black/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
             aria-label="Scroll thumbnails left"
           >
-            <FaChevronLeft
-              className="text-gray-800 dark:text-gray-200 text-xs sm:text-sm"
-              
-            />
+            <ChevronLeft className="w-3.5 h-3.5 text-white" />
           </button>
 
-          {/* Thumbnails Container */}
           <div
             ref={thumbnailScrollRef}
-            className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
+            className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {media.map((item, index) => (
               <button
                 key={index}
-                aria-label="Go to the slide"
+                aria-label={`Go to slide ${index + 1}`}
                 onClick={() => goToSlide(index)}
-                className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                className={`relative flex-shrink-0 w-20 h-20 bg-theme-card-light dark:bg-theme-card-dark border transition-all ${
                   index === currentIndex
-                    ? "border-theme-primary scale-105"
-                    : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+                    ? "border-theme-hover-light dark:border-theme-hover-dark ring-1 ring-theme-hover-light"
+                    : "border-theme-border-light/70 dark:border-theme-border-dark/70 opacity-70 hover:opacity-100"
                 }`}
               >
                 {item.type === "image" ? (
@@ -382,11 +320,8 @@ export default function ProductMediaCarousel({
                       className="object-cover"
                       sizes="80px"
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                      <FaPlay
-                        className="text-white text-xs sm:text-sm"
-                        
-                      />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <Play className="text-white w-4 h-4" />
                     </div>
                   </div>
                 )}
@@ -394,16 +329,12 @@ export default function ProductMediaCarousel({
             ))}
           </div>
 
-          {/* Right Arrow */}
           <button
             onClick={() => scrollThumbnails("right")}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 sm:p-2 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-black/70 hover:bg-black/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
             aria-label="Scroll thumbnails right"
           >
-            <FaChevronRight
-              className="text-gray-800 dark:text-gray-200 text-xs sm:text-sm"
-              
-            />
+            <ChevronRight className="w-3.5 h-3.5 text-white" />
           </button>
         </div>
       )}

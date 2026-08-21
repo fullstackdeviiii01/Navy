@@ -3,7 +3,8 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
+import Loader from "../../components/shared/Loader";
 
 function PaymentSuccessContent() {
   const router = useRouter();
@@ -11,33 +12,37 @@ function PaymentSuccessContent() {
 
   useEffect(() => {
     setProcessing(false);
-    setTimeout(() => router.push("/account?tab=orders"), 3000);
-  }, []);
+    const timer = setTimeout(() => router.push("/account?tab=orders"), 3000);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full text-center">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full mb-6">
-          {processing ? (
-            <Loader2 size={48} className="text-green-600 dark:text-green-400 animate-spin" />
-          ) : (
-            <CheckCircle size={48} className="text-green-600 dark:text-green-400" />
-          )}
-        </div>
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center py-12 px-4 transition-colors">
+      <div className="max-w-md w-full text-center border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-10 shadow-sm">
+        {processing ? (
+          <Loader size="lg" text="FINALIZING ORDER..." />
+        ) : (
+          <>
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-300 mb-6" aria-hidden="true">
+              <Check className="w-6 h-6" />
+            </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-          Order Confirmed!
-        </h1>
+            <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+              PAYMENT RECEIVED
+            </p>
+            <h1 className="text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
+              Order <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Confirmed</span>
+            </h1>
 
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          {processing
-            ? "Processing your order..."
-            : "Your order has been confirmed. Check your email for details."}
-        </p>
+            <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6 leading-relaxed">
+              Your order has been confirmed and queued for preparation.
+            </p>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Redirecting to your orders...
-        </p>
+            <p className="text-[11px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              Redirecting to your orders dashboard...
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -45,13 +50,7 @@ function PaymentSuccessContent() {
 
 export default function PaymentSuccessPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<Loader fullScreen text="LOADING..." />}>
       <PaymentSuccessContent />
     </Suspense>
   );

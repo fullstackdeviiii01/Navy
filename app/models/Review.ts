@@ -14,11 +14,11 @@ export interface IReviewDocument extends Document {
   title: string;
   comment: string;
   
-  // Detailed Ratings
-  detailed_ratings: {
-    quality: number;
-    durability: number;
-    matches_description: number;
+  // Detailed Ratings (Optional for backwards compatibility)
+  detailed_ratings?: {
+    quality?: number;
+    durability?: number;
+    matches_description?: number;
   };
   
   // Media
@@ -101,24 +101,9 @@ const ReviewSchema = new Schema<IReviewDocument>(
       trim: true,
     },
     detailed_ratings: {
-      quality: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5,
-      },
-      durability: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5,
-      },
-      matches_description: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5,
-      },
+      quality: { type: Number, min: 1, max: 5 },
+      durability: { type: Number, min: 1, max: 5 },
+      matches_description: { type: Number, min: 1, max: 5 },
     },
     images: [
       {

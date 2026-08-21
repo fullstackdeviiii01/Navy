@@ -1,7 +1,7 @@
 // app/components/product/ProductSort.tsx
 "use client";
 
-import { FaSort } from "react-icons/fa";
+import { ChevronDown } from "lucide-react";
 
 interface ProductSortProps {
   sortBy: string;
@@ -10,15 +10,14 @@ interface ProductSortProps {
 
 export default function ProductSort({ sortBy, onSortChange }: ProductSortProps) {
   return (
-    <div className="flex items-center gap-1.5 sm:gap-2">
-      <FaSort className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-sm sm:text-base flex-shrink-0" aria-hidden="true"/>
+    <div className="relative inline-flex items-center">
       <select
         value={sortBy}
         aria-label="Sort products by"
         onChange={(e) => onSortChange(e.target.value)}
-        className="px-3 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-theme-primary"
+        className="appearance-none pl-3 pr-8 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark cursor-pointer transition-colors"
       >
-        <option value="featured">Featured</option>
+        <option value="featured">Sort: Featured</option>
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
         <option value="name-asc">Name: A to Z</option>
@@ -26,6 +25,7 @@ export default function ProductSort({ sortBy, onSortChange }: ProductSortProps) 
         <option value="newest">Newest First</option>
         <option value="rating">Highest Rated</option>
       </select>
+      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-theme-text-muted-light dark:text-theme-text-muted-dark pointer-events-none" />
     </div>
   );
 }

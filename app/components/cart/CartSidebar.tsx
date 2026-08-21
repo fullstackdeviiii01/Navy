@@ -1,8 +1,9 @@
+// app/components/cart/CartSidebar.tsx
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -59,38 +60,43 @@ export default function CartSidebar() {
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Shopping cart">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         onClick={closeCart}
       />
 
       {/* Sidebar */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-xl flex flex-col animate-slide-in-right">
+      <div className="fixed inset-y-0 right-0 w-full max-w-md bg-theme-surface-light dark:bg-theme-surface-dark border-l border-theme-border-light dark:border-theme-border-dark shadow-2xl flex flex-col animate-slide-in-right">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Shopping Cart ({itemCount})
-          </h2>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-theme-border-light dark:border-theme-border-dark">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
+              YOUR BASKET
+            </p>
+            <h2 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Shopping Cart ({itemCount})
+            </h2>
+          </div>
           <button
             onClick={closeCart}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-1.5 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
             aria-label="Close cart"
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Items */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">
-                Your cart is empty
+            <div className="flex flex-col items-center justify-center h-full text-center py-12">
+              <p className="text-sm font-serif italic text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6">
+                Your basket is empty
               </p>
               <button
-                onClick={() => { closeCart(); router.push("/"); }}
-                className="px-6 py-2 bg-theme-primary text-white rounded-lg hover:bg-theme-primary-hover transition-colors"
+                onClick={() => { closeCart(); router.push("/products"); }}
+                className="px-6 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
               >
-                Start Shopping
+                START SHOPPING
               </button>
             </div>
           ) : (
@@ -98,52 +104,66 @@ export default function CartSidebar() {
               const product = item.product_id;
               const image = product?.images?.[0]?.url;
               return (
-                <div key={item._id} className="flex gap-3 py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                <div key={item._id} className="flex gap-4 py-4 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-0">
                   {/* Image */}
-                  {image && (
-                    <img
-                      src={image}
-                      alt={product?.name || "Product"}
-                      className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                    />
-                  )}
+                  <div className="relative aspect-[4/5] w-20 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden">
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={product?.name || "Product"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-[10px]">
+                        No image
+                      </div>
+                    )}
+                  </div>
 
                   {/* Details */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {product?.name}
-                    </p>
-                    {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {Object.entries(item.variant_attributes).map(([k, v]) => `${k}: ${v}`).join(", ")}
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                      <p className="text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                        {product?.name}
                       </p>
-                    )}
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
-                      {formatPrice(item.price_at_addition)}
-                    </p>
+                      {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
+                        <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
+                          {Object.entries(item.variant_attributes).map(([k, v]) => `${k}: ${v}`).join(", ")}
+                        </p>
+                      )}
+                      <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mt-1">
+                        {formatPrice(item.price_at_addition)}
+                      </p>
+                    </div>
 
                     {/* Quantity controls */}
-                    <div className="flex items-center gap-2 mt-1">
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                        className="w-6 h-6 flex items-center justify-center rounded border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
-                      >
-                        -
-                      </button>
-                      <span className="text-sm text-gray-900 dark:text-white min-w-[1.5rem] text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                        className="w-6 h-6 flex items-center justify-center rounded border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
-                      >
-                        +
-                      </button>
+                    <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-theme-border-light/40 dark:border-theme-border-dark/40">
+                      <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark">
+                        <button
+                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                          className="w-6 h-6 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark min-w-[1.5rem] text-center px-1 border-x border-theme-border-light dark:border-theme-border-dark">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                          className="w-6 h-6 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+
                       <button
                         onClick={() => handleRemove(item._id)}
-                        className="ml-auto text-xs text-red-500 hover:text-red-700"
+                        className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-red-600 dark:hover:text-red-400 p-1 transition-colors"
+                        aria-label="Remove item"
                       >
-                        Remove
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -155,11 +175,13 @@ export default function CartSidebar() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-4 space-y-3">
+          <div className="border-t border-theme-border-light dark:border-theme-border-dark px-6 py-5 space-y-4 bg-theme-card-light/30 dark:bg-theme-card-dark/20">
             {/* Total */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
+            <div className="flex items-baseline justify-between">
+              <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                Subtotal
+              </span>
+              <span className="text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {formatPrice(cart?.subtotal || 0)}
               </span>
             </div>
@@ -167,15 +189,15 @@ export default function CartSidebar() {
             {/* Buttons */}
             <button
               onClick={handleViewCart}
-              className="w-full py-3 bg-theme-primary hover:bg-theme-primary-hover text-white font-semibold rounded-lg transition-colors"
+              className="w-full py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
             >
-              View Cart
+              VIEW BASKET & CHECKOUT
             </button>
             <button
               onClick={closeCart}
-              className="w-full py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="w-full py-3 border border-theme-border-light dark:border-theme-border-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs uppercase tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
             >
-              Keep Browsing
+              KEEP BROWSING
             </button>
           </div>
         )}

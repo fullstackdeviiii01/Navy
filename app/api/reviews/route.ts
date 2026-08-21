@@ -205,9 +205,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validation
-    if (!product_id || !rating || !title || !comment || !detailed_ratings) {
+    if (!product_id || !rating || !title || !comment) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Product, rating, headline, and comment are required" },
         { status: 400 },
       );
     }
@@ -215,29 +215,6 @@ export async function POST(request: NextRequest) {
     if (rating < 1 || rating > 5) {
       return NextResponse.json(
         { error: "Rating must be between 1 and 5" },
-        { status: 400 },
-      );
-    }
-
-    // Validate detailed ratings
-    const { quality, durability, matches_description } = detailed_ratings;
-    if (!quality || !durability || !matches_description) {
-      return NextResponse.json(
-        { error: "All detailed ratings are required" },
-        { status: 400 },
-      );
-    }
-
-    if (
-      quality < 1 ||
-      quality > 5 ||
-      durability < 1 ||
-      durability > 5 ||
-      matches_description < 1 ||
-      matches_description > 5
-    ) {
-      return NextResponse.json(
-        { error: "All detailed ratings must be between 1 and 5" },
         { status: 400 },
       );
     }
@@ -309,11 +286,7 @@ export async function POST(request: NextRequest) {
         rating,
         title,
         comment,
-        detailed_ratings: {
-          quality,
-          durability,
-          matches_description,
-        },
+        ...(detailed_ratings && { detailed_ratings }),
         images: images || [],
         videos: videos || [],
         verified_purchase: true,
@@ -395,11 +368,7 @@ export async function POST(request: NextRequest) {
         rating,
         title,
         comment,
-        detailed_ratings: {
-          quality,
-          durability,
-          matches_description,
-        },
+        ...(detailed_ratings && { detailed_ratings }),
         images: images || [],
         videos: videos || [],
         verified_purchase: true,

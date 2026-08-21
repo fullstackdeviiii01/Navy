@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FaTag } from "react-icons/fa";
+import { ArrowRight } from "lucide-react";
 
 interface CategoryCardProps {
   category: {
@@ -17,76 +17,60 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category }: CategoryCardProps) {
+  const shortName = category.name.split(" ")[0].toUpperCase();
+
   return (
     <Link
       href={`/products?category=${category.slug}`}
       aria-label={`Shop ${category.name} - ${category.product_count} items available`}
+      className="group flex flex-col h-full overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark transition-all duration-300 hover:border-theme-hover-light/60 dark:hover:border-theme-hover-dark/60"
     >
-      <div className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
-        {/* Image Container with Overlay Effect */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-          {category.image_url ? (
-            <>
-              <Image
-                src={category.image_url}
-                alt={`${category.name} category`}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              />
-              {/* Gradient Overlay on Hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-center">
-                <FaTag className="text-5xl text-gray-300 dark:text-gray-600 mx-auto mb-3" aria-hidden="true"/>
-                <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">
-                  No Image
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Product Count Badge */}
-          <div className="absolute top-3 right-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-              {category.product_count}{" "}
-              {category.product_count === 1 ? "item" : "items"}
-            </span>
+      {/* Sharp Aspect-Ratio Image Container */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-theme-card-light dark:bg-theme-card-dark border-b border-theme-border-light dark:border-theme-border-dark">
+        {category.image_url ? (
+          <>
+            <Image
+              src={category.image_url}
+              alt={`${category.name} category`}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs">
+            No Image
           </div>
-        </div>
+        )}
 
-        {/* Content Section */}
-        <div className="p-4 flex-1 flex flex-col">
-          <h3 className="text-gray-900 dark:text-white font-semibold text-base mb-2 group-hover:text-theme-primary transition-colors line-clamp-2 leading-tight">
+        {/* Product Count Badge */}
+        <div className="absolute top-3 right-3 bg-black/75 backdrop-blur-xs px-2.5 py-1">
+          <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-white">
+            {category.product_count}{" "}
+            {category.product_count === 1 ? "PIECE" : "PIECES"}
+          </span>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-xl sm:text-2xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors mb-2 leading-snug">
             {category.name}
           </h3>
 
           {category.description && (
-            <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-3 flex-1">
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark line-clamp-2 mb-4 leading-relaxed">
               {category.description}
             </p>
           )}
+        </div>
 
-          {/* Shop Now Link */}
-          <div className="flex items-center text-theme-primary font-medium text-sm mt-auto">
-            <span className="group-hover:mr-2 transition-all">Shop Now</span>
-            <svg
-              className="w-4 h-4 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
+        {/* Shop Now Link */}
+        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 mt-auto">
+          <span>SHOP {shortName}</span>
+          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-300" />
         </div>
       </div>
     </Link>

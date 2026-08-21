@@ -1,7 +1,7 @@
 // app/components/checkout/PaymentMethodSelector.tsx
 "use client";
 
-import { FaMoneyBillWave, FaUniversity, FaMobileAlt } from "react-icons/fa";
+import { Banknote, Building2, Smartphone } from "lucide-react";
 
 export interface StaticPaymentMethod {
   id: string;
@@ -68,24 +68,22 @@ interface PaymentMethodSelectorProps {
 export default function PaymentMethodSelector({
   selectedMethod,
   onMethodChange,
-  orderTotal,
 }: PaymentMethodSelectorProps) {
   const getMethodIcon = (id: string) => {
-    const iconClass = "w-5 h-5 sm:w-6 sm:h-6";
     switch (id) {
       case "bank_transfer":
-        return <FaUniversity className={iconClass} />;
+        return <Building2 className="w-4 h-4" />;
       case "jazzcash":
-        return <FaMobileAlt className={iconClass} />;
+        return <Smartphone className="w-4 h-4" />;
       case "cod":
       default:
-        return <FaMoneyBillWave className={iconClass} />;
+        return <Banknote className="w-4 h-4" />;
     }
   };
 
   return (
     <div className="space-y-3">
-      <h3 className="text-base sm:text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
+      <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
         Select Payment Method
       </h3>
 
@@ -95,10 +93,10 @@ export default function PaymentMethodSelector({
           return (
             <label
               key={method.id}
-              className={`flex items-start gap-3 sm:gap-4 p-4 border rounded-xl cursor-pointer transition-all duration-200 ${
+              className={`flex items-start gap-4 p-4 border cursor-pointer transition-all ${
                 isSelected
-                  ? "border-[#A8752B] bg-[#F8F3EA] dark:bg-[#342611] shadow-md ring-1 ring-[#A8752B]"
-                  : "border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-[#A8752B]/60"
+                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/50 dark:bg-theme-card-dark/40"
+                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50"
               }`}
             >
               <input
@@ -107,14 +105,14 @@ export default function PaymentMethodSelector({
                 value={method.id}
                 checked={isSelected}
                 onChange={() => onMethodChange(method.id)}
-                className="mt-1 w-4 h-4 text-[#A8752B] focus:ring-[#A8752B] flex-shrink-0"
+                className="mt-0.5 w-4 h-4 accent-[#241910] dark:accent-[#D7D3CF] cursor-pointer flex-shrink-0"
               />
 
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div
                   className={`mt-0.5 flex-shrink-0 ${
                     isSelected
-                      ? "text-[#A8752B]"
+                      ? "text-theme-hover-light dark:text-theme-hover-dark"
                       : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark"
                   }`}
                 >
@@ -123,11 +121,11 @@ export default function PaymentMethodSelector({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark text-sm sm:text-base">
+                    <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm uppercase tracking-wider">
                       {method.name}
                     </p>
                     {method.requiresProof && (
-                      <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex-shrink-0">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex-shrink-0">
                         Screenshot Required
                       </span>
                     )}

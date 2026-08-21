@@ -1,7 +1,7 @@
 // app/components/product/ActiveFilters.tsx
 "use client";
 
-import { FaTimes } from "react-icons/fa";
+import { X } from "lucide-react";
 import { ProductFilters } from "../../hooks/useProductFilters";
 
 interface ActiveFiltersProps {
@@ -29,7 +29,7 @@ export default function ActiveFilters({
     if (category) {
       activeFilters.push({
         type: "category",
-        label: `Category: ${category.name}`,
+        label: `${category.name.toUpperCase()}`,
       });
     }
   }
@@ -38,19 +38,19 @@ export default function ActiveFilters({
   if (filters.search) {
     activeFilters.push({
       type: "search",
-      label: `Search: "${filters.search}"`,
+      label: `SEARCH: "${filters.search}"`,
     });
   }
 
   // Price range filter
   if (filters.minPrice > 0 || filters.maxPrice > 0) {
-    let label = "Price: ";
+    let label = "PRICE: ";
     if (filters.minPrice > 0 && filters.maxPrice > 0) {
-      label += `$${filters.minPrice} - $${filters.maxPrice}`;
+      label += `RS. ${filters.minPrice} - RS. ${filters.maxPrice}`;
     } else if (filters.minPrice > 0) {
-      label += `Over $${filters.minPrice}`;
+      label += `OVER RS. ${filters.minPrice}`;
     } else {
-      label += `Under $${filters.maxPrice}`;
+      label += `UNDER RS. ${filters.maxPrice}`;
     }
     activeFilters.push({
       type: "minPrice",
@@ -62,7 +62,7 @@ export default function ActiveFilters({
   if (filters.rating > 0) {
     activeFilters.push({
       type: "rating",
-      label: `${filters.rating}+ Stars`,
+      label: `${filters.rating}+ STARS`,
     });
   }
 
@@ -70,7 +70,7 @@ export default function ActiveFilters({
   if (filters.inStock) {
     activeFilters.push({
       type: "inStock",
-      label: "In Stock Only",
+      label: "IN STOCK ONLY",
     });
   }
 
@@ -78,7 +78,7 @@ export default function ActiveFilters({
   filters.brands.forEach((brand) => {
     activeFilters.push({
       type: "brands",
-      label: `Brand: ${brand}`,
+      label: `BRAND: ${brand.toUpperCase()}`,
       value: brand,
     });
   });
@@ -88,33 +88,26 @@ export default function ActiveFilters({
   }
 
   return (
-    <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg p-3 sm:p-4 md:p-5">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
-        <h3 className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium text-xs sm:text-sm md:text-base">
-          Active Filters ({activeFilters.length})
-        </h3>
+    <div className="flex flex-wrap items-center gap-2 pt-2">
+      {activeFilters.map((filter, index) => (
         <button
-        aria-label="Clear all filters"
-          onClick={onClearAll}
-          className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark transition-colors self-start sm:self-auto"
+          key={`${filter.type}-${index}`}
+          aria-label={`Remove filter: ${filter.label}`}
+          onClick={() => onRemoveFilter(filter.type, filter.value)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-[11px] uppercase tracking-[0.15em] font-medium hover:border-theme-hover-light dark:hover:border-theme-hover-dark transition-colors group"
         >
-          Clear All
+          <span className="truncate max-w-[200px]">{filter.label}</span>
+          <X className="w-3 h-3 text-theme-text-muted-light dark:text-theme-text-muted-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark flex-shrink-0"/>
         </button>
-      </div>
+      ))}
 
-      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-        {activeFilters.map((filter, index) => (
-          <button
-            key={`${filter.type}-${index}`}
-            aria-label={`Remove filter: ${filter.label}`}
-            onClick={() => onRemoveFilter(filter.type, filter.value)}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-theme-primary/10 text-theme-primary rounded-full text-[10px] sm:text-xs md:text-sm hover:bg-theme-primary/20 transition-colors"
-          >
-            <span className="truncate max-w-[150px] sm:max-w-[200px] md:max-w-none">{filter.label}</span>
-            <FaTimes className="text-[8px] sm:text-xs flex-shrink-0"/>
-          </button>
-        ))}
-      </div>
+      <button
+        aria-label="Clear all filters"
+        onClick={onClearAll}
+        className="text-[11px] uppercase tracking-[0.2em] font-medium text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors px-2 py-1"
+      >
+        CLEAR ALL
+      </button>
     </div>
   );
 }

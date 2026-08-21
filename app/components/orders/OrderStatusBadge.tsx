@@ -1,7 +1,7 @@
 // app/components/orders/OrderStatusBadge.tsx
 "use client";
 
-import { Clock, CheckCircle, Package, Truck, Ban } from "lucide-react";
+import { Clock, Check, Package, Truck, Ban } from "lucide-react";
 
 interface OrderStatusBadgeProps {
   status: string;
@@ -12,38 +12,32 @@ export default function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
     const configs: any = {
       pending: {
         icon: Clock,
-        color: "text-yellow-800 dark:text-yellow-200",
-        bg: "bg-yellow-100 dark:bg-yellow-900",
+        className: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30",
         label: "Pending",
       },
       confirmed: {
-        icon: CheckCircle,
-        color: "text-blue-800 dark:text-blue-200",
-        bg: "bg-blue-100 dark:bg-blue-900",
+        icon: Check,
+        className: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30",
         label: "Confirmed",
       },
       processing: {
         icon: Package,
-        color: "text-purple-800 dark:text-purple-200",
-        bg: "bg-purple-100 dark:bg-purple-900",
+        className: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30",
         label: "Processing",
       },
       shipped: {
         icon: Truck,
-        color: "text-indigo-800 dark:text-indigo-200",
-        bg: "bg-indigo-100 dark:bg-indigo-900",
+        className: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/30",
         label: "Shipped",
       },
       delivered: {
-        icon: CheckCircle,
-        color: "text-green-800 dark:text-green-200",
-        bg: "bg-green-100 dark:bg-green-900",
+        icon: Check,
+        className: "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30",
         label: "Delivered",
       },
       cancelled: {
         icon: Ban,
-        color: "text-red-800 dark:text-red-200",
-        bg: "bg-red-100 dark:bg-red-900",
+        className: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30",
         label: "Cancelled",
       },
     };
@@ -55,12 +49,12 @@ export default function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${config.bg} ${config.color}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 border text-[11px] uppercase tracking-wider font-semibold ${config.className}`}
       role="status"
       aria-label={`Order status: ${config.label}`}
     >
-      <Icon size={14} className="mr-1.5" aria-hidden="true" />
-      {config.label}
+      <Icon className="w-3 h-3" aria-hidden="true" />
+      <span>{config.label}</span>
     </span>
   );
 }

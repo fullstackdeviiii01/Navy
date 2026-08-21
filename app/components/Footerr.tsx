@@ -119,36 +119,36 @@ export default function Footerr() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#EAE1D1] dark:bg-[#2C210E] border-t border-[#E0D4C3] dark:border-[#554220] mt-16 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-theme-card-light dark:bg-theme-card-dark border-t border-theme-border-light dark:border-theme-border-dark mt-16 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand & About Column */}
           <div className="space-y-4 md:col-span-1">
-            <h3 className="text-lg font-bold text-gray-900 tracking-tight">
-              {companyInfo.company_name || "STORE"}
+            <h3 className="text-xl font-serif tracking-wide text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              {companyInfo.company_name || "LAMP & GLOW"}
             </h3>
             {companyInfo.company_address && (
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
                 {companyInfo.company_address}
               </p>
             )}
             {companyInfo.company_phone && (
-              <p className="text-xs sm:text-sm text-gray-600">
-                <span className="font-semibold text-gray-700">Phone: </span>
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">Phone: </span>
                 <a
                   href={`tel:${companyInfo.company_phone}`}
-                  className="hover:text-theme-primary transition-colors"
+                  className="hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   {companyInfo.company_phone}
                 </a>
               </p>
             )}
             {companyInfo.company_email && (
-              <p className="text-xs sm:text-sm text-gray-600">
-                <span className="font-semibold text-gray-700">Email: </span>
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">Email: </span>
                 <a
                   href={`mailto:${companyInfo.company_email}`}
-                  className="hover:text-theme-primary transition-colors"
+                  className="hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   {companyInfo.company_email}
                 </a>
@@ -158,14 +158,14 @@ export default function Footerr() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h4 className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-[0.2em] mb-4">
               Quick Links
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2.5 text-xs">
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Home
                 </Link>
@@ -173,7 +173,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/products"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   All Products
                 </Link>
@@ -181,7 +181,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/categories"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Categories
                 </Link>
@@ -189,7 +189,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/track-order"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Track Order
                 </Link>
@@ -199,14 +199,14 @@ export default function Footerr() {
 
           {/* Customer Care */}
           <div>
-            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h4 className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-[0.2em] mb-4">
               Customer Support
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2.5 text-xs">
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Contact Us
                 </Link>
@@ -214,7 +214,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/faqs"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   FAQs
                 </Link>
@@ -222,7 +222,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/wishlist"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Wishlist
                 </Link>
@@ -230,9 +230,9 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/cart"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
-                  Shopping Cart
+                  Shopping Basket
                 </Link>
               </li>
             </ul>
@@ -240,14 +240,14 @@ export default function Footerr() {
 
           {/* Legal / Policy Links */}
           <div>
-            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-4">
+            <h4 className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-[0.2em] mb-4">
               Policy & Legal
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2.5 text-xs">
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -255,7 +255,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/terms-and-conditions"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Terms & Conditions
                 </Link>
@@ -263,7 +263,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/shipping-policy"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Shipping Policy
                 </Link>
@@ -271,7 +271,7 @@ export default function Footerr() {
               <li>
                 <Link
                   href="/refund-policy"
-                  className="text-gray-600 hover:text-theme-primary transition-colors"
+                  className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Return & Refund Policy
                 </Link>
@@ -280,16 +280,16 @@ export default function Footerr() {
           </div>
         </div>
 
-        {/* Bottom Bar: Copyright & Socials */}
-        <div className="border-t border-gray-200 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500">
+        {/* Bottom Bar */}
+        <div className="border-t border-theme-border-light dark:border-theme-border-dark mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
             {companyInfo.copyright_text ||
               `© ${currentYear} ${companyInfo.company_name || "Store"}. All Rights Reserved.`}
           </p>
 
           {/* Social Icons */}
           {socialIcons.length > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {socialIcons.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -299,7 +299,7 @@ export default function Footerr() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="text-gray-500 hover:text-theme-primary transition-colors"
+                    className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                   >
                     <Icon className="w-4 h-4" />
                   </a>

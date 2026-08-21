@@ -13,32 +13,30 @@ export default function ProductProgressBar({
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-3 sm:px-4">
-      <div className="space-y-0.5 sm:space-y-1">
-        {/* Progress Bar */}
+    <div className="w-full space-y-2">
+      {/* Progress Bar */}
+      <div
+        className="w-full bg-theme-border-light dark:bg-theme-border-dark h-1 overflow-hidden"
+        role="progressbar"
+        aria-valuenow={current}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-label="Products loaded progress"
+      >
         <div
-          className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2 overflow-hidden shadow-inner"
-          role="progressbar"
-          aria-valuenow={current}
-          aria-valuemin={0}
-          aria-valuemax={total}
-          aria-label="Products loaded"
-        >
-          <div
-            className="bg-gradient-to-r from-theme-primary to-theme-primary/80 h-full rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
+          className="bg-theme-hover-light dark:bg-theme-hover-dark h-full transition-all duration-500 ease-out"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
 
-        {/* Progress Text */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-          <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-medium">
-            {current} of {total} products
-          </span>
-          <span className="text-theme-primary font-semibold">
-            {percentage}%
-          </span>
-        </div>
+      {/* Progress Text */}
+      <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.15em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+        <span>
+          {current} of {total} pieces
+        </span>
+        <span>
+          {percentage}%
+        </span>
       </div>
     </div>
   );

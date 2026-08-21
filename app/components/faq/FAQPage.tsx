@@ -2,13 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaSearch,
-  FaHome,
-  FaChevronRight,
-} from "react-icons/fa";
+import { Plus, Minus, Search, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { faqsApi } from "../../../lib/api/faqs";
 import Loader from "../shared/Loader";
@@ -79,47 +73,48 @@ export default function FAQPage() {
 
   if (loading) {
     return (
-      <div className="relative h-64">
+      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-8">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-12 sm:py-16 transition-colors">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm mb-6">
+        <nav className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] mb-8" aria-label="Breadcrumb">
           <Link
             href="/"
             aria-label="Home"
-            className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-secondary-light dark:hover:text-theme-text-secondary-dark transition-colors"
+            className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
           >
-            <FaHome />
+            HOME
           </Link>
-          <FaChevronRight
-            className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs"
-          />
+          <ChevronRight className="w-3 h-3 text-theme-text-muted-light dark:text-theme-text-muted-dark" />
           <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
-            FAQ
+            FAQS
           </span>
         </nav>
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
-            Frequently Asked Questions
+        <div className="mb-10 border-b border-theme-border-light dark:border-theme-border-dark pb-8">
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+            HELP & KNOWLEDGE BASE
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
+            Frequently <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Asked Questions</span>
           </h1>
-          <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark max-w-2xl mx-auto">
-            Find answers to common questions about our products and services
+          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-2xl">
+            Everything you need to know about our handcrafted lighting, shipping timelines, and care instructions.
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="mb-6">
+        <div className="mb-8">
           <div className="relative">
-            <FaSearch
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted-light dark:text-theme-text-muted-dark"
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-theme-text-muted-light dark:text-theme-text-muted-dark"
               aria-hidden="true"
             />
             <input
@@ -127,23 +122,22 @@ export default function FAQPage() {
               aria-label="Search FAQs"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for answers..."
-              className="w-full pl-12 pr-4 py-3 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search by keyword, material, warranty, shipping..."
+              className="w-full pl-11 pr-4 py-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light placeholder:text-theme-text-muted-light"
             />
           </div>
         </div>
 
         {/* Category Filter */}
         {categories.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-8 flex flex-wrap gap-2">
             <button
               onClick={() => setActiveCategory("all")}
-              aria-label="All product categories"
               aria-pressed={activeCategory === "all"}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 border text-xs uppercase tracking-[0.15em] font-medium transition-colors ${
                 activeCategory === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  ? "border-theme-primary bg-theme-primary text-theme-btn-text"
+                  : "border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:border-theme-hover-light"
               }`}
             >
               All Categories
@@ -152,10 +146,10 @@ export default function FAQPage() {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 border text-xs uppercase tracking-[0.15em] font-medium transition-colors ${
                   activeCategory === category
-                    ? "bg-blue-600 text-white"
-                    : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    ? "border-theme-primary bg-theme-primary text-theme-btn-text"
+                    : "border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:border-theme-hover-light"
                 }`}
               >
                 {category}
@@ -164,68 +158,58 @@ export default function FAQPage() {
           </div>
         )}
 
-        {/* FAQs */}
-        <div className="space-y-3">
+        {/* FAQs List */}
+        <div className="divide-y divide-theme-border-light dark:divide-theme-border-dark border-y border-theme-border-light dark:border-theme-border-dark">
           {filteredFaqs.length > 0 ? (
-            filteredFaqs.map((faq) => (
-              <div
-                key={faq._id}
-                className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleFaq(faq._id)}
-                  aria-label={`Toggle answer for: ${faq.question || "this question"}`}
-                  aria-expanded={expandedFaq === faq._id}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark transition-colors"
-                >
-                  <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark pr-4">
-                    {faq.question}
-                  </span>
-                  {expandedFaq === faq._id ? (
-                    <FaChevronUp
-                      className="text-blue-600 flex-shrink-0"
-                    />
-                  ) : (
-                    <FaChevronDown
-                      className="text-theme-text-muted-light dark:text-theme-text-muted-dark flex-shrink-0"
-                      
-                    />
-                  )}
-                </button>
+            filteredFaqs.map((faq) => {
+              const isOpen = expandedFaq === faq._id;
+              return (
+                <div key={faq._id} className="py-4">
+                  <button
+                    onClick={() => toggleFaq(faq._id)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center justify-between text-left py-2 hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors group"
+                  >
+                    <span className="font-serif text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light pr-4">
+                      {faq.question}
+                    </span>
+                    {isOpen ? (
+                      <Minus className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark flex-shrink-0" />
+                    ) : (
+                      <Plus className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark flex-shrink-0" />
+                    )}
+                  </button>
 
-                {expandedFaq === faq._id && (
-                  <div className="px-6 pb-4 border-t border-theme-border-light dark:border-theme-border-dark pt-4">
-                    <JoditHtmlContent content={faq.answer} />
-                  </div>
-                )}
-              </div>
-            ))
+                  {isOpen && (
+                    <div className="pt-3 pb-2 text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+                      <JoditHtmlContent content={faq.answer} />
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
-            <div className="text-center py-12 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg border border-theme-border-light dark:border-theme-border-dark">
-              <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                {searchQuery
-                  ? "No FAQs match your search. Try different keywords."
-                  : "No FAQs available at the moment."}
-              </p>
+            <div className="text-center py-12 text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              {searchQuery
+                ? "No FAQs match your search query."
+                : "No FAQs available at this time."}
             </div>
           )}
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-12 text-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-8 border border-theme-border-light dark:border-theme-border-dark">
-          <h3 className="text-xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-            Still have questions?
+        <div className="mt-12 p-8 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-center space-y-4">
+          <h3 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Still need assistance?
           </h3>
-          <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark mb-4">
-            Can't find the answer you're looking for? Get in touch with our
-            support team.
+          <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto">
+            Our atelier specialists are available to answer any questions regarding bespoke custom projects or delivery schedules.
           </p>
           <Link
             href="/contact"
-            aria-label="Go to Contact page"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="inline-block py-3 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
           >
-            Contact Us
+            CONTACT OUR CONCIERGE
           </Link>
         </div>
       </div>

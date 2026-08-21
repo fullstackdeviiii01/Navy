@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Truck, Clock, Check } from "lucide-react";
+import { Truck, Clock, Check, Loader2 } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface ShippingService {
@@ -27,7 +27,7 @@ export default function ShippingServiceSelector({
   onServiceSelect,
   loading = false,
 }: ShippingServiceSelectorProps) {
-    const [services, setServices] = useState<ShippingService[]>([]);
+  const [services, setServices] = useState<ShippingService[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -59,26 +59,26 @@ export default function ShippingServiceSelector({
 
   const getEstimatedDelivery = (service: ShippingService) => {
     if (service.estimated_days_min && service.estimated_days_max) {
-      return `${service.estimated_days_min}-${service.estimated_days_max} days`;
+      return `${service.estimated_days_min}-${service.estimated_days_max} business days`;
     } else if (service.estimated_days_min) {
-      return `${service.estimated_days_min}+ days`;
+      return `${service.estimated_days_min}+ business days`;
     } else if (service.estimated_days_max) {
-      return `Up to ${service.estimated_days_max} days`;
+      return `Up to ${service.estimated_days_max} business days`;
     }
     return null;
   };
 
   if (fetchLoading) {
     return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Truck className="w-5 h-5 text-gray-900 dark:text-white" />
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-            Shipping Method
+      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
+        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Delivery Method
           </h3>
         </div>
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
+        <div className="flex items-center justify-center py-6 text-theme-text-muted-light dark:text-theme-text-muted-dark">
+          <Loader2 className="w-5 h-5 animate-spin" />
         </div>
       </div>
     );
@@ -86,15 +86,15 @@ export default function ShippingServiceSelector({
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Truck className="w-5 h-5 text-gray-900 dark:text-white" />
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-            Shipping Method
+      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
+        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Delivery Method
           </h3>
         </div>
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+        <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs">
+          <p>{error}</p>
         </div>
       </div>
     );
@@ -102,27 +102,29 @@ export default function ShippingServiceSelector({
 
   if (services.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Truck className="w-5 h-5 text-gray-900 dark:text-white" />
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-            Shipping Method
+      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
+        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Delivery Method
           </h3>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          No shipping options available
+        <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+          Standard delivery will be calculated.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-5 md:p-6">
-      <div className="flex items-center gap-2 mb-4 sm:mb-5">
-        <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-gray-900 dark:text-white" />
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-          Shipping Method
-        </h3>
+    <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-theme-border-light dark:border-theme-border-dark">
+        <div className="flex items-center gap-2">
+          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
+          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            Delivery Method
+          </h3>
+        </div>
       </div>
 
       <div className="space-y-3">
@@ -133,10 +135,10 @@ export default function ShippingServiceSelector({
           return (
             <label
               key={service._id}
-              className={`block p-3 sm:p-4 border rounded-lg cursor-pointer transition-all ${
+              className={`block p-4 border cursor-pointer transition-all ${
                 isSelected
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm"
-                  : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/50 dark:bg-theme-card-dark/40"
+                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex items-start gap-3">
@@ -147,35 +149,35 @@ export default function ShippingServiceSelector({
                   checked={isSelected}
                   onChange={() => !loading && onServiceSelect(service._id)}
                   disabled={loading}
-                  className="w-4 h-4 mt-0.5 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                  className="w-4 h-4 mt-0.5 accent-[#241910] dark:accent-[#D7D3CF] cursor-pointer flex-shrink-0"
                 />
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {service.display_name}
                         </p>
                         {isSelected && (
-                          <Check className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                          <Check className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark flex-shrink-0" />
                         )}
                       </div>
                       {service.description && (
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1">
                           {service.description}
                         </p>
                       )}
                       {estimatedDelivery && (
-                        <div className="flex items-center gap-1.5 mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                          <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <div className="flex items-center gap-1.5 mt-1.5 text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                          <Clock className="w-3.5 h-3.5" />
                           <span>{estimatedDelivery}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="text-right flex-shrink-0">
-                      <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                      <p className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {service.base_price === 0
                           ? "FREE"
                           : formatPrice(service.base_price)}
@@ -190,15 +192,9 @@ export default function ShippingServiceSelector({
       </div>
 
       {loading && (
-        <div className="mt-3 sm:mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <div className="text-xs sm:text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
-            <div
-              className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"
-              role="status"
-              aria-label="Loading"
-            ></div>
-            <span>Updating shipping cost...</span>
-          </div>
+        <div className="mt-3 p-2.5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light/60 dark:border-theme-border-dark/60 flex items-center gap-2 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          <span>Updating delivery fee...</span>
         </div>
       )}
     </div>

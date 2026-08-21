@@ -1,7 +1,7 @@
 // app/components/product/LoadMoreButton.tsx
 "use client";
 
-import { FaSpinner, FaChevronDown } from "react-icons/fa";
+import { Loader2, ChevronDown } from "lucide-react";
 
 interface LoadMoreButtonProps {
   onClick: () => void;
@@ -15,23 +15,23 @@ export default function LoadMoreButton({
   remainingCount,
 }: LoadMoreButtonProps) {
   return (
-    <div className="mt-6 sm:mt-8 mb-3 sm:mb-4 flex justify-center px-4">
+    <div className="flex justify-center px-4">
       <button
         onClick={onClick}
         disabled={loading}
         aria-label="Load more products button"
-        className="group relative px-4 sm:px-6 py-2.5 sm:py-3 bg-theme-primary text-white font-semibold text-sm sm:text-base rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-w-[160px] sm:min-w-[200px] w-full sm:w-auto max-w-xs"
+        className="group px-8 py-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-primary hover:text-theme-btn-text hover:border-theme-primary font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px] flex items-center justify-center gap-2"
       >
         {loading ? (
-          <span className="flex items-center justify-center gap-2 sm:gap-3">
-            <FaSpinner className="animate-spin text-base sm:text-lg"/>
-            <span>Loading...</span>
-          </span>
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>LOADING PIECES...</span>
+          </>
         ) : (
-          <span className="flex items-center justify-center gap-2 sm:gap-3">
-            <span>Load More Products</span>
-            <FaChevronDown className="text-xs sm:text-sm group-hover:translate-y-0.5 transition-transform"/>
-          </span>
+          <>
+            <span>LOAD MORE {remainingCount ? `(${remainingCount})` : "PIECES"}</span>
+            <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+          </>
         )}
       </button>
     </div>
