@@ -230,12 +230,6 @@ export default function ProductReviewSection({
         </div>
       )}
 
-      {!canReview && !showForm && eligibilityMessage && (
-        <div className="p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/30 dark:bg-theme-card-dark/20 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark" role="status">
-          {eligibilityMessage}
-        </div>
-      )}
-
       {/* AI Summary Display */}
       {hasReviews && <AISummaryDisplay productId={productId} />}
 

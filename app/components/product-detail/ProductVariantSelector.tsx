@@ -141,11 +141,11 @@ export default function ProductVariantSelector({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-2">
       {/* Selection Progress Indicator */}
       {!isFullySelected && variantAttributes.length > 1 && (
         <div
-          className="p-3 bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs"
+          className="p-2 bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs"
           role="status"
           aria-live="polite"
         >
@@ -163,7 +163,7 @@ export default function ProductVariantSelector({
           const hasSwatches = Object.keys(swatchMap).length > 0;
 
           return (
-            <div key={attributeOption.name} className="space-y-2">
+            <div key={attributeOption.name} className="space-y-1">
               {/* Label */}
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">

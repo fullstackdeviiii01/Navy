@@ -28,13 +28,13 @@ export default function RelatedProducts({ products, title = "You may also like" 
   }
 
   return (
-    <section className="mt-16 sm:mt-20 pt-12 border-t border-theme-border-light dark:border-theme-border-dark" aria-labelledby="related-products-heading">
-      <div className="flex items-end justify-between mb-8">
+    <section className="mt-4 sm:mt-5 pt-4 border-t border-theme-border-light dark:border-theme-border-dark" aria-labelledby="related-products-heading">
+      <div className="flex items-end justify-between mb-3 sm:mb-4">
         <div>
-          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+          <p className="text-[10px] font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
             CURATED PIECES
           </p>
-          <h2 id="related-products-heading" className="text-2xl sm:text-3xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h2 id="related-products-heading" className="text-xl sm:text-2xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {title}
           </h2>
         </div>

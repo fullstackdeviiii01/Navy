@@ -1,17 +1,18 @@
+// app/(public)/pages/ProductDetailPage.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { productsApi } from "../../../lib/api/products";
 import ProductInfo from "../../components/product-detail/ProductInfo";
 import ProductQuantity from "../../components/product-detail/ProductQuantity";
 import AddToCartButton from "../../components/product-detail/AddToCartButton";
 import ProductTabs from "../../components/product-detail/ProductTabs";
+import ProductReviewSection from "../../components/product-detail/ProductReviewSection";
 import RelatedProducts from "../../components/product-detail/RelatedProducts";
 import ProductBreadcrumb from "../../components/product-detail/ProductBreadcrumb";
 import Loader from "../../components/shared/Loader";
 import ProductMediaCarousel from "../../components/product/ProductMediaCarousel";
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
-import StickyProductBar from "../../components/product-detail/StickyProductBar";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface Props {
@@ -41,10 +42,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
-  const [isStickyVisible, setIsStickyVisible] = useState(false);
-
-  const mainActionRef = useRef<HTMLDivElement>(null);
-  const variantSelectorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (productId) {
@@ -57,26 +54,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
       fetchRelatedProducts();
     }
   }, [product]);
-
-  // Observer to toggle sticky product bar when user scrolls past the main buy box
-  useEffect(() => {
-    const target = mainActionRef.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When main action box is visible at top of viewport, sticky bar should be hidden
-        setIsStickyVisible(!entry.isIntersecting);
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px",
-      }
-    );
-
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [product, loading]);
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -108,18 +85,10 @@ export default function ProductDetailPageContent({ productId }: Props) {
     setSelectedVariant(variant);
   };
 
-  const handleScrollToOptions = () => {
-    if (variantSelectorRef.current) {
-      variantSelectorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else if (mainActionRef.current) {
-      mainActionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
   if (loading) {
     return (
       <div
-        className="relative h-48 sm:h-56 md:h-64"
+        className="relative h-36 sm:h-44"
         role="status"
         aria-live="polite"
         aria-label="Loading product details"
@@ -131,16 +100,16 @@ export default function ProductDetailPageContent({ productId }: Props) {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center p-4">
+      <div className="min-h-[50vh] bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center p-4">
         <div
           className="text-center max-w-md"
           role="alert"
           aria-live="assertive"
         >
-          <h1 className="text-2xl sm:text-3xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
             Product Not Found
           </h1>
-          <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
             The product you're looking for doesn't exist.
           </p>
         </div>
@@ -165,8 +134,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
     : product.inventory?.stock_status === "out_of_stock";
 
   const currentPrice = selectedVariant?.price || product.pricing?.price || 0;
-  const currentComparePrice =
-    selectedVariant?.compareAtPrice || product.pricing?.compare_at_price;
 
   const currentStock = isVariableProduct
     ? (product.variants as ProductVariant[]).reduce(
@@ -179,17 +146,17 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const variantOutOfStock = selectedVariant ? selectedVariant.stockQuantity === 0 : false;
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark pb-20">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark pb-6 sm:pb-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-1">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb navigation">
+        <nav aria-label="Breadcrumb navigation" className="mb-1">
           <ProductBreadcrumb items={breadcrumbItems} />
         </nav>
 
         {/* 2-column grid: images left, info right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
           {/* LEFT COLUMN: Product media + Desktop tabs */}
-          <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <section aria-label={`${product.name} product media gallery`}>
               <ProductMediaCarousel
                 media={[
@@ -215,7 +182,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
               />
             </section>
 
-            {/* Desktop tabs */}
+            {/* Desktop tabs (Description, Specifications, Shipping, Care) */}
             <section
               className="hidden lg:block"
               aria-label="Product details and specifications"
@@ -231,19 +198,18 @@ export default function ProductDetailPageContent({ productId }: Props) {
             </section>
           </div>
 
-          {/* RIGHT COLUMN: Sticky info + actions */}
-          <div className="lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-2 scrollbar-hide [&::-webkit-scrollbar]:hidden">
-            <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+          {/* RIGHT COLUMN: Info + actions (Natural Free Flow) */}
+          <div>
+            <div className="flex flex-col gap-2 sm:gap-2.5">
+              
+              {/* Product Info (Title, Category, Main Price) */}
               <section aria-label={`${product.name} product information`}>
-                <ProductInfo product={product} />
+                <ProductInfo product={product} selectedVariant={selectedVariant} />
               </section>
 
               {/* Variant selector */}
               {isVariableProduct && (
-                <div
-                  ref={variantSelectorRef}
-                  className="py-3 border-y border-theme-border-light dark:border-theme-border-dark"
-                >
+                <div className="py-1.5 border-b border-theme-border-light dark:border-theme-border-dark">
                   <ProductVariantSelector
                     variants={product.variants || []}
                     variantAttributes={product.variantOptions || []}
@@ -253,46 +219,12 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 </div>
               )}
 
-              {/* Selected variant price */}
-              {selectedVariant && (
-                <div
-                  className="p-3 bg-green-500/10 border border-green-500/30 text-xs"
-                  role="region"
-                  aria-label="Selected variant pricing"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium uppercase tracking-wider text-green-800 dark:text-green-200">
-                      Variant Price:
-                    </span>
-                    <span
-                      className="text-base sm:text-lg font-serif text-green-800 dark:text-green-200 font-semibold"
-                      aria-label={`Price: ${formatPrice(currentPrice)}`}
-                    >
-                      {formatPrice(currentPrice)}
-                    </span>
-                  </div>
-                  {currentComparePrice && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-green-700/80 dark:text-green-300/80">
-                        Original:
-                      </span>
-                      <span
-                        className="text-xs text-green-700/80 dark:text-green-300/80 line-through"
-                        aria-label={`Original price: ${formatPrice(currentComparePrice)}`}
-                      >
-                        {formatPrice(currentComparePrice)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Main action block: Quantity + Price + Add to Cart */}
-              <div ref={mainActionRef} className="space-y-4">
-                {/* Quantity + total (non-variable or variant selected) */}
+              {/* Main action block: Quantity + Total Price + Add to Cart */}
+              <div className="space-y-2 pt-0.5">
+                {/* Quantity + total price */}
                 {!isOutOfStock && (!isVariableProduct || selectedVariant) && (
                   <div
-                    className="space-y-3"
+                    className="space-y-1.5"
                     role="region"
                     aria-label="Quantity and pricing"
                   >
@@ -301,12 +233,12 @@ export default function ProductDetailPageContent({ productId }: Props) {
                       onQuantityChange={setQuantity}
                       max={currentStock}
                     />
-                    <div className="flex items-baseline justify-between pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs sm:text-sm">
-                      <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                    <div className="flex items-baseline justify-between pt-1.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
+                      <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                         Total Price:
                       </span>
                       <span
-                        className="text-lg sm:text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                        className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium"
                         aria-label={`Total price: ${formatPrice(totalPrice)}`}
                       >
                         {formatPrice(totalPrice)}
@@ -318,25 +250,25 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 {/* Stock warning for selected variant */}
                 {variantOutOfStock && (
                   <div
-                    className="p-3 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs"
+                    className="p-2 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs"
                     role="alert"
                     aria-live="polite"
                   >
-                    <p className="font-medium">
+                    <p className="font-medium text-xs">
                       This variant is currently out of stock.
                     </p>
                   </div>
                 )}
 
-                {/* Add to Cart or Select Options prompt */}
+                {/* Add to Cart button */}
                 <div
-                  className="pt-2"
+                  className="pt-0.5"
                   role="region"
                   aria-label="Product actions"
                 >
                   {isVariableProduct && !selectedVariant ? (
-                    <div className="text-center p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark">
-                      <p className="text-xs uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
+                    <div className="text-center p-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark">
+                      <p className="text-[11px] uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
                         Please select your options above
                       </p>
                     </div>
@@ -350,13 +282,14 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   )}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
         {/* Mobile tabs */}
         <section
-          className="lg:hidden mb-8 sm:mb-10 md:mb-12"
+          className="lg:hidden mb-4 sm:mb-6"
           aria-label="Product details and specifications"
         >
           <ProductTabs
@@ -369,28 +302,25 @@ export default function ProductDetailPageContent({ productId }: Props) {
           />
         </section>
 
+        {/* DEDICATED SEPARATE FULL-WIDTH REVIEW SECTION (COMPACT SPACING) */}
+        <section 
+          id="product-reviews" 
+          aria-label="Customer Reviews and Ratings" 
+          className="pt-4 sm:pt-5 border-t border-theme-border-light dark:border-theme-border-dark mb-2"
+        >
+          <div className="max-w-5xl">
+            <h3 className="font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3 tracking-tight">
+              Customer Reviews & Ratings
+            </h3>
+            <ProductReviewSection productId={product._id} />
+          </div>
+        </section>
+
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <section aria-label="Related products you may like">
-            <RelatedProducts products={relatedProducts} />
-          </section>
+          <RelatedProducts products={relatedProducts} />
         )}
       </div>
-
-      {/* Full-width Sticky Product Bar */}
-      <StickyProductBar
-        product={product}
-        selectedVariant={selectedVariant}
-        quantity={quantity}
-        onQuantityChange={setQuantity}
-        isOutOfStock={isOutOfStock}
-        variantOutOfStock={variantOutOfStock}
-        isVariableProduct={isVariableProduct}
-        currentStock={currentStock}
-        totalPrice={totalPrice}
-        isVisible={isStickyVisible}
-        onScrollToOptions={handleScrollToOptions}
-      />
     </div>
   );
 }
