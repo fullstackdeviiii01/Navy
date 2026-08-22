@@ -3,6 +3,7 @@
 
 import { Eye, Star } from "lucide-react";
 import GenerateSummaryButton from "./GenerateSummaryButton";
+import { getPrimaryProductImage } from "../../../../lib/utils/productImageUtils";
 
 interface Review {
   _id: string;
@@ -91,15 +92,13 @@ export default function ReviewsTable({
           <div className="bg-theme-card-light/50 dark:bg-theme-card-dark/40 border-b border-theme-border-light dark:border-theme-border-dark p-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-3">
-                {product.images?.[0] && (
-                  <div className="relative h-12 w-12 border border-theme-border-light dark:border-theme-border-dark overflow-hidden flex-shrink-0">
-                    <img
-                      src={product.images[0].url || product.images[0]}
-                      alt={product.name}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
+                <div className="relative h-12 w-12 border border-theme-border-light dark:border-theme-border-dark overflow-hidden flex-shrink-0 bg-black/5 rounded">
+                  <img
+                    src={getPrimaryProductImage(product)}
+                    alt={product.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
                 <div>
                   <h3 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {product.name}

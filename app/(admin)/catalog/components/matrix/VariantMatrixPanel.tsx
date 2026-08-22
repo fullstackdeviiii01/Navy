@@ -349,6 +349,7 @@ export default function VariantMatrixPanel({
           {variantData.variants && variantData.variants.length > 0 && (
             <MatrixPermutationTable
               variants={variantData.variants}
+              variantOptions={variantData.variantOptions}
               onUpdate={handleVariantUpdate}
               productCurrency="PKR"
             />

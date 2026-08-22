@@ -18,6 +18,12 @@ import { productsApi } from "../../../../lib/api/products";
 import Loader from "../../../components/shared/Loader";
 import JoditHtmlContent from "../../../components/shared/JoditHtmlContent";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
+import {
+  getPrimaryProductImage,
+  getAllProductImages,
+  getAllProductMedia,
+  getColorImagesMap,
+} from "../../../../lib/utils/productImageUtils";
 
 interface CatalogItemOverviewViewProps {
   productId: string;
@@ -91,6 +97,13 @@ export default function CatalogItemOverviewView({
           >
             <FaArrowLeft className="w-3.5 h-3.5" />
           </button>
+          <div className="w-14 h-14 rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5 shrink-0 relative shadow-xs">
+            <img
+              src={getPrimaryProductImage(product)}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
@@ -238,42 +251,79 @@ export default function CatalogItemOverviewView({
 
       {/* Media & Finish Palette Gallery */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-5">
-        <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
-          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Visual Media & Color Finishes
-          </h3>
-          <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-            Photographs and finish-specific galleries assigned to this luminaire model.
-          </p>
+        <div className="flex items-center justify-between border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
+          <div>
+            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              Visual Media & Color Finishes
+            </h3>
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+              Unified gallery of general product photography and finish-specific images assigned to this model.
+            </p>
+          </div>
+          <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light/80 dark:bg-theme-bg-dark/60 px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark">
+            {getAllProductImages(product).length} Photos Total
+          </span>
         </div>
 
-        {/* Top Product Images */}
-        {product.images && product.images.length > 0 && (
-          <div className="space-y-2">
-            <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
-              General Catalog Photography
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {product.images.map((img: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="relative group rounded-xl overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 aspect-square"
+        {/* All Product Media Unified Showcase */}
+        {(() => {
+          const allImages = getAllProductImages(product);
+          if (allImages.length === 0) {
+            return (
+              <div className="text-center py-8 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl bg-black/[0.02]">
+                <p className="text-xs text-theme-text-muted-light italic">
+                  No images uploaded yet in general photography or color finishes.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => router.push(`/admin/products/${productId}/edit`)}
+                  className="mt-2 text-xs font-semibold text-theme-hover-light dark:text-theme-hover-dark hover:underline"
                 >
-                  <img
-                    src={img.url}
-                    alt={img.alt_text || product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {img.is_primary && (
-                    <span className="absolute top-2 left-2 bg-blue-600 text-white text-[9px] uppercase font-bold px-2 py-0.5 rounded shadow">
-                      Primary
-                    </span>
-                  )}
-                </div>
-              ))}
+                  Upload photos in editor →
+                </button>
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-2">
+              <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
+                All Active Visual Assets ({allImages.length})
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {allImages.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="relative group rounded-xl overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 aspect-square"
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt_text || product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 left-2 flex flex-col gap-1">
+                      {img.is_primary && (
+                        <span className="bg-blue-600 text-white text-[9px] uppercase font-bold px-2 py-0.5 rounded shadow">
+                          Primary
+                        </span>
+                      )}
+                      {img.source === "color" && img.colorName && (
+                        <span className="bg-purple-700/90 text-white text-[9px] font-semibold px-2 py-0.5 rounded shadow backdrop-blur-xs">
+                          {img.colorName}
+                        </span>
+                      )}
+                      {img.source === "general" && !img.is_primary && (
+                        <span className="bg-black/60 text-white text-[8px] uppercase font-semibold px-1.5 py-0.5 rounded shadow">
+                          General
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Color-Specific Photo Palette */}
         {colorOpt && colorOpt.values?.length > 0 && (
@@ -441,7 +491,7 @@ export default function CatalogItemOverviewView({
                       ? rawImgs.get(colorAttr.value)?.[0]
                       : rawImgs[colorAttr.value]?.[0]
                     : undefined;
-                  const displayImg = v.imageUrl || colorImg || product.images?.[0]?.url;
+                  const displayImg = v.imageUrl || colorImg || getPrimaryProductImage(product);
 
                   const rawHex = colorOpt?.colorHexCodes || {};
                   const hex = colorAttr

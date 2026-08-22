@@ -4,6 +4,7 @@
 import { FaEdit, FaTrash, FaEye, FaCog, FaBoxes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
+import { getPrimaryProductImage } from "../../../../lib/utils/productImageUtils";
 
 interface CatalogItem {
   _id: string;
@@ -120,23 +121,7 @@ export default function CatalogItemGrid({
   };
 
   const resolveProductImage = (product: CatalogItem): string => {
-    if (product.images && product.images.length > 0 && product.images[0]?.url) {
-      return product.images[0].url;
-    }
-    const colorOpt = product.variantOptions?.find(
-      (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
-    );
-    if (colorOpt?.colorImages) {
-      for (const key of Object.keys(colorOpt.colorImages)) {
-        const imgs = colorOpt.colorImages[key];
-        if (imgs && imgs.length > 0) return imgs[0];
-      }
-    }
-    if (product.variants && product.variants.length > 0) {
-      const vWithImg = product.variants.find((v) => v.imageUrl);
-      if (vWithImg?.imageUrl) return vWithImg.imageUrl;
-    }
-    return "https://placehold.co/100x100?text=No+Photo";
+    return getPrimaryProductImage(product);
   };
 
   if (!products || products.length === 0) {

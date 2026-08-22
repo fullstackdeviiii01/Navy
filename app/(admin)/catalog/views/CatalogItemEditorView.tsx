@@ -439,6 +439,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             onRemoveNew={(index) => {
               setNewImages(newImages.filter((_, i) => i !== index));
             }}
+            colorItems={colorItems}
           />
         </div>
 

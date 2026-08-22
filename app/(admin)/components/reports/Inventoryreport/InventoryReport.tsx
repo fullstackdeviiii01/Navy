@@ -6,6 +6,7 @@ import { Download, Package, AlertTriangle, XCircle, DollarSign } from "lucide-re
 import { reportsApi } from "../../../../../lib/api/reports";
 import { exportToPDF } from "../export/exportUtils";
 import Loader from "../../../../components/shared/Loader";
+import { getPrimaryProductImage } from "../../../../../lib/utils/productImageUtils";
 
 export default function InventoryReport() {
   const [data, setData] = useState<any>(null);
@@ -158,13 +159,11 @@ export default function InventoryReport() {
                     >
                       <td className="py-2 px-3 sm:py-3 sm:px-4">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          {product.images?.[0]?.url && (
-                            <img
-                              src={product.images[0].url}
-                              alt={product.name}
-                              className="w-8 h-8 sm:w-10 sm:h-10 rounded object-cover flex-shrink-0"
-                            />
-                          )}
+                          <img
+                            src={getPrimaryProductImage(product)}
+                            alt={product.name}
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded object-cover flex-shrink-0 bg-black/5"
+                          />
                           <span className="text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                             {product.name}
                           </span>
@@ -222,13 +221,11 @@ export default function InventoryReport() {
                     >
                       <td className="py-2 px-3 sm:py-3 sm:px-4">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          {product.images?.[0]?.url && (
-                            <img
-                              src={product.images[0].url}
-                              alt={product.name}
-                              className="w-8 h-8 sm:w-10 sm:h-10 rounded object-cover flex-shrink-0"
-                            />
-                          )}
+                          <img
+                            src={getPrimaryProductImage(product)}
+                            alt={product.name}
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded object-cover flex-shrink-0 bg-black/5"
+                          />
                           <span className="text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                             {product.name}
                           </span>

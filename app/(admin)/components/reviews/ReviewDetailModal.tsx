@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { getPrimaryProductImage } from "../../../../lib/utils/productImageUtils";
 
 interface ReviewDetailModalProps {
   review: {
@@ -105,15 +106,13 @@ export default function ReviewDetailModal({
                   Product
                 </h4>
                 <div className="flex items-center gap-3">
-                  {review.product_id?.images?.[0] && (
-                    <div className="relative h-12 w-12 border border-theme-border-light dark:border-theme-border-dark flex-shrink-0 overflow-hidden">
-                      <img
-                        src={review.product_id.images[0].url || review.product_id.images[0]}
-                        alt={review.product_id.name}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="relative h-12 w-12 border border-theme-border-light dark:border-theme-border-dark flex-shrink-0 overflow-hidden bg-black/5 rounded">
+                    <img
+                      src={getPrimaryProductImage(review.product_id)}
+                      alt={review.product_id?.name || "Product"}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                       {review.product_id?.name}

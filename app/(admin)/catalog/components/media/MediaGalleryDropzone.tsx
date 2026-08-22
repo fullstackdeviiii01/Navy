@@ -10,6 +10,7 @@ interface MediaGalleryDropzoneProps {
   onImageSelect: (files: File[]) => void;
   onRemoveExisting: (index: number) => void;
   onRemoveNew: (index: number) => void;
+  colorItems?: any[];
 }
 
 function NewImagePreview({ file, onRemove }: { file: File; onRemove: () => void }) {
@@ -55,6 +56,7 @@ export default function MediaGalleryDropzone({
   onImageSelect,
   onRemoveExisting,
   onRemoveNew,
+  colorItems = [],
 }: MediaGalleryDropzoneProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -64,9 +66,17 @@ export default function MediaGalleryDropzone({
     }
   };
 
+  const colorImagesCount = colorItems.reduce((acc, c) => {
+    const existing = c.existingImages?.length || 0;
+    const pending = c.newFiles?.length || 0;
+    return acc + existing + pending;
+  }, 0);
+
+  const totalAllPhotos = images.length + newImages.length + colorImagesCount;
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h4 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             General Product Photography
@@ -75,10 +85,48 @@ export default function MediaGalleryDropzone({
             General high-res showcase photos. (Color-specific finishes can also be uploaded in the Color section below).
           </p>
         </div>
-        <span className="text-xs font-mono text-theme-text-muted-light">
-          {images.length + newImages.length} Photos
-        </span>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded border border-theme-border-light dark:border-theme-border-dark">
+            {images.length + newImages.length} General {colorImagesCount > 0 ? `+ ${colorImagesCount} Color (${totalAllPhotos} Total)` : "Photos"}
+          </span>
+        </div>
       </div>
+
+      {/* Color Section Images Notice Banner if color photos exist */}
+      {colorImagesCount > 0 && (
+        <div className="p-3 bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200/60 dark:border-purple-800/40 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-pulse shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-purple-950 dark:text-purple-200">
+                {colorImagesCount} Color Finish photo{colorImagesCount === 1 ? "" : "s"} attached below
+              </p>
+              <p className="text-[11px] text-purple-800/80 dark:text-purple-300/70">
+                These will be displayed across customer storefront, product carousels, and catalog listings.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {colorItems
+              .filter((c) => (c.existingImages?.length || 0) + (c.newFiles?.length || 0) > 0)
+              .map((c, i) => {
+                const count = (c.existingImages?.length || 0) + (c.newFiles?.length || 0);
+                return (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-white dark:bg-black/40 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 shadow-2xs"
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full border border-black/20 shrink-0"
+                      style={{ backgroundColor: c.hex || "#5D4037" }}
+                    />
+                    <span>{c.name}: {count} photo{count === 1 ? "" : "s"}</span>
+                  </span>
+                );
+              })}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {/* Existing Images */}

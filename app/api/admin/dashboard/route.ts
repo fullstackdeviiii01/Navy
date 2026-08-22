@@ -6,6 +6,7 @@ import User from "../../../models/User";
 import Order from "../../../models/Order";
 import Product from "../../../models/Product";
 import Category from "../../../models/Category";
+import { getPrimaryProductImage } from "../../../../lib/utils/productImageUtils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -351,7 +352,7 @@ export async function GET(request: NextRequest) {
         name: p.name,
         stock: totalStock,
         threshold: p.inventory?.low_stock_threshold ?? 10,
-        image: p.images?.[0]?.url || "",
+        image: getPrimaryProductImage(p, ""),
         isVariant,
         lowVariantLabel,
       };

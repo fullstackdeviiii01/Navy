@@ -3,23 +3,28 @@
 
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { ProductVariant } from "../../../../../types/product-variants";
+import { ProductVariant, VariantOption } from "../../../../../types/product-variants";
 import PermutationItemForm from "./PermutationItemForm";
 import { formatPrice } from "../../../../../lib/utils/formatPrice";
+import { getColorImagesMap } from "../../../../../lib/utils/productImageUtils";
 
 interface MatrixPermutationTableProps {
   variants: ProductVariant[];
+  variantOptions?: VariantOption[];
   onUpdate: (variantId: string, updates: Partial<ProductVariant>) => void;
   productCurrency: string;
 }
 
 export default function MatrixPermutationTable({
   variants,
+  variantOptions = [],
   onUpdate,
   productCurrency,
 }: MatrixPermutationTableProps) {
   const [editingVariantId, setEditingVariantId] = useState<string | null>(null);
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
+
+  const colorImagesMap = getColorImagesMap(variantOptions);
 
   const handleSaveVariant = async (variant: ProductVariant) => {
     if (editingVariant?._id) {
@@ -46,16 +51,23 @@ export default function MatrixPermutationTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
-              {variants.map((variant) => (
+              {variants.map((variant) => {
+                const colorAttr = variant.attributes?.find(
+                  (a) => a.name === "color" || a.name?.toLowerCase() === "color"
+                );
+                const colorImg = colorAttr ? colorImagesMap[colorAttr.value]?.[0] : undefined;
+                const displayImg = variant.imageUrl || colorImg;
+
+                return (
                 <tr
                   key={variant._id}
                   className="hover:bg-theme-card-light/40 dark:hover:bg-theme-card-dark/30 transition-colors"
                 >
                   <td className="px-4 py-3">
-                    {variant.imageUrl ? (
+                    {displayImg ? (
                       <img
-                        src={variant.imageUrl}
-                        alt="Variant"
+                        src={displayImg}
+                        alt={variant.sku || "Variant"}
                         className="w-10 h-10 object-cover rounded-lg border border-theme-border-light dark:border-theme-border-dark"
                       />
                     ) : (
@@ -109,8 +121,9 @@ export default function MatrixPermutationTable({
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              );
+            })}
+          </tbody>
           </table>
         </div>
       </div>
