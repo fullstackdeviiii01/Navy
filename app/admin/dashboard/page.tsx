@@ -1,6 +1,6 @@
 // app/admin/dashboard/page.tsx
-import ExecutiveCommandDashboard from "../../(admin)/analytics/views/ExecutiveCommandDashboard";
+import StoreExecutiveDashboard from "../../(admin)/analytics/views/StoreExecutiveDashboard";
 
 export default function Dashboard() {
-  return <ExecutiveCommandDashboard />;
+  return <StoreExecutiveDashboard />;
 }
