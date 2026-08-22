@@ -1,5 +1,6 @@
-import SiteSettingsPage from "../../(admin)/pages/site-settings/SiteSettingsPage";
+// app/admin/site-settings/page.tsx
+import AtelierSettingsView from "../../(admin)/atelier-config/views/AtelierSettingsView";
 
 export default function SiteSettingsRoute() {
-  return <SiteSettingsPage />;
+  return <AtelierSettingsView />;
 }

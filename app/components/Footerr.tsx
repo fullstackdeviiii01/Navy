@@ -3,17 +3,12 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  BsFacebook,
   BsInstagram,
-  BsLinkedin,
-  BsTiktok,
-  BsSnapchat,
-  BsWhatsapp,
-  BsTwitterX,
-  BsGithub,
-  BsYoutube,
+  BsFacebook,
   BsPinterest,
+  BsWhatsapp,
 } from "react-icons/bs";
 import { ChevronsRight } from "lucide-react";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
@@ -21,20 +16,15 @@ import { categoriesApi } from "../../lib/api/categories";
 
 interface CompanyInfo {
   company_name?: string;
+  company_logo?: string;
   company_email?: string;
   company_phone?: string;
   company_address?: string;
   social_media?: {
-    facebook?: string;
     instagram?: string;
-    linkedin?: string;
-    tiktok?: string;
-    snapchat?: string;
-    whatsapp?: string;
-    twitter?: string;
-    github?: string;
-    youtube?: string;
+    facebook?: string;
     pinterest?: string;
+    whatsapp?: string;
   };
   copyright_text?: string;
 }
@@ -93,34 +83,28 @@ export default function Footerr() {
 
   const socialIcons = [
     {
-      key: "whatsapp",
-      icon: BsWhatsapp,
-      url: companyInfo.social_media?.whatsapp || "https://wa.me/923130538686",
-      label: "WhatsApp",
-    },
-    {
       key: "instagram",
       icon: BsInstagram,
-      url: companyInfo.social_media?.instagram || "https://instagram.com",
+      url: companyInfo.social_media?.instagram,
       label: "Instagram",
     },
     {
       key: "facebook",
       icon: BsFacebook,
-      url: companyInfo.social_media?.facebook || "https://facebook.com",
+      url: companyInfo.social_media?.facebook,
       label: "Facebook",
     },
     {
       key: "pinterest",
       icon: BsPinterest,
-      url: companyInfo.social_media?.pinterest || "https://pinterest.com",
+      url: companyInfo.social_media?.pinterest,
       label: "Pinterest",
     },
     {
-      key: "linkedin",
-      icon: BsLinkedin,
-      url: companyInfo.social_media?.linkedin,
-      label: "LinkedIn",
+      key: "whatsapp",
+      icon: BsWhatsapp,
+      url: companyInfo.social_media?.whatsapp,
+      label: "WhatsApp",
     },
   ].filter((social) => social.url && social.url.trim() !== "");
 
@@ -133,16 +117,27 @@ export default function Footerr() {
       <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4">
           <div className="flex items-center gap-2.5">
-            {/* Monogram Box (R | L) */}
-            <div className="flex items-center border border-theme-hover-light/70 dark:border-theme-hover-dark/70 bg-theme-surface-light dark:bg-theme-surface-dark px-2.5 py-1 shadow-sm shrink-0">
-              <span className="font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
-                R
-              </span>
-              <span className="h-4 w-[1px] bg-theme-hover-light dark:bg-theme-hover-dark mx-1.5 inline-block" />
-              <span className="font-serif text-lg sm:text-xl text-theme-hover-light dark:text-theme-hover-dark tracking-tight font-normal">
-                L
-              </span>
-            </div>
+            {companyInfo.company_logo ? (
+              <div className="relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
+                <Image
+                  src={companyInfo.company_logo}
+                  alt={companyInfo.company_name || "Brand Logo"}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            ) : (
+              /* Monogram Box (R | L) */
+              <div className="flex items-center border border-theme-hover-light/70 dark:border-theme-hover-dark/70 bg-theme-surface-light dark:bg-theme-surface-dark px-2.5 py-1 shadow-sm shrink-0">
+                <span className="font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
+                  R
+                </span>
+                <span className="h-4 w-[1px] bg-theme-hover-light dark:bg-theme-hover-dark mx-1.5 inline-block" />
+                <span className="font-serif text-lg sm:text-xl text-theme-hover-light dark:text-theme-hover-dark tracking-tight font-normal">
+                  L
+                </span>
+              </div>
+            )}
 
             <div className="flex flex-col leading-none">
               <span className="font-serif text-base sm:text-lg tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
@@ -370,7 +365,7 @@ export default function Footerr() {
           
           {/* Copyright */}
           <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono">
-            © {currentYear} {companyInfo.company_name || "Rehan Wooden Lamps"}. All rights reserved.
+            {companyInfo.copyright_text || `© ${currentYear} ${companyInfo.company_name || "Rehan Wooden Lamps"}. All rights reserved.`}
           </p>
 
           {/* Social Media Links */}

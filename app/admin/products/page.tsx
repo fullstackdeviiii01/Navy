@@ -1,8 +1,6 @@
-// ============================================
-// 2. app/admin/products/page.tsx
-// ============================================
-import ProductListPage from "../../(admin)/pages/products/ProductListPage";
+// app/admin/products/page.tsx
+import CatalogDirectoryView from "../../(admin)/catalog/views/CatalogDirectoryView";
 
 export default function ProductsPage() {
-  return <ProductListPage />;
+  return <CatalogDirectoryView />;
 }

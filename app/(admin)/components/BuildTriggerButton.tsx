@@ -97,10 +97,10 @@ export default function BuildTriggerButton() {
   };
 
   const buttonStyles: Record<BuildStatus, string> = {
-    idle: "bg-orange-600 hover:bg-orange-700 text-white",
-    loading: "bg-orange-600 text-white opacity-80 cursor-not-allowed",
-    done: "bg-green-600 text-white cursor-default",
-    error: "bg-red-600 text-white cursor-default",
+    idle: "bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 shadow-xs",
+    loading: "bg-neutral-900/80 dark:bg-neutral-100/80 text-white dark:text-neutral-900 cursor-not-allowed",
+    done: "bg-emerald-600 text-white cursor-default",
+    error: "bg-rose-600 text-white cursor-default",
   };
 
   const buttonLabel: Record<BuildStatus, string> = {

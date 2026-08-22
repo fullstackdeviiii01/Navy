@@ -1,8 +1,6 @@
-// ============================================
-// 3. app/admin/products/new/page.tsx
-// ============================================
-import ProductFormPage from "../../../(admin)/pages/products/ProductFormPage";
+// app/admin/products/new/page.tsx
+import CatalogItemEditorView from "../../../(admin)/catalog/views/CatalogItemEditorView";
 
 export default function NewProductPage() {
-  return <ProductFormPage mode="add" />;
+  return <CatalogItemEditorView mode="add" />;
 }

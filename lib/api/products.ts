@@ -8,6 +8,7 @@ export const productsApi = {
     limit?: number;
     status?: string;
     category?: string;
+    inStock?: boolean;
     search?: string;
     sortBy?: string;
     sortOrder?: string;

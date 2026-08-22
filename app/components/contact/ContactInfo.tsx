@@ -1,7 +1,7 @@
 // app/components/contact/ContactInfo.tsx
 "use client";
 
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 
 interface ContactInfoProps {
   settings: any;
@@ -9,27 +9,6 @@ interface ContactInfoProps {
 
 export default function ContactInfo({ settings }: ContactInfoProps) {
   if (!settings) return null;
-
-  const getTodayHours = () => {
-    if (!settings.working_hours) return null;
-    const days = [
-      "sunday",
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-    ];
-    const today = days[new Date().getDay()];
-    const todayHours = settings.working_hours[today];
-    if (!todayHours) return null;
-    return todayHours.is_open
-      ? `${todayHours.open} - ${todayHours.close}`
-      : "Closed";
-  };
-
-  const todayHours = getTodayHours();
 
   return (
     <div className="space-y-6">
@@ -83,20 +62,17 @@ export default function ContactInfo({ settings }: ContactInfoProps) {
                 <p className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark leading-relaxed">
                   {settings.company_address}
                 </p>
-              </div>
-            </div>
-          )}
-
-          {todayHours && (
-            <div className="flex items-start gap-3">
-              <Clock className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
-                  Operating Hours Today
-                </p>
-                <p className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  {todayHours}
-                </p>
+                {settings.company_location_link && (
+                  <a
+                    href={settings.company_location_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-theme-hover-light dark:text-theme-hover-dark hover:underline mt-1 font-medium"
+                  >
+                    <span>View on Google Maps</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
               </div>
             </div>
           )}
@@ -105,3 +81,4 @@ export default function ContactInfo({ settings }: ContactInfoProps) {
     </div>
   );
 }
+

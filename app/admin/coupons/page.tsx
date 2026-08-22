@@ -1,6 +1,6 @@
 // app/admin/coupons/page.tsx
-import CouponsPage from "../../(admin)/pages/coupons/CouponsPage";
+import PromotionsStudioView from "../../(admin)/promotions/views/PromotionsStudioView";
 
 export default function CouponsRoute() {
-  return <CouponsPage />;
+  return <PromotionsStudioView />;
 }

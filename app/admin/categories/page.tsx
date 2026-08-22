@@ -1,5 +1,6 @@
-import CategoriesPage from "../../(admin)/pages/categories/CategoriesPage";
+// app/admin/categories/page.tsx
+import TaxonomyDirectoryView from "../../(admin)/taxonomy/views/TaxonomyDirectoryView";
 
 export default function CategoriesRoute() {
-  return <CategoriesPage />;
+  return <TaxonomyDirectoryView />;
 }

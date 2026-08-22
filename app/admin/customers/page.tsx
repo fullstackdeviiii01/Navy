@@ -1,5 +1,6 @@
-import CustomersPage from "../../(admin)/pages/customers/CustomersPage";
+// app/admin/customers/page.tsx
+import PatronDirectoryView from "../../(admin)/patrons/views/PatronDirectoryView";
 
 export default function CustomersRoute() {
-  return <CustomersPage />;
+  return <PatronDirectoryView />;
 }

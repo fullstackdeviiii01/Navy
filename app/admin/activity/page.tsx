@@ -1,6 +1,6 @@
 // app/admin/activity/page.tsx
-import ActivityPage from "../../(admin)/pages/activity/ActivityPage"
+import AuditLedgerView from "../../(admin)/audit-ledger/views/AuditLedgerView";
 
 export default function ActivityRoute() {
-  return <ActivityPage />
+  return <AuditLedgerView />;
 }
