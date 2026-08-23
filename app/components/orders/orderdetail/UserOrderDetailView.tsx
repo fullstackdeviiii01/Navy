@@ -1,6 +1,4 @@
-// app/components/orders/orderdetail/UserOrderDetailView.tsx
-"use client";
-
+import { useState, useEffect } from "react";
 import {
   Package,
   MapPin,
@@ -13,8 +11,9 @@ import Image from "next/image";
 import OrderStatusBadge from "../OrderStatusBadge";
 import ShippingAddress from "./ShippingAddress";
 import BillingAddress from "./BillingAddress";
-import RequestReturnButton from "../RequestReturnButton";
 import DownloadInvoiceButton from "../../invoice/DownloadInvoiceButton";
+import ReturnStatusCard from "../../returns/ReturnStatusCard";
+import { returnsApi } from "../../../../lib/api/returns";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
 
 interface UserOrderDetailViewProps {
@@ -32,8 +31,27 @@ export default function UserOrderDetailView({
   onReviewClick,
   isGuestView = false,
 }: UserOrderDetailViewProps) {
+  const [returnDoc, setReturnDoc] = useState<any>(null);
   const canCancel = ["pending", "confirmed"].includes(order.status);
   const canReview = order.status === "delivered";
+
+  useEffect(() => {
+    fetchReturnData();
+  }, [order._id]);
+
+  const fetchReturnData = async () => {
+    try {
+      const data = await returnsApi.getReturnByOrder(order._id);
+      setReturnDoc(data.return || null);
+    } catch (err) {
+      console.error("Failed to fetch order return status:", err);
+    }
+  };
+
+  const handleRefreshAll = () => {
+    fetchReturnData();
+    onRefresh();
+  };
 
   return (
     <div className="bg-theme-bg-light dark:bg-theme-bg-dark py-6 transition-colors">
@@ -41,6 +59,13 @@ export default function UserOrderDetailView({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content - Left Side */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Returns & Exchange Live Tracker / Action Card */}
+            <ReturnStatusCard
+              order={order}
+              returnDoc={returnDoc}
+              onRefresh={handleRefreshAll}
+            />
+
             <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark overflow-hidden">
               {/* Header Banner */}
               <div className="p-6 border-b border-theme-border-light dark:border-theme-border-dark">
@@ -75,16 +100,6 @@ export default function UserOrderDetailView({
                         paymentStatus={order.payment_status}
                         isAdmin={false}
                       />
-                      {order.has_active_return ? (
-                        <div className="px-3 py-2 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                          Return {order.return_status}
-                        </div>
-                      ) : (
-                        <RequestReturnButton
-                          order={order}
-                          onSuccess={onRefresh}
-                        />
-                      )}
                     </div>
 
                     {canCancel && (

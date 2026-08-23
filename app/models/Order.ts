@@ -95,6 +95,8 @@ export interface IOrderDocument extends Document {
   admin_notes?: string;
   placed_at: Date;
   auto_confirm: boolean;
+  has_active_return?: boolean;
+  return_status?: string;
   confirmed_at?: Date;
   shipped_at?: Date;
   delivered_at?: Date;
@@ -259,6 +261,8 @@ const OrderSchema = new Schema<IOrderDocument>(
     carrier: { type: String },
     customer_notes: { type: String },
     admin_notes: { type: String },
+    has_active_return: { type: Boolean, default: false },
+    return_status: { type: String, default: null },
     placed_at: { type: Date, default: Date.now },
     auto_confirm: { type: Boolean, default: false },
     confirmed_at: { type: Date },

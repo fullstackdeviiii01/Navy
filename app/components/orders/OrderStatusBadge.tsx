@@ -1,15 +1,15 @@
 // app/components/orders/OrderStatusBadge.tsx
 "use client";
 
-import { Clock, Check, Package, Truck, Ban } from "lucide-react";
+import { Clock, Check, Package, Truck, Ban, RotateCcw } from "lucide-react";
 
 interface OrderStatusBadgeProps {
   status: string;
 }
 
 export default function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
-  const getStatusConfig = (status: string) => {
-    const configs: any = {
+  const getStatusConfig = (st: string) => {
+    const configs: Record<string, { icon: any; className: string; label: string }> = {
       pending: {
         icon: Clock,
         className: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30",
@@ -40,8 +40,13 @@ export default function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
         className: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30",
         label: "Cancelled",
       },
+      refunded: {
+        icon: RotateCcw,
+        className: "bg-neutral-500/10 text-neutral-700 dark:text-neutral-300 border-neutral-500/30",
+        label: "Refunded",
+      },
     };
-    return configs[status] || configs.pending;
+    return configs[st] || configs.pending;
   };
 
   const config = getStatusConfig(status);

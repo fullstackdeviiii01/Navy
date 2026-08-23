@@ -5,7 +5,6 @@ import connectDB from "../../../../lib/db";
 import Order from "../../../models/Order";
 import User from "../../../models/User";
 import { getSessionIdFromRequest } from "../../../../lib/auth/session";
-import "../../../models/Return";
 
 export async function GET(
   request: NextRequest,
@@ -37,8 +36,6 @@ export async function GET(
           "user_id",
           "name email customer_since order_count total_spent",
         )
-        .populate("has_active_return")
-        .populate("return_status")
         .lean();
     } else if (user) {
       // Regular authenticated users can view orders by user_id or email

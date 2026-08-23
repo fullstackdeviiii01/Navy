@@ -1,6 +1,6 @@
 // app/admin/returns/page.tsx
-import ConciergeReturnsDirectory from "../../(admin)/concierge/views/ConciergeReturnsDirectory";
+import AdminReturnsDirectory from "../../(admin)/returns/views/AdminReturnsDirectory";
 
-export default function ReturnsRoute() {
-  return <ConciergeReturnsDirectory />;
+export default function ReturnsPage() {
+  return <AdminReturnsDirectory />;
 }

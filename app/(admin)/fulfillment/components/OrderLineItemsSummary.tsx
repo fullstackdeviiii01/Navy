@@ -33,7 +33,7 @@ export default function OrderLineItemsSummary({
       <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
           <Package className="w-4 h-4 text-theme-hover-light" />
-          <span>Fulfillment Fixtures ({items.length})</span>
+          <span>Order Items ({items.length})</span>
         </h3>
       </div>
 
@@ -63,7 +63,7 @@ export default function OrderLineItemsSummary({
                     {Object.entries(item.variant_attributes).map(([key, val]) => (
                       <span
                         key={key}
-                        className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono"
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono"
                       >
                         {key}: {val}
                       </span>
@@ -86,7 +86,7 @@ export default function OrderLineItemsSummary({
         ))}
       </div>
 
-      {/* Pricing Ledger Breakdown */}
+      {/* Pricing Summary */}
       <div className="border-t border-theme-border-light/80 dark:border-theme-border-dark/80 pt-3 space-y-1.5 text-xs">
         <div className="flex justify-between text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
           <span>Subtotal</span>
@@ -95,27 +95,27 @@ export default function OrderLineItemsSummary({
 
         {pricing.discount_amount > 0 && (
           <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
-            <span>Promotion Discount</span>
+            <span>Discount</span>
             <span>- Rs. {pricing.discount_amount.toLocaleString()}</span>
           </div>
         )}
 
         {pricing.tax_amount > 0 && (
           <div className="flex justify-between text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-            <span>Estimated Sales Tax</span>
+            <span>Tax</span>
             <span>Rs. {pricing.tax_amount.toLocaleString()}</span>
           </div>
         )}
 
         <div className="flex justify-between text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-          <span>Courier Shipping</span>
+          <span>Shipping</span>
           <span>
-            {pricing.shipping_cost === 0 ? "Complimentary" : `Rs. ${pricing.shipping_cost.toLocaleString()}`}
+            {pricing.shipping_cost === 0 ? "Free" : `Rs. ${pricing.shipping_cost.toLocaleString()}`}
           </span>
         </div>
 
         <div className="flex justify-between text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
-          <span>Total Manifest Amount</span>
+          <span>Total</span>
           <span>Rs. {pricing.total.toLocaleString()}</span>
         </div>
       </div>

@@ -1,4 +1,4 @@
-// app/models/Return.ts - SIMPLIFIED REFUND-ONLY MODEL
+// app/models/Return.ts
 import mongoose, { Schema, Document } from "mongoose";
 import "./Product";
 import "./User";
@@ -6,12 +6,27 @@ import "./Order";
 
 export interface IReturnItem {
   product_id: mongoose.Types.ObjectId;
-  variant_id?: mongoose.Types.ObjectId;
   product_name: string;
+  product_image?: string;
   variant_attributes?: { [key: string]: string };
   quantity: number;
   price: number;
-  reason: string;
+}
+
+export interface IPayoutDetails {
+  method: "bank_transfer" | "jazzcash" | "easypaisa";
+  account_title: string;
+  account_number: string;
+  bank_or_wallet_name: string;
+  submitted_at: Date;
+}
+
+export interface ISettlement {
+  transaction_reference: string;
+  proof_url?: string;
+  settled_at: Date;
+  settled_by?: mongoose.Types.ObjectId;
+  admin_notes?: string;
 }
 
 export interface IReturnDocument extends Document {
@@ -19,44 +34,32 @@ export interface IReturnDocument extends Document {
   order_id: mongoose.Types.ObjectId;
   user_id?: mongoose.Types.ObjectId | null;
   guest_email?: string;
-  
+
   items: IReturnItem[];
-  
-  return_reason: string;
+  refund_amount: number;
+
+  return_reason:
+    | "defective"
+    | "damaged"
+    | "wrong_item"
+    | "quality_issue"
+    | "not_as_described"
+    | "changed_mind"
+    | "other";
   return_reason_details?: string;
-  
-  photos?: string[];
-  
-  // SIMPLIFIED STATUS FLOW: pending → approved/rejected → refunded (if approved)
+
+  media_urls?: string[];
+
   status: "pending" | "approved" | "rejected" | "refunded";
   rejection_reason?: string;
-  
-  refund_amount: number;
-  refund_method: "bank_transfer" | "manual";
-  refund_status?: "pending" | "processing" | "completed" | "failed";
-  
-  // Bank transfer details for COD orders
-  bank_transfer_details?: {
-    account_holder_name: string;
-    account_number: string;
-    bank_name: string;
-    ifsc_code?: string; // For Indian banks
-    swift_code?: string; // For international
-    routing_number?: string; // For US banks
-  };
-  
-  tracking_number?: string;
-  carrier?: string;
-  
-  admin_notes?: string;
-  
+
+  payout_details?: IPayoutDetails;
+  settlement?: ISettlement;
+
   requested_at: Date;
-  approved_at?: Date;
-  rejected_at?: Date;
+  reviewed_at?: Date;
   refunded_at?: Date;
-  
-  processed_by?: mongoose.Types.ObjectId;
-  
+
   created_at: Date;
   updated_at: Date;
 }
@@ -64,24 +67,37 @@ export interface IReturnDocument extends Document {
 const ReturnItemSchema = new Schema<IReturnItem>(
   {
     product_id: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-    variant_id: { type: Schema.Types.ObjectId, default: null },
     product_name: { type: String, required: true },
+    product_image: { type: String },
     variant_attributes: { type: Map, of: String },
     quantity: { type: Number, required: true, min: 1 },
     price: { type: Number, required: true, min: 0 },
-    reason: { type: String, required: true },
   },
   { _id: false }
 );
 
-const BankTransferDetailsSchema = new Schema(
+const PayoutDetailsSchema = new Schema<IPayoutDetails>(
   {
-    account_holder_name: { type: String, required: true },
-    account_number: { type: String, required: true },
-    bank_name: { type: String, required: true },
-    ifsc_code: { type: String },
-    swift_code: { type: String },
-    routing_number: { type: String },
+    method: {
+      type: String,
+      enum: ["bank_transfer", "jazzcash", "easypaisa"],
+      required: true,
+    },
+    account_title: { type: String, required: true, trim: true },
+    account_number: { type: String, required: true, trim: true },
+    bank_or_wallet_name: { type: String, required: true, trim: true },
+    submitted_at: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
+const SettlementSchema = new Schema<ISettlement>(
+  {
+    transaction_reference: { type: String, required: true, trim: true },
+    proof_url: { type: String },
+    settled_at: { type: Date, default: Date.now },
+    settled_by: { type: Schema.Types.ObjectId, ref: "User" },
+    admin_notes: { type: String },
   },
   { _id: false }
 );
@@ -94,7 +110,7 @@ const ReturnSchema = new Schema<IReturnDocument>(
       index: true,
       default: function () {
         const timestamp = Date.now().toString(36).toUpperCase();
-        const random = Math.random().toString(36).substring(2, 7).toUpperCase();
+        const random = Math.random().toString(36).substring(2, 6).toUpperCase();
         return `RMA-${timestamp}-${random}`;
       },
     },
@@ -116,7 +132,7 @@ const ReturnSchema = new Schema<IReturnDocument>(
       trim: true,
       index: true,
     },
-    
+
     items: {
       type: [ReturnItemSchema],
       required: true,
@@ -125,18 +141,23 @@ const ReturnSchema = new Schema<IReturnDocument>(
         message: "Return must have at least one item",
       },
     },
-    
+
+    refund_amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
     return_reason: {
       type: String,
       required: true,
       enum: [
         "defective",
+        "damaged",
         "wrong_item",
+        "quality_issue",
         "not_as_described",
         "changed_mind",
-        "arrived_late",
-        "damaged",
-        "quality_issue",
         "other",
       ],
       index: true,
@@ -145,9 +166,9 @@ const ReturnSchema = new Schema<IReturnDocument>(
       type: String,
       maxlength: 1000,
     },
-    
-    photos: [{ type: String }],
-    
+
+    media_urls: [{ type: String }],
+
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "refunded"],
@@ -157,53 +178,30 @@ const ReturnSchema = new Schema<IReturnDocument>(
     rejection_reason: {
       type: String,
     },
-    
-    refund_amount: {
-      type: Number,
-      required: true,
-      min: 0,
+
+    payout_details: {
+      type: PayoutDetailsSchema,
+      default: null,
     },
-    refund_method: {
-      type: String,
-      enum: ["bank_transfer", "manual"],
-      required: true,
+
+    settlement: {
+      type: SettlementSchema,
+      default: null,
     },
-    refund_status: {
-      type: String,
-      enum: ["pending", "processing", "completed", "failed"],
-      index: true,
-    },
-    
-    bank_transfer_details: {
-      type: BankTransferDetailsSchema,
-    },
-    
-    tracking_number: { type: String },
-    carrier: { type: String },
-    
-    admin_notes: { type: String },
-    
+
     requested_at: { type: Date, default: Date.now },
-    approved_at: { type: Date },
-    rejected_at: { type: Date },
+    reviewed_at: { type: Date },
     refunded_at: { type: Date },
-    
-    processed_by: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
   }
 );
 
-// Indexes for efficient queries
 ReturnSchema.index({ user_id: 1, created_at: -1 });
 ReturnSchema.index({ guest_email: 1, created_at: -1 });
 ReturnSchema.index({ status: 1, created_at: -1 });
 ReturnSchema.index({ order_id: 1 });
-ReturnSchema.index({ refund_status: 1 });
 
 export default (mongoose.models.Return ||
   mongoose.model<IReturnDocument>("Return", ReturnSchema)) as mongoose.Model<IReturnDocument>;

@@ -57,10 +57,10 @@ export default function OrderStatusUpdateModal({
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div>
             <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Update Fulfillment Status
+              Update Order Status
             </h3>
             <p className="text-xs font-mono text-theme-text-muted-light mt-0.5">
-              Manifest #{order.order_number}
+              Order #{order.order_number}
             </p>
           </div>
           <button
@@ -76,20 +76,20 @@ export default function OrderStatusUpdateModal({
         <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-              Select Lifecycle Status
+              Order Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40 cursor-pointer"
             >
-              <option value="pending">Pending Review</option>
-              <option value="confirmed">Order Confirmed</option>
-              <option value="processing">Processing & Manufacturing</option>
-              <option value="shipped">Dispatched / In Transit</option>
-              <option value="delivered">Delivered to Patron</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
               <option value="cancelled">Cancelled</option>
-              <option value="refunded">Refund Settled</option>
+              <option value="refunded">Refunded</option>
             </select>
           </div>
 
@@ -97,12 +97,12 @@ export default function OrderStatusUpdateModal({
             <div className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-3">
               <div className="flex items-center gap-2 text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 <Truck className="w-3.5 h-3.5 text-indigo-500" />
-                <span>Carrier Dispatch Information</span>
+                <span>Shipping Details</span>
               </div>
 
               <div>
                 <label className="block text-[11px] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-                  Logistics Carrier
+                  Courier / Carrier
                 </label>
                 <select
                   value={carrier}
@@ -115,13 +115,13 @@ export default function OrderStatusUpdateModal({
                   <option value="Trax">Trax Logistics</option>
                   <option value="DHL">DHL Express</option>
                   <option value="FedEx">FedEx</option>
-                  <option value="Custom">Artisan Courier</option>
+                  <option value="Other">Other Courier</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-[11px] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-                  Tracking Waybill / Reference #
+                  Tracking Number
                 </label>
                 <input
                   type="text"
@@ -150,7 +150,7 @@ export default function OrderStatusUpdateModal({
               className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold tracking-wide shadow-xs hover:shadow active:scale-[0.99] transition-all disabled:opacity-50"
             >
               <Check className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? "Updating..." : "Commit Status"}</span>
+              <span>{isSubmitting ? "Updating..." : "Update Status"}</span>
             </button>
           </div>
         </form>
