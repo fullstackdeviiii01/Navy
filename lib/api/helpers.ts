@@ -2,9 +2,12 @@
 
 export const getAuthToken = () => {
   if (typeof window !== "undefined") {
-    const localToken = localStorage.getItem("auth_token");
+    const localToken =
+      localStorage.getItem("auth_token") || localStorage.getItem("__session");
     if (localToken) return localToken;
-    const match = document.cookie.match(/(?:^|;\s*)__session=([^;]+)/);
+    const match =
+      document.cookie.match(/(?:^|;\s*)auth_token=([^;]+)/) ||
+      document.cookie.match(/(?:^|;\s*)__session=([^;]+)/);
     if (match) return decodeURIComponent(match[1]);
   }
   return "";

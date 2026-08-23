@@ -32,6 +32,7 @@ export async function GET(
 
     if (isAdmin && user && user.role === "admin") {
       order = await Order.findById(id)
+        .populate("items.product_id", "name images category_id")
         .populate(
           "user_id",
           "name email customer_since order_count total_spent",
@@ -40,8 +41,16 @@ export async function GET(
         .populate("return_status")
         .lean();
     } else if (user) {
-      // Regular authenticated users can only view their own orders
-      order = await Order.findOne({ _id: id, user_id: user._id }).lean();
+      // Regular authenticated users can view orders by user_id or email
+      order = await Order.findOne({
+        _id: id,
+        $or: [
+          { user_id: user._id },
+          { "guest_info.email": user.email.toLowerCase() },
+        ],
+      })
+        .populate("items.product_id", "name images category_id")
+        .lean();
     } else {
       // Guest users can view orders by session_id
       const sessionId = getSessionIdFromRequest(request);
@@ -55,7 +64,9 @@ export async function GET(
         _id: id,
         session_id: sessionId,
         order_type: "guest",
-      }).lean();
+      })
+        .populate("items.product_id", "name images category_id")
+        .lean();
     }
 
     if (!order) {

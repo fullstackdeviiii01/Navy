@@ -52,6 +52,22 @@ export default function AccountPage() {
   });
   const [passwordLoading, setPasswordLoading] = useState(false);
 
+  // Dynamic order metrics loaded directly from orders API
+  const [orderStats, setOrderStats] = useState<{
+    totalPurchases: number;
+    totalSpent: number;
+  } | null>(null);
+
+  const handleOrdersLoaded = (orders: any[]) => {
+    setOrderStats({
+      totalPurchases: orders.length,
+      totalSpent: orders.reduce(
+        (sum: number, o: any) => sum + (o.pricing?.total || 0),
+        0
+      ),
+    });
+  };
+
   useEffect(() => {
     const tabParam = searchParams.get("tab");
     if (tabParam) {
@@ -175,7 +191,7 @@ export default function AccountPage() {
 
   if (userLoading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-[#2B1F0E]">
+      <div className="min-h-[70vh] flex items-center justify-center bg-theme-bg-light dark:bg-theme-bg-dark">
         <Loader />
       </div>
     );
@@ -220,46 +236,50 @@ export default function AccountPage() {
   const headerInfo = getHeaderInfo();
 
   return (
-    <div className="min-h-screen bg-[#2B1F0E] text-[#F3EBDC] pb-24">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark pb-24 transition-colors">
       {/* Toast Notifications */}
       {error && (
-        <div className="fixed top-20 right-4 sm:right-8 z-50 bg-red-900/90 border border-red-700 text-red-100 px-5 py-3 shadow-2xl text-xs uppercase tracking-wider animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-20 right-4 sm:right-8 z-50 bg-red-100 dark:bg-red-950/90 border border-red-300 dark:border-red-800 text-red-900 dark:text-red-200 px-5 py-3 shadow-2xl text-xs uppercase tracking-wider animate-in fade-in slide-in-from-top-2">
           {error}
         </div>
       )}
       {success && (
-        <div className="fixed top-20 right-4 sm:right-8 z-50 bg-[#1D2A18] border border-[#486337] text-green-200 px-5 py-3 shadow-2xl text-xs uppercase tracking-wider animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-20 right-4 sm:right-8 z-50 bg-green-100 dark:bg-green-950/90 border border-green-300 dark:border-green-800 text-green-900 dark:text-green-200 px-5 py-3 shadow-2xl text-xs uppercase tracking-wider animate-in fade-in slide-in-from-top-2">
           {success}
         </div>
       )}
 
       {/* Top Banner Header Section */}
-      <div className="border-b border-[#3D2C15] bg-[#241B0E]/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
+      <div className="border-b border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/40 dark:bg-theme-card-dark/30 pt-10 sm:pt-14 pb-8 sm:pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-          <p className="text-[11px] font-medium tracking-[0.25em] uppercase text-[#D4A359] mb-2">
+          <p className="text-[11px] font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
             MY ACCOUNT
           </p>
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#F3EBDC] leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
               {headerInfo.title}
               {headerInfo.italic && (
-                <span className="italic font-light text-[#D4A359]">
+                <span className="italic font-light text-theme-hover-light dark:text-theme-hover-dark">
                   {headerInfo.italic}
                 </span>
               )}
             </h1>
             {activeTab === "orders" && (
               <div className="text-right">
-                <span className="text-2xl font-serif text-[#D4A359]">
-                  {dbUser?.order_count || 0}
+                <span className="text-2xl font-serif text-theme-hover-light dark:text-theme-hover-dark">
+                  {orderStats !== null
+                    ? orderStats.totalPurchases
+                    : dbUser?.order_count || 0}
                 </span>
-                <span className="block text-[10px] tracking-[0.2em] uppercase text-[#D7D3CF]/60">
-                  {dbUser?.order_count === 1 ? "ORDER" : "ORDERS"}
+                <span className="block text-[10px] tracking-[0.2em] uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                  {(orderStats !== null ? orderStats.totalPurchases : dbUser?.order_count) === 1
+                    ? "ORDER"
+                    : "ORDERS"}
                 </span>
               </div>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-[#D7D3CF]/70 mt-2 tracking-wide max-w-xl">
+          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-2 tracking-wide max-w-xl">
             {headerInfo.subtitle}
           </p>
         </div>
@@ -268,18 +288,18 @@ export default function AccountPage() {
       {/* Main Layout Grid: Navigation & Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 sm:pt-10">
         
-        {/* MOBILE NAVIGATION: Sticky horizontal bar always in display */}
-        <div className="lg:hidden sticky top-16 sm:top-20 z-30 bg-[#241B0E] border-b border-[#3D2C15] -mx-4 sm:-mx-6 px-4 sm:px-6 mb-6 shadow-md">
+        {/* MOBILE NAVIGATION: Sticky horizontal bar */}
+        <div className="lg:hidden sticky top-16 sm:top-20 z-30 bg-theme-surface-light dark:bg-theme-surface-dark border-b border-theme-border-light dark:border-theme-border-dark -mx-4 sm:-mx-6 px-4 sm:px-6 mb-6 shadow-md">
           <nav className="flex items-center overflow-x-auto scrollbar-hide py-2 gap-2 text-xs">
             <button
               onClick={() => handleTabClick("overview")}
               className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
                 activeTab === "overview"
-                  ? "bg-[#2E200F] text-[#F3EBDC] border-[#D4A359]"
-                  : "bg-[#1C1307] text-[#D7D3CF]/70 border-[#3D2C15] hover:text-[#F3EBDC]"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
               }`}
             >
-              <LayoutDashboard size={13} className={activeTab === "overview" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+              <LayoutDashboard size={13} className={activeTab === "overview" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Overview</span>
             </button>
 
@@ -287,11 +307,11 @@ export default function AccountPage() {
               onClick={() => handleTabClick("orders")}
               className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
                 activeTab === "orders"
-                  ? "bg-[#2E200F] text-[#F3EBDC] border-[#D4A359]"
-                  : "bg-[#1C1307] text-[#D7D3CF]/70 border-[#3D2C15] hover:text-[#F3EBDC]"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
               }`}
             >
-              <ShoppingBag size={13} className={activeTab === "orders" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+              <ShoppingBag size={13} className={activeTab === "orders" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Orders</span>
             </button>
 
@@ -299,11 +319,11 @@ export default function AccountPage() {
               onClick={() => handleTabClick("details")}
               className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
                 activeTab === "details"
-                  ? "bg-[#2E200F] text-[#F3EBDC] border-[#D4A359]"
-                  : "bg-[#1C1307] text-[#D7D3CF]/70 border-[#3D2C15] hover:text-[#F3EBDC]"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
               }`}
             >
-              <User size={13} className={activeTab === "details" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+              <User size={13} className={activeTab === "details" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Account Details</span>
             </button>
 
@@ -311,11 +331,11 @@ export default function AccountPage() {
               onClick={() => handleTabClick("security")}
               className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
                 activeTab === "security"
-                  ? "bg-[#2E200F] text-[#F3EBDC] border-[#D4A359]"
-                  : "bg-[#1C1307] text-[#D7D3CF]/70 border-[#3D2C15] hover:text-[#F3EBDC]"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
               }`}
             >
-              <Lock size={13} className={activeTab === "security" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+              <Lock size={13} className={activeTab === "security" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Security</span>
             </button>
 
@@ -324,7 +344,7 @@ export default function AccountPage() {
                 href="/admin/dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] bg-[#1C1307] border border-[#D4A359]/60 text-[#D4A359]"
+                className="flex items-center gap-1.5 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-hover-light/60 text-theme-hover-light dark:text-theme-hover-dark"
               >
                 <Shield size={13} />
                 <span>Admin</span>
@@ -333,7 +353,7 @@ export default function AccountPage() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] bg-[#1C1307] border border-[#3D2C15] text-red-400/80 hover:text-red-300"
+              className="flex items-center gap-1.5 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-red-600 dark:text-red-400 hover:text-red-700"
             >
               <LogOut size={13} />
               <span>Sign Out</span>
@@ -344,18 +364,18 @@ export default function AccountPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* DESKTOP Left Navigation Sidebar */}
-          <aside className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-[#201509] border border-[#3D2C15] p-3 sticky top-28 shadow-xl">
+          <aside className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-3 sticky top-28 shadow-sm">
             <nav className="space-y-1">
               {/* 1. Overview */}
               <button
                 onClick={() => handleTabClick("overview")}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
                   activeTab === "overview"
-                    ? "bg-[#2E200F] text-[#F3EBDC] border-l-[3px] border-[#D4A359]"
-                    : "text-[#D7D3CF]/70 hover:text-[#F3EBDC] hover:bg-[#2A1D0E]"
+                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
                 }`}
               >
-                <LayoutDashboard size={16} className={activeTab === "overview" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+                <LayoutDashboard size={16} className={activeTab === "overview" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>OVERVIEW</span>
               </button>
 
@@ -364,11 +384,11 @@ export default function AccountPage() {
                 onClick={() => handleTabClick("orders")}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
                   activeTab === "orders"
-                    ? "bg-[#2E200F] text-[#F3EBDC] border-l-[3px] border-[#D4A359]"
-                    : "text-[#D7D3CF]/70 hover:text-[#F3EBDC] hover:bg-[#2A1D0E]"
+                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
                 }`}
               >
-                <ShoppingBag size={16} className={activeTab === "orders" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+                <ShoppingBag size={16} className={activeTab === "orders" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>ORDERS</span>
               </button>
 
@@ -377,11 +397,11 @@ export default function AccountPage() {
                 onClick={() => handleTabClick("details")}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
                   activeTab === "details"
-                    ? "bg-[#2E200F] text-[#F3EBDC] border-l-[3px] border-[#D4A359]"
-                    : "text-[#D7D3CF]/70 hover:text-[#F3EBDC] hover:bg-[#2A1D0E]"
+                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
                 }`}
               >
-                <User size={16} className={activeTab === "details" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+                <User size={16} className={activeTab === "details" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>ACCOUNT DETAILS</span>
               </button>
 
@@ -390,11 +410,11 @@ export default function AccountPage() {
                 onClick={() => handleTabClick("security")}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
                   activeTab === "security"
-                    ? "bg-[#2E200F] text-[#F3EBDC] border-l-[3px] border-[#D4A359]"
-                    : "text-[#D7D3CF]/70 hover:text-[#F3EBDC] hover:bg-[#2A1D0E]"
+                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
                 }`}
               >
-                <Lock size={16} className={activeTab === "security" ? "text-[#D4A359]" : "text-[#D7D3CF]/50"} />
+                <Lock size={16} className={activeTab === "security" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>SECURITY</span>
               </button>
 
@@ -404,21 +424,21 @@ export default function AccountPage() {
                   href="/admin/dashboard"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-between px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase text-[#D4A359] hover:bg-[#2A1D0E] transition-colors border-t border-[#3D2C15]/80 mt-2 pt-3"
+                  className="w-full flex items-center justify-between px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40 transition-colors border-t border-theme-border-light dark:border-theme-border-dark mt-2 pt-3"
                 >
                   <div className="flex items-center gap-3">
-                    <Shield size={16} className="text-[#D4A359]" />
+                    <Shield size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
                     <span>ADMIN PANEL</span>
                   </div>
-                  <ChevronRight size={14} className="text-[#D4A359]" />
+                  <ChevronRight size={14} className="text-theme-hover-light dark:text-theme-hover-dark" />
                 </a>
               )}
 
               {/* 6. Sign Out */}
-              <div className="border-t border-[#3D2C15]/80 pt-2 mt-2">
+              <div className="border-t border-theme-border-light dark:border-theme-border-dark pt-2 mt-2">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase text-[#D7D3CF]/60 hover:text-red-400 hover:bg-[#2A1D0E] transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-red-600 dark:hover:text-red-400 hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40 transition-colors"
                 >
                   <LogOut size={16} />
                   <span>SIGN OUT</span>
@@ -435,61 +455,58 @@ export default function AccountPage() {
               <div className="space-y-8">
                 {/* Stats Overview */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-[#201509] border border-[#3D2C15] p-5">
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#D7D3CF]/60 mb-1">
+                  <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-5">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1">
                       TOTAL PURCHASES
                     </p>
-                    <p className="text-2xl sm:text-3xl font-serif text-[#F3EBDC]">
-                      {dbUser?.order_count || 0}
+                    <p className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      {orderStats !== null
+                        ? orderStats.totalPurchases
+                        : dbUser?.order_count || 0}
                     </p>
                   </div>
-                  <div className="bg-[#201509] border border-[#3D2C15] p-5">
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#D7D3CF]/60 mb-1">
+                  <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-5">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1">
                       TOTAL EXPENDITURE
                     </p>
-                    <p className="text-2xl sm:text-3xl font-serif text-[#D4A359]">
-                      {formatPrice(dbUser?.total_spent || 0)}
+                    <p className="text-2xl sm:text-3xl font-serif text-theme-hover-light dark:text-theme-hover-dark">
+                      {formatPrice(
+                        orderStats !== null
+                          ? orderStats.totalSpent
+                          : dbUser?.total_spent || 0
+                      )}
                     </p>
                   </div>
-                  <div className="bg-[#201509] border border-[#3D2C15] p-5">
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#D7D3CF]/60 mb-1">
+                  <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-5">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1">
                       PATRON STATUS
                     </p>
-                    <p className="text-sm font-semibold tracking-wider text-[#F3EBDC] uppercase mt-2">
+                    <p className="text-sm font-semibold tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase mt-2">
                       VERIFIED CLIENT
                     </p>
                   </div>
                 </div>
 
                 {/* Recent Orders Box */}
-                <div className="bg-[#201509] border border-[#3D2C15] p-6 sm:p-8">
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#3D2C15]">
-                    <h2 className="text-xl font-serif text-[#F3EBDC]">
+                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-6 sm:p-8">
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+                    <h2 className="text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       Recent orders
                     </h2>
                     <button
                       onClick={() => handleTabClick("orders")}
-                      className="text-xs uppercase tracking-[0.18em] text-[#D4A359] hover:underline"
+                      className="text-xs uppercase tracking-[0.18em] text-theme-hover-light dark:text-theme-hover-dark hover:underline font-semibold"
                     >
                       View All →
                     </button>
                   </div>
 
-                  {dbUser?.order_count > 0 ? (
-                    <OrdersTab dbUser={dbUser} limit={2} />
-                  ) : (
-                    <div className="text-center py-12 sm:py-16 space-y-4">
-                      <p className="text-sm text-[#D7D3CF]/70">
-                        You haven't placed any orders yet.
-                      </p>
-                      <Link
-                        href="/products"
-                        className="inline-block px-8 py-3.5 bg-[#170E05] hover:bg-[#A8752B] border border-[#3D2C15] text-white text-xs font-semibold tracking-[0.2em] uppercase transition-colors"
-                      >
-                        Explore the collection
-                      </Link>
-                    </div>
-                  )}
+                  <OrdersTab
+                    dbUser={dbUser}
+                    limit={2}
+                    isOverview={true}
+                    onOrdersLoaded={handleOrdersLoaded}
+                  />
                 </div>
               </div>
             )}
@@ -497,7 +514,10 @@ export default function AccountPage() {
             {/* ── TAB 2: ORDERS ─────────────────────────────────────────── */}
             {activeTab === "orders" && (
               <div className="space-y-6">
-                <OrdersTab dbUser={dbUser} />
+                <OrdersTab
+                  dbUser={dbUser}
+                  onOrdersLoaded={handleOrdersLoaded}
+                />
               </div>
             )}
 
@@ -505,10 +525,10 @@ export default function AccountPage() {
             {activeTab === "details" && (
               <div className="space-y-8">
                 {/* 1. Personal Details Form */}
-                <div className="bg-[#201509] border border-[#3D2C15] p-6 sm:p-8">
-                  <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#3D2C15]">
-                    <User size={18} className="text-[#D4A359]" />
-                    <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-[#F3EBDC]">
+                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-6 sm:p-8">
+                  <div className="flex items-center gap-3 pb-4 mb-6 border-b border-theme-border-light dark:border-theme-border-dark">
+                    <User size={18} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                    <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       PERSONAL DETAILS
                     </h2>
                   </div>
@@ -517,7 +537,7 @@ export default function AccountPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Full Name */}
                       <div>
-                        <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
+                        <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
                           FULL NAME
                         </label>
                         <input
@@ -527,13 +547,13 @@ export default function AccountPage() {
                             setProfileForm({ ...profileForm, name: e.target.value })
                           }
                           required
-                          className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                          className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
                         />
                       </div>
 
                       {/* Contact Number */}
                       <div>
-                        <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
+                        <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
                           CONTACT NUMBER
                         </label>
                         <input
@@ -543,28 +563,28 @@ export default function AccountPage() {
                             setProfileForm({ ...profileForm, phone: e.target.value })
                           }
                           placeholder="+92 300 0000000"
-                          className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                          className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
                         />
                       </div>
                     </div>
 
                     {/* Email Address (Uneditable) */}
                     <div>
-                      <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
-                        EMAIL ADDRESS <span className="text-[#D7D3CF]/40">(UNEDITABLE)</span>
+                      <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
+                        EMAIL ADDRESS <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">(UNEDITABLE)</span>
                       </label>
                       <input
                         type="email"
                         value={userEmail}
                         disabled
-                        className="w-full bg-[#150D04] border border-[#3D2C15]/50 px-4 py-3 text-sm text-[#D7D3CF]/50 cursor-not-allowed"
+                        className="w-full bg-theme-card-light/60 dark:bg-theme-card-dark/60 border border-theme-border-light/60 dark:border-theme-border-dark/60 px-4 py-3 text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark cursor-not-allowed"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={updating}
-                      className="px-8 py-3.5 bg-[#A8752B] hover:bg-[#C08A38] text-white text-xs font-semibold tracking-[0.2em] uppercase transition-colors disabled:opacity-50"
+                      className="px-8 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.2em] uppercase transition-colors disabled:opacity-50"
                     >
                       {updating ? "Saving Changes..." : "Save Details"}
                     </button>
@@ -572,7 +592,7 @@ export default function AccountPage() {
                 </div>
 
                 {/* 2. Embedded Saved Addresses Section */}
-                <div className="bg-[#201509] border border-[#3D2C15] p-6 sm:p-8">
+                <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-6 sm:p-8">
                   <AddressesTab
                     dbUser={dbUser}
                     authUser={authUser}
@@ -588,27 +608,27 @@ export default function AccountPage() {
 
             {/* ── TAB 4: SECURITY ───────────────────────────────────────── */}
             {activeTab === "security" && (
-              <div className="bg-[#201509] border border-[#3D2C15] p-6 sm:p-8 space-y-6">
-                <div className="flex items-center gap-3 pb-4 border-b border-[#3D2C15]">
-                  <Lock size={18} className="text-[#D4A359]" />
-                  <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-[#F3EBDC]">
+              <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-6 sm:p-8 space-y-6">
+                <div className="flex items-center gap-3 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+                  <Lock size={18} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                  <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     PASSWORD CREDENTIALS
                   </h2>
                 </div>
 
                 {/* Advisory notice */}
-                <div className="bg-[#180F05] border border-[#3D2C15] p-4 text-xs text-[#D7D3CF]/80 leading-relaxed space-y-2">
+                <div className="bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark p-4 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed space-y-2">
                   <p>
                     To maintain the integrity of your account, we recommend periodically updating your credentials. Ensure your new password is unique and not shared across other platforms.
                   </p>
-                  <p className="text-[10px] tracking-[0.18em] uppercase text-[#D4A359] font-medium">
+                  <p className="text-[10px] tracking-[0.18em] uppercase text-theme-hover-light dark:text-theme-hover-dark font-medium">
                     REQUIREMENTS: 6+ CHARACTERS · ALPHANUMERIC RECOMMENDATION
                   </p>
                 </div>
 
                 <form onSubmit={handlePasswordSubmit} className="space-y-5 max-w-lg">
                   <div>
-                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
+                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
                       CURRENT PASSWORD
                     </label>
                     <input
@@ -622,12 +642,12 @@ export default function AccountPage() {
                       }
                       required
                       placeholder="••••••••"
-                      className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                      className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
+                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
                       NEW PASSWORD
                     </label>
                     <input
@@ -641,12 +661,12 @@ export default function AccountPage() {
                       }
                       required
                       placeholder="••••••••"
-                      className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                      className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D7D3CF]/70 mb-2">
+                    <label className="block text-[10px] font-semibold tracking-[0.2em] uppercase text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
                       CONFIRM NEW PASSWORD
                     </label>
                     <input
@@ -660,14 +680,14 @@ export default function AccountPage() {
                       }
                       required
                       placeholder="••••••••"
-                      className="w-full bg-[#180F05] border border-[#3D2C15] px-4 py-3 text-sm text-[#F3EBDC] focus:outline-none focus:border-[#D4A359]"
+                      className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={passwordLoading}
-                    className="px-8 py-3.5 bg-[#A8752B] hover:bg-[#C08A38] text-white text-xs font-semibold tracking-[0.2em] uppercase transition-colors disabled:opacity-50"
+                    className="px-8 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.2em] uppercase transition-colors disabled:opacity-50"
                   >
                     {passwordLoading ? "Updating Password..." : "Update Password"}
                   </button>

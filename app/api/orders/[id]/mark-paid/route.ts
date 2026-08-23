@@ -1,5 +1,4 @@
-// // app/api/orders/[id]/mark-paid/route.ts
-// UPDATED — now issues invoice when COD payment is marked received
+// app/api/orders/[id]/mark-paid/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/auth";
 import connectDB from "../../../../../lib/db";
@@ -40,29 +39,19 @@ export async function POST(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    if (order.payment_method !== "cod") {
-      return NextResponse.json(
-        { error: "Only COD orders can be manually marked as paid" },
-        { status: 400 }
-      );
-    }
-
-    if (order.status !== "delivered") {
-      return NextResponse.json(
-        { error: "Order must be delivered before marking as paid" },
-        { status: 400 }
-      );
-    }
-
     if (order.payment_status === "paid") {
       return NextResponse.json(
-        { error: "Order already marked as paid" },
+        { error: "Order payment is already marked as paid" },
         { status: 400 }
       );
     }
 
-    // Update order
+    // Update order payment status
     order.payment_status = "paid";
+    if (order.status === "pending") {
+      order.status = "confirmed";
+      order.confirmed_at = new Date();
+    }
     await order.save();
 
     // Update user stats
@@ -70,7 +59,7 @@ export async function POST(
       await (User as any).findByIdAndUpdate(order.user_id, {
         $inc: {
           order_count: 1,
-          total_spent: order.pricing.total,
+          total_spent: order.pricing?.total || 0,
         },
         $set: { last_order_at: order.placed_at },
       });
@@ -85,23 +74,22 @@ export async function POST(
       }
     );
 
-    // ── Issue invoice (COD payment now confirmed) ─────────────────────────
+    // Issue invoice now that payment is confirmed
     try {
       await InvoiceService.issueForOrder(id);
     } catch (invoiceError) {
-      // Non-fatal — log but don't fail the payment marking
-      console.error("Failed to issue invoice after COD payment:", invoiceError);
+      console.error("Failed to issue invoice after payment verification:", invoiceError);
     }
 
     return NextResponse.json({
       success: true,
-      message: "Payment marked as received",
+      message: "Payment successfully verified and marked as paid",
       order,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Mark paid failed:", error);
     return NextResponse.json(
-      { error: "Failed to mark payment as received" },
+      { error: error.message || "Failed to mark payment as received" },
       { status: 500 }
     );
   }

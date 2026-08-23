@@ -36,10 +36,16 @@ export default function DownloadInvoiceButton({
     try {
       const url = `/api/orders/${orderId}/invoice${isAdmin ? "?admin=true" : ""}`;
 
+      const token = getAuthToken();
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
+        method: "GET",
+        headers,
+        credentials: "include",
       });
 
       if (!response.ok) {

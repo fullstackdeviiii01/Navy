@@ -119,13 +119,19 @@ export default function FulfillmentDataTable({
                     </span>
                   </td>
 
-                  {/* Total */}
+                  {/* Total & Payment Method */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
                       Rs. {order.pricing?.total?.toLocaleString() || "0"}
                     </span>
-                    <span className="text-[10px] text-theme-text-muted-light uppercase">
-                      {order.payment_method || "Online"}
+                    <span className="text-[10px] text-theme-text-muted-light uppercase font-medium">
+                      {order.payment_method === "bank_transfer"
+                        ? "Bank Transfer"
+                        : order.payment_method === "jazzcash"
+                        ? "JazzCash"
+                        : order.payment_method === "cod"
+                        ? "COD"
+                        : order.payment_method || "Online"}
                     </span>
                   </td>
 
@@ -142,13 +148,22 @@ export default function FulfillmentDataTable({
 
                   {/* Payment */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold capitalize ${
-                        PAYMENT_BADGES[order.payment_status] || PAYMENT_BADGES.pending
-                      }`}
-                    >
-                      {order.payment_status}
-                    </span>
+                    <div className="space-y-1">
+                      <span
+                        className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold capitalize ${
+                          PAYMENT_BADGES[order.payment_status] || PAYMENT_BADGES.pending
+                        }`}
+                      >
+                        {order.payment_status}
+                      </span>
+                      {order.payment_proof_url && (
+                        <div className="block">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
+                            📸 Receipt
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </td>
 
                   {/* Actions */}

@@ -182,14 +182,12 @@ export default function ProductVariantSelector({
         .map((attributeOption) => {
           const availableValues = getAvailableValues(attributeOption.name);
           const selectedValue = currentSelection[attributeOption.name];
-          const swatchMap = variantImageMap[attributeOption.name] || {};
-          const hasSwatches = Object.keys(swatchMap).length > 0;
           const isColorOption =
             attributeOption.name.toLowerCase() === "color" ||
             attributeOption.displayName.toLowerCase() === "color";
 
           return (
-            <div key={attributeOption.name} className="space-y-1">
+            <div key={attributeOption.name} className="space-y-1.5">
               {/* Label */}
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -212,9 +210,6 @@ export default function ProductVariantSelector({
                   {availableValues.map(({ value, inStock }) => {
                     const isSelected = selectedValue === value;
                     const isDisabled = !inStock;
-                    const swatchUrl =
-                      swatchMap[value] ||
-                      attributeOption.colorImages?.[value]?.[0];
 
                     const hexMatch = value.match(/#(?:[0-9a-fA-F]{3}){1,2}\b/);
                     const hexCode =
@@ -238,7 +233,7 @@ export default function ProductVariantSelector({
                             relative w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 flex items-center justify-center p-[2px]
                             ${
                               isSelected
-                                ? "ring-2 ring-offset-2 ring-[#A8752B] dark:ring-[#D4A359] dark:ring-offset-theme-bg-dark scale-105"
+                                ? "ring-2 ring-offset-2 ring-theme-hover-light dark:ring-theme-hover-dark dark:ring-offset-theme-bg-dark scale-105"
                                 : inStock
                                   ? "hover:scale-110 ring-1 ring-black/10 dark:ring-white/20"
                                   : "opacity-35 cursor-not-allowed ring-1 ring-black/10"
@@ -260,64 +255,22 @@ export default function ProductVariantSelector({
                       );
                     }
 
-                    // Image Swatch (Square)
-                    if (hasSwatches && swatchUrl) {
-                      return (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() =>
-                            !isDisabled && handleSelect(attributeOption.name, value)
-                          }
-                          disabled={isDisabled}
-                          title={value}
-                          className={`
-                            relative w-12 h-12 border overflow-hidden transition-all
-                            ${
-                              isSelected
-                                ? "border-theme-hover-light dark:border-theme-hover-dark ring-1 ring-theme-hover-light"
-                                : inStock
-                                  ? "border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light"
-                                  : "border-theme-border-light/40 dark:border-theme-border-dark/40 opacity-40 cursor-not-allowed"
-                            }
-                          `}
-                          aria-label={`${value}${isSelected ? " (selected)" : ""}${!inStock ? " (sold out)" : ""}`}
-                          aria-pressed={isSelected}
-                        >
-                          <Image
-                            src={swatchUrl}
-                            alt={value}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                          />
-                          {!inStock && (
-                            <div
-                              className="absolute inset-0 bg-black/50 flex items-center justify-center"
-                              aria-hidden="true"
-                            >
-                              <span className="text-[9px] text-white font-medium">Out</span>
-                            </div>
-                          )}
-                        </button>
-                      );
-                    }
-
-                    // Sharp Text Button (No Image)
+                    // All other attributes (Quantity, Size, Material, etc.): Clean Text Pills
                     return (
                       <button
                         key={value}
+                        type="button"
                         onClick={() =>
                           !isDisabled && handleSelect(attributeOption.name, value)
                         }
                         disabled={isDisabled}
                         className={`
-                          relative px-4 py-2 border text-xs uppercase tracking-[0.15em] font-medium transition-all
+                          relative px-3.5 py-1.5 border text-xs uppercase tracking-[0.15em] font-medium transition-all
                           ${
                             isSelected
-                              ? "border-theme-primary bg-theme-primary text-theme-btn-text"
+                              ? "border-theme-primary bg-theme-primary text-theme-btn-text shadow-sm"
                               : inStock
-                                ? "border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light"
+                                ? "border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark"
                                 : "border-theme-border-light/40 dark:border-theme-border-dark/40 text-theme-text-muted-light dark:text-theme-text-muted-dark opacity-50 cursor-not-allowed line-through"
                           }
                         `}

@@ -16,6 +16,7 @@ import {
 import OrderStatusUpdateModal from "../components/OrderStatusUpdateModal";
 import OrderLineItemsSummary from "../components/OrderLineItemsSummary";
 import CustomerDossierCard from "../components/CustomerDossierCard";
+import PaymentVerificationCard from "../components/PaymentVerificationCard";
 import DownloadInvoiceButton from "../../../components/invoice/DownloadInvoiceButton";
 import { adminOrdersApi } from "../../../../lib/api/orders";
 
@@ -154,6 +155,10 @@ export default function OrderManifestDetailView({
           <p className="text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase">
             {order.payment_method === "cod"
               ? "Cash on Delivery"
+              : order.payment_method === "bank_transfer"
+              ? "Bank Transfer"
+              : order.payment_method === "jazzcash"
+              ? "JazzCash"
               : order.payment_method || "Online"}
           </p>
           <span className="text-[10px] text-theme-text-muted-light block">
@@ -189,8 +194,12 @@ export default function OrderManifestDetailView({
 
       {/* Detail Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Line Items & Pricing */}
+        {/* Left Column: Payment Proof & Line Items */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Payment Verification & Proof Card */}
+          <PaymentVerificationCard order={order} onRefresh={onRefresh} />
+
+          {/* Line Items Summary */}
           <OrderLineItemsSummary
             items={order.items || []}
             pricing={

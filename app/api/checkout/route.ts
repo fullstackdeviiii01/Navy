@@ -158,17 +158,33 @@ export async function POST(request: NextRequest) {
           );
         }
         itemPrice = variant.price;
-        variant.stockQuantity -= item.quantity;
-        await product.save();
+        // Atomically update variant stock and product totals
+        await (Product as any).updateOne(
+          { _id: product._id, "variants._id": item.variant_id },
+          {
+            $inc: {
+              "variants.$.stockQuantity": -item.quantity,
+              "inventory.stock_quantity": -item.quantity,
+              "variantInventory.totalStock": -item.quantity,
+            },
+            $set: { updated_at: new Date() },
+          }
+        );
       } else {
-        if (product.inventory.stock_quantity < item.quantity) {
+        if (product.inventory?.stock_quantity < item.quantity) {
           return NextResponse.json(
             { error: `Insufficient stock for ${product.name}` },
             { status: 400 }
           );
         }
-        product.inventory.stock_quantity -= item.quantity;
-        await product.save();
+        // Atomically update simple product inventory stock
+        await (Product as any).updateOne(
+          { _id: product._id },
+          {
+            $inc: { "inventory.stock_quantity": -item.quantity },
+            $set: { updated_at: new Date() },
+          }
+        );
       }
 
       const matchedVariant = product.hasVariants && item.variant_id

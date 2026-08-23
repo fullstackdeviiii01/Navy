@@ -10,6 +10,8 @@ import { getSessionIdFromRequest } from "../../../../../lib/auth/session";
 import { generateInvoicePDF } from "../../../../../lib/services/invoicePdfGenerator";
 import type { InvoiceData } from "../../../../../lib/services/invoicePdfGenerator";
 
+import { InvoiceService } from "../../../../../lib/services/invoiceService";
+
 // ── Company info from SiteSettings DB ────────────────────────────────────────
 async function getCompanyInfo() {
   const settings = await (SiteSettings as any).findOne({ is_global_settings: true }).lean() as any;
@@ -23,8 +25,6 @@ async function getCompanyInfo() {
     website: info.company_website ?? undefined,
   };
 }
-
-// ── Exchange rates removed — all prices in PKR ──────────────────────────────
 
 function formatDate(date: Date | string): string {
   return new Date(date).toLocaleDateString("en-US", {
@@ -52,7 +52,7 @@ export async function GET(
     if (token) {
       const decoded = await verifyIdToken(token);
       if (decoded) {
-        user = await (User as any).findOne({ uid: decoded.uid });
+        user = await (User as any).findOne({ email: decoded.email }).lean();
       }
     }
 
@@ -90,11 +90,25 @@ export async function GET(
       );
     }
 
-    // ── Fetch invoice record ─────────────────────────────────────────────────
-    const invoice = await Invoice.findOne({ order_id: id }).lean();
+    // ── Fetch or auto-create invoice record ───────────────────────────────────
+    let invoice: any = await Invoice.findOne({ order_id: id }).lean();
+    if (!invoice) {
+      try {
+        const created = await InvoiceService.createForOrder(id, {
+          userId: order.user_id?.toString() ?? null,
+          guestEmail: order.guest_info?.email,
+          currency: order.pricing?.currency || "PKR",
+          issueImmediately: order.payment_status === "paid" || isAdmin,
+        });
+        invoice = await Invoice.findById(created._id).lean();
+      } catch (invoiceErr) {
+        console.error("Auto invoice creation fallback failed:", invoiceErr);
+      }
+    }
+
     if (!invoice) {
       return NextResponse.json(
-        { error: "Invoice not found for this order." },
+        { error: "Invoice record could not be found or generated." },
         { status: 404 }
       );
     }

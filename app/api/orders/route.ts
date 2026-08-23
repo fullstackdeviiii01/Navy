@@ -87,8 +87,13 @@ export async function GET(request: NextRequest) {
     let query: any;
 
     if (user) {
-      // Authenticated user - get their orders
-      query = { user_id: user._id };
+      // Authenticated user - get orders by user_id or email
+      query = {
+        $or: [
+          { user_id: user._id },
+          { "guest_info.email": user.email.toLowerCase() },
+        ],
+      };
     } else {
       // Guest user - get orders by session_id
       const sessionId = getSessionIdFromRequest(request);
@@ -108,7 +113,12 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     const [orders, total] = await Promise.all([
-      Order.find(query).sort({ placed_at: -1 }).skip(skip).limit(limit).lean(),
+      Order.find(query)
+        .populate("items.product_id", "name images category_id")
+        .sort({ placed_at: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       Order.countDocuments(query),
     ]);
 

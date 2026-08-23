@@ -108,26 +108,36 @@ export default function UserOrderDetailView({
                 </h2>
 
                 <div className="space-y-4">
-                  {order.items.map((item: any, index: number) => (
-                    <div
-                      key={index}
-                      className="flex gap-4 pb-4 border-b border-theme-border-light dark:border-theme-border-dark last:border-0 last:pb-0"
-                    >
-                      <div className="relative flex-shrink-0 w-20 h-20 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
-                        {item.product_image && (
-                          <Image
-                            src={item.product_image}
-                            alt={item.product_name}
-                            fill
-                            className="object-cover"
-                            sizes="80px"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-serif text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                          {item.product_name}
-                        </h3>
+                  {order.items.map((item: any, index: number) => {
+                    const itemImg =
+                      item.product_image ||
+                      item.product_id?.images?.[0]?.url ||
+                      item.image ||
+                      "";
+                    const itemName = item.product_name || item.name || "Custom Lamp";
+
+                    return (
+                      <div
+                        key={index}
+                        className="flex gap-4 pb-4 border-b border-theme-border-light dark:border-theme-border-dark last:border-0 last:pb-0"
+                      >
+                        <div className="relative flex-shrink-0 w-20 h-20 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden flex items-center justify-center">
+                          {itemImg ? (
+                            <img
+                              src={itemImg}
+                              alt={itemName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                              <Package size={22} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-serif text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                            {itemName}
+                          </h3>
 
                         {/* Variant Attributes */}
                         {item.variant_attributes &&
@@ -185,7 +195,8 @@ export default function UserOrderDetailView({
                         )}
                       </div>
                     </div>
-                  ))}
+                  );
+                })}
                 </div>
 
                 {/* Addresses Grid */}

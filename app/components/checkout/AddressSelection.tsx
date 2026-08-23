@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, CreditCard, Edit2 } from "lucide-react";
+import { MapPin, CreditCard, Edit2, Phone } from "lucide-react";
 import AddressForm from "./AddressForm";
 
 interface AddressSelectionProps {
@@ -45,15 +45,16 @@ export default function AddressSelection({
     <div className="space-y-4">
       {/* ── 1. Shipping Address ────────────────────────────────────────── */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
-        <div className="px-4 py-3 bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
+        <div className="px-4 py-3 bg-theme-card-light/50 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
           <h3 className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-wider flex items-center gap-2">
-            <MapPin size={16} className="text-[#A8752B]" />
+            <MapPin size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
             Shipping Destination
           </h3>
           {shippingAddress?.line1 && !showShippingForm && (
             <button
+              type="button"
               onClick={() => setShowShippingForm(true)}
-              className="text-xs text-[#A8752B] hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
+              className="text-xs text-theme-hover-light dark:text-theme-hover-dark hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
             >
               <Edit2 size={12} />
               Change
@@ -75,12 +76,13 @@ export default function AddressSelection({
                 {shippingAddress.city}, {shippingAddress.state}{" "}
                 {shippingAddress.postal_code}
               </p>
-              <p className="text-[#A8752B] font-semibold uppercase text-xs">
+              <p className="text-theme-hover-light dark:text-theme-hover-dark font-semibold uppercase text-xs">
                 {shippingAddress.country || "Pakistan"}
               </p>
               {shippingAddress.phone && (
-                <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark pt-1">
-                  📞 {shippingAddress.phone}
+                <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark pt-1 flex items-center gap-1.5 font-mono">
+                  <Phone size={13} className="text-theme-text-muted-light dark:text-theme-text-muted-dark flex-shrink-0" />
+                  <span>{shippingAddress.phone}</span>
                 </p>
               )}
             </div>
@@ -101,9 +103,9 @@ export default function AddressSelection({
 
       {/* ── 2. Billing Address ─────────────────────────────────────────── */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden">
-        <div className="px-4 py-3 bg-[#E9DFCE]/40 dark:bg-[#48381A]/40 border-b border-theme-border-light dark:border-theme-border-dark">
+        <div className="px-4 py-3 bg-theme-card-light/50 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark">
           <h3 className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-wider flex items-center gap-2">
-            <CreditCard size={16} className="text-[#A8752B]" />
+            <CreditCard size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
             Billing Details
           </h3>
         </div>
@@ -122,7 +124,7 @@ export default function AddressSelection({
                   setShowBillingForm(true);
                 }
               }}
-              className="w-4 h-4 accent-[#A8752B]"
+              className="w-4 h-4 accent-theme-hover-light"
             />
             <span className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Billing address is same as shipping address
@@ -138,8 +140,9 @@ export default function AddressSelection({
                       {billingAddress.full_name}
                     </p>
                     <button
+                      type="button"
                       onClick={() => setShowBillingForm(true)}
-                      className="text-xs text-[#A8752B] hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
+                      className="text-xs text-theme-hover-light dark:text-theme-hover-dark hover:underline flex items-center gap-1 uppercase tracking-wider font-semibold"
                     >
                       <Edit2 size={12} />
                       Change
@@ -153,9 +156,15 @@ export default function AddressSelection({
                     {billingAddress.city}, {billingAddress.state}{" "}
                     {billingAddress.postal_code}
                   </p>
-                  <p className="text-[#A8752B] font-semibold uppercase text-xs">
+                  <p className="text-theme-hover-light dark:text-theme-hover-dark font-semibold uppercase text-xs">
                     {billingAddress.country || "Pakistan"}
                   </p>
+                  {billingAddress.phone && (
+                    <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark pt-1 flex items-center gap-1.5 font-mono">
+                      <Phone size={13} className="text-theme-text-muted-light dark:text-theme-text-muted-dark flex-shrink-0" />
+                      <span>{billingAddress.phone}</span>
+                    </p>
+                  )}
                 </div>
               ) : (
                 <AddressForm
