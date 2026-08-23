@@ -25,10 +25,6 @@ const VariantAttributeSchema = new Schema<VariantAttribute>(
 // Product Variant Schema
 const ProductVariantSchema = new Schema<ProductVariant>(
   {
-    sku: {
-      type: String,
-      trim: true,
-    },
     attributes: {
       type: [VariantAttributeSchema],
       required: true,
@@ -79,7 +75,6 @@ const ProductVariantSchema = new Schema<ProductVariant>(
     isAvailable: {
       type: Boolean,
       default: true,
-      index: true,
     },
     position: {
       type: Number,
@@ -169,16 +164,11 @@ const PricingSchema = new Schema(
 // Inventory Schema
 const InventorySchema = new Schema(
   {
-    sku: {
-      type: String,
-      trim: true,
-    },
     stock_quantity: {
       type: Number,
       required: true,
       min: 0,
       default: 0,
-      index: true,
     },
     low_stock_threshold: { type: Number, default: 10 },
     track_inventory: { type: Boolean, default: true },

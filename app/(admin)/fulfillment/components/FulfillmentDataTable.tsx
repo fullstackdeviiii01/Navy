@@ -46,7 +46,7 @@ export default function FulfillmentDataTable({
     order.user_id?.email || order.guest_info?.email || "No email";
 
   const handleMarkPaymentReceived = async (orderId: string) => {
-    if (!confirm("Confirm payment received for this COD order?")) return;
+    if (!confirm("Confirm payment received and mark this order as PAID?")) return;
     try {
       await adminOrdersApi.markPaid(orderId);
       onRefresh();
@@ -150,17 +150,30 @@ export default function FulfillmentDataTable({
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-1">
                       <span
-                        className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold capitalize ${
-                          PAYMENT_BADGES[order.payment_status] || PAYMENT_BADGES.pending
+                        className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                          order.payment_status === "paid"
+                            ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
+                            : order.payment_method === "cod"
+                            ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+                            : "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
                         }`}
                       >
-                        {order.payment_status}
+                        {order.payment_status === "paid"
+                          ? "Paid"
+                          : order.payment_method === "cod"
+                          ? "COD (Unpaid)"
+                          : "Pending Verification"}
                       </span>
                       {order.payment_proof_url && (
                         <div className="block">
-                          <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
-                            📸 Receipt
-                          </span>
+                          <a
+                            href={order.payment_proof_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[9px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800 hover:underline"
+                          >
+                            📸 Receipt ↗
+                          </a>
                         </div>
                       )}
                     </div>
@@ -169,13 +182,13 @@ export default function FulfillmentDataTable({
                   {/* Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="inline-flex items-center gap-1">
-                      {/* Mark Paid button if eligible */}
-                      {isCODDeliveredUnpaid && (
+                      {/* Mark Paid button if unpaid */}
+                      {order.payment_status !== "paid" && (
                         <button
                           type="button"
                           onClick={() => handleMarkPaymentReceived(order._id)}
                           className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-semibold transition-colors mr-1"
-                          title="Mark Payment Received"
+                          title="Verify & Mark Payment Received"
                         >
                           Mark Paid
                         </button>

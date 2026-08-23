@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Trash2, Minus, Plus, Video, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getItemImage } from "../../../lib/utils/productImages";
 
 interface CartItemProps {
   item: {
@@ -58,12 +59,9 @@ export default function CartItem({
   const isOutOfStock = availableStock === 0;
   const isLowStock = availableStock > 0 && availableStock <= 5;
 
-  const matchedVariant = item.variant_id
-    ? item.product_id.variants?.find((v: any) => v._id === item.variant_id)
-    : null;
-  const variantImageUrl = (matchedVariant as any)?.imageUrl;
-  const primaryImage = variantImageUrl ? { url: variantImageUrl } : item.product_id.images?.[0];
-  const hasImages = Boolean(primaryImage || (item.product_id.images && item.product_id.images.length > 0));
+  const resolvedImageUrl = getItemImage(item);
+  const primaryImage = resolvedImageUrl ? { url: resolvedImageUrl } : null;
+  const hasImages = Boolean(resolvedImageUrl);
   const hasVideos = item.product_id.videos && item.product_id.videos.length > 0;
   const primaryVideo =
     item.product_id.videos?.find((v) => v.is_primary) ||

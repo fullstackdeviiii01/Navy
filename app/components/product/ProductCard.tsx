@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getProductMainImage } from "../../../lib/utils/productImages";
 
 interface ProductCardProps {
   product: {
@@ -43,16 +44,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const variantCount = product.variants?.length || 0;
   
-  // Resolve image from product.images, variant images, or color option images
   const colorOption = product.variantOptions?.find(
     (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
   );
-  const firstColorImage = colorOption?.colorImages
-    ? (Object.values(colorOption.colorImages).flat()[0] as string)
-    : undefined;
-  const firstVariantImage = product.variants?.find((v: any) => v.imageUrl)?.imageUrl;
-
-  const firstImage = product.images?.[0]?.url || firstVariantImage || firstColorImage;
+  const firstImage = getProductMainImage(product);
   const categoryName = product.category_id?.name || "";
 
   // Calculate lowest price and compare price

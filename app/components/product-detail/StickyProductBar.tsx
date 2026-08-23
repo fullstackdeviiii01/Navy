@@ -5,6 +5,7 @@ import Image from "next/image";
 import AddToCartButton from "./AddToCartButton";
 import ProductQuantity from "./ProductQuantity";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getProductMainImage } from "../../../lib/utils/productImages";
 
 interface VariantAttribute {
   name: string;
@@ -59,7 +60,7 @@ export default function StickyProductBar({
 }: StickyProductBarProps) {
   const primaryImage =
     selectedVariant?.imageUrl ||
-    product.images?.[0]?.url ||
+    getProductMainImage(product, selectedVariant?._id) ||
     "/placeholder-image.png";
 
   const isReadyToBuy = !isVariableProduct || Boolean(selectedVariant);

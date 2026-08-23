@@ -130,7 +130,6 @@ const CartSchema = new Schema<ICartDocument>(
     expires_at: {
       type: Date,
       default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-      index: true,
     },
     created_at: {
       type: Date,

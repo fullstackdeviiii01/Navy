@@ -310,55 +310,77 @@ export default function UserOrderDetailView({
               </div>
             </div>
 
-            {/* Payment Proof */}
-            {(order.payment_proof_url || order.bank_reference || order.payment_method !== "cod") && (
-              <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
-                  <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-                    <CreditCard size={14} aria-hidden="true" />
-                    Payment Verification
-                  </h3>
-                  <span className="text-[10px] uppercase font-semibold tracking-wider text-theme-hover-light dark:text-theme-hover-dark">
+            {/* Payment Information */}
+            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
+                <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+                  <CreditCard size={14} aria-hidden="true" />
+                  Payment Details
+                </h3>
+                <span
+                  className={`inline-flex px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider border ${
+                    order.payment_status === "paid"
+                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                      : order.payment_method === "cod"
+                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                      : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                  }`}
+                >
+                  {order.payment_status === "paid"
+                    ? "Paid ✓"
+                    : order.payment_method === "cod"
+                    ? "Pay on Delivery"
+                    : "Pending Verification"}
+                </span>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                    Method:
+                  </span>
+                  <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase">
                     {order.payment_method === "jazzcash"
                       ? "JazzCash"
                       : order.payment_method === "bank_transfer"
                       ? "Bank Transfer"
-                      : "COD"}
+                      : "Cash on Delivery"}
                   </span>
                 </div>
-                <div className="space-y-3 text-xs">
-                  {order.bank_reference && (
-                    <div className="p-3 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
-                      <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-0.5">
-                        Transaction / Reference ID
-                      </p>
-                      <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono font-bold">
-                        {order.bank_reference}
-                      </p>
-                    </div>
-                  )}
-                  {order.payment_proof_url && (
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
-                        Attached Receipt:
-                      </p>
-                      <a
-                        href={order.payment_proof_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block group relative overflow-hidden border border-theme-border-light dark:border-theme-border-dark"
-                      >
-                        <img
-                          src={order.payment_proof_url}
-                          alt="Payment receipt proof"
-                          className="w-full max-h-56 object-contain bg-black/5 dark:bg-black/20"
-                        />
-                      </a>
-                    </div>
-                  )}
-                </div>
+
+                {order.payment_status !== "paid" && (
+                  <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark italic">
+                    {order.payment_method === "cod"
+                      ? "Please keep exact cash ready for the courier when your package arrives."
+                      : "Your payment reference is being verified with our bank. Your order will be confirmed once verified."}
+                  </p>
+                )}
+
+                {order.bank_reference && (
+                  <div className="p-3 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
+                    <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-0.5">
+                      Transaction / Reference ID
+                    </p>
+                    <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono font-bold">
+                      {order.bank_reference}
+                    </p>
+                  </div>
+                )}
+
+                {order.payment_proof_url && (
+                  <div className="pt-1">
+                    <a
+                      href={order.payment_proof_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light text-xs font-semibold transition-colors"
+                    >
+                      <span>View Uploaded Receipt ↗</span>
+                    </a>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Timeline */}
             <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">

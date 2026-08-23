@@ -12,7 +12,6 @@ export interface VariantAttribute {
 
 export interface ProductVariant {
   _id?: mongoose.Types.ObjectId;
-  sku?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
@@ -72,7 +71,6 @@ export interface IProductDocument extends Document {
   };
 
   inventory: {
-    sku?: string;
     stock_quantity: number;
     low_stock_threshold: number;
     track_inventory: boolean;

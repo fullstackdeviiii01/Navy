@@ -97,7 +97,7 @@ export default function OrdersTab({
           </p>
           <Link
             href="/products"
-            className="inline-block px-6 py-2.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+            className="no-theme-hover inline-block px-6 py-2.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
           >
             Explore the collection
           </Link>
@@ -118,7 +118,7 @@ export default function OrdersTab({
         </p>
         <Link
           href="/products"
-          className="inline-block px-8 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.2em] uppercase transition-colors"
+          className="no-theme-hover inline-block px-8 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs font-semibold tracking-[0.2em] uppercase transition-colors"
         >
           Explore Collection
         </Link>
@@ -175,13 +175,16 @@ export default function OrdersTab({
                   {order.status}
                 </span>
                 <span
-                  className={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.15em] uppercase border ${
-                    isPaid
+                  className={`px-2.5 py-1 text-[10px] font-semibold tracking-[0.15em] uppercase border ${isPaid
                       ? "border-green-600/50 text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/40"
                       : "border-amber-600/50 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40"
-                  }`}
+                    }`}
                 >
-                  {isPaid ? "PAID" : "UNPAID"}
+                  {isPaid
+                    ? "PAID ✓"
+                    : order.payment_method === "cod"
+                      ? "PAY ON DELIVERY"
+                      : "PENDING VERIFICATION"}
                 </span>
               </div>
             </div>
@@ -266,7 +269,7 @@ export default function OrdersTab({
 
               <Link
                 href={`/orders/${order._id}`}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-theme-card-light dark:bg-theme-card-dark hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark hover:text-white border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-[11px] font-semibold tracking-[0.2em] uppercase transition-colors group"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-[11px] font-semibold tracking-[0.2em] uppercase transition-colors group"
               >
                 <span>VIEW DETAILS</span>
                 <ArrowRight

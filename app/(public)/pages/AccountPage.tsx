@@ -32,7 +32,7 @@ export default function AccountPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [activeTab, setActiveTab] = useState("overview");
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
@@ -287,17 +287,16 @@ export default function AccountPage() {
 
       {/* Main Layout Grid: Navigation & Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 sm:pt-10">
-        
+
         {/* MOBILE NAVIGATION: Sticky horizontal bar */}
         <div className="lg:hidden sticky top-16 sm:top-20 z-30 bg-theme-surface-light dark:bg-theme-surface-dark border-b border-theme-border-light dark:border-theme-border-dark -mx-4 sm:-mx-6 px-4 sm:px-6 mb-6 shadow-md">
           <nav className="flex items-center overflow-x-auto scrollbar-hide py-2 gap-2 text-xs">
             <button
               onClick={() => handleTabClick("overview")}
-              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
-                activeTab === "overview"
-                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
-                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
-              }`}
+              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${activeTab === "overview"
+                ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
+                }`}
             >
               <LayoutDashboard size={13} className={activeTab === "overview" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Overview</span>
@@ -305,11 +304,10 @@ export default function AccountPage() {
 
             <button
               onClick={() => handleTabClick("orders")}
-              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
-                activeTab === "orders"
-                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
-                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
-              }`}
+              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${activeTab === "orders"
+                ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
+                }`}
             >
               <ShoppingBag size={13} className={activeTab === "orders" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Orders</span>
@@ -317,11 +315,10 @@ export default function AccountPage() {
 
             <button
               onClick={() => handleTabClick("details")}
-              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
-                activeTab === "details"
-                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
-                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
-              }`}
+              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${activeTab === "details"
+                ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
+                }`}
             >
               <User size={13} className={activeTab === "details" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Account Details</span>
@@ -329,11 +326,10 @@ export default function AccountPage() {
 
             <button
               onClick={() => handleTabClick("security")}
-              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${
-                activeTab === "security"
-                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
-                  : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
-              }`}
+              className={`flex items-center gap-2 px-3.5 py-2 whitespace-nowrap uppercase tracking-[0.14em] font-medium text-[11px] border transition-colors ${activeTab === "security"
+                ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-theme-hover-light dark:border-theme-hover-dark"
+                : "bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark border-theme-border-light dark:border-theme-border-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark"
+                }`}
             >
               <Lock size={13} className={activeTab === "security" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
               <span>Security</span>
@@ -362,18 +358,17 @@ export default function AccountPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* DESKTOP Left Navigation Sidebar */}
           <aside className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-3 sticky top-28 shadow-sm">
             <nav className="space-y-1">
               {/* 1. Overview */}
               <button
                 onClick={() => handleTabClick("overview")}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
-                  activeTab === "overview"
-                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
-                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${activeTab === "overview"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                  : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
+                  }`}
               >
                 <LayoutDashboard size={16} className={activeTab === "overview" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>OVERVIEW</span>
@@ -382,11 +377,10 @@ export default function AccountPage() {
               {/* 2. Orders */}
               <button
                 onClick={() => handleTabClick("orders")}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
-                  activeTab === "orders"
-                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
-                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${activeTab === "orders"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                  : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
+                  }`}
               >
                 <ShoppingBag size={16} className={activeTab === "orders" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>ORDERS</span>
@@ -395,11 +389,10 @@ export default function AccountPage() {
               {/* 3. Account Details */}
               <button
                 onClick={() => handleTabClick("details")}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
-                  activeTab === "details"
-                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
-                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${activeTab === "details"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                  : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
+                  }`}
               >
                 <User size={16} className={activeTab === "details" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>ACCOUNT DETAILS</span>
@@ -408,11 +401,10 @@ export default function AccountPage() {
               {/* 4. Security */}
               <button
                 onClick={() => handleTabClick("security")}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${
-                  activeTab === "security"
-                    ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
-                    : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-[12px] xl:text-[13px] font-medium tracking-[0.16em] uppercase transition-all duration-200 ${activeTab === "security"
+                  ? "bg-theme-card-light dark:bg-theme-card-dark text-theme-text-primary-light dark:text-theme-text-primary-dark border-l-[3px] border-theme-hover-light dark:border-theme-hover-dark"
+                  : "text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark hover:bg-theme-card-light/50 dark:hover:bg-theme-card-dark/40"
+                  }`}
               >
                 <Lock size={16} className={activeTab === "security" ? "text-theme-hover-light dark:text-theme-hover-dark" : "text-theme-text-muted-light dark:text-theme-text-muted-dark"} />
                 <span>SECURITY</span>
@@ -449,7 +441,7 @@ export default function AccountPage() {
 
           {/* Right Main Content Area */}
           <main className="lg:col-span-8 xl:col-span-9">
-            
+
             {/* ── TAB 1: OVERVIEW ───────────────────────────────────────── */}
             {activeTab === "overview" && (
               <div className="space-y-8">

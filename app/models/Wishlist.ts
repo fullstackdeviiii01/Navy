@@ -34,7 +34,6 @@ const WishlistSchema = new Schema<IWishlistDocument>(
     expires_at: {
       type: Date,
       default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-      index: true,
     },
     created_at: {
       type: Date,

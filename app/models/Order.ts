@@ -286,25 +286,6 @@ OrderSchema.pre("validate", function (next) {
   }
 });
 
-// Virtuals
-OrderSchema.virtual("has_active_return", {
-  ref: "Return",
-  localField: "_id",
-  foreignField: "order_id",
-  justOne: true,
-  match: { status: { $nin: ["rejected"] } },
-});
-
-OrderSchema.virtual("return_status", {
-  ref: "Return",
-  localField: "_id",
-  foreignField: "order_id",
-  justOne: true,
-});
-
-OrderSchema.set("toJSON", { virtuals: true });
-OrderSchema.set("toObject", { virtuals: true });
-
 // Indexes
 OrderSchema.index({ user_id: 1, created_at: -1 });
 OrderSchema.index({ "guest_info.email": 1, created_at: -1 });

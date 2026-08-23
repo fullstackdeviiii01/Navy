@@ -4,6 +4,7 @@
 import { Tag, Truck, User, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getItemImage } from "../../../lib/utils/productImages";
 
 interface OrderSummaryCheckoutProps {
   cart: any;
@@ -40,8 +41,7 @@ export default function OrderSummaryCheckout({
       <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark">
         <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
           {cart.items.map((item: any) => {
-            const matchedVariant = item.variant_id && item.product_id?.variants?.find((v: any) => v._id === item.variant_id);
-            const itemImageUrl = matchedVariant?.imageUrl || item.product_id?.images?.[0]?.url;
+            const itemImageUrl = getItemImage(item);
 
             return (
               <div key={item._id} className="flex gap-3">

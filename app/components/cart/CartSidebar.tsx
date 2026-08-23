@@ -7,6 +7,7 @@ import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getItemImage } from "../../../lib/utils/productImages";
 
 export default function CartSidebar() {
   const { cart, isCartOpen, closeCart, refreshCart } = useUser();
@@ -102,7 +103,7 @@ export default function CartSidebar() {
           ) : (
             items.map((item: any) => {
               const product = item.product_id;
-              const image = product?.images?.[0]?.url;
+              const image = getItemImage(item);
               return (
                 <div key={item._id} className="flex gap-4 py-4 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-0">
                   {/* Image */}

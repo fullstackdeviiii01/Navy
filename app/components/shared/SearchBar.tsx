@@ -8,6 +8,7 @@ import Link from "next/link";
 import { FaSearch, FaSpinner, FaTimes, FaTag, FaBox } from "react-icons/fa";
 import { searchApi } from "../../../lib/api/search";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getProductMainImage } from "../../../lib/utils/productImages";
 
 interface SearchResult {
   products: Array<{
@@ -213,27 +214,29 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                 </h3>
               </div>
               <div className="py-1">
-                {results.products.map((product) => (
-                  <Link
-                    key={product._id}
-                    href={`/product/${product._id}`}
-                    onClick={handleResultClick}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                    {product.images?.length > 0 ? (
-                      <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                        <Image
-                          src={product.images[0].url}
-                          alt={product.images[0].alt_text || product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <FaBox className="text-gray-400 dark:text-gray-500" />
-                      </div>
-                    )}
+                {results.products.map((product) => {
+                  const productImg = getProductMainImage(product);
+                  return (
+                    <Link
+                      key={product._id}
+                      href={`/product/${product._id}`}
+                      onClick={handleResultClick}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    >
+                      {productImg ? (
+                        <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <Image
+                            src={productImg}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                          <FaBox className="text-gray-400 dark:text-gray-500" />
+                        </div>
+                      )}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 dark:text-white truncate">
                         {product.name}
@@ -262,7 +265,8 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                       </span>
                     )}
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
