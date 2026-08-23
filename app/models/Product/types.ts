@@ -12,7 +12,7 @@ export interface VariantAttribute {
 
 export interface ProductVariant {
   _id?: mongoose.Types.ObjectId;
-  sku: string;
+  sku?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
@@ -33,6 +33,7 @@ export interface VariantOption {
   values: string[];
   colorHexCodes?: Record<string, string>;
   colorImages?: Record<string, string[]>;
+  colorVideos?: Record<string, string[]>;
   position: number;
 }
 
@@ -58,7 +59,6 @@ export interface IProductDocument extends Document {
   shipping_info?: string;
   return_info?: string;
   brand?: string;
-
   category_id: mongoose.Types.ObjectId;
   subcategory_ids: mongoose.Types.ObjectId[];
 
@@ -72,7 +72,7 @@ export interface IProductDocument extends Document {
   };
 
   inventory: {
-    sku: string;
+    sku?: string;
     stock_quantity: number;
     low_stock_threshold: number;
     track_inventory: boolean;

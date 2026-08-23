@@ -16,7 +16,7 @@ interface CatalogItem {
     currency: string;
   };
   inventory: {
-    sku: string;
+    sku?: string;
     stock_quantity: number;
     stock_status: string;
   };
@@ -150,7 +150,7 @@ export default function CatalogItemGrid({
               <tr className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold">
                 <th className="py-3 px-4 w-16">Item</th>
                 <th className="py-3 px-4">Title & Details</th>
-                <th className="py-3 px-4">SKU & Category</th>
+                <th className="py-3 px-4">Category</th>
                 <th className="py-3 px-4">Pricing</th>
                 <th className="py-3 px-4">Inventory</th>
                 <th className="py-3 px-4">Status</th>
@@ -171,56 +171,62 @@ export default function CatalogItemGrid({
                     key={product._id}
                     className="hover:bg-theme-card-light/40 dark:hover:bg-theme-card-dark/30 transition-colors group"
                   >
-                    {/* Thumbnail */}
+                    {/* Visual Media Thumbnail */}
                     <td className="py-3 px-4">
-                      <div className="w-12 h-12 rounded-lg border border-theme-border-light dark:border-theme-border-light/40 overflow-hidden bg-black/5 shrink-0 relative">
-                        <img
-                          src={imgUrl}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                      <div className="w-12 h-12 rounded-lg bg-black/5 dark:bg-white/5 border border-theme-border-light dark:border-theme-border-dark overflow-hidden flex items-center justify-center shrink-0">
+                        {imgUrl ? (
+                          <img
+                            src={imgUrl}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                          />
+                        ) : (
+                          <span className="text-[9px] font-mono text-theme-text-muted-light">
+                            NO IMG
+                          </span>
+                        )}
                       </div>
                     </td>
 
-                    {/* Product Name & Color Swatches */}
-                    <td className="py-3 px-4 min-w-[200px]">
+                    {/* Title & Finish Swatches */}
+                    <td className="py-3 px-4 max-w-[220px]">
                       <button
+                        type="button"
                         onClick={() => router.push(`/admin/products/${product._id}`)}
-                        className="text-left font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors line-clamp-1 block"
+                        className="font-serif font-semibold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark text-left transition-colors truncate block w-full"
                       >
                         {product.name}
                       </button>
 
-                      {/* Color dots preview */}
+                      {/* Finish Pills Preview */}
                       {colorOpt && colorOpt.values && colorOpt.values.length > 0 && (
                         <div className="flex items-center gap-1 mt-1">
-                          {colorOpt.values.slice(0, 5).map((cVal: string, cIdx: number) => {
+                          {colorOpt.values.slice(0, 4).map((val: string, i: number) => {
                             const rawHex = colorOpt.colorHexCodes || {};
-                            const hex = (typeof rawHex.get === "function" ? rawHex.get(cVal) : rawHex[cVal]) || "#5D4037";
+                            const hex =
+                              (typeof rawHex.get === "function" ? rawHex.get(val) : rawHex[val]) ||
+                              "#5D4037";
                             return (
                               <span
-                                key={cIdx}
+                                key={i}
+                                title={val}
                                 className="w-2.5 h-2.5 rounded-full border border-black/20 shrink-0"
                                 style={{ backgroundColor: hex }}
-                                title={cVal}
                               />
                             );
                           })}
-                          {colorOpt.values.length > 5 && (
-                            <span className="text-[10px] text-theme-text-muted-light font-mono">
-                              +{colorOpt.values.length - 5}
+                          {colorOpt.values.length > 4 && (
+                            <span className="text-[9px] font-mono text-theme-text-muted-light">
+                              +{colorOpt.values.length - 4}
                             </span>
                           )}
                         </div>
                       )}
                     </td>
 
-                    {/* SKU & Category */}
+                    {/* Category */}
                     <td className="py-3 px-4 whitespace-nowrap">
-                      <span className="font-mono text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark block">
-                        {product.inventory?.sku || "N/A"}
-                      </span>
-                      <span className="text-[10px] font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark capitalize">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {product.category_id?.name || "Uncategorized"}
                       </span>
                     </td>
@@ -234,7 +240,7 @@ export default function CatalogItemGrid({
                             {product.variantPricing.priceVaries && ` – ${formatPrice(product.variantPricing.maxPrice)}`}
                           </span>
                           <span className="block text-[10px] text-theme-hover-light dark:text-theme-hover-dark font-mono">
-                            {product.variants?.length} Variant SKUs
+                            {product.variants?.length} Finishes/Variants
                           </span>
                         </div>
                       ) : (
@@ -334,10 +340,7 @@ export default function CatalogItemGrid({
                   <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-[10px] text-theme-text-muted-light">
-                      {product.inventory?.sku || "N/A"}
-                    </span>
+                  <div className="flex items-center justify-end gap-2">
                     {getStatusBadge(product.status)}
                   </div>
                   <h4

@@ -6,7 +6,7 @@ export interface ProductMediaItem {
   alt_text?: string;
   thumbnail?: string;
   is_primary?: boolean;
-  source?: "general" | "color" | "variant" | "video";
+  source?: "general" | "color" | "variant" | "video" | "color-video";
   colorName?: string;
 }
 
@@ -45,6 +45,48 @@ export function getColorImagesMap(variantOptions?: any[]): Record<string, string
         );
       } else if (typeof imgs === "string" && (imgs as string).trim().length > 0) {
         result[colorName] = [imgs];
+      }
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Extracts a normalized map of color finish videos from variantOptions
+ */
+export function getColorVideosMap(variantOptions?: any[]): Record<string, string[]> {
+  if (!variantOptions || !Array.isArray(variantOptions)) return {};
+
+  const colorOpt = variantOptions.find(
+    (opt: any) =>
+      opt?.name === "color" ||
+      opt?.displayName?.toLowerCase() === "color" ||
+      opt?.name?.toLowerCase() === "colour"
+  );
+
+  if (!colorOpt || !colorOpt.colorVideos) return {};
+
+  const result: Record<string, string[]> = {};
+  const raw = colorOpt.colorVideos;
+
+  if (typeof raw.get === "function") {
+    if (colorOpt.values && Array.isArray(colorOpt.values)) {
+      colorOpt.values.forEach((val: string) => {
+        const vids = raw.get(val);
+        if (Array.isArray(vids)) {
+          result[val] = vids.filter((u) => typeof u === "string" && u.trim().length > 0);
+        }
+      });
+    }
+  } else if (typeof raw === "object" && raw !== null) {
+    Object.entries(raw).forEach(([colorName, vids]) => {
+      if (Array.isArray(vids)) {
+        result[colorName] = (vids as any[]).filter(
+          (u) => typeof u === "string" && u.trim().length > 0
+        );
+      } else if (typeof vids === "string" && (vids as string).trim().length > 0) {
+        result[colorName] = [vids];
       }
     });
   }
@@ -244,7 +286,7 @@ export function getAllProductMedia(
     });
   }
 
-  // 5. Product videos
+  // 5. General Product videos
   if (product.videos && Array.isArray(product.videos)) {
     product.videos.forEach((video: any) => {
       const url = typeof video === "string" ? video : video?.url;
@@ -259,6 +301,23 @@ export function getAllProductMedia(
       }
     });
   }
+
+  // 6. Color finish videos
+  const colorVideosMap = getColorVideosMap(product.variantOptions);
+  Object.entries(colorVideosMap).forEach(([colorName, urls]) => {
+    urls.forEach((url) => {
+      if (url && typeof url === "string" && !seenUrls.has(url)) {
+        seenUrls.add(url);
+        mediaItems.push({
+          type: "video",
+          url,
+          alt_text: `${product.name || "Product"} ${colorName} finish video`,
+          source: "color-video",
+          colorName,
+        });
+      }
+    });
+  });
 
   return mediaItems;
 }

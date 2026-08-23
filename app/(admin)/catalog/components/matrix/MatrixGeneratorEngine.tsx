@@ -8,7 +8,7 @@ import { VariantOption } from "../../../../../types/product-variants";
 interface MatrixGeneratorEngineProps {
   isOpen: boolean;
   onClose: () => void;
-  onGenerate: (optionNames: string[], basePrice: number, baseSku: string) => void;
+  onGenerate: (optionNames: string[], basePrice: number) => void;
   variantOptions?: VariantOption[];
   isLoading?: boolean;
 }
@@ -22,7 +22,6 @@ export default function MatrixGeneratorEngine({
 }: MatrixGeneratorEngineProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [basePrice, setBasePrice] = useState("");
-  const [baseSku, setBaseSku] = useState("");
 
   const estimatedVariantCount = useMemo(() => {
     const selected = variantOptions.filter((opt) =>
@@ -38,12 +37,12 @@ export default function MatrixGeneratorEngine({
       alert("Select at least one option");
       return;
     }
-    if (!basePrice || !baseSku) {
-      alert("Base price and SKU are required");
+    if (!basePrice) {
+      alert("Base price is required");
       return;
     }
 
-    onGenerate(selectedOptions, parseFloat(basePrice), baseSku);
+    onGenerate(selectedOptions, parseFloat(basePrice));
   };
 
   return (
@@ -113,19 +112,6 @@ export default function MatrixGeneratorEngine({
               value={basePrice}
               onChange={(e) => setBasePrice(e.target.value)}
               className="w-full px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-              Base SKU Prefix *
-            </label>
-            <input
-              type="text"
-              value={baseSku}
-              onChange={(e) => setBaseSku(e.target.value)}
-              placeholder="e.g. RL-LMP-01"
-              className="w-full px-3 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light focus:outline-none focus:ring-2 focus:ring-blue-500/40"
             />
           </div>
         </div>

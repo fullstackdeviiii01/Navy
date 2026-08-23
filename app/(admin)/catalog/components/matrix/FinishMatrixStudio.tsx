@@ -2,15 +2,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaPlus, FaTrash, FaUpload, FaPalette, FaImage } from "react-icons/fa";
+import { FaPlus, FaTrash, FaUpload, FaPalette, FaImage, FaVideo, FaPlay } from "react-icons/fa";
 import { VariantOption, ProductVariant, VariantAttribute } from "../../../../../types/product-variants";
 
-interface ColorItem {
+export interface ColorItem {
   id: string;
   name: string;
   hex: string;
   existingImages: string[];
   newFiles: File[];
+  existingVideos: string[];
+  newVideoFiles: File[];
 }
 
 interface FinishMatrixStudioProps {
@@ -19,7 +21,6 @@ interface FinishMatrixStudioProps {
   onVariantOptionsChange: (options: VariantOption[]) => void;
   onVariantsChange: (variants: ProductVariant[]) => void;
   basePrice: number;
-  baseSku: string;
   productCurrency: string;
   colorItems?: ColorItem[];
   onColorItemsChange?: (items: ColorItem[]) => void;
@@ -36,13 +37,60 @@ const LUXURY_PALETTE_PRESETS = [
   { name: "Deep Navy", hex: "#0A192F" },
 ];
 
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+const MAX_VIDEO_DURATION = 30;
+const ALLOWED_VIDEO_FORMATS = ["video/mp4", "video/webm", "video/quicktime"];
+
+function ColorVideoPreview({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [file]);
+
+  if (!url) return null;
+
+  return (
+    <div className="relative group w-16 h-16 rounded-lg border border-purple-500/80 overflow-hidden bg-black/10">
+      <video
+        src={url}
+        className="w-full h-full object-cover"
+        muted
+        loop
+        onMouseEnter={(e) => e.currentTarget.play()}
+        onMouseLeave={(e) => {
+          e.currentTarget.pause();
+          e.currentTarget.currentTime = 0;
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
+        <FaPlay className="text-white text-xs" />
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+        title="Remove video"
+      >
+        <FaTrash size={8} />
+      </button>
+      <span className="absolute bottom-0 left-0 right-0 bg-purple-600 text-white text-[7px] uppercase text-center font-bold">
+        New Vid
+      </span>
+    </div>
+  );
+}
+
 export default function FinishMatrixStudio({
   variantOptions,
   variants,
   onVariantOptionsChange,
   onVariantsChange,
   basePrice,
-  baseSku,
   productCurrency,
   colorItems: externalColorItems,
   onColorItemsChange,
@@ -59,6 +107,7 @@ export default function FinishMatrixStudio({
 
   const [valueInputs, setValueInputs] = useState<{ [key: number]: string }>({});
   const [showVariantTable, setShowVariantTable] = useState(true);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   // Initialize colorItems and other variant options on mount or prop change
   useEffect(() => {
@@ -68,6 +117,7 @@ export default function FinishMatrixStudio({
     if (colorOpt && colorItems.length === 0) {
       const rawHex: any = colorOpt.colorHexCodes || {};
       const rawImgs: any = colorOpt.colorImages || {};
+      const rawVids: any = colorOpt.colorVideos || {};
 
       const initialColors: ColorItem[] = colorOpt.values.map((val, idx) => {
         const hexVal =
@@ -87,12 +137,17 @@ export default function FinishMatrixStudio({
           }
         }
 
+        let existingVids =
+          (typeof rawVids?.get === "function" ? rawVids.get(val) : rawVids?.[val]) || [];
+
         return {
           id: `color-${idx}-${Date.now()}`,
           name: val,
           hex: hexVal,
-          existingImages: existing,
+          existingImages: Array.isArray(existing) ? existing : [],
           newFiles: [],
+          existingVideos: Array.isArray(existingVids) ? existingVids : [],
+          newVideoFiles: [],
         };
       });
 
@@ -125,10 +180,12 @@ export default function FinishMatrixStudio({
     if (validColors.length > 0) {
       const colorHexCodes: Record<string, string> = {};
       const colorImages: Record<string, string[]> = {};
+      const colorVideos: Record<string, string[]> = {};
 
       validColors.forEach((c) => {
         colorHexCodes[c.name.trim()] = c.hex;
         colorImages[c.name.trim()] = c.existingImages;
+        colorVideos[c.name.trim()] = c.existingVideos || [];
       });
 
       fullOptions.push({
@@ -137,6 +194,7 @@ export default function FinishMatrixStudio({
         values: validColors.map((c) => c.name.trim()),
         colorHexCodes,
         colorImages,
+        colorVideos,
         position: 0,
       });
     }
@@ -183,7 +241,6 @@ export default function FinishMatrixStudio({
       }
 
       return {
-        sku: `${baseSku || "PROD"}-V${String(index + 1).padStart(3, "0")}`,
         attributes: attrs,
         price: basePrice || 0,
         compareAtPrice: undefined,
@@ -204,6 +261,8 @@ export default function FinishMatrixStudio({
       hex: "#5D4037",
       existingImages: [],
       newFiles: [],
+      existingVideos: [],
+      newVideoFiles: [],
     };
     const updated = [...colorItems, newColor];
     setColorItems(updated);
@@ -235,6 +294,53 @@ export default function FinishMatrixStudio({
     syncAllOptionsAndVariants(updated, nonColorOptions);
   };
 
+  const validateColorVideo = async (file: File): Promise<string | null> => {
+    if (!ALLOWED_VIDEO_FORMATS.includes(file.type)) {
+      return `${file.name}: Invalid format. Only MP4, WebM, and MOV are allowed.`;
+    }
+    if (file.size > MAX_VIDEO_SIZE) {
+      return `${file.name}: File too large. Maximum size is 50MB.`;
+    }
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        if (video.duration > MAX_VIDEO_DURATION) {
+          resolve(`${file.name}: Video too long. Maximum duration is ${MAX_VIDEO_DURATION} seconds.`);
+        } else {
+          resolve(null);
+        }
+      };
+      video.onerror = () => resolve(`${file.name}: Failed to load video metadata.`);
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleColorVideoUpload = async (index: number, files: FileList | null) => {
+    if (!files) return;
+    const fileArray = Array.from(files);
+    const validVideos: File[] = [];
+    for (const file of fileArray) {
+      const error = await validateColorVideo(file);
+      if (error) {
+        setVideoError(error);
+        setTimeout(() => setVideoError(null), 6000);
+      } else {
+        validVideos.push(file);
+      }
+    }
+    if (validVideos.length > 0) {
+      const updated = [...colorItems];
+      updated[index] = {
+        ...updated[index],
+        newVideoFiles: [...(updated[index].newVideoFiles || []), ...validVideos],
+      };
+      setColorItems(updated);
+      syncAllOptionsAndVariants(updated, nonColorOptions);
+    }
+  };
+
   const removeColorExistingImage = (colorIndex: number, imgIndex: number) => {
     const updated = [...colorItems];
     const newExisting = updated[colorIndex].existingImages.filter((_, i) => i !== imgIndex);
@@ -247,6 +353,22 @@ export default function FinishMatrixStudio({
     const updated = [...colorItems];
     const newFiles = updated[colorIndex].newFiles.filter((_, i) => i !== fileIndex);
     updated[colorIndex] = { ...updated[colorIndex], newFiles };
+    setColorItems(updated);
+    syncAllOptionsAndVariants(updated, nonColorOptions);
+  };
+
+  const removeColorExistingVideo = (colorIndex: number, videoIndex: number) => {
+    const updated = [...colorItems];
+    const newExisting = (updated[colorIndex].existingVideos || []).filter((_, i) => i !== videoIndex);
+    updated[colorIndex] = { ...updated[colorIndex], existingVideos: newExisting };
+    setColorItems(updated);
+    syncAllOptionsAndVariants(updated, nonColorOptions);
+  };
+
+  const removeColorNewVideo = (colorIndex: number, fileIndex: number) => {
+    const updated = [...colorItems];
+    const newVideoFiles = (updated[colorIndex].newVideoFiles || []).filter((_, i) => i !== fileIndex);
+    updated[colorIndex] = { ...updated[colorIndex], newVideoFiles };
     setColorItems(updated);
     syncAllOptionsAndVariants(updated, nonColorOptions);
   };
@@ -353,6 +475,12 @@ export default function FinishMatrixStudio({
           </button>
         </div>
 
+        {videoError && (
+          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl text-xs text-red-700 dark:text-red-300">
+            {videoError}
+          </div>
+        )}
+
         {colorItems.length === 0 ? (
           <div className="py-8 text-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl p-4 space-y-2">
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -447,12 +575,22 @@ export default function FinishMatrixStudio({
                   ))}
                 </div>
 
-                {/* Color-Specific Images Uploader */}
-                <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
-                  <label className="block text-[11px] uppercase tracking-wider font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5 flex items-center gap-1.5">
-                    <FaImage className="text-theme-hover-light dark:text-theme-hover-dark" />
-                    <span>Images for {color.name || "this finish"}</span>
-                  </label>
+                {/* Color-Specific Media (Photos & Videos) Uploader */}
+                <div className="pt-2.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark flex items-center gap-1.5">
+                      <span className="flex items-center gap-1 text-theme-hover-light dark:text-theme-hover-dark">
+                        <FaImage size={11} />
+                        <span>/</span>
+                        <FaVideo size={11} />
+                      </span>
+                      <span>Finish Media for {color.name || "this finish"}</span>
+                    </label>
+
+                    <span className="text-[10px] text-theme-text-muted-light font-mono">
+                      {color.existingImages.length + color.newFiles.length} Photos • {(color.existingVideos?.length || 0) + (color.newVideoFiles?.length || 0)} Videos
+                    </span>
+                  </div>
 
                   <div className="flex flex-wrap items-center gap-2.5">
                     {/* Existing Images */}
@@ -463,13 +601,14 @@ export default function FinishMatrixStudio({
                           type="button"
                           onClick={() => removeColorExistingImage(cIdx, imgIdx)}
                           className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove photo"
                         >
-                          <FaTrash size={9} />
+                          <FaTrash size={8} />
                         </button>
                       </div>
                     ))}
 
-                    {/* New Upload Files */}
+                    {/* New Upload Images */}
                     {color.newFiles.map((file, fileIdx) => {
                       const objUrl = URL.createObjectURL(file);
                       return (
@@ -479,26 +618,83 @@ export default function FinishMatrixStudio({
                             type="button"
                             onClick={() => removeColorNewFile(cIdx, fileIdx)}
                             className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Remove photo"
                           >
-                            <FaTrash size={9} />
+                            <FaTrash size={8} />
                           </button>
                           <span className="absolute bottom-0 left-0 right-0 bg-blue-600 text-white text-[8px] uppercase text-center font-bold">
-                            New
+                            New Photo
                           </span>
                         </div>
                       );
                     })}
 
-                    {/* Upload button for this color */}
+                    {/* Existing Videos */}
+                    {(color.existingVideos || []).map((videoUrl, videoIdx) => (
+                      <div key={`exist-video-${videoIdx}`} className="relative group w-16 h-16 rounded-lg border border-purple-500/80 overflow-hidden bg-black/10">
+                        <video
+                          src={videoUrl}
+                          className="w-full h-full object-cover"
+                          muted
+                          loop
+                          onMouseEnter={(e) => e.currentTarget.play()}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.pause();
+                            e.currentTarget.currentTime = 0;
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
+                          <FaPlay className="text-white text-xs" />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeColorExistingVideo(cIdx, videoIdx)}
+                          className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove video"
+                        >
+                          <FaTrash size={8} />
+                        </button>
+                        <span className="absolute top-0.5 left-0.5 bg-purple-600 text-white text-[7px] uppercase font-bold px-1 rounded">
+                          Video
+                        </span>
+                      </div>
+                    ))}
+
+                    {/* New Upload Videos */}
+                    {(color.newVideoFiles || []).map((file, fileIdx) => (
+                      <ColorVideoPreview
+                        key={`new-video-${fileIdx}-${file.name}`}
+                        file={file}
+                        onRemove={() => removeColorNewVideo(cIdx, fileIdx)}
+                      />
+                    ))}
+
+                    {/* Add Photo Button */}
                     <label className="w-16 h-16 rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark cursor-pointer hover:border-theme-hover-light transition-colors text-theme-text-muted-light hover:text-theme-hover-light group">
-                      <FaUpload size={12} className="mb-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                      <span className="text-[9px] uppercase font-semibold">Add Photo</span>
+                      <FaUpload size={11} className="mb-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <span className="text-[9px] uppercase font-semibold">Photo</span>
                       <input
                         type="file"
                         multiple
                         accept="image/*"
                         onChange={(e) => {
                           handleColorFileUpload(cIdx, e.target.files);
+                          e.target.value = "";
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {/* Add Video Button */}
+                    <label className="w-16 h-16 rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-purple-300 dark:border-purple-800 cursor-pointer hover:border-purple-500 transition-colors text-purple-600 dark:text-purple-400 hover:text-purple-700 group bg-purple-50/20 dark:bg-purple-950/20">
+                      <FaVideo size={11} className="mb-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <span className="text-[9px] uppercase font-semibold">Video</span>
+                      <input
+                        type="file"
+                        multiple
+                        accept="video/mp4,video/webm,video/quicktime"
+                        onChange={(e) => {
+                          handleColorVideoUpload(cIdx, e.target.files);
                           e.target.value = "";
                         }}
                         className="hidden"
@@ -599,18 +795,17 @@ export default function FinishMatrixStudio({
               Generated Variant Permutations ({variants.length} combinations)
             </h4>
             <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Photos & SKUs linked automatically
+              Photos & Finishes linked automatically
             </span>
           </div>
 
-          <div className="rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
+          <div className="rounded-xl border border-theme-border-light dark:border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
                 <thead className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold">
                   <tr>
                     <th className="px-3 py-2.5">Variant</th>
                     <th className="px-3 py-2.5">Photo</th>
-                    <th className="px-3 py-2.5">SKU</th>
                     <th className="px-3 py-2.5">Price ({productCurrency})</th>
                     <th className="px-3 py-2.5">Compare Price</th>
                     <th className="px-3 py-2.5">Stock</th>
@@ -646,15 +841,6 @@ export default function FinishMatrixStudio({
                         ) : (
                           <span className="text-[10px] text-theme-text-muted-light">—</span>
                         )}
-                      </td>
-
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={variant.sku}
-                          onChange={(e) => updateVariant(index, "sku", e.target.value)}
-                          className="w-full px-2 py-1 border border-theme-border-light dark:border-theme-border-dark rounded bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono"
-                        />
                       </td>
 
                       <td className="px-3 py-2">

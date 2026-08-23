@@ -21,7 +21,7 @@ interface Props {
 
 interface ProductVariant {
   _id?: string;
-  sku: string;
+  sku?: string;
   attributes: Array<{ name: string; value: string }>;
   price: number;
   compareAtPrice?: number;
@@ -234,7 +234,21 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   }
                 });
 
-                // 4. Product videos
+                // Collect all color finish videos
+                const allColorVideos: string[] = [];
+                if (colorOpt?.colorVideos) {
+                  Object.values(colorOpt.colorVideos).forEach((val: any) => {
+                    if (Array.isArray(val)) {
+                      val.forEach((url) => {
+                        if (url && typeof url === "string" && !allColorVideos.includes(url)) {
+                          allColorVideos.push(url);
+                        }
+                      });
+                    }
+                  });
+                }
+
+                // 4. Product showreel videos
                 (product.videos || []).forEach((video: any) => {
                   if (video.url && !seenUrls.has(video.url)) {
                     mediaItems.push({
@@ -243,6 +257,17 @@ export default function ProductDetailPageContent({ productId }: Props) {
                       thumbnail: video.thumbnail,
                     });
                     seenUrls.add(video.url);
+                  }
+                });
+
+                // 5. Color finish videos
+                allColorVideos.forEach((cVid) => {
+                  if (cVid && !seenUrls.has(cVid)) {
+                    mediaItems.push({
+                      type: "video",
+                      url: cVid,
+                    });
+                    seenUrls.add(cVid);
                   }
                 });
 

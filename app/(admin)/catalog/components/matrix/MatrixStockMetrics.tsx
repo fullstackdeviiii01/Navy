@@ -27,7 +27,7 @@ export default function MatrixStockMetrics({
           {totalVariants}
         </div>
         <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-          Configured SKUs in Matrix
+          Configured Variants in Matrix
         </p>
       </div>
 

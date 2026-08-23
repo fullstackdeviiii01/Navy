@@ -20,7 +20,7 @@ interface CatalogItem {
     currency: string;
   };
   inventory: {
-    sku: string;
+    sku?: string;
     stock_quantity: number;
     stock_status: string;
   };

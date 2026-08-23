@@ -13,6 +13,8 @@ import {
   FaLayerGroup,
   FaTag,
   FaMoneyBillWave,
+  FaVideo,
+  FaPlay,
 } from "react-icons/fa";
 import { productsApi } from "../../../../lib/api/products";
 import Loader from "../../../components/shared/Loader";
@@ -122,8 +124,6 @@ export default function CatalogItemOverviewView({
               </span>
             </div>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5 flex items-center gap-2">
-              <span className="font-mono">SKU: {product.inventory?.sku || "N/A"}</span>
-              <span>•</span>
               <span className="capitalize">{product.category_id?.name || "Uncategorized"}</span>
             </p>
           </div>
@@ -136,30 +136,28 @@ export default function CatalogItemOverviewView({
             <Link
               href={`/products/${product.seo.slug}`}
               target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:border-theme-hover-light transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark text-xs font-semibold rounded-lg text-theme-text-primary-light dark:text-theme-text-primary-dark transition-colors"
             >
-              <span>Storefront</span>
-              <FaExternalLinkAlt className="w-2.5 h-2.5 opacity-70" />
+              <FaExternalLinkAlt className="w-3 h-3" />
+              <span>Storefront View</span>
             </Link>
           )}
 
           {/* Edit Product */}
-          <button
-            type="button"
-            onClick={() => router.push(`/admin/products/${productId}/edit`)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg transition-all shadow-xs hover:shadow active:scale-[0.99]"
+          <Link
+            href={`/admin/products/${productId}/edit`}
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg shadow-xs hover:shadow active:scale-[0.99] transition-all"
           >
             <FaEdit className="w-3 h-3" />
-            <span>Edit Product</span>
-          </button>
+            <span>Edit Luminaire</span>
+          </Link>
 
           {/* Manage Variants */}
           {isVariableProduct && (
             <button
               type="button"
               onClick={() => router.push(`/admin/products/${productId}/variants`)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
             >
               <FaCog className="w-3 h-3" />
               <span>Configure Variants</span>
@@ -223,7 +221,7 @@ export default function CatalogItemOverviewView({
             </div>
           </div>
           <p className="text-xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {isVariableProduct ? `${product.variants?.length || 0} SKUs` : "Simple"}
+            {isVariableProduct ? `${product.variants?.length || 0} Variants` : "Simple"}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
             {isVariableProduct ? "Multi-attribute variant matrix" : "Single catalog item"}
@@ -251,81 +249,115 @@ export default function CatalogItemOverviewView({
 
       {/* Media & Finish Palette Gallery */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-5">
-        <div className="flex items-center justify-between border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
-          <div>
-            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Visual Media & Color Finishes
-            </h3>
-            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-              Unified gallery of general product photography and finish-specific images assigned to this model.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light/80 dark:bg-theme-bg-dark/60 px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark">
-            {getAllProductImages(product).length} Photos Total
-          </span>
-        </div>
-
-        {/* All Product Media Unified Showcase */}
         {(() => {
-          const allImages = getAllProductImages(product);
-          if (allImages.length === 0) {
-            return (
-              <div className="text-center py-8 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl bg-black/[0.02]">
-                <p className="text-xs text-theme-text-muted-light italic">
-                  No images uploaded yet in general photography or color finishes.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => router.push(`/admin/products/${productId}/edit`)}
-                  className="mt-2 text-xs font-semibold text-theme-hover-light dark:text-theme-hover-dark hover:underline"
-                >
-                  Upload photos in editor →
-                </button>
-              </div>
-            );
-          }
+          const allMedia = getAllProductMedia(product);
+          const photoCount = allMedia.filter((m) => m.type === "image").length;
+          const videoCount = allMedia.filter((m) => m.type === "video").length;
 
           return (
-            <div className="space-y-2">
-              <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
-                All Active Visual Assets ({allImages.length})
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {allImages.map((img, idx) => (
-                  <div
-                    key={idx}
-                    className="relative group rounded-xl overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 aspect-square"
-                  >
-                    <img
-                      src={img.url}
-                      alt={img.alt_text || product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 left-2 flex flex-col gap-1">
-                      {img.is_primary && (
-                        <span className="bg-blue-600 text-white text-[9px] uppercase font-bold px-2 py-0.5 rounded shadow">
-                          Primary
-                        </span>
-                      )}
-                      {img.source === "color" && img.colorName && (
-                        <span className="bg-purple-700/90 text-white text-[9px] font-semibold px-2 py-0.5 rounded shadow backdrop-blur-xs">
-                          {img.colorName}
-                        </span>
-                      )}
-                      {img.source === "general" && !img.is_primary && (
-                        <span className="bg-black/60 text-white text-[8px] uppercase font-semibold px-1.5 py-0.5 rounded shadow">
-                          General
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+            <>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
+                <div>
+                  <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Visual Media & Color Finishes
+                  </h3>
+                  <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                    Unified gallery of general product photography, showreels, and finish-specific media.
+                  </p>
+                </div>
+                <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light/80 dark:bg-theme-bg-dark/60 px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark self-start sm:self-auto">
+                  {photoCount} Photos • {videoCount} Videos ({allMedia.length} Total)
+                </span>
               </div>
-            </div>
+
+              {/* All Product Media Unified Showcase */}
+              {allMedia.length === 0 ? (
+                <div className="text-center py-8 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl bg-black/[0.02]">
+                  <p className="text-xs text-theme-text-muted-light italic">
+                    No images or videos uploaded yet.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/admin/products/${productId}/edit`)}
+                    className="mt-2 text-xs font-semibold text-theme-hover-light dark:text-theme-hover-dark hover:underline"
+                  >
+                    Upload media in editor →
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
+                    All Active Media Assets ({allMedia.length})
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {allMedia.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative group rounded-xl overflow-hidden border aspect-square ${
+                          item.type === "video"
+                            ? "border-purple-500/80 bg-black/10"
+                            : "border-theme-border-light dark:border-theme-border-dark bg-black/5"
+                        }`}
+                      >
+                        {item.type === "image" ? (
+                          <img
+                            src={item.url}
+                            alt={item.alt_text || product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <>
+                            <video
+                              src={item.url}
+                              className="w-full h-full object-cover"
+                              muted
+                              loop
+                              onMouseEnter={(e) => e.currentTarget.play()}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.pause();
+                                e.currentTarget.currentTime = 0;
+                              }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
+                              <div className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-xs flex items-center justify-center text-white">
+                                <FaPlay className="ml-0.5" size={10} />
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        <div className="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none">
+                          {item.is_primary && (
+                            <span className="bg-blue-600 text-white text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shadow">
+                              Primary
+                            </span>
+                          )}
+                          {item.type === "video" && (
+                            <span className="bg-purple-600 text-white text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1">
+                              <FaVideo size={8} /> Video
+                            </span>
+                          )}
+                          {item.colorName && (
+                            <span className="bg-purple-800/90 text-white text-[8px] font-semibold px-1.5 py-0.5 rounded shadow backdrop-blur-xs">
+                              {item.colorName}
+                            </span>
+                          )}
+                          {item.source === "general" && !item.is_primary && item.type === "image" && (
+                            <span className="bg-black/60 text-white text-[8px] uppercase font-semibold px-1.5 py-0.5 rounded shadow">
+                              General
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           );
         })()}
 
-        {/* Color-Specific Photo Palette */}
+        {/* Color-Specific Photo & Video Palette */}
         {colorOpt && colorOpt.values?.length > 0 && (
           <div className="space-y-3 pt-2">
             <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
@@ -348,6 +380,12 @@ export default function CatalogItemOverviewView({
                   if (vMatch?.imageUrl) imgs = [vMatch.imageUrl];
                 }
 
+                const rawVids = colorOpt.colorVideos || {};
+                const vids: string[] =
+                  (typeof rawVids.get === "function" ? rawVids.get(val) : rawVids[val]) || [];
+
+                const hasMedia = imgs.length > 0 || vids.length > 0;
+
                 return (
                   <div
                     key={cIdx}
@@ -368,11 +406,12 @@ export default function CatalogItemOverviewView({
                       </span>
                     </div>
 
-                    {imgs.length > 0 ? (
+                    {hasMedia ? (
                       <div className="flex flex-wrap gap-2">
+                        {/* Images */}
                         {imgs.map((cImg, iIdx) => (
                           <div
-                            key={iIdx}
+                            key={`img-${iIdx}`}
                             className="w-14 h-14 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5"
                           >
                             <img
@@ -382,10 +421,36 @@ export default function CatalogItemOverviewView({
                             />
                           </div>
                         ))}
+
+                        {/* Videos */}
+                        {vids.map((cVid, vIdx) => (
+                          <div
+                            key={`vid-${vIdx}`}
+                            className="relative group w-14 h-14 rounded-lg border border-purple-500/80 overflow-hidden bg-black/10"
+                          >
+                            <video
+                              src={cVid}
+                              className="w-full h-full object-cover"
+                              muted
+                              loop
+                              onMouseEnter={(e) => e.currentTarget.play()}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.pause();
+                                e.currentTarget.currentTime = 0;
+                              }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
+                              <FaPlay className="text-white text-[10px]" />
+                            </div>
+                            <span className="absolute top-0.5 left-0.5 bg-purple-600 text-white text-[7px] uppercase font-bold px-1 rounded">
+                              Video
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       <p className="text-[11px] text-theme-text-muted-light italic">
-                        No finish photos uploaded
+                        No finish media uploaded
                       </p>
                     )}
                   </div>
@@ -454,10 +519,10 @@ export default function CatalogItemOverviewView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
             <div>
               <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Variant Combination Matrix ({product.variants?.length || 0} SKUs)
+                Variant Combination Matrix ({product.variants?.length || 0} Combinations)
               </h3>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-                Every generated specification permutation with custom pricing, SKU, and live availability.
+                Every generated specification permutation with custom pricing, stock, and live availability.
               </p>
             </div>
             <button
@@ -476,7 +541,6 @@ export default function CatalogItemOverviewView({
                 <tr className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold border-b border-theme-border-light dark:border-theme-border-dark">
                   <th className="py-2.5 px-3 w-16">Photo</th>
                   <th className="py-2.5 px-3">Attributes & Finish</th>
-                  <th className="py-2.5 px-3">SKU</th>
                   <th className="py-2.5 px-3">Price</th>
                   <th className="py-2.5 px-3">Stock</th>
                   <th className="py-2.5 px-3 text-right">Status</th>
@@ -506,9 +570,9 @@ export default function CatalogItemOverviewView({
                       className="hover:bg-theme-card-light/30 dark:hover:bg-theme-card-dark/20 transition-colors"
                     >
                       <td className="py-2 px-3">
-                        <div className="w-10 h-10 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5">
+                        <div className="w-10 h-10 rounded-lg border border-theme-border-light dark:border-theme-border-light/40 overflow-hidden bg-black/5">
                           {displayImg ? (
-                            <img src={displayImg} alt={v.sku} className="w-full h-full object-cover" />
+                            <img src={displayImg} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[8px] text-theme-text-muted-light">
                               None
@@ -538,9 +602,6 @@ export default function CatalogItemOverviewView({
                             </span>
                           ))}
                         </div>
-                      </td>
-                      <td className="py-2 px-3 font-mono text-[11px]">
-                        {v.sku}
                       </td>
                       <td className="py-2 px-3 font-semibold">
                         {formatPrice(v.price)}

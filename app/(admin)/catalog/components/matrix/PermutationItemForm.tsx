@@ -86,22 +86,7 @@ export default function PermutationItemForm({
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-                SKU
-              </label>
-              <input
-                type="text"
-                value={formData.sku}
-                onChange={(e) =>
-                  setFormData({ ...formData, sku: e.target.value })
-                }
-                disabled
-                className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-gray-100 dark:bg-gray-800 text-theme-text-primary-light dark:text-theme-text-primary-dark disabled:opacity-50"
-              />
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
                 Price ({productCurrency}) *

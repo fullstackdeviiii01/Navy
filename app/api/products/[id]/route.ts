@@ -91,7 +91,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     console.error("Product update failed:", error);
     if (error.code === 11000) {
       return NextResponse.json(
-        { error: "Product with this SKU or slug already exists" },
+        { error: "Product with this title or slug already exists" },
         { status: 400 }
       );
     }

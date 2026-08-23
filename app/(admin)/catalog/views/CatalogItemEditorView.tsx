@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { productsApi } from "../../../../lib/api/products";
-import MediaGalleryDropzone from "../components/media/MediaGalleryDropzone";
-import ShowreelUploadManager from "../components/media/ShowreelUploadManager";
-import FinishMatrixStudio from "../components/matrix/FinishMatrixStudio";
+import MediaAssetsManager from "../components/media/MediaAssetsManager";
+import FinishMatrixStudio, { ColorItem } from "../components/matrix/FinishMatrixStudio";
 import dynamic from "next/dynamic";
 import Loader from "../../../components/shared/Loader";
 import { VariantOption, ProductVariant } from "../../../../types/product-variants";
@@ -52,7 +51,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
     category_id: "",
     price: "",
     compare_at_price: "",
-    sku: "",
     stock_quantity: "",
     low_stock_threshold: "10",
     status: "draft",
@@ -122,7 +120,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         category_id: p.category_id?._id || p.category_id || "",
         price: p.pricing?.price?.toString() || "",
         compare_at_price: p.pricing?.compare_at_price?.toString() || "",
-        sku: p.inventory?.sku || "",
         stock_quantity: p.inventory?.stock_quantity?.toString() || "",
         low_stock_threshold: p.inventory?.low_stock_threshold?.toString() || "10",
         status: p.status || "draft",
@@ -236,13 +233,14 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
 
         const colorHexCodes: Record<string, string> = {};
         const colorImages: Record<string, string[]> = {};
+        const colorVideos: Record<string, string[]> = {};
 
         for (const item of colorItems) {
           const colorName = item.name.trim();
           if (!colorName) continue;
           colorHexCodes[colorName] = item.hex;
 
-          let finalImagesForColor = [...item.existingImages];
+          let finalImagesForColor = [...(item.existingImages || [])];
           if (item.newFiles && item.newFiles.length > 0) {
             setUploadingImages(true);
             const uploadedColorFiles = await uploadFiles(item.newFiles);
@@ -251,6 +249,16 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             setUploadingImages(false);
           }
           colorImages[colorName] = finalImagesForColor;
+
+          let finalVideosForColor = [...(item.existingVideos || [])];
+          if (item.newVideoFiles && item.newVideoFiles.length > 0) {
+            setUploadingVideos(true);
+            const uploadedColorVideos = await uploadVideoFiles(item.newVideoFiles);
+            const newVideoUrls = uploadedColorVideos.map((v) => v.url);
+            finalVideosForColor = [...finalVideosForColor, ...newVideoUrls];
+            setUploadingVideos(false);
+          }
+          colorVideos[colorName] = finalVideosForColor;
         }
 
         const validColorNames = colorItems.map((c) => c.name.trim()).filter(Boolean);
@@ -261,6 +269,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             values: validColorNames,
             colorHexCodes,
             colorImages,
+            colorVideos,
           };
         } else if (validColorNames.length > 0) {
           preparedVariantOptions.unshift({
@@ -269,6 +278,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             values: validColorNames,
             colorHexCodes,
             colorImages,
+            colorVideos,
             position: 0,
           });
         }
@@ -286,18 +296,22 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
       }
 
       const hasTopImages = allImages.length > 0;
-      const hasColorSectionImages =
+      const hasTopVideos = allVideos.length > 0;
+      const hasColorSectionMedia =
         hasVariants &&
         preparedVariantOptions.some((opt) => {
-          if (opt.name === "color" || opt.displayName.toLowerCase() === "color") {
+          if (opt.name === "color" || opt.displayName?.toLowerCase() === "color") {
             const cImgs = opt.colorImages || {};
-            return Object.values(cImgs).some((arr: any) => Array.isArray(arr) && arr.length > 0);
+            const cVids = opt.colorVideos || {};
+            const hasImgs = Object.values(cImgs).some((arr: any) => Array.isArray(arr) && arr.length > 0);
+            const hasVids = Object.values(cVids).some((arr: any) => Array.isArray(arr) && arr.length > 0);
+            return hasImgs || hasVids;
           }
           return false;
         });
 
-      if (!hasTopImages && !hasColorSectionImages) {
-        alert("Please upload at least one product image in the Product Images section or in the Color section below.");
+      if (!hasTopImages && !hasTopVideos && !hasColorSectionMedia) {
+        alert("Please upload at least one product photo or video in the Media Assets section or in the Color section below.");
         setLoading(false);
         return;
       }
@@ -323,7 +337,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
           currency: "PKR",
         };
         productPayload.inventory = {
-          sku: formData.sku,
           stock_quantity: parseInt(formData.stock_quantity) || 0,
           low_stock_threshold: parseInt(formData.low_stock_threshold) || 10,
           stock_status: parseInt(formData.stock_quantity) > 0 ? "in_stock" : "out_of_stock",
@@ -340,7 +353,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
           currency: "PKR",
         };
         productPayload.inventory = {
-          sku: formData.sku || (preparedVariants[0]?.sku ? preparedVariants[0].sku.split("-")[0] : "PROD"),
           stock_quantity: totalStock,
           low_stock_threshold: parseInt(formData.low_stock_threshold) || 10,
           stock_status: totalStock > 0 ? "in_stock" : "out_of_stock",
@@ -427,30 +439,32 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 1. General Product Media */}
+        {/* 1. Unified Visual Media Assets (Photos & Videos) */}
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
-          <MediaGalleryDropzone
+          <MediaAssetsManager
             images={images}
             newImages={newImages}
             onImageSelect={(files) => setNewImages([...newImages, ...files])}
-            onRemoveExisting={(index) => {
+            onRemoveExistingImage={(index) => {
               setImages(images.filter((_, i) => i !== index));
             }}
-            onRemoveNew={(index) => {
+            onRemoveNewImage={(index) => {
               setNewImages(newImages.filter((_, i) => i !== index));
             }}
-            colorItems={colorItems}
-          />
-        </div>
-
-        {/* 2. Product Showreel Videos */}
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
-          <ShowreelUploadManager
+            onSetPrimaryImage={(index) => {
+              setImages(
+                images.map((img, i) => ({
+                  ...img,
+                  is_primary: i === index,
+                }))
+              );
+            }}
             videos={videos}
             newVideos={newVideos}
             onVideoSelect={(files) => setNewVideos([...newVideos, ...files])}
-            onRemoveExisting={(index) => setVideos(videos.filter((_, i) => i !== index))}
-            onRemoveNew={(index) => setNewVideos(newVideos.filter((_, i) => i !== index))}
+            onRemoveExistingVideo={(index) => setVideos(videos.filter((_, i) => i !== index))}
+            onRemoveNewVideo={(index) => setNewVideos(newVideos.filter((_, i) => i !== index))}
+            colorItems={colorItems}
           />
         </div>
 
@@ -655,21 +669,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                   Stock & Tracking
                 </h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-                    Master SKU *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. RL-LMP-01"
-                    value={formData.sku}
-                    onChange={(e) => updateFormData({ sku: e.target.value })}
-                    required
-                    disabled={mode === "edit"}
-                    className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40 disabled:opacity-50"
-                  />
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
                     Stock Quantity *
@@ -711,7 +711,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
               onVariantOptionsChange={setVariantOptions}
               onVariantsChange={setVariants}
               basePrice={parseFloat(formData.price) || 0}
-              baseSku={formData.sku || "PROD"}
               productCurrency="PKR"
               colorItems={colorItems}
               onColorItemsChange={setColorItems}

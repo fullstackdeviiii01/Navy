@@ -312,15 +312,24 @@ export default function ProductMediaCarousel({
                     sizes="80px"
                   />
                 ) : (
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={item.thumbnail || item.url}
-                      alt={`Video thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                  <div className="relative w-full h-full bg-black/10 overflow-hidden">
+                    {item.thumbnail ? (
+                      <Image
+                        src={item.thumbnail}
+                        alt={`Video thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    ) : (
+                      <video
+                        src={item.url}
+                        className="w-full h-full object-cover"
+                        muted
+                        preload="metadata"
+                      />
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
                       <Play className="text-white w-4 h-4" />
                     </div>
                   </div>

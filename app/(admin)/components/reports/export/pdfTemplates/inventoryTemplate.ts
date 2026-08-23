@@ -37,7 +37,6 @@ export function generateInventoryHTML(data: any): string {
       <thead>
         <tr>
           <th>Product Name</th>
-          <th>SKU</th>
           <th style="text-align: right;">Stock</th>
         </tr>
       </thead>
@@ -47,7 +46,6 @@ export function generateInventoryHTML(data: any): string {
             (product: any) => `
           <tr>
             <td>${product.name}</td>
-            <td>${product.inventory.sku}</td>
             <td style="text-align: right; color: #ef4444; font-weight: 600;">${product.inventory.stock_quantity}</td>
           </tr>
         `
@@ -67,7 +65,6 @@ export function generateInventoryHTML(data: any): string {
       <thead>
         <tr>
           <th>Product Name</th>
-          <th>SKU</th>
           <th style="text-align: right;">Current Stock</th>
           <th style="text-align: right;">Threshold</th>
         </tr>
@@ -78,7 +75,6 @@ export function generateInventoryHTML(data: any): string {
             (product: any) => `
           <tr>
             <td>${product.name}</td>
-            <td>${product.inventory.sku}</td>
             <td style="text-align: right; color: #f59e0b; font-weight: 600;">${product.inventory.stock_quantity}</td>
             <td style="text-align: right;">${product.inventory.low_stock_threshold}</td>
           </tr>

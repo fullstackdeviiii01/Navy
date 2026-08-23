@@ -13,7 +13,7 @@ interface VariantAttribute {
 
 interface ProductVariant {
   _id?: string;
-  sku: string;
+  sku?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;

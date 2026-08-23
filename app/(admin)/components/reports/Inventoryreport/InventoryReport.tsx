@@ -143,9 +143,6 @@ export default function InventoryReport() {
                     <th className="text-left py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap min-w-[180px]">
                       Product
                     </th>
-                    <th className="text-left py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap hidden sm:table-cell">
-                      SKU
-                    </th>
                     <th className="text-right py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap">
                       Stock
                     </th>
@@ -168,9 +165,6 @@ export default function InventoryReport() {
                             {product.name}
                           </span>
                         </div>
-                      </td>
-                      <td className="py-2 px-3 sm:py-3 sm:px-4 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark hidden sm:table-cell">
-                        <span className="truncate max-w-[120px] inline-block">{product.inventory.sku}</span>
                       </td>
                       <td className="py-2 px-3 sm:py-3 sm:px-4 text-right">
                         <span className="text-sm font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">
@@ -202,9 +196,6 @@ export default function InventoryReport() {
                     <th className="text-left py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap min-w-[180px]">
                       Product
                     </th>
-                    <th className="text-left py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap hidden md:table-cell">
-                      SKU
-                    </th>
                     <th className="text-right py-2 px-3 sm:py-3 sm:px-4 text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark whitespace-nowrap">
                       Current Stock
                     </th>
@@ -230,9 +221,6 @@ export default function InventoryReport() {
                             {product.name}
                           </span>
                         </div>
-                      </td>
-                      <td className="py-2 px-3 sm:py-3 sm:px-4 text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark hidden md:table-cell">
-                        <span className="truncate max-w-[120px] inline-block">{product.inventory.sku}</span>
                       </td>
                       <td className="py-2 px-3 sm:py-3 sm:px-4 text-right text-sm font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap">
                         {product.inventory.stock_quantity}

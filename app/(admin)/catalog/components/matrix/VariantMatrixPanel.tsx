@@ -62,8 +62,7 @@ export default function VariantMatrixPanel({
   const generateNewVariantCombinations = (
     newOptions: VariantOption[],
     existingVariants: ProductVariant[],
-    basePrice: number,
-    baseSku: string
+    basePrice: number
   ): ProductVariant[] => {
     const allCombinations = generateAllCombinations(newOptions);
     const preservedVariants: ProductVariant[] = [];
@@ -81,7 +80,6 @@ export default function VariantMatrixPanel({
         preservedVariants.push(existingVariant);
       } else {
         newCombinations.push({
-          sku: `${baseSku}-V${String(existingVariants.length + newCombinations.length + 1).padStart(3, "0")}`,
           attributes: combination.attributes,
           price: basePrice,
           stockQuantity: 0,
@@ -132,21 +130,14 @@ export default function VariantMatrixPanel({
       setLoading(true);
       setError("");
 
+      await variantsApi.configureVariants(productId, { hasVariants: enabled });
+      setHasVariants(enabled);
+
       if (enabled) {
-        await variantsApi.configureVariants(productId, { hasVariants: true });
-        setHasVariants(true);
-        onToggleVariants(true);
         await fetchVariantData();
         setSuccess("Variants enabled for product");
       } else {
-        if (!confirm("Disable variants? This will remove existing variants.")) {
-          setLoading(false);
-          return;
-        }
-        await variantsApi.configureVariants(productId, { hasVariants: false });
-        setHasVariants(false);
         setVariantData(null);
-        onToggleVariants(false);
         setSuccess("Variants disabled for product");
       }
     } catch (err: any) {
@@ -163,13 +154,11 @@ export default function VariantMatrixPanel({
 
       const currentVariants = variantData?.variants || [];
       const basePrice = currentVariants[0]?.price || 0;
-      const baseSku = currentVariants[0]?.sku?.split("-V")[0] || "PROD";
 
       const updatedVariants = generateNewVariantCombinations(
         options,
         currentVariants,
-        basePrice,
-        baseSku
+        basePrice
       );
 
       await variantsApi.configureVariants(productId, {
@@ -190,8 +179,7 @@ export default function VariantMatrixPanel({
 
   const handleGenerateVariants = async (
     optionNames: string[],
-    basePrice: number,
-    baseSku: string
+    basePrice: number
   ) => {
     try {
       setLoading(true);
@@ -200,7 +188,6 @@ export default function VariantMatrixPanel({
       const response = await variantsApi.generateVariants(productId, {
         optionNames,
         basePrice,
-        baseSku,
       });
 
       setVariantData((prev) =>
@@ -275,7 +262,7 @@ export default function VariantMatrixPanel({
             Variable Product Features
           </h3>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-            Allow this luminaire model to feature individual finishes, sizes, and SKUs.
+            Allow this luminaire model to feature individual finishes, sizes, and pricing.
           </p>
         </div>
         <label className="relative inline-flex items-center cursor-pointer">

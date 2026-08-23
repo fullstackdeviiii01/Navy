@@ -5,7 +5,7 @@ import Product from "../../../../app/models/Product";
 
 export async function generateInventoryReport() {
   const products = await (Product as any).find()
-    .select("name inventory.sku inventory.stock_quantity inventory.low_stock_threshold images pricing.price")
+    .select("name inventory.stock_quantity inventory.low_stock_threshold images pricing.price")
     .lean();
 
   const lowStock = products.filter(

@@ -42,7 +42,6 @@ export default function MatrixPermutationTable({
             <thead className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold">
               <tr>
                 <th className="px-4 py-3">Photo</th>
-                <th className="px-4 py-3">SKU</th>
                 <th className="px-4 py-3">Attributes</th>
                 <th className="px-4 py-3">Price</th>
                 <th className="px-4 py-3">Stock</th>
@@ -67,15 +66,12 @@ export default function MatrixPermutationTable({
                     {displayImg ? (
                       <img
                         src={displayImg}
-                        alt={variant.sku || "Variant"}
+                        alt="Variant"
                         className="w-10 h-10 object-cover rounded-lg border border-theme-border-light dark:border-theme-border-dark"
                       />
                     ) : (
                       <span className="text-xs text-theme-text-muted-light italic">No image</span>
                     )}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {variant.sku}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">

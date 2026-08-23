@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
       } else {
         query.$or = [
           { name: { $regex: cleanSearch, $options: "i" } },
-          { "inventory.sku": { $regex: cleanSearch, $options: "i" } },
           { brand: { $regex: cleanSearch, $options: "i" } },
           { description: { $regex: cleanSearch, $options: "i" } },
         ];
@@ -145,7 +144,7 @@ export async function POST(request: NextRequest) {
     console.error("Product creation failed:", error);
     if (error.code === 11000) {
       return NextResponse.json(
-        { error: "Product with this SKU or slug already exists" },
+        { error: "Product with this title or slug already exists" },
         { status: 400 }
       );
     }

@@ -60,7 +60,7 @@ export default function CatalogFilterToolbar({
           <FaSearch className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-theme-text-muted-light dark:text-theme-text-muted-dark w-3.5 h-3.5 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search by title, SKU, or tags..."
+            placeholder="Search by title, brand, or collection..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onSearch()}

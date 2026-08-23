@@ -11,7 +11,7 @@ import { VariantOption } from "../../../../../../types/product-variants";
 interface GenerateVariantsRequest {
   optionNames: string[];
   basePrice: number;
-  baseSku: string;
+  baseSku?: string;
 }
 
 export async function POST(
@@ -63,7 +63,6 @@ export async function POST(
     const combinations = generateVariantCombinations(selectedOptions);
     const newVariants: ProductVariant[] = combinations.map(
       (combo, index) => ({
-        sku: `${body.baseSku}-V${String(index + 1).padStart(3, "0")}`,
         attributes: combo,
         price: body.basePrice,
         stockQuantity: 0,

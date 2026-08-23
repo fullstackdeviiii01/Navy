@@ -27,10 +27,6 @@ const ProductVariantSchema = new Schema<ProductVariant>(
   {
     sku: {
       type: String,
-      required: true,
-      unique: true,
-      sparse: true,
-      index: true,
       trim: true,
     },
     attributes: {
@@ -126,6 +122,10 @@ const VariantOptionSchema = new Schema<VariantOption>(
       type: Schema.Types.Mixed,
       default: {},
     },
+    colorVideos: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
   },
   { _id: false },
 );
@@ -171,10 +171,6 @@ const InventorySchema = new Schema(
   {
     sku: {
       type: String,
-      required: true,
-      unique: true,
-      sparse: true,
-      index: true,
       trim: true,
     },
     stock_quantity: {
@@ -445,7 +441,6 @@ ProductSchema.index({ created_at: -1 });
 ProductSchema.index({ status: 1, is_visible: 1 });
 
 // Variant indexes
-ProductSchema.index({ "variants.sku": 1 });
 ProductSchema.index({ "variants.isAvailable": 1 });
 
 // Category index

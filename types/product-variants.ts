@@ -6,7 +6,7 @@ export interface VariantAttribute {
 
 export interface ProductVariant {
   _id?: string;
-  sku: string;
+  sku?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
@@ -27,6 +27,7 @@ export interface VariantOption {
   values: string[];
   colorHexCodes?: Record<string, string>;
   colorImages?: Record<string, string[]>;
+  colorVideos?: Record<string, string[]>;
   position: number;
 }
 

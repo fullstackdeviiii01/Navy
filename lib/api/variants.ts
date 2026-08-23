@@ -36,7 +36,7 @@ export const variantsApi = {
     config: {
       optionNames: string[];
       basePrice: number;
-      baseSku: string;
+      baseSku?: string;
     }
   ) => {
     const response = await fetch(
