@@ -7,6 +7,24 @@ import { generateInventoryHTML } from "./pdfTemplates/inventoryTemplate";
 
 let cachedLogo: string | null = null;
 
+function formatReportFileTimestamp(date: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+}
+
+const REPORT_TYPE_LABELS: Record<string, string> = {
+  sales: "Sales-Report",
+  products: "Product-Performance-Report",
+  customers: "Customer-Analytics-Report",
+  inventory: "Inventory-Valuation-Report",
+};
+
 export async function exportToPDF(
   reportType: string,
   data: any,
@@ -32,8 +50,12 @@ export async function exportToPDF(
     logoUrl = "/company/company_logo_1787545112127_e99pp05qeb7.webp";
   }
 
-  const htmlContent = createPDFDocument(reportType, data, dateRange, logoUrl);
-  const fileName = `Talal-Lamps-${reportType}-report-${new Date().toISOString().split("T")[0]}.pdf`;
+  const timestamp = formatReportFileTimestamp();
+  const reportLabel = REPORT_TYPE_LABELS[reportType] || `${reportType}-Report`;
+  const fileBaseName = `Talal-Lamps-${reportLabel}-${timestamp}`;
+  const fileName = `${fileBaseName}.pdf`;
+
+  const htmlContent = createPDFDocument(reportType, data, dateRange, logoUrl, fileBaseName);
   downloadPDF(htmlContent, fileName);
 }
 
@@ -41,7 +63,8 @@ function createPDFDocument(
   reportType: string,
   data: any,
   dateRange: string,
-  logoUrl?: string
+  logoUrl?: string,
+  docTitle?: string
 ): string {
   let bodyContent = "";
 
@@ -60,19 +83,21 @@ function createPDFDocument(
       break;
   }
 
+  const title = docTitle || `Talal Wooden Lamps - ${REPORT_TYPE_LABELS[reportType] || "Report"}`;
+
   return `
     <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <title>Talal Wooden Lamps - Atelier Report</title>
+        <title>${title}</title>
         ${commonPDFStyles}
       </head>
       <body>
         ${bodyContent}
         <div class="report-footer">
           <span>TALAL WOODEN LAMPS · CONFIDENTIAL ATELIER INTELLIGENCE</span>
-          <span>Generated on ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+          <span>Generated on ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" })}</span>
         </div>
       </body>
     </html>
