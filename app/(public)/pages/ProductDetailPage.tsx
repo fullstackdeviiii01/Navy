@@ -42,6 +42,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
     variant: ProductVariant | null,
     previewImg?: string
   ) => {
+    setSelectedAttributes(selection || {});
     setSelectedVariant(variant);
     if (previewImg) {
       setPreviewImageUrl(previewImg);
@@ -171,22 +173,30 @@ export default function ProductDetailPageContent({ productId }: Props) {
               {(() => {
                 const activePreviewUrl = selectedVariant?.imageUrl || previewImageUrl || undefined;
 
-                // Collect all color finish images
+                // Collect all finish/variant images from all variant options
                 const allColorImages: string[] = [];
-                const colorOpt = product.variantOptions?.find(
-                  (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
-                );
-                if (colorOpt?.colorImages) {
-                  Object.values(colorOpt.colorImages).forEach((val: any) => {
-                    if (Array.isArray(val)) {
-                      val.forEach((url) => {
-                        if (url && typeof url === "string" && !allColorImages.includes(url)) {
-                          allColorImages.push(url);
-                        }
-                      });
+                if (Array.isArray(product.variantOptions)) {
+                  product.variantOptions.forEach((opt: any) => {
+                    if (opt.colorImages) {
+                      let colorMap = opt.colorImages;
+                      if (colorMap instanceof Map) colorMap = Object.fromEntries(colorMap);
+                      if (typeof colorMap === "object" && colorMap !== null) {
+                        Object.values(colorMap).forEach((val: any) => {
+                          if (Array.isArray(val)) {
+                            val.forEach((url) => {
+                              if (url && typeof url === "string" && !allColorImages.includes(url)) {
+                                allColorImages.push(url);
+                              }
+                            });
+                          } else if (val && typeof val === "string" && !allColorImages.includes(val)) {
+                            allColorImages.push(val);
+                          }
+                        });
+                      }
                     }
                   });
                 }
+
                 // Also check variants for images
                 if (product.variants && Array.isArray(product.variants)) {
                   product.variants.forEach((v: any) => {
@@ -222,7 +232,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   }
                 });
 
-                // 3. All color finish photos
+                // 3. All color/variant finish photos
                 allColorImages.forEach((cUrl) => {
                   if (cUrl && !seenUrls.has(cUrl)) {
                     mediaItems.push({
@@ -234,16 +244,26 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   }
                 });
 
-                // Collect all color finish videos
+                // Collect all finish videos from all variant options
                 const allColorVideos: string[] = [];
-                if (colorOpt?.colorVideos) {
-                  Object.values(colorOpt.colorVideos).forEach((val: any) => {
-                    if (Array.isArray(val)) {
-                      val.forEach((url) => {
-                        if (url && typeof url === "string" && !allColorVideos.includes(url)) {
-                          allColorVideos.push(url);
-                        }
-                      });
+                if (Array.isArray(product.variantOptions)) {
+                  product.variantOptions.forEach((opt: any) => {
+                    if (opt.colorVideos) {
+                      let videoMap = opt.colorVideos;
+                      if (videoMap instanceof Map) videoMap = Object.fromEntries(videoMap);
+                      if (typeof videoMap === "object" && videoMap !== null) {
+                        Object.values(videoMap).forEach((val: any) => {
+                          if (Array.isArray(val)) {
+                            val.forEach((url) => {
+                              if (url && typeof url === "string" && !allColorVideos.includes(url)) {
+                                allColorVideos.push(url);
+                              }
+                            });
+                          } else if (val && typeof val === "string" && !allColorVideos.includes(val)) {
+                            allColorVideos.push(val);
+                          }
+                        });
+                      }
                     }
                   });
                 }
@@ -379,6 +399,14 @@ export default function ProductDetailPageContent({ productId }: Props) {
                       productId={product._id}
                       quantity={quantity}
                       variantId={selectedVariant?._id}
+                      variantAttributes={selectedAttributes}
+                      productName={product.name}
+                      productImage={
+                        selectedVariant?.imageUrl ||
+                        previewImageUrl ||
+                        product.images?.find((img: any) => img.is_primary)?.url ||
+                        product.images?.[0]?.url
+                      }
                       disabled={isOutOfStock || variantOutOfStock || false}
                     />
                   )}

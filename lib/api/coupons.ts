@@ -1,29 +1,29 @@
 // lib/api/coupons.ts
-import { getAuthToken, handleResponse } from "./helpers";
+import { getApiHeaders, handleResponse } from "./helpers";
 
 export const couponsApi = {
   // Get all coupons (admin only)
   getAll: async () => {
     const response = await fetch("/api/coupons", {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
 
   // Get active coupons for display on products (public)
   getActiveCoupons: async () => {
-    const response = await fetch("/api/coupons/active");
+    const response = await fetch("/api/coupons/active", {
+      credentials: "include",
+    });
     return handleResponse(response);
   },
 
   // Get coupon by ID (admin only)
   getById: async (id: string) => {
     const response = await fetch(`/api/coupons/${id}`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -32,10 +32,8 @@ export const couponsApi = {
   create: async (data: any) => {
     const response = await fetch("/api/coupons", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify(data),
     });
     return handleResponse(response);
@@ -45,10 +43,8 @@ export const couponsApi = {
   update: async (id: string, data: any) => {
     const response = await fetch(`/api/coupons/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify(data),
     });
     return handleResponse(response);
@@ -58,9 +54,8 @@ export const couponsApi = {
   delete: async (id: string) => {
     const response = await fetch(`/api/coupons/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -69,10 +64,8 @@ export const couponsApi = {
   validate: async (code: string) => {
     const response = await fetch(`/api/coupons/validate`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({ code }),
     });
     return handleResponse(response);

@@ -8,7 +8,6 @@ import { cartApi } from "../../../lib/api/cart";
 import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import EmptyCart from "../../components/cart/EmptyCart";
-import ExitIntentPopup from "../../components/cart/ExitIntentPopup";
 import Loader from "../../components/shared/Loader";
 import { ArrowLeft } from "lucide-react";
 
@@ -69,7 +68,10 @@ export default function CartPage() {
     }
   };
 
-  const handleCouponUpdate = async () => {
+  const handleCouponUpdate = async (updatedCart?: any) => {
+    if (updatedCart) {
+      updateCart(updatedCart);
+    }
     await refreshCart();
   };
 
@@ -160,13 +162,6 @@ export default function CartPage() {
           </div>
         </div>
       </main>
-
-      {!isAuthenticated && (
-        <ExitIntentPopup
-          isGuestUser={!isAuthenticated}
-          hasItems={cart.items.length > 0}
-        />
-      )}
     </div>
   );
 }

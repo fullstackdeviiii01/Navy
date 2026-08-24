@@ -7,7 +7,7 @@ import { X, Check, Loader2 } from "lucide-react";
 
 interface CouponSectionProps {
   cart: any;
-  onUpdate: () => void;
+  onUpdate: (updatedCart?: any) => void;
 }
 
 export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
@@ -25,10 +25,14 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
 
     try {
       const data = await cartApi.applyCoupon(code);
-      setMessage(`Saved Rs. ${data.discount.toFixed(2)}`);
+      setMessage(`Saved Rs. ${Number(data.discount || 0).toLocaleString()}`);
       setIsError(false);
       setCode("");
-      onUpdate();
+      if (data?.cart) {
+        onUpdate(data.cart);
+      } else {
+        onUpdate();
+      }
     } catch (error: any) {
       setMessage(error.message || "Invalid code");
       setIsError(true);
@@ -41,10 +45,14 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
     setLoading(true);
     setMessage("");
     try {
-      await cartApi.removeCoupon();
+      const data = await cartApi.removeCoupon();
       setMessage("Coupon removed");
       setIsError(false);
-      onUpdate();
+      if (data?.cart) {
+        onUpdate(data.cart);
+      } else {
+        onUpdate();
+      }
     } catch (error: any) {
       setMessage(error.message || "Failed to remove");
       setIsError(true);

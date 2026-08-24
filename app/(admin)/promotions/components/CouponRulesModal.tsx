@@ -2,8 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Tag, Check, Calendar, DollarSign, Percent } from "lucide-react";
+import { X, Tag, Check, Calendar, DollarSign, Percent, Layers, Package } from "lucide-react";
 import { couponsApi } from "../../../../lib/api/coupons";
+import { categoriesApi } from "../../../../lib/api/categories";
+import { productsApi } from "../../../../lib/api/products";
 
 interface CouponRulesModalProps {
   coupon: any;
@@ -21,6 +23,11 @@ export default function CouponRulesModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loadingLookups, setLoadingLookups] = useState(false);
+  const [productSearch, setProductSearch] = useState("");
+
   const [formData, setFormData] = useState({
     code: "",
     description: "",
@@ -34,7 +41,34 @@ export default function CouponRulesModal({
     per_user_limit: 1,
     is_active: true,
     show_on_products: true,
+    applicable_to: {
+      type: "all" as "all" | "categories" | "products",
+      category_ids: [] as string[],
+      product_ids: [] as string[],
+    },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchLookups();
+    }
+  }, [isOpen]);
+
+  const fetchLookups = async () => {
+    setLoadingLookups(true);
+    try {
+      const [catData, prodData] = await Promise.all([
+        categoriesApi.getAll(false),
+        productsApi.getAll({ limit: 1000 }),
+      ]);
+      setCategories(catData.categories || []);
+      setProducts(prodData.products || []);
+    } catch (err) {
+      console.error("Failed to load promotion lookups:", err);
+    } finally {
+      setLoadingLookups(false);
+    }
+  };
 
   useEffect(() => {
     if (coupon) {
@@ -55,6 +89,17 @@ export default function CouponRulesModal({
         per_user_limit: coupon.per_user_limit || 1,
         is_active: coupon.is_active ?? true,
         show_on_products: coupon.show_on_products ?? true,
+        applicable_to: {
+          type: coupon.applicable_to?.type || "all",
+          category_ids:
+            coupon.applicable_to?.category_ids?.map((id: any) =>
+              typeof id === "object" ? id._id?.toString() : id?.toString()
+            ) || [],
+          product_ids:
+            coupon.applicable_to?.product_ids?.map((id: any) =>
+              typeof id === "object" ? id._id?.toString() : id?.toString()
+            ) || [],
+        },
       });
     } else {
       const today = new Date().toISOString().split("T")[0];
@@ -75,16 +120,67 @@ export default function CouponRulesModal({
         per_user_limit: 1,
         is_active: true,
         show_on_products: true,
+        applicable_to: {
+          type: "all",
+          category_ids: [],
+          product_ids: [],
+        },
       });
     }
   }, [coupon, isOpen]);
 
   if (!isOpen) return null;
 
+  const handleCategoryToggle = (catId: string) => {
+    const current = formData.applicable_to.category_ids;
+    const exists = current.includes(catId);
+    const updated = exists ? current.filter((id) => id !== catId) : [...current, catId];
+
+    setFormData({
+      ...formData,
+      applicable_to: {
+        ...formData.applicable_to,
+        category_ids: updated,
+      },
+    });
+  };
+
+  const handleProductToggle = (prodId: string) => {
+    const current = formData.applicable_to.product_ids;
+    const exists = current.includes(prodId);
+    const updated = exists ? current.filter((id) => id !== prodId) : [...current, prodId];
+
+    setFormData({
+      ...formData,
+      applicable_to: {
+        ...formData.applicable_to,
+        product_ids: updated,
+      },
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError("");
+
+    if (
+      formData.applicable_to.type === "categories" &&
+      formData.applicable_to.category_ids.length === 0
+    ) {
+      setError("Please select at least one category for this promotion.");
+      setSaving(false);
+      return;
+    }
+
+    if (
+      formData.applicable_to.type === "products" &&
+      formData.applicable_to.product_ids.length === 0
+    ) {
+      setError("Please select at least one product for this promotion.");
+      setSaving(false);
+      return;
+    }
 
     try {
       const payload = {
@@ -93,9 +189,15 @@ export default function CouponRulesModal({
         valid_from: new Date(formData.valid_from).toISOString(),
         valid_until: new Date(formData.valid_until).toISOString(),
         applicable_to: {
-          type: "all",
-          category_ids: [],
-          product_ids: [],
+          type: formData.applicable_to.type,
+          category_ids:
+            formData.applicable_to.type === "categories"
+              ? formData.applicable_to.category_ids
+              : [],
+          product_ids:
+            formData.applicable_to.type === "products"
+              ? formData.applicable_to.product_ids
+              : [],
         },
       };
 
@@ -113,6 +215,10 @@ export default function CouponRulesModal({
     }
   };
 
+  const filteredProducts = products.filter((p) =>
+    (p.name || "").toLowerCase().includes(productSearch.toLowerCase())
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark w-full max-w-xl max-h-[90vh] rounded-2xl border border-theme-border-light dark:border-theme-border-dark shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
@@ -127,7 +233,7 @@ export default function CouponRulesModal({
                 {coupon ? "Edit Promotion Voucher" : "Create New Promotion Voucher"}
               </h3>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-                Configure discount rates, minimum cart limits, and expiration windows.
+                Configure discount rates, minimum cart limits, and product eligibility.
               </p>
             </div>
           </div>
@@ -262,6 +368,154 @@ export default function CouponRulesModal({
                   }
                   className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
                 />
+              </div>
+            )}
+          </div>
+
+          {/* Applicable Scope Section */}
+          <div className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/40 dark:bg-theme-bg-dark/20 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
+                Applicable Catalog Scope *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      applicable_to: { ...formData.applicable_to, type: "all" },
+                    })
+                  }
+                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                    formData.applicable_to.type === "all"
+                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
+                      : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
+                  }`}
+                >
+                  <Tag className="w-3.5 h-3.5" />
+                  <span>All Pieces</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      applicable_to: { ...formData.applicable_to, type: "categories" },
+                    })
+                  }
+                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                    formData.applicable_to.type === "categories"
+                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
+                      : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Categories</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      applicable_to: { ...formData.applicable_to, type: "products" },
+                    })
+                  }
+                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                    formData.applicable_to.type === "products"
+                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
+                      : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
+                  }`}
+                >
+                  <Package className="w-3.5 h-3.5" />
+                  <span>Specific Pieces</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Categories Selector */}
+            {formData.applicable_to.type === "categories" && (
+              <div className="space-y-2 pt-1">
+                <span className="text-[11px] font-semibold text-theme-text-muted-light block uppercase tracking-wider">
+                  Select Categories ({formData.applicable_to.category_ids.length} selected)
+                </span>
+                <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark">
+                  {categories.map((cat) => {
+                    const isSelected = formData.applicable_to.category_ids.includes(
+                      cat._id?.toString()
+                    );
+                    return (
+                      <label
+                        key={cat._id}
+                        onClick={() => handleCategoryToggle(cat._id?.toString())}
+                        className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-neutral-100 dark:bg-neutral-800 border-neutral-400"
+                            : "border-theme-border-light/50 hover:bg-theme-bg-light"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {}}
+                          className="rounded text-neutral-900 focus:ring-neutral-500"
+                        />
+                        <span className="truncate text-xs font-medium">{cat.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Products Selector */}
+            {formData.applicable_to.type === "products" && (
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-semibold text-theme-text-muted-light block uppercase tracking-wider">
+                    Select Pieces ({formData.applicable_to.product_ids.length} selected)
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search product..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    className="px-2 py-1 text-[11px] border border-theme-border-light rounded bg-theme-surface-light dark:bg-theme-surface-dark"
+                  />
+                </div>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto p-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark">
+                  {filteredProducts.map((prod) => {
+                    const isSelected = formData.applicable_to.product_ids.includes(
+                      prod._id?.toString()
+                    );
+                    return (
+                      <label
+                        key={prod._id}
+                        onClick={() => handleProductToggle(prod._id?.toString())}
+                        className={`flex items-center justify-between gap-2 p-2 rounded border cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-neutral-100 dark:bg-neutral-800 border-neutral-400"
+                            : "border-theme-border-light/50 hover:bg-theme-bg-light"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {}}
+                            className="rounded text-neutral-900 focus:ring-neutral-500"
+                          />
+                          <span className="truncate text-xs font-medium">{prod.name}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-theme-text-muted-light shrink-0">
+                          Rs. {prod.pricing?.price?.toLocaleString() || prod.price}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

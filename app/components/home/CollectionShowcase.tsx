@@ -48,11 +48,11 @@ export default function CollectionShowcase() {
 
                   <Link
                     href="/products"
-                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2.5 sm:px-6 sm:py-3.5 bg-[#A8752B] hover:bg-[#C99648] text-white text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-colors shrink-0 active:scale-95 shadow-lg"
+                    className="no-theme-hover inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 bg-theme-primary hover:bg-[#A8752B] dark:hover:bg-[#C99648] text-theme-btn-text hover:text-white dark:hover:text-white text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-md active:scale-95 shrink-0 group"
                     aria-label="View our handcrafted lamp collection"
                   >
-                    <span>VIEW COLLECTION</span>
-                    <ChevronsRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    <span className="text-inherit">VIEW COLLECTION</span>
+                    <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-inherit" />
                   </Link>
                 </div>
               </div>

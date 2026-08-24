@@ -1,5 +1,5 @@
 // lib/api/orders.ts
-import { getAuthToken, handleResponse } from "./helpers";
+import { getApiHeaders, handleResponse } from "./helpers";
 
 export const ordersApi = {
   // Get user's orders
@@ -13,9 +13,8 @@ export const ordersApi = {
     }
 
     const response = await fetch(`/api/orders?${params}`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -23,9 +22,8 @@ export const ordersApi = {
   // Get order by ID
   getOrderById: async (id: string) => {
     const response = await fetch(`/api/orders/${id}`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -34,9 +32,8 @@ export const ordersApi = {
   cancelOrder: async (id: string) => {
     const response = await fetch(`/api/orders/${id}/cancel`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -44,9 +41,8 @@ export const ordersApi = {
   // Download invoice PDF — only available when payment_status === "paid"
   downloadInvoice: async (orderId: string): Promise<Blob> => {
     const response = await fetch(`/api/orders/${orderId}/invoice`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -75,9 +71,8 @@ export const adminOrdersApi = {
     }
 
     const response = await fetch(`/api/orders?${queryParams}`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -85,9 +80,8 @@ export const adminOrdersApi = {
   // Get order by ID
   getById: async (id: string) => {
     const response = await fetch(`/api/orders/${id}?admin=true`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -100,10 +94,8 @@ export const adminOrdersApi = {
   ) => {
     const response = await fetch(`/api/orders/${id}/status`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({
         status,
         ...(trackingData && trackingData),
@@ -119,10 +111,8 @@ export const adminOrdersApi = {
   ) => {
     const response = await fetch(`/api/orders/${id}/tracking`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify(data),
     });
     return handleResponse(response);
@@ -132,10 +122,8 @@ export const adminOrdersApi = {
   addNotes: async (id: string, notes: string) => {
     const response = await fetch(`/api/orders/${id}/notes`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({ admin_notes: notes }),
     });
     return handleResponse(response);
@@ -145,9 +133,8 @@ export const adminOrdersApi = {
   markPaid: async (id: string) => {
     const response = await fetch(`/api/orders/${id}/mark-paid`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -155,9 +142,8 @@ export const adminOrdersApi = {
   // Get order statistics
   getStats: async () => {
     const response = await fetch("/api/orders/stats", {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -165,9 +151,8 @@ export const adminOrdersApi = {
   // Download invoice PDF — admin can always download regardless of payment status
   downloadInvoice: async (orderId: string): Promise<Blob> => {
     const response = await fetch(`/api/orders/${orderId}/invoice?admin=true`, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));

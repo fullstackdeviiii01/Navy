@@ -72,11 +72,11 @@ export default function BespokeInquiryBanner() {
             <div className="relative z-10 pt-5 sm:pt-6 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-between w-full px-5 sm:px-6 py-3.5 sm:py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
+                className="no-theme-hover inline-flex items-center justify-between w-full px-6 sm:px-8 py-3.5 sm:py-4 bg-theme-primary hover:bg-[#A8752B] dark:hover:bg-[#C99648] text-theme-btn-text hover:text-white dark:hover:text-white text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-md active:scale-95 group"
                 aria-label="Start a lighting consultation on our contact page"
               >
-                <span>START A CONVERSATION</span>
-                <ChevronsRight className="w-4 h-4" />
+                <span className="text-inherit">START A CONVERSATION</span>
+                <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-inherit" />
               </Link>
             </div>
           </div>

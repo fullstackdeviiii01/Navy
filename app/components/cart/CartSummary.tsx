@@ -3,13 +3,11 @@
 
 import { useRouter } from "next/navigation";
 import CouponSection from "./CouponSection";
-import SaveCartEmail from "./SaveCartEmail";
-import { useUser } from "../../context/UserContext";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CartSummaryProps {
   cart: any;
-  onCouponUpdate: () => void;
+  onCouponUpdate: (updatedCart?: any) => void;
 }
 
 export default function CartSummary({
@@ -17,55 +15,47 @@ export default function CartSummary({
   onCouponUpdate,
 }: CartSummaryProps) {
   const router = useRouter();
-  const { isAuthenticated } = useUser();
 
   const shippingService = cart.selected_shipping_service_id;
 
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
-      <h2 className="text-xl sm:text-2xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark pb-4 border-b border-theme-border-light dark:border-theme-border-dark mb-6">
-        Order Summary
+      <h2 className="text-xs uppercase tracking-[0.25em] font-medium text-theme-hover-light dark:text-theme-hover-dark pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+        ORDER SUMMARY
       </h2>
 
-      <div className="space-y-4">
+      <div className="mt-5 space-y-4 text-xs sm:text-sm">
         {/* Subtotal */}
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex justify-between text-theme-text-primary-light dark:text-theme-text-primary-dark">
           <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-            Subtotal ({cart.items.length} {cart.items.length === 1 ? "item" : "items"})
+            Subtotal
           </span>
-          <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {formatPrice(cart.subtotal)}
-          </span>
+          <span>{formatPrice(cart.subtotal)}</span>
         </div>
 
         {/* Discount */}
-        {cart.discount_amount > 0 && (
-          <div className="flex items-center justify-between text-sm text-green-600 dark:text-green-400">
-            <span>Discount</span>
-            <span className="font-semibold">
-              -{formatPrice(cart.discount_amount)}
-            </span>
+        {cart.discount > 0 && (
+          <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
+            <span>Discount ({cart.coupon_code})</span>
+            <span>-{formatPrice(cart.discount)}</span>
           </div>
         )}
 
         {/* Shipping */}
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex justify-between text-theme-text-primary-light dark:text-theme-text-primary-dark">
           <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-            Estimated Shipping
+            Shipping
           </span>
-          <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {!cart.selected_shipping_service_id ? (
-              <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs font-normal">
-                Calculated at checkout
-              </span>
-            ) : (
-              formatPrice(cart.shipping_cost || 0)
-            )}
+          <span>
+            {cart.shipping_fee === 0
+              ? "Calculated at checkout"
+              : formatPrice(cart.shipping_fee)}
           </span>
         </div>
 
+        {/* Selected shipping service info if any */}
         {shippingService && (
-          <div className="p-2.5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
+          <div className="p-3 bg-theme-card-light/40 dark:bg-theme-card-dark/40 border border-theme-border-light dark:border-theme-border-dark text-[11px]">
             <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {shippingService.display_name}
             </p>
@@ -81,12 +71,6 @@ export default function CartSummary({
         <div className="pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
           <CouponSection cart={cart} onUpdate={onCouponUpdate} />
         </div>
-
-        {!isAuthenticated && cart.items.length > 0 && (
-          <div className="pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
-            <SaveCartEmail source="cart_sidebar" />
-          </div>
-        )}
 
         {/* Total & Action */}
         <div className="pt-5 border-t border-theme-border-light dark:border-theme-border-dark space-y-4">

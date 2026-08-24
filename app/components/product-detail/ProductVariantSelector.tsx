@@ -134,24 +134,66 @@ export default function ProductVariantSelector({
     };
     setCurrentSelection(newSelection);
 
-    // Immediately resolve image for this option (especially color)
+    const matchingVariant = findMatchingVariant(newSelection);
     let previewImg: string | undefined = undefined;
-    const isColor =
-      attributeName.toLowerCase() === "color";
-    if (isColor) {
-      const colorOpt = variantAttributes.find(
-        (opt) => opt.name.toLowerCase() === "color" || opt.displayName.toLowerCase() === "color"
-      );
-      previewImg =
-        colorOpt?.colorImages?.[value]?.[0] ||
-        variantImageMap[attributeName]?.[value];
-    } else {
-      previewImg = variantImageMap[attributeName]?.[value];
+
+    // 1. If full variant matched and has an imageUrl, that is the primary source of truth
+    if (matchingVariant?.imageUrl) {
+      previewImg = matchingVariant.imageUrl;
     }
 
-    const matchingVariant = findMatchingVariant(newSelection);
-    if (!previewImg && matchingVariant?.imageUrl) {
-      previewImg = matchingVariant.imageUrl;
+    // 2. If no direct variant imageUrl, check if the selected option has colorImages
+    if (!previewImg) {
+      const optObj = variantAttributes.find(
+        (opt) => opt.name.toLowerCase() === attributeName.toLowerCase()
+      );
+      if (optObj?.colorImages) {
+        const imgVal = optObj.colorImages[value];
+        if (imgVal) {
+          previewImg = Array.isArray(imgVal) ? imgVal[0] : imgVal;
+        }
+      }
+    }
+
+    // 3. Check if ANY currently selected color/finish attribute has a colorImage
+    if (!previewImg) {
+      for (const [attrKey, attrVal] of Object.entries(newSelection)) {
+        const colorOpt = variantAttributes.find(
+          (opt) =>
+            opt.name.toLowerCase() === attrKey.toLowerCase() ||
+            opt.displayName.toLowerCase() === attrKey.toLowerCase()
+        );
+        if (colorOpt?.colorImages?.[attrVal]) {
+          const imgVal = colorOpt.colorImages[attrVal];
+          previewImg = Array.isArray(imgVal) ? imgVal[0] : imgVal;
+          if (previewImg) break;
+        }
+      }
+    }
+
+    // 4. Check if any variant matching the selected color has an imageUrl
+    if (!previewImg) {
+      const colorEntry = Object.entries(newSelection).find(([k]) => {
+        const opt = variantAttributes.find((o) => o.name.toLowerCase() === k.toLowerCase());
+        return (
+          opt &&
+          (opt.name.toLowerCase() === "color" ||
+            opt.displayName.toLowerCase() === "color" ||
+            opt.name.toLowerCase().includes("finish") ||
+            opt.displayName.toLowerCase().includes("finish") ||
+            (opt.colorHexCodes && Object.keys(opt.colorHexCodes).length > 0))
+        );
+      });
+
+      if (colorEntry) {
+        const colorVal = colorEntry[1];
+        const matchedColorVar = variants.find((v) =>
+          v.attributes?.some((a) => a.value.toLowerCase() === colorVal.toLowerCase())
+        );
+        if (matchedColorVar?.imageUrl) {
+          previewImg = matchedColorVar.imageUrl;
+        }
+      }
     }
 
     onSelectionChange(newSelection, matchingVariant, previewImg);
@@ -184,7 +226,12 @@ export default function ProductVariantSelector({
           const selectedValue = currentSelection[attributeOption.name];
           const isColorOption =
             attributeOption.name.toLowerCase() === "color" ||
-            attributeOption.displayName.toLowerCase() === "color";
+            attributeOption.displayName.toLowerCase() === "color" ||
+            attributeOption.name.toLowerCase().includes("finish") ||
+            attributeOption.displayName.toLowerCase().includes("finish") ||
+            attributeOption.name.toLowerCase().includes("shade") ||
+            (attributeOption.colorHexCodes && Object.keys(attributeOption.colorHexCodes).length > 0) ||
+            (attributeOption.colorImages && Object.keys(attributeOption.colorImages).length > 0);
 
           return (
             <div key={attributeOption.name} className="space-y-1.5">

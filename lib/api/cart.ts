@@ -1,11 +1,11 @@
-import { getAuthToken, handleResponse } from "./helpers";
+// lib/api/cart.ts
+import { getApiHeaders, handleResponse } from "./helpers";
 
 export const cartApi = {
   getCart: async () => {
     const response = await fetch("/api/cart", {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -13,42 +13,53 @@ export const cartApi = {
   addItem: async (
     productId: string,
     quantity: number = 1,
-    variantId?: string
+    variantId?: string,
+    variantAttributes?: Record<string, string>,
+    productName?: string,
+    productImage?: string
   ) => {
+    console.log("🌐 [cartApi.addItem] Sending POST /api/cart with payload:", {
+      product_id: productId,
+      quantity,
+      variant_id: variantId,
+      variant_attributes: variantAttributes,
+      product_name: productName,
+      product_image: productImage,
+    });
+
     const response = await fetch("/api/cart", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({
         product_id: productId,
         quantity,
         variant_id: variantId,
+        variant_attributes: variantAttributes,
+        product_name: productName,
+        product_image: productImage,
       }),
     });
-    return handleResponse(response);
+    const result = await handleResponse(response);
+    console.log("🌐 [cartApi.addItem] Received result from /api/cart:", result);
+    return result;
   },
 
   updateQuantity: async (itemId: string, quantity: number) => {
     const response = await fetch(`/api/cart/item/${itemId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({ quantity }),
     });
     return handleResponse(response);
   },
 
-  updateGuestEmail: async (email: string, source: string = 'cart_sidebar') => {
+  updateGuestEmail: async (email: string, source: string = "cart_sidebar") => {
     const response = await fetch("/api/cart/update-email", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({ email, source }),
     });
     return handleResponse(response);
@@ -57,9 +68,8 @@ export const cartApi = {
   removeItem: async (itemId: string) => {
     const response = await fetch(`/api/cart/item/${itemId}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -67,9 +77,8 @@ export const cartApi = {
   clearCart: async () => {
     const response = await fetch("/api/cart/clear", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },
@@ -77,10 +86,8 @@ export const cartApi = {
   applyCoupon: async (code: string) => {
     const response = await fetch("/api/cart/apply-coupon", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
       body: JSON.stringify({ code }),
     });
     return handleResponse(response);
@@ -89,9 +96,8 @@ export const cartApi = {
   removeCoupon: async () => {
     const response = await fetch("/api/cart/remove-coupon", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getApiHeaders(),
+      credentials: "include",
     });
     return handleResponse(response);
   },

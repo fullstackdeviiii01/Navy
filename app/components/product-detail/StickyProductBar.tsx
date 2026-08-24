@@ -128,6 +128,14 @@ export default function StickyProductBar({
                   productId={product._id}
                   quantity={quantity}
                   variantId={selectedVariant?._id}
+                  variantAttributes={
+                    selectedVariant?.attributes?.reduce((acc: any, a: any) => {
+                      acc[a.name] = a.value;
+                      return acc;
+                    }, {})
+                  }
+                  productName={product.name}
+                  productImage={selectedVariant?.imageUrl || primaryImage}
                   disabled={isDisabled}
                 />
               </div>

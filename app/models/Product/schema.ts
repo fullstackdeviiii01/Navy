@@ -214,7 +214,6 @@ const SEOSchema = new Schema(
       required: true,
       unique: true,
       sparse: true,
-      index: true,
       lowercase: true,
       trim: true,
     },
@@ -281,16 +280,24 @@ export const ProductSchema = new Schema<IProductDocument>(
       },
     ],
 
-    // ========== Pricing (Simple Products) ==========
+    // ========== Pricing (Simple & Variable Products) ==========
     pricing: {
       type: PricingSchema,
-      required: true,
+      default: () => ({
+        price: 0,
+        currency: "PKR",
+      }),
     },
 
-    // ========== Inventory (Simple Products) ==========
+    // ========== Inventory (Simple & Variable Products) ==========
     inventory: {
       type: InventorySchema,
-      required: true,
+      default: () => ({
+        stock_quantity: 0,
+        low_stock_threshold: 10,
+        stock_status: "in_stock",
+        track_inventory: true,
+      }),
     },
 
     // ========== Variants Configuration ==========
@@ -325,13 +332,18 @@ export const ProductSchema = new Schema<IProductDocument>(
     // ========== Shipping ==========
     shipping: {
       type: ShippingSchema,
-      required: true,
+      default: () => ({
+        requires_shipping: true,
+        is_fragile: false,
+        weight: 1,
+        weight_unit: "kg",
+      }),
     },
 
     // ========== SEO ==========
     seo: {
       type: SEOSchema,
-      required: true,
+      default: () => ({}),
     },
 
     // ========== Product Attributes & Specifications ==========

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Minus, Plus, Video, PlayCircle } from "lucide-react";
+import { Trash2, Minus, Plus, Video, PlayCircle, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getItemImage } from "../../../lib/utils/productImages";
@@ -12,8 +12,8 @@ interface CartItemProps {
     _id: string;
     product_id: {
       _id: string;
-      name: string;
-      images: Array<{ url: string }>;
+      name?: string;
+      images?: Array<{ url: string }>;
       videos?: Array<{ url: string; is_primary?: boolean }>;
       inventory?: {
         stock_quantity: number;
@@ -24,9 +24,21 @@ interface CartItemProps {
         _id: string;
         stockQuantity: number;
         attributes: Array<{ name: string; value: string }>;
+        imageUrl?: string;
+        isAvailable?: boolean;
       }>;
+      variantOptions?: Array<{
+        name: string;
+        displayName?: string;
+        colorImages?: Record<string, string[]>;
+      }>;
+      variantInventory?: {
+        totalStock?: number;
+      };
     };
-    variant_id?: string;
+    variant_id?: string | any;
+    product_name?: string;
+    product_image?: string;
     variant_attributes?: { [key: string]: string };
     quantity: number;
     price_at_addition: number;
@@ -45,14 +57,42 @@ export default function CartItem({
   const [localQuantity, setLocalQuantity] = useState(item.quantity);
   const [showVideo, setShowVideo] = useState(false);
 
+  const productObj: any =
+    item.product_id && typeof item.product_id === "object" ? item.product_id : {};
+  const productName = item.product_name || productObj.name || "Product";
+  const productId = productObj._id || item.product_id;
+
   const getAvailableStock = (): number => {
-    if (item.product_id.hasVariants && item.variant_id) {
-      const variant = item.product_id.variants?.find(
-        (v) => v._id === item.variant_id,
+    const prod: any = item.product_id;
+    if (!prod || typeof prod !== "object") return 99;
+
+    if (prod.hasVariants && item.variant_id) {
+      const targetVarId =
+        typeof item.variant_id === "object" && item.variant_id !== null
+          ? item.variant_id._id?.toString?.() || String(item.variant_id._id || item.variant_id)
+          : String(item.variant_id || "");
+
+      const variant = prod.variants?.find(
+        (v: any) => (v._id?.toString?.() || String(v._id || "")) === targetVarId
       );
-      return variant?.stockQuantity || 0;
+
+      if (variant) {
+        if (typeof variant.stockQuantity === "number") return variant.stockQuantity;
+        if (variant.isAvailable === false) return 0;
+        return 99;
+      }
     }
-    return item.product_id.inventory?.stock_quantity || 0;
+
+    if (typeof prod.inventory?.stock_quantity === "number") {
+      return prod.inventory.stock_quantity;
+    }
+    if (typeof prod.variantInventory?.totalStock === "number") {
+      return prod.variantInventory.totalStock;
+    }
+    if (prod.inventory?.stock_status === "out_of_stock") {
+      return 0;
+    }
+    return 99;
   };
 
   const availableStock = getAvailableStock();
@@ -62,10 +102,10 @@ export default function CartItem({
   const resolvedImageUrl = getItemImage(item);
   const primaryImage = resolvedImageUrl ? { url: resolvedImageUrl } : null;
   const hasImages = Boolean(resolvedImageUrl);
-  const hasVideos = item.product_id.videos && item.product_id.videos.length > 0;
+  const hasVideos = Array.isArray(productObj.videos) && productObj.videos.length > 0;
   const primaryVideo =
-    item.product_id.videos?.find((v) => v.is_primary) ||
-    item.product_id.videos?.[0];
+    productObj.videos?.find((v: any) => v.is_primary) ||
+    productObj.videos?.[0];
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -111,14 +151,14 @@ export default function CartItem({
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
         {/* Product Image */}
         <Link
-          href={`/product/${item.product_id._id}`}
+          href={productId ? `/product/${productId}` : "#"}
           className="flex-shrink-0"
         >
           <div className="relative aspect-[4/5] w-24 sm:w-28 md:w-32 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden group">
             {showVideo && hasVideos && primaryVideo ? (
               <>
                 <video
-                  aria-label={`${item.product_id.name} product video`}
+                  aria-label={`${productName} product video`}
                   src={primaryVideo.url}
                   className="w-full h-full object-cover"
                   muted
@@ -136,14 +176,15 @@ export default function CartItem({
               </>
             ) : hasImages && primaryImage ? (
               <img
-                aria-label={`View ${item.product_id.name} details`}
+                aria-label={`View ${productName} details`}
                 src={primaryImage.url}
-                alt={item.product_id.name}
+                alt={productName}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs">
-                No media
+              <div className="w-full h-full flex flex-col items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs p-2 text-center">
+                <ImageIcon className="w-6 h-6 mb-1 opacity-40" />
+                <span>No media</span>
               </div>
             )}
 
@@ -172,11 +213,11 @@ export default function CartItem({
           <div>
             <div className="flex items-start justify-between gap-4 mb-2">
               <Link
-                href={`/product/${item.product_id._id}`}
+                href={productId ? `/product/${productId}` : "#"}
                 className="group/title flex-1 min-w-0"
               >
                 <h3 className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover/title:text-theme-hover-light dark:group-hover/title:text-theme-hover-dark transition-colors line-clamp-2">
-                  {item.product_id.name}
+                  {productName}
                 </h3>
               </Link>
 

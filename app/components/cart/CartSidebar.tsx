@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
@@ -102,25 +103,31 @@ export default function CartSidebar() {
               </p>
               <button
                 onClick={() => { closeCart(); router.push("/products"); }}
-                className="px-6 py-3 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
+                className="px-6 py-3 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm"
               >
                 START SHOPPING
               </button>
             </div>
           ) : (
             items.map((item: any) => {
-              const product = item.product_id;
+              const product = item.product_id && typeof item.product_id === "object" ? item.product_id : {};
+              const productName = item.product_name || product.name || "Product";
+              const productId = product._id || item.product_id;
               const image = getItemImage(item);
               return (
                 <div key={item._id} className="flex gap-3 sm:gap-4 py-3 sm:py-4 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-0">
                   {/* Image */}
-                  <div className="relative aspect-[4/5] w-16 sm:w-20 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden">
+                  <Link
+                    href={productId ? `/product/${productId}` : "#"}
+                    onClick={closeCart}
+                    className="relative aspect-[4/5] w-16 sm:w-20 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden block group"
+                  >
                     {image ? (
                       <Image
                         src={image}
-                        alt={product?.name || "Product"}
+                        alt={productName}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="80px"
                       />
                     ) : (
@@ -128,14 +135,18 @@ export default function CartSidebar() {
                         No image
                       </div>
                     )}
-                  </div>
+                  </Link>
 
                   {/* Details */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      <p className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
-                        {product?.name}
-                      </p>
+                      <Link
+                        href={productId ? `/product/${productId}` : "#"}
+                        onClick={closeCart}
+                        className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors truncate block"
+                      >
+                        {productName}
+                      </Link>
                       {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
                         <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5 truncate">
                           {Object.entries(item.variant_attributes).map(([k, v]) => `${k}: ${v}`).join(", ")}

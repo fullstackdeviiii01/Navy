@@ -9,6 +9,8 @@ export interface ICartItem {
   _id: mongoose.Types.ObjectId;
   product_id: mongoose.Types.ObjectId;
   variant_id?: mongoose.Types.ObjectId | null;
+  product_name?: string;
+  product_image?: string;
   quantity: number;
   price_at_addition: number;
   variant_attributes?: Record<string, string>;
@@ -44,6 +46,14 @@ const CartItemSchema = new Schema<ICartItem>(
     },
     variant_id: {
       type: Schema.Types.ObjectId,
+      default: null,
+    },
+    product_name: {
+      type: String,
+      default: null,
+    },
+    product_image: {
+      type: String,
       default: null,
     },
     quantity: {
@@ -165,7 +175,6 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
   if (coupon && coupon.is_active) {
     await this.populate({
       path: "items.product_id",
-      select: "category_id",
     });
 
     let applicableSubtotal = 0;

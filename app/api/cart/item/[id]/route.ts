@@ -72,8 +72,6 @@ export async function PUT(
 
     const populatedCart = await cart.populate({
       path: "items.product_id",
-      select:
-        "name images pricing inventory hasVariants variants variantOptions",
     });
 
     return NextResponse.json({
@@ -139,8 +137,6 @@ export async function DELETE(
 
     const populatedCart = await cart.populate({
       path: "items.product_id",
-      select:
-        "name images pricing inventory hasVariants variants variantOptions",
     });
 
     return NextResponse.json({

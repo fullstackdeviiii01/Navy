@@ -62,7 +62,7 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
             .map(
               (product: any) => `
             <tr>
-              <td style="font-weight: 600;">${product.name || "Handcrafted Luminaire"}</td>
+              <td style="font-weight: 600;">${product.name || "Product"}</td>
               <td class="text-right font-mono" style="font-weight: 700; color: #991B1B;">${product.inventory?.stock_quantity || 0}</td>
               <td class="text-right"><span class="badge-status badge-danger">OUT OF STOCK</span></td>
             </tr>
@@ -96,7 +96,7 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
             .map(
               (product: any) => `
             <tr>
-              <td style="font-weight: 600;">${product.name || "Handcrafted Luminaire"}</td>
+              <td style="font-weight: 600;">${product.name || "Product"}</td>
               <td class="text-right font-mono" style="font-weight: 700; color: #92400E;">${product.inventory?.stock_quantity || 0}</td>
               <td class="text-right font-mono" style="color: #6B7280;">${product.inventory?.low_stock_threshold || 5}</td>
               <td class="text-right"><span class="badge-status badge-warning">LOW STOCK</span></td>

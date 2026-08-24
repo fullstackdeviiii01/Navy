@@ -130,7 +130,7 @@ ProductSchema.methods.getVariantOptions = function (): VariantOption[] {
 
 ProductSchema.virtual("discount_percentage").get(function () {
   if (
-    this.pricing.compare_at_price &&
+    this.pricing?.compare_at_price &&
     this.pricing.compare_at_price > this.pricing.price
   ) {
     return Math.round(
@@ -146,5 +146,5 @@ ProductSchema.virtual("in_stock").get(function () {
   if (this.hasVariants) {
     return this.getAvailableVariants().length > 0;
   }
-  return this.inventory.stock_quantity > 0;
+  return (this.inventory?.stock_quantity ?? 0) > 0;
 });

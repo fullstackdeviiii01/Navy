@@ -1,7 +1,7 @@
 // app/(public)/pages/CheckoutPage.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const isOrderPlaced = useRef(false);
 
   const [guestInfo, setGuestInfo] = useState({
     email: "",
@@ -41,10 +42,13 @@ export default function CheckoutPage() {
 
   // React immediately whenever context cart updates (e.g. if modified in cart sidebar)
   useEffect(() => {
+    if (isOrderPlaced.current) return;
     if (!userLoading) {
       if (contextCart) {
         if (!contextCart.items || contextCart.items.length === 0) {
-          router.push("/cart");
+          if (!isOrderPlaced.current) {
+            router.push("/cart");
+          }
           return;
         }
         setCart(contextCart);
@@ -66,10 +70,13 @@ export default function CheckoutPage() {
   }, [contextCart, userLoading, dbUser, router]);
 
   const fetchCart = async () => {
+    if (isOrderPlaced.current) return;
     try {
       const data = await cartApi.getCart();
       if (!data.cart || data.cart.items.length === 0) {
-        router.push("/cart");
+        if (!isOrderPlaced.current) {
+          router.push("/cart");
+        }
         return;
       }
       setCart(data.cart);
@@ -216,8 +223,9 @@ export default function CheckoutPage() {
   };
 
   const handlePaymentSuccess = async (orderId: string) => {
-    await refreshCart();
-    router.push(`/order-confirmation/${orderId}`);
+    isOrderPlaced.current = true;
+    updateCart?.({ items: [], subtotal: 0, total: 0 });
+    router.replace(`/order-confirmation/${orderId}`);
   };
 
   const checkExistingUser = async (email: string): Promise<boolean> => {

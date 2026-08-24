@@ -11,6 +11,9 @@ interface AddToCartButtonProps {
   quantity: number;
   disabled?: boolean;
   variantId?: string;
+  variantAttributes?: Record<string, string>;
+  productName?: string;
+  productImage?: string;
   onSuccess?: () => void;
 }
 
@@ -19,6 +22,9 @@ export default function AddToCartButton({
   quantity,
   disabled,
   variantId,
+  variantAttributes,
+  productName,
+  productImage,
   onSuccess,
 }: AddToCartButtonProps) {
   const { refreshCart, updateCart, openCart } = useUser();
@@ -32,12 +38,32 @@ export default function AddToCartButton({
     }
 
     setIsAdding(true);
+    console.log("🛒 [AddToCartButton] Initiating Add to Cart:", {
+      productId,
+      quantity,
+      variantId,
+      variantAttributes,
+      productName,
+      productImage,
+    });
+
     try {
-      const data = await cartApi.addItem(productId, quantity, variantId);
+      const data = await cartApi.addItem(
+        productId,
+        quantity,
+        variantId,
+        variantAttributes,
+        productName,
+        productImage
+      );
+
+      console.log("✅ [AddToCartButton] Server returned cart response:", data);
+
       if (data?.cart) {
+        console.log("⚡ [AddToCartButton] Setting context cart immediately with:", data.cart);
         updateCart?.(data.cart);
       }
-      await refreshCart();
+
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
       openCart();
@@ -46,7 +72,7 @@ export default function AddToCartButton({
         onSuccess();
       }
     } catch (error) {
-      console.error("Failed to add to cart:", error);
+      console.error("❌ [AddToCartButton] Failed to add to cart:", error);
       alert("Failed to add item to cart. Please try again.");
     } finally {
       setIsAdding(false);

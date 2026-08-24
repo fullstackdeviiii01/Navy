@@ -42,6 +42,7 @@ export default function OrderSummaryCheckout({
         <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
           {cart.items.map((item: any) => {
             const itemImageUrl = getItemImage(item);
+            const itemName = item.product_name || item.product_id?.name || "Product";
 
             return (
               <div key={item._id} className="flex gap-3">
@@ -49,7 +50,7 @@ export default function OrderSummaryCheckout({
                   {itemImageUrl ? (
                     <Image
                       src={itemImageUrl}
-                      alt={item.product_id?.name || "Product"}
+                      alt={itemName}
                       fill
                       className="object-cover"
                       sizes="56px"
@@ -62,8 +63,13 @@ export default function OrderSummaryCheckout({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
-                    {item.product_id?.name}
+                    {itemName}
                   </p>
+                  {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
+                    <p className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark truncate">
+                      {Object.entries(item.variant_attributes).map(([k, v]) => `${k}: ${v}`).join(", ")}
+                    </p>
+                  )}
                   <div className="flex items-baseline justify-between mt-1 gap-2">
                     <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
                       Qty: {item.quantity}

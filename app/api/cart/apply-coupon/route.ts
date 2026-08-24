@@ -86,12 +86,10 @@ export async function POST(request: NextRequest) {
     if (user) {
       cart = await (Cart as any).findOne({ user_id: user._id }).populate({
         path: "items.product_id",
-        select: "name category_id pricing",
       });
     } else {
       cart = await (Cart as any).findOne({ session_id: sessionId }).populate({
         path: "items.product_id",
-        select: "name category_id pricing",
       });
     }
 
@@ -169,7 +167,6 @@ export async function POST(request: NextRequest) {
 
     cart = await cart.populate({
       path: "items.product_id",
-      select: "name images pricing inventory",
     });
 
     return NextResponse.json({

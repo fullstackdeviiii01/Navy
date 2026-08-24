@@ -123,6 +123,36 @@ export async function POST(request: NextRequest) {
       body.seo.slug = slug;
     }
 
+    if (!body.shipping) {
+      body.shipping = {
+        requires_shipping: true,
+        is_fragile: false,
+        weight: 1,
+        weight_unit: "kg",
+      };
+    }
+
+    if (!body.pricing) {
+      const prices = (body.variants || [])
+        .map((v: any) => v.price)
+        .filter((p: any) => typeof p === "number" && !isNaN(p));
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+      body.pricing = { price: minPrice, currency: "PKR" };
+    }
+
+    if (!body.inventory) {
+      const totalStock = (body.variants || []).reduce(
+        (sum: number, v: any) => sum + (v.stockQuantity || 0),
+        0
+      );
+      body.inventory = {
+        stock_quantity: totalStock,
+        low_stock_threshold: 10,
+        stock_status: totalStock > 0 ? "in_stock" : "out_of_stock",
+        track_inventory: true,
+      };
+    }
+
     // Set created_by
     body.created_by = adminUser._id;
 
@@ -149,7 +179,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: error.message || "Failed to create product", details: error.errors },
       { status: 500 }
     );
   }

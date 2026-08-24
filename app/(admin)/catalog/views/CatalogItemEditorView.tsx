@@ -228,7 +228,13 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
 
       if (hasVariants && colorItems.length > 0) {
         const updatedColorOptIdx = preparedVariantOptions.findIndex(
-          (opt) => opt.name === "color" || opt.displayName.toLowerCase() === "color"
+          (opt) =>
+            opt.name.toLowerCase() === "color" ||
+            opt.displayName.toLowerCase() === "color" ||
+            opt.name.toLowerCase().includes("finish") ||
+            opt.displayName.toLowerCase().includes("finish") ||
+            (opt.colorHexCodes && Object.keys(opt.colorHexCodes).length > 0) ||
+            (opt.colorImages && Object.keys(opt.colorImages).length > 0)
         );
 
         const colorHexCodes: Record<string, string> = {};
@@ -284,15 +290,40 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         }
 
         preparedVariants = preparedVariants.map((v) => {
-          const colorAttr = v.attributes?.find((a) => a.name === "color");
+          const colorAttr = v.attributes?.find(
+            (a) =>
+              a.name?.toLowerCase() === "color" ||
+              a.name?.toLowerCase().includes("finish") ||
+              a.name?.toLowerCase().includes("shade") ||
+              Boolean(colorImages[a.value])
+          );
           if (colorAttr && colorImages[colorAttr.value] && colorImages[colorAttr.value].length > 0) {
             return {
               ...v,
-              imageUrl: v.imageUrl || colorImages[colorAttr.value][0],
+              imageUrl: colorImages[colorAttr.value][0],
             };
           }
           return v;
         });
+
+        // If top-level images are empty, auto-populate from finish photos
+        if (allImages.length === 0) {
+          const finishImgs: string[] = [];
+          Object.values(colorImages).forEach((arr) => {
+            if (Array.isArray(arr)) {
+              arr.forEach((u) => {
+                if (u && !finishImgs.includes(u)) finishImgs.push(u);
+              });
+            }
+          });
+          if (finishImgs.length > 0) {
+            allImages = finishImgs.map((url, idx) => ({
+              url,
+              alt_text: `${formData.name} - ${idx + 1}`,
+              is_primary: idx === 0,
+            }));
+          }
+        }
       }
 
       const hasTopImages = allImages.length > 0;
@@ -300,14 +331,11 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
       const hasColorSectionMedia =
         hasVariants &&
         preparedVariantOptions.some((opt) => {
-          if (opt.name === "color" || opt.displayName?.toLowerCase() === "color") {
-            const cImgs = opt.colorImages || {};
-            const cVids = opt.colorVideos || {};
-            const hasImgs = Object.values(cImgs).some((arr: any) => Array.isArray(arr) && arr.length > 0);
-            const hasVids = Object.values(cVids).some((arr: any) => Array.isArray(arr) && arr.length > 0);
-            return hasImgs || hasVids;
-          }
-          return false;
+          const cImgs = opt.colorImages || {};
+          const cVids = opt.colorVideos || {};
+          const hasImgs = Object.values(cImgs).some((arr: any) => Array.isArray(arr) && arr.length > 0);
+          const hasVids = Object.values(cVids).some((arr: any) => Array.isArray(arr) && arr.length > 0);
+          return hasImgs || hasVids;
         });
 
       if (!hasTopImages && !hasTopVideos && !hasColorSectionMedia) {
@@ -328,6 +356,12 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         images: allImages,
         videos: allVideos,
         hasVariants,
+        shipping: existingProduct?.shipping || {
+          requires_shipping: true,
+          is_fragile: false,
+          weight: 1,
+          weight_unit: "kg",
+        },
       };
 
       if (!hasVariants) {

@@ -112,41 +112,67 @@ export default function FinishMatrixStudio({
   // Initialize colorItems and other variant options on mount or prop change
   useEffect(() => {
     const colorOpt = variantOptions.find(
-      (opt) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
+      (opt) =>
+        opt.name.toLowerCase() === "color" ||
+        opt.displayName?.toLowerCase() === "color" ||
+        opt.name.toLowerCase().includes("finish") ||
+        opt.displayName?.toLowerCase().includes("finish") ||
+        (opt.colorHexCodes && Object.keys(opt.colorHexCodes).length > 0) ||
+        (opt.colorImages && Object.keys(opt.colorImages).length > 0)
     );
+
     if (colorOpt && colorItems.length === 0) {
-      const rawHex: any = colorOpt.colorHexCodes || {};
-      const rawImgs: any = colorOpt.colorImages || {};
-      const rawVids: any = colorOpt.colorVideos || {};
+      let rawHex: any = colorOpt.colorHexCodes || {};
+      if (rawHex instanceof Map) rawHex = Object.fromEntries(rawHex);
+      let rawImgs: any = colorOpt.colorImages || {};
+      if (rawImgs instanceof Map) rawImgs = Object.fromEntries(rawImgs);
+      let rawVids: any = colorOpt.colorVideos || {};
+      if (rawVids instanceof Map) rawVids = Object.fromEntries(rawVids);
 
       const initialColors: ColorItem[] = colorOpt.values.map((val, idx) => {
-        const hexVal =
-          (typeof rawHex?.get === "function" ? rawHex.get(val) : rawHex?.[val]) ||
-          LUXURY_PALETTE_PRESETS.find((p) => p.name.toLowerCase() === val.toLowerCase())?.hex ||
-          "#5D4037";
+        let hexVal = rawHex?.[val];
+        if (!hexVal) {
+          const matchKey = Object.keys(rawHex).find((k) => k.toLowerCase() === val.toLowerCase());
+          if (matchKey) hexVal = rawHex[matchKey];
+        }
+        if (!hexVal) {
+          hexVal =
+            LUXURY_PALETTE_PRESETS.find((p) => p.name.toLowerCase() === val.toLowerCase())?.hex ||
+            "#5D4037";
+        }
 
-        let existing =
-          (typeof rawImgs?.get === "function" ? rawImgs.get(val) : rawImgs?.[val]) || [];
+        let existing = rawImgs?.[val];
+        if (!existing || existing.length === 0) {
+          const matchKey = Object.keys(rawImgs).find((k) => k.toLowerCase() === val.toLowerCase());
+          if (matchKey) existing = rawImgs[matchKey];
+        }
 
-        if (existing.length === 0 && variants.length > 0) {
+        if ((!existing || existing.length === 0) && variants.length > 0) {
           const matchedVar = variants.find((v) =>
-            v.attributes?.some((a) => a.name === "color" && a.value === val)
+            v.attributes?.some(
+              (a) =>
+                (a.name.toLowerCase() === "color" || a.name.toLowerCase().includes("finish")) &&
+                a.value.toLowerCase() === val.toLowerCase()
+            )
           );
           if (matchedVar?.imageUrl) {
             existing = [matchedVar.imageUrl];
           }
         }
 
-        let existingVids =
-          (typeof rawVids?.get === "function" ? rawVids.get(val) : rawVids?.[val]) || [];
+        let existingVids = rawVids?.[val];
+        if (!existingVids || existingVids.length === 0) {
+          const matchKey = Object.keys(rawVids).find((k) => k.toLowerCase() === val.toLowerCase());
+          if (matchKey) existingVids = rawVids[matchKey];
+        }
 
         return {
           id: `color-${idx}-${Date.now()}`,
           name: val,
           hex: hexVal,
-          existingImages: Array.isArray(existing) ? existing : [],
+          existingImages: Array.isArray(existing) ? existing : typeof existing === "string" ? [existing] : [],
           newFiles: [],
-          existingVideos: Array.isArray(existingVids) ? existingVids : [],
+          existingVideos: Array.isArray(existingVids) ? existingVids : typeof existingVids === "string" ? [existingVids] : [],
           newVideoFiles: [],
         };
       });
@@ -157,7 +183,11 @@ export default function FinishMatrixStudio({
     }
 
     const nonColorOptions = variantOptions.filter(
-      (opt) => opt.name !== "color" && opt.displayName?.toLowerCase() !== "color"
+      (opt) =>
+        opt.name.toLowerCase() !== "color" &&
+        opt.displayName?.toLowerCase() !== "color" &&
+        !opt.name.toLowerCase().includes("finish") &&
+        !opt.displayName?.toLowerCase().includes("finish")
     );
     const inputs: { [key: number]: string } = {};
     nonColorOptions.forEach((option, index) => {
@@ -167,7 +197,11 @@ export default function FinishMatrixStudio({
   }, []);
 
   const nonColorOptions = variantOptions.filter(
-    (opt) => opt.name !== "color" && opt.displayName?.toLowerCase() !== "color"
+    (opt) =>
+      opt.name.toLowerCase() !== "color" &&
+      opt.displayName?.toLowerCase() !== "color" &&
+      !opt.name.toLowerCase().includes("finish") &&
+      !opt.displayName?.toLowerCase().includes("finish")
   );
 
   const syncAllOptionsAndVariants = (
@@ -222,8 +256,13 @@ export default function FinishMatrixStudio({
         )
       );
 
-      const colorAttr = attrs.find((a) => a.name === "color");
-      const matchedColor = colorAttr ? validColors.find((c) => c.name.trim() === colorAttr.value) : null;
+      const colorAttr = attrs.find(
+        (a) =>
+          a.name.toLowerCase() === "color" ||
+          a.name.toLowerCase().includes("finish") ||
+          validColors.some((c) => c.name.trim().toLowerCase() === a.value.toLowerCase())
+      );
+      const matchedColor = colorAttr ? validColors.find((c) => c.name.trim().toLowerCase() === colorAttr.value.toLowerCase()) : null;
       let matchedImageUrl: string | undefined = undefined;
       if (matchedColor) {
         if (matchedColor.existingImages.length > 0) {
@@ -236,7 +275,7 @@ export default function FinishMatrixStudio({
       if (existingVariant) {
         return {
           ...existingVariant,
-          imageUrl: existingVariant.imageUrl || matchedImageUrl,
+          imageUrl: matchedImageUrl !== undefined ? matchedImageUrl : existingVariant.imageUrl,
         };
       }
 

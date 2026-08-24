@@ -11,6 +11,7 @@ import Product from "../../models/Product";
 import User from "../../models/User";
 import ShippingService from "../../models/ShippingService";
 import { ICartItem } from "../../models/Cart";
+import { getProductMainImage } from "../../../lib/utils/productImages";
 import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
@@ -45,8 +46,6 @@ export async function GET(request: NextRequest) {
 
       await cart.populate({
         path: "items.product_id",
-        select:
-          "name images pricing inventory hasVariants variants variantOptions",
       });
 
       if (cart.selected_shipping_service_id) {
@@ -69,8 +68,6 @@ export async function GET(request: NextRequest) {
 
     await cart.populate({
       path: "items.product_id",
-        select:
-        "name images pricing inventory hasVariants variants variantOptions",
     });
 
     if (cart.selected_shipping_service_id) {
@@ -96,9 +93,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { product_id, quantity, variant_id } = await request.json();
+    const body = await request.json();
+    console.log("📥 [API POST /api/cart] Received request body:", body);
+    const {
+      product_id,
+      quantity,
+      variant_id,
+      variant_attributes: clientAttributes,
+      product_name: clientProductName,
+      product_image: clientProductImage,
+    } = body;
 
     if (!product_id || !quantity || quantity < 1) {
+      console.warn("⚠️ [API POST /api/cart] Invalid product or quantity:", { product_id, quantity });
       return NextResponse.json(
         { error: "Invalid product or quantity" },
         { status: 400 }
@@ -119,36 +126,43 @@ export async function POST(request: NextRequest) {
 
     const product = await (Product as any).findById(product_id);
     if (!product) {
+      console.error("❌ [API POST /api/cart] Product not found for ID:", product_id);
       return NextResponse.json(
         { error: "Product not found" },
         { status: 404 }
       );
     }
 
-    let price = product.pricing.price;
-    let stockQuantity = product.inventory.stock_quantity;
-    let variantAttributes: Record<string, string> = {};
+    console.log("📦 [API POST /api/cart] Found product:", product.name, "(hasVariants:", product.hasVariants, ")");
+
+    let price = product.pricing?.price || 0;
+    let stockQuantity = product.inventory?.stock_quantity || 99;
+    let variantAttributes: Record<string, string> = clientAttributes || {};
 
     if (product.hasVariants) {
       if (!variant_id) {
+        console.warn("⚠️ [API POST /api/cart] Missing variant_id for variable product");
         return NextResponse.json(
           { error: "Variant selection required" },
           { status: 400 }
         );
       }
 
-      const variant = product.variants.find(
-        (v: any) => v._id?.toString() === variant_id
+      const targetVarId = variant_id.toString();
+      const variant = product.variants?.find(
+        (v: any) => (v._id?.toString() || String(v._id)) === targetVarId
       );
 
       if (!variant) {
+        console.error("❌ [API POST /api/cart] Variant not found for ID:", variant_id);
         return NextResponse.json(
           { error: "Variant not found" },
           { status: 404 }
         );
       }
 
-      if (!variant.isAvailable || variant.stockQuantity < quantity) {
+      if (variant.isAvailable === false || (typeof variant.stockQuantity === "number" && variant.stockQuantity < quantity)) {
+        console.warn("⚠️ [API POST /api/cart] Variant unavailable or insufficient stock:", variant.stockQuantity);
         return NextResponse.json(
           { error: "Variant unavailable or insufficient stock" },
           { status: 400 }
@@ -156,21 +170,37 @@ export async function POST(request: NextRequest) {
       }
 
       price = variant.price;
-      stockQuantity = variant.stockQuantity;
+      stockQuantity = typeof variant.stockQuantity === "number" ? variant.stockQuantity : stockQuantity;
 
       if (variant.attributes && Array.isArray(variant.attributes)) {
         variant.attributes.forEach((attr: any) => {
-          variantAttributes[attr.name] = attr.value;
+          if (attr.name && attr.value) {
+            variantAttributes[attr.name] = attr.value;
+          }
         });
       }
+      console.log("🎨 [API POST /api/cart] Matched variant price:", price, "attributes:", variantAttributes, "variant imageUrl:", variant.imageUrl);
     } else {
       if (stockQuantity < quantity) {
+        console.warn("⚠️ [API POST /api/cart] Simple product insufficient stock:", stockQuantity);
         return NextResponse.json(
           { error: "Insufficient stock" },
           { status: 400 }
         );
       }
     }
+
+    const resolvedProductName = clientProductName || product.name || "Product";
+    const resolvedImage =
+      clientProductImage ||
+      getProductMainImage(product, variant_id, variantAttributes) ||
+      product.images?.[0]?.url ||
+      "";
+
+    console.log("🖼️ [API POST /api/cart] Final resolved name and image:", {
+      name: resolvedProductName,
+      image: resolvedImage,
+    });
 
     let cart;
     let sessionId: string | null = null;
@@ -208,15 +238,24 @@ export async function POST(request: NextRequest) {
         );
       }
       existingItem.quantity += quantity;
+      existingItem.product_name = resolvedProductName;
+      if (resolvedImage) existingItem.product_image = resolvedImage;
+      if (Object.keys(variantAttributes).length > 0) {
+        existingItem.variant_attributes = variantAttributes;
+      }
+      console.log("🔄 [API POST /api/cart] Updated existing item in cart:", existingItem);
     } else {
-      const newItem: Omit<ICartItem, "_id" | "added_at"> = {
+      const newItem: any = {
         product_id: product._id,
         variant_id: variant_id ? new mongoose.Types.ObjectId(variant_id) : null,
+        product_name: resolvedProductName,
+        product_image: resolvedImage || undefined,
         quantity,
         price_at_addition: price,
         variant_attributes: variantAttributes,
       };
-      cart.items.push(newItem as ICartItem);
+      cart.items.push(newItem);
+      console.log("➕ [API POST /api/cart] Pushed new item to cart:", newItem);
     }
 
     const shippingServiceForCalc = cart.selected_shipping_service_id
@@ -228,11 +267,19 @@ export async function POST(request: NextRequest) {
     await cart.calculateTotals(couponForCalc, shippingServiceForCalc);
     await cart.save();
 
+    console.log("💾 [API POST /api/cart] Saved cart successfully. Total items:", cart.items.length);
+
     const populatedCart = await cart.populate({
       path: "items.product_id",
-      select:
-        "name images pricing inventory hasVariants variants variantOptions",
     });
+
+    console.log("📤 [API POST /api/cart] Populated cart response items:", populatedCart.items.map((i: any) => ({
+      product_name: i.product_name || i.product_id?.name,
+      product_image: i.product_image || i.product_id?.images?.[0]?.url,
+      qty: i.quantity,
+      price: i.price_at_addition,
+      variant_attributes: i.variant_attributes
+    })));
 
     const response = NextResponse.json({
       success: true,
@@ -246,7 +293,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error: any) {
-    console.error("Add to cart failed:", error);
+    console.error("💥 [API POST /api/cart] Add to cart error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to add item to cart" },
       { status: 500 }

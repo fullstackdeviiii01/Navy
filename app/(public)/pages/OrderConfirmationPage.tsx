@@ -524,15 +524,15 @@ export default function OrderConfirmationPage({ orderId }: Props) {
         <div className="pt-6 border-t border-theme-border-light dark:border-theme-border-dark flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <Link
             href={`/track-order?orderId=${order.order_number || order._id}`}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 sm:px-8 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all shadow-sm"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 py-3.5 sm:py-4 px-6 sm:px-8 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.2em] font-medium transition-all shadow-sm"
           >
-            <Truck className="w-4 h-4" />
+            <Truck className="w-4 h-4 text-white dark:text-neutral-900" />
             <span>Track Order Status</span>
           </Link>
 
           <Link
             href="/products"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 sm:px-8 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light text-xs uppercase tracking-[0.2em] font-medium transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 sm:px-8 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light text-xs uppercase tracking-[0.2em] font-medium transition-all"
           >
             <span>Continue Shopping</span>
             <ArrowRight className="w-4 h-4" />

@@ -13,6 +13,21 @@ import Loader from "../components/shared/Loader";
 
 const UserContext = createContext(null);
 
+export const getToken = () => {
+  if (typeof window === "undefined") return "";
+  const localToken =
+    localStorage.getItem("auth_token") || localStorage.getItem("__session");
+  if (localToken && localToken !== "undefined" && localToken !== "null") return localToken;
+  const match =
+    document.cookie.match(/(?:^|;\s*)auth_token=([^;]+)/) ||
+    document.cookie.match(/(?:^|;\s*)__session=([^;]+)/);
+  if (match) {
+    const val = decodeURIComponent(match[1]);
+    if (val && val !== "undefined" && val !== "null") return val;
+  }
+  return "";
+};
+
 export function UserProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
@@ -24,8 +39,13 @@ export function UserProvider({ children }) {
   const [sessionId, setSessionId] = useState(null);
 
   // Fetch user profile from MongoDB using JWT
-  const fetchUserProfile = useCallback(async (token) => {
+  const fetchUserProfile = useCallback(async (tokenParam) => {
     try {
+      const token = tokenParam || getToken();
+      if (!token) {
+        setDbUser(null);
+        return null;
+      }
       const response = await fetch("/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,14 +69,25 @@ export function UserProvider({ children }) {
     }
   }, []);
 
-  // Fetch user cart
-  const fetchCart = useCallback(async (token) => {
+  // Fetch user cart (unified for both authenticated and guest users)
+  const fetchCart = useCallback(async (tokenParam) => {
     try {
+      const token = tokenParam !== undefined ? tokenParam : getToken();
       const headers = {};
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }
-      const response = await fetch("/api/cart", { headers });
+      const storedSession =
+        typeof window !== "undefined"
+          ? localStorage.getItem("guest_session_id")
+          : null;
+      if (storedSession) {
+        headers["x-session-id"] = storedSession;
+      }
+      const response = await fetch("/api/cart", {
+        headers,
+        credentials: "include",
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -74,17 +105,8 @@ export function UserProvider({ children }) {
   }, []);
 
   const fetchGuestCart = useCallback(async () => {
-    try {
-      const response = await fetch("/api/cart");
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart);
-        return data.cart;
-      }
-    } catch (error) {
-      console.error("Error fetching guest cart:", error);
-    }
-  }, []);
+    return await fetchCart("");
+  }, [fetchCart]);
 
   // Check auth status on mount by calling /api/auth/me
   useEffect(() => {
@@ -92,20 +114,15 @@ export function UserProvider({ children }) {
 
     const checkAuth = async () => {
       try {
-        // Check if we have a token in localStorage
-        const token = localStorage.getItem("auth_token");
+        const token = getToken();
 
         if (!token) {
-          // No token — user is a guest
-          console.log("No token found in localStorage, user is guest");
           setAuthUser(null);
           setDbUser(null);
-          await fetchGuestCart();
-          setLoading(false);
+          await fetchCart("");
+          if (mounted) setLoading(false);
           return;
         }
-
-        console.log("Token found, verifying with server...");
 
         // Verify token with server
         const response = await fetch("/api/auth/me", {
@@ -118,25 +135,27 @@ export function UserProvider({ children }) {
 
         if (response.ok) {
           const userData = await response.json();
-          console.log("Token verified successfully, user:", userData.email);
           setAuthUser(userData);
+          localStorage.setItem("auth_token", token);
 
           // Fetch full profile and cart
-          const profile = await fetchUserProfile(token);
-          await fetchCart(token);
+          await Promise.all([
+            fetchUserProfile(token),
+            fetchCart(token),
+          ]);
         } else {
           // Token is invalid or expired — clear it
-          console.log("Token verification failed, clearing auth");
           localStorage.removeItem("auth_token");
           setAuthUser(null);
           setDbUser(null);
-          await fetchGuestCart();
+          await fetchCart("");
         }
       } catch (error) {
         console.error("Auth check failed:", error);
         localStorage.removeItem("auth_token");
         setAuthUser(null);
         setDbUser(null);
+        await fetchCart("");
       } finally {
         if (mounted) {
           setLoading(false);
@@ -193,6 +212,7 @@ export function UserProvider({ children }) {
 
     localStorage.removeItem("auth_token");
     document.cookie = "__session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     setAuthUser(null);
     setDbUser(null);
     setCart(null);
@@ -215,7 +235,7 @@ export function UserProvider({ children }) {
 
   // Refresh user data
   const refreshUser = async () => {
-    const token = localStorage.getItem("auth_token");
+    const token = getToken();
     if (token) {
       await fetchUserProfile(token);
     }
@@ -223,17 +243,12 @@ export function UserProvider({ children }) {
 
   // Refresh cart
   const refreshCart = async () => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      await fetchCart(token);
-    } else {
-      await fetchGuestCart();
-    }
+    return await fetchCart();
   };
 
   // Update user profile
   const updateUserProfile = async (updates) => {
-    const token = localStorage.getItem("auth_token");
+    const token = getToken();
     if (!token) return { success: false, error: "Not authenticated" };
 
     try {
