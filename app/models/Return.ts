@@ -5,6 +5,7 @@ import "./User";
 import "./Order";
 
 export interface IReturnItem {
+  order_item_id?: mongoose.Types.ObjectId | string;
   product_id: mongoose.Types.ObjectId;
   product_name: string;
   product_image?: string;
@@ -66,6 +67,7 @@ export interface IReturnDocument extends Document {
 
 const ReturnItemSchema = new Schema<IReturnItem>(
   {
+    order_item_id: { type: Schema.Types.ObjectId },
     product_id: { type: Schema.Types.ObjectId, ref: "Product", required: true },
     product_name: { type: String, required: true },
     product_image: { type: String },

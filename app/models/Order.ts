@@ -8,6 +8,7 @@ import "./Payment";
 import "./Invoice";
 
 export interface IOrderItem {
+  _id?: any;
   product_id: mongoose.Types.ObjectId;
   variant_id?: mongoose.Types.ObjectId;
   product_name: string;

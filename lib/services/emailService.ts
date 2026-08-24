@@ -285,7 +285,7 @@ export class EmailService {
               <p><strong>Order Number:</strong> ${order.order_number}</p>
               <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
               <p><strong>Items:</strong> ${returnRequest.items.length} item(s)</p>
-              <p><strong>Refund Amount:</strong> $${returnRequest.refund_amount.toFixed(2)}</p>
+              <p><strong>Refund Amount:</strong> Rs. ${Number(returnRequest.refund_amount || 0).toLocaleString()}</p>
               <p><strong>Requested At:</strong> ${new Date(returnRequest.created_at).toLocaleString()}</p>
               <br>
               <p>Please review the return request in the admin panel.</p>

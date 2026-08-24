@@ -107,10 +107,35 @@ export async function POST(request: NextRequest) {
     let calculatedRefundAmount = 0;
 
     for (const reqItem of items) {
-      const matchedOrderItem = order.items.find((oi: any) => {
-        const prodMatch = oi.product_id?.toString() === reqItem.product_id;
-        return prodMatch;
+      // 1. Try matching by subdocument _id
+      let matchedOrderItem = order.items.find((oi: any) => {
+        if (reqItem.order_item_id && oi._id) {
+          return oi._id.toString() === reqItem.order_item_id.toString();
+        }
+        if (reqItem._id && oi._id) {
+          return oi._id.toString() === reqItem._id.toString();
+        }
+        return false;
       });
+
+      // 2. If not matched by _id, match by product_id AND price / variant_id
+      if (!matchedOrderItem) {
+        matchedOrderItem = order.items.find((oi: any) => {
+          const prodMatch = (oi.product_id?._id || oi.product_id)?.toString() === (reqItem.product_id?._id || reqItem.product_id)?.toString();
+          const priceMatch = reqItem.price !== undefined ? Math.abs(oi.price - reqItem.price) < 0.01 : true;
+          const varMatch = reqItem.variant_id
+            ? (oi.variant_id?._id || oi.variant_id)?.toString() === (reqItem.variant_id?._id || reqItem.variant_id)?.toString()
+            : true;
+          return prodMatch && priceMatch && varMatch;
+        });
+      }
+
+      // 3. Fallback to product_id match
+      if (!matchedOrderItem) {
+        matchedOrderItem = order.items.find((oi: any) => {
+          return (oi.product_id?._id || oi.product_id)?.toString() === (reqItem.product_id?._id || reqItem.product_id)?.toString();
+        });
+      }
 
       if (!matchedOrderItem) {
         return NextResponse.json(
@@ -130,6 +155,7 @@ export async function POST(request: NextRequest) {
       }
 
       validatedItems.push({
+        order_item_id: (matchedOrderItem as any)._id,
         product_id: matchedOrderItem.product_id,
         product_name: matchedOrderItem.product_name,
         product_image: matchedOrderItem.product_image || reqItem.product_image,

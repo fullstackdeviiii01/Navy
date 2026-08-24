@@ -1,7 +1,7 @@
 // app/(admin)/returns/components/AdminReturnDetailModal.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   X,
   CheckCircle2,
@@ -53,13 +53,8 @@ export default function AdminReturnDetailModal({
   const [uploadingProof, setUploadingProof] = useState(false);
   const [processingSettle, setProcessingSettle] = useState(false);
 
-  useState(() => {
-    if (isOpen && returnId) {
-      fetchDetail();
-    }
-  });
-
-  const fetchDetail = async () => {
+  const fetchDetail = useCallback(async () => {
+    if (!returnId) return;
     setLoading(true);
     setError("");
     try {
@@ -70,7 +65,13 @@ export default function AdminReturnDetailModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [returnId]);
+
+  useEffect(() => {
+    if (isOpen && returnId) {
+      fetchDetail();
+    }
+  }, [isOpen, returnId, fetchDetail]);
 
   if (!isOpen) return null;
 
@@ -128,11 +129,14 @@ export default function AdminReturnDetailModal({
         body: formData,
       });
       const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to upload transfer proof");
+      }
       if (data.url) {
         setProofUrl(data.url);
       }
-    } catch (err) {
-      alert("Failed to upload transfer proof");
+    } catch (err: any) {
+      alert(err.message || "Failed to upload transfer proof");
     } finally {
       setUploadingProof(false);
     }
