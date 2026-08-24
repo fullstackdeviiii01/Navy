@@ -182,12 +182,12 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           label: "Reports & Analytics",
           icon: BarChart3,
         },
-        {
-          type: "link",
-          href: "/admin/activity",
-          label: "Activity Logs",
-          icon: Activity,
-        },
+        // {
+        //   type: "link",
+        //   href: "/admin/activity",
+        //   label: "Activity Logs",
+        //   icon: Activity,
+        // },
       ],
     },
   ];
