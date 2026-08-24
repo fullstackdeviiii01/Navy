@@ -99,19 +99,19 @@ export default function DownloadInvoiceButton({
           onClick={handleDownload}
           disabled={loading}
           aria-label={`Download invoice for order ${orderNumber}`}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark rounded-lg hover:bg-theme-hover-bg-light dark:hover:bg-theme-hover-bg-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.15em] bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <Loader2 size={15} className="animate-spin" />
+            <Loader2 size={13} className="animate-spin text-theme-hover-light" />
           ) : (
-            <Download size={15} />
+            <Download size={13} className="text-theme-hover-light" />
           )}
-          {loading ? "Generating..." : "Download Invoice"}
+          <span>{loading ? "Generating..." : "Download Invoice"}</span>
         </button>
       ) : (
-        <div className="flex items-center gap-2 px-4 py-2 text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark border border-dashed border-theme-border-light dark:border-theme-border-dark rounded-lg cursor-not-allowed select-none">
-          <FileText size={15} />
-          Invoice available after payment
+        <div className="inline-flex items-center gap-2 px-3.5 py-2 text-xs uppercase tracking-[0.1em] text-theme-text-muted-light dark:text-theme-text-muted-dark border border-dashed border-theme-border-light dark:border-theme-border-dark select-none">
+          <FileText size={13} />
+          <span>Available After Payment</span>
         </div>
       )}
 

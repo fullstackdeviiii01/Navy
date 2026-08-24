@@ -17,12 +17,13 @@ async function getCompanyInfo() {
   const settings = await (SiteSettings as any).findOne({ is_global_settings: true }).lean() as any;
   const info = settings?.company_info ?? {};
   return {
-    name:    info.company_name    ?? "Your Store",
-    address: info.company_address ?? "",
-    city:    info.company_city    ?? "",
-    email:   info.company_email   ?? "",
-    phone:   info.company_phone   ?? undefined,
-    website: info.company_website ?? undefined,
+    name:    info.company_name    ?? "Talal Wooden Lamps",
+    address: info.company_address ?? "Atelier Workshop, Lahore, Pakistan",
+    city:    info.company_city    ?? "Lahore, Pakistan",
+    email:   info.company_email   ?? "concierge@talalwoodenlamps.com",
+    phone:   info.company_phone   ?? "+92 300 1234567",
+    website: info.company_website ?? "www.talalwoodenlamps.com",
+    logo:    info.company_logo    ?? undefined,
   };
 }
 

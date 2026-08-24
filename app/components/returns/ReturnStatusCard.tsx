@@ -44,9 +44,20 @@ export default function ReturnStatusCard({
   const [payoutError, setPayoutError] = useState("");
   const [payoutSuccess, setPayoutSuccess] = useState("");
 
-  const isEligibleToRequest =
-    !returnDoc &&
-    (order.status === "delivered" || order.status === "shipped");
+  // Calculate strict 7-day return eligibility from time of delivery
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  const isDelivered = order.status === "delivered" || !!order.delivered_at;
+  const deliveryTimestamp = order.delivered_at
+    ? new Date(order.delivered_at).getTime()
+    : isDelivered
+    ? new Date(order.updated_at || order.placed_at).getTime()
+    : null;
+
+  const isWithin7Days = deliveryTimestamp
+    ? Date.now() - deliveryTimestamp <= SEVEN_DAYS_MS
+    : false;
+
+  const isEligibleToRequest = !returnDoc && isDelivered && isWithin7Days;
 
   const handlePayoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +103,7 @@ export default function ReturnStatusCard({
                 Returns & Exchange Guarantee
               </h3>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Eligible for replacement or refund within 30 days of delivery.
+                Eligible for replacement or refund within 7 days of delivery.
               </p>
             </div>
           </div>

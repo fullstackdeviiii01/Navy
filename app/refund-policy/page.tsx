@@ -35,7 +35,7 @@ export default function RefundPolicyPage() {
             Returns <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">& Refunds</span>
           </h1>
           <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark uppercase tracking-wider">
-            14-Day Satisfaction Window
+            7-Day Satisfaction Window
           </p>
         </div>
 
@@ -43,10 +43,10 @@ export default function RefundPolicyPage() {
         <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-10 space-y-8 text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              1. 14-Day Return Window
+              1. 7-Day Return Window
             </h2>
             <p>
-              We want you to be completely enamored with your new handcrafted luminaire. If the piece is not the right fit for your space, you may request a return or exchange within 14 days of receipt in original packaging and condition.
+              We want you to be completely enamored with your new handcrafted luminaire. If the piece is not the right fit for your space, you may request a return or exchange within 7 days of delivery in original packaging and condition.
             </p>
           </section>
 

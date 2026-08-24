@@ -29,6 +29,14 @@ export default function RequestReturnModal({
   order,
   onSuccess,
 }: RequestReturnModalProps) {
+  // Unique key helper for order line items
+  const getItemKey = (item: any, idx: number) => {
+    return (
+      item._id?.toString() ||
+      `${item.product_id?._id || item.product_id || "item"}_${item.variant_id || ""}_${idx}`
+    );
+  };
+
   // Selection state for ordered items
   const [selectedItems, setSelectedItems] = useState<
     Record<
@@ -40,8 +48,8 @@ export default function RequestReturnModal({
     >
   >(() => {
     const initial: Record<string, { selected: boolean; quantity: number }> = {};
-    order.items?.forEach((item: any, idx: number) => {
-      const key = `${item.product_id?._id || item.product_id || idx}`;
+    order?.items?.forEach((item: any, idx: number) => {
+      const key = getItemKey(item, idx);
       initial[key] = { selected: false, quantity: item.quantity || 1 };
     });
     return initial;
@@ -80,8 +88,8 @@ export default function RequestReturnModal({
   // Calculate estimated refund sum in real-time
   const calculateTotalRefund = () => {
     let sum = 0;
-    order.items?.forEach((item: any, idx: number) => {
-      const key = `${item.product_id?._id || item.product_id || idx}`;
+    order?.items?.forEach((item: any, idx: number) => {
+      const key = getItemKey(item, idx);
       const state = selectedItems[key];
       if (state?.selected) {
         sum += (item.price || 0) * (state.quantity || 1);
@@ -101,19 +109,25 @@ export default function RequestReturnModal({
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
+        if (file.size > 20 * 1024 * 1024) {
+          throw new Error(`File ${file.name} exceeds the 20MB limit.`);
+        }
+
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await fetch("/api/upload", {
+        const response = await fetch("/api/upload", {
           method: "POST",
           body: formData,
         });
 
-        if (!res.ok) {
-          throw new Error("Failed to upload image or video proof");
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to upload file");
         }
 
-        const data = await res.json();
+        const data = await response.json();
         if (data.url) {
           setMediaUrls((prev) => [...prev, data.url]);
         }
@@ -135,12 +149,13 @@ export default function RequestReturnModal({
 
     // Gather selected items
     const itemsToReturn: any[] = [];
-    order.items?.forEach((item: any, idx: number) => {
-      const key = `${item.product_id?._id || item.product_id || idx}`;
+    order?.items?.forEach((item: any, idx: number) => {
+      const key = getItemKey(item, idx);
       const state = selectedItems[key];
       if (state?.selected) {
         itemsToReturn.push({
           product_id: item.product_id?._id || item.product_id,
+          variant_id: item.variant_id?._id || item.variant_id,
           product_name: item.product_name || item.name || "Product",
           product_image:
             item.product_image || item.product_id?.images?.[0]?.url || item.image,
@@ -185,7 +200,7 @@ export default function RequestReturnModal({
         <div className="p-5 sm:p-6 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-widest text-theme-hover-light dark:text-theme-hover-dark font-semibold">
-              RETURNS & REFUNDS
+              7-DAY RETURN POLICY
             </span>
             <h2 className="text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Request Return for Order #{order.order_number}
@@ -222,7 +237,7 @@ export default function RequestReturnModal({
 
             <div className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60 border border-theme-border-light dark:border-theme-border-dark rounded-md bg-theme-bg-light/50 dark:bg-theme-bg-dark/30">
               {order.items?.map((item: any, idx: number) => {
-                const key = `${item.product_id?._id || item.product_id || idx}`;
+                const key = getItemKey(item, idx);
                 const state = selectedItems[key] || { selected: false, quantity: item.quantity || 1 };
                 const itemImg =
                   item.product_image ||
@@ -318,10 +333,8 @@ export default function RequestReturnModal({
             >
               <option value="defective">Defective / Not Working Properly</option>
               <option value="damaged">Damaged in Transit</option>
-              <option value="wrong_item">Wrong Item Received</option>
-              <option value="quality_issue">Quality Does Not Match Expectation</option>
-              <option value="not_as_described">Not as Described on Site</option>
-              <option value="changed_mind">Changed Mind</option>
+              <option value="wrong_item">Received Wrong Luminaire / Model</option>
+              <option value="quality_issue">Material / Craftsmanship Quality Concern</option>
               <option value="other">Other Reason</option>
             </select>
           </div>
@@ -329,29 +342,26 @@ export default function RequestReturnModal({
           {/* Step 3: Explanation */}
           <div className="space-y-2">
             <label className="block text-[11px] uppercase font-bold tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              3. Explanation / Notes (Optional)
+              3. Explanation / Issue Details (Optional)
             </label>
             <textarea
               rows={3}
+              placeholder="Describe the issue with your piece..."
               value={reasonDetails}
               onChange={(e) => setReasonDetails(e.target.value)}
-              placeholder="Describe the issue with the item(s)..."
-              className="w-full px-3.5 py-2.5 bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark text-xs rounded focus:outline-none focus:border-theme-hover-light"
+              className="w-full px-3.5 py-2.5 bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark text-xs rounded focus:outline-none focus:border-theme-hover-light resize-none"
             />
           </div>
 
           {/* Step 4: Photo / Video Evidence */}
           <div className="space-y-2">
             <label className="block text-[11px] uppercase font-bold tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              4. Photo / Video Evidence (Recommended)
+              4. Photos / Videos of Issue (Recommended)
             </label>
-            <div className="border border-dashed border-theme-border-light dark:border-theme-border-dark rounded-md p-4 bg-theme-bg-light/40 dark:bg-theme-bg-dark/20 flex flex-col items-center justify-center text-center space-y-2">
-              <Upload size={20} className="text-theme-text-muted-light" />
-              <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Upload photos or short video clip showing the issue or defect.
-              </p>
-              <label className="cursor-pointer px-4 py-1.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light rounded text-[11px] font-semibold transition-colors">
-                <span>{uploading ? "Uploading..." : "Browse Media Files"}</span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs rounded transition-colors">
+                <Upload size={14} className="text-theme-hover-light" />
+                <span>{uploading ? "Uploading Evidence..." : "Attach Photos / Videos"}</span>
                 <input
                   type="file"
                   multiple
@@ -361,70 +371,81 @@ export default function RequestReturnModal({
                   className="hidden"
                 />
               </label>
+              <span className="text-[10px] text-theme-text-muted-light">
+                Up to 20MB per file
+              </span>
             </div>
 
-            {/* Uploaded media previews */}
+            {/* Uploaded Previews */}
             {mediaUrls.length > 0 && (
-              <div className="grid grid-cols-4 gap-2 pt-2">
-                {mediaUrls.map((url, idx) => (
-                  <div
-                    key={idx}
-                    className="relative group rounded border border-theme-border-light dark:border-theme-border-dark overflow-hidden h-16 bg-black/20"
-                  >
-                    {url.endsWith(".mp4") || url.endsWith(".webm") ? (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Video size={20} className="text-white" />
-                      </div>
-                    ) : (
-                      <img src={url} alt="Proof" className="w-full h-full object-cover" />
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeMedia(idx)}
-                      className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              <div className="flex gap-2 flex-wrap pt-2">
+                {mediaUrls.map((url, i) => {
+                  const isVideo = url.endsWith(".mp4") || url.endsWith(".webm") || url.includes("video");
+                  return (
+                    <div
+                      key={i}
+                      className="relative w-16 h-16 rounded border border-theme-border-light overflow-hidden group bg-black/5"
                     >
-                      <Trash2 size={10} />
-                    </button>
-                  </div>
-                ))}
+                      {isVideo ? (
+                        <div className="w-full h-full flex items-center justify-center bg-black text-white">
+                          <Video size={16} />
+                        </div>
+                      ) : (
+                        <img src={url} alt="Evidence" className="w-full h-full object-cover" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeMedia(i)}
+                        className="absolute inset-0 bg-red-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
 
-          {/* Footer Bar / Submit */}
-          <div className="pt-4 border-t border-theme-border-light dark:border-theme-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Refund Breakdown Summary Box */}
+          <div className="p-4 rounded bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
             <div>
-              <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light block">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light block">
                 Estimated Refund Amount
               </span>
-              <p className="text-base font-serif font-bold text-theme-hover-light dark:text-theme-hover-dark">
+              <span className="text-base font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {formatPrice(totalRefund)}
-              </p>
+              </span>
             </div>
+            <div className="text-right text-[10px] text-theme-text-muted-light">
+              <p>Payout account will be collected</p>
+              <p>upon atelier review & approval.</p>
+            </div>
+          </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark rounded text-xs font-semibold hover:bg-theme-card-light transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={submitting || totalRefund === 0}
-                className="px-6 py-2.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text rounded text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin" />
-                    <span>Submitting Claim...</span>
-                  </>
-                ) : (
-                  <span>Submit Return Claim</span>
-                )}
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-theme-border-light dark:border-theme-border-dark">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-theme-border-light dark:border-theme-border-dark text-theme-text-muted-light hover:text-theme-text-primary-light text-xs font-semibold uppercase tracking-wider rounded transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || uploading}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-xs font-semibold uppercase tracking-wider rounded transition-all disabled:opacity-50"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>Submitting Request...</span>
+                </>
+              ) : (
+                <span>Submit Return Claim</span>
+              )}
+            </button>
           </div>
         </form>
       </div>

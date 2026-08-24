@@ -64,22 +64,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Verify order eligibility (must be delivered or shipped)
-    const eligibleStatuses = ["delivered", "shipped"];
-    if (!eligibleStatuses.includes(order.status)) {
+    // Verify order eligibility (must be delivered)
+    if (order.status !== "delivered" && !order.delivered_at) {
       return NextResponse.json(
-        { error: `Order status '${order.status}' is not eligible for return. Only delivered orders can be returned.` },
+        { error: "Return requests can only be initiated after your order has been delivered." },
         { status: 400 }
       );
     }
 
-    // Verify within 30-day window
-    const daysSinceOrder = Math.floor(
-      (Date.now() - new Date(order.placed_at).getTime()) / (1000 * 60 * 60 * 24)
-    );
-    if (daysSinceOrder > 30) {
+    // Verify within strict 7-day delivery window (calculated from delivery timestamp)
+    const deliveryTimestamp = order.delivered_at
+      ? new Date(order.delivered_at).getTime()
+      : new Date(order.updated_at || order.placed_at).getTime();
+
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    const timeSinceDelivery = Date.now() - deliveryTimestamp;
+
+    if (timeSinceDelivery > SEVEN_DAYS_MS) {
+      const daysPassed = Math.floor(timeSinceDelivery / (1000 * 60 * 60 * 24));
       return NextResponse.json(
-        { error: "The 30-day return policy window for this order has expired." },
+        {
+          error: `The 7-day return policy window for this order has expired (${daysPassed} days since delivery). Return requests must be submitted within 7 days of delivery.`,
+        },
         { status: 400 }
       );
     }
