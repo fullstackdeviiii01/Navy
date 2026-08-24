@@ -242,7 +242,7 @@ export default function AdminReturnDetailModal({
                     Customer
                   </span>
                   <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {returnDoc.user_id?.name || "Guest Patron"}
+                    {returnDoc.user_id?.name || "Guest Customer"}
                   </p>
                   <p className="text-[11px] text-theme-text-muted-light truncate">
                     {returnDoc.user_id?.email || returnDoc.guest_email || "N/A"}

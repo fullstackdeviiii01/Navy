@@ -15,7 +15,7 @@ export function generateCustomerHTML(data: any, dateRange: string, logoUrl?: str
         ${logoUrl ? `<img src="${logoUrl}" alt="Talal Wooden Lamps Logo" style="height: 48px; width: 48px; object-fit: contain; border-radius: 4px;" />` : ""}
         <div>
           <h1 class="brand-title">Talal Wooden Lamps</h1>
-          <p class="brand-subtitle">Patron & Client Acquisition Intelligence</p>
+          <p class="brand-subtitle">Customer Growth & Spending Report</p>
         </div>
       </div>
       <div class="report-meta-box">
@@ -26,36 +26,36 @@ export function generateCustomerHTML(data: any, dateRange: string, logoUrl?: str
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">New Registered Patrons</div>
+        <div class="stat-label">New Customers</div>
         <div class="stat-value">${newCustomers.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Active Ordering Patrons</div>
+        <div class="stat-label">Active Customers</div>
         <div class="stat-value">${activeCustomers.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Avg Orders / Patron</div>
+        <div class="stat-label">Avg Orders / Customer</div>
         <div class="stat-value">${Number(avgOrdersPerCust).toFixed(1)}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Avg Spend / Patron</div>
+        <div class="stat-label">Avg Spend / Customer</div>
         <div class="stat-value">Rs. ${Math.round(avgRevPerCust).toLocaleString()}</div>
       </div>
     </div>
 
     <div class="section-title">
-      <span>Top Atelier Patrons by Lifetime Spend</span>
-      <span class="count-tag">${topCustomers.length} Top Patrons</span>
+      <span>Top Customers by Total Spending</span>
+      <span class="count-tag">${topCustomers.length} Top Customers</span>
     </div>
 
     <table>
       <thead>
         <tr>
           <th style="width: 45px;">Rank</th>
-          <th>Patron Name</th>
-          <th>Contact Email</th>
+          <th>Customer Name</th>
+          <th>Email Address</th>
           <th class="text-right" style="width: 80px;">Orders</th>
-          <th class="text-right" style="width: 140px;">Total Expenditure</th>
+          <th class="text-right" style="width: 140px;">Total Spent</th>
         </tr>
       </thead>
       <tbody>
@@ -63,22 +63,18 @@ export function generateCustomerHTML(data: any, dateRange: string, logoUrl?: str
           topCustomers.length > 0
             ? topCustomers
                 .map(
-                  (customer: any, index: number) => `
+                  (c: any, index: number) => `
               <tr>
-                <td style="font-weight: 600; color: #8E7051;">#${index + 1}</td>
-                <td style="font-weight: 600;">${customer.name || "Guest Patron"}</td>
-                <td style="color: #6B7280; font-size: 10.5px;">${customer.email || "N/A"}</td>
-                <td class="text-right font-mono">${(customer.orders || 0).toLocaleString()}</td>
-                <td class="text-right font-mono" style="font-weight: 600; color: #241910;">Rs. ${Math.round(customer.revenue || 0).toLocaleString()}</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #8E7051;">#0${index + 1}</td>
+                <td style="font-weight: 600; color: #241910;">${c.name || "Customer"}</td>
+                <td style="color: #6B7280; font-family: monospace; font-size: 11px;">${c.email || "N/A"}</td>
+                <td class="text-right" style="font-weight: 600;">${c.orders || c.order_count || 0}</td>
+                <td class="text-right" style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #241910;">Rs. ${Math.round(c.totalSpent || c.total_spent || 0).toLocaleString()}</td>
               </tr>
             `
                 )
                 .join("")
-            : `
-              <tr>
-                <td colspan="5" class="text-center" style="color: #8C847B; padding: 24px;">No patron activity recorded in this period.</td>
-              </tr>
-            `
+            : `<tr><td colspan="5" style="text-align: center; color: #7A736C; padding: 24px;">No customer records found for this period.</td></tr>`
         }
       </tbody>
     </table>

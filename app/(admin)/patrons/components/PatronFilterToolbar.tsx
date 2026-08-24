@@ -41,7 +41,7 @@ export default function PatronFilterToolbar({
           <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-theme-text-muted-light w-3.5 h-3.5 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search patrons by name, email, or telephone..."
+            placeholder="Search customers by name, email, or phone..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder:text-theme-text-muted-light focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
@@ -58,9 +58,9 @@ export default function PatronFilterToolbar({
             }
             className="px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40 cursor-pointer"
           >
-            <option value="all">All Patron Types</option>
-            <option value="registered">Registered Members</option>
-            <option value="guest">Guest Checkouts</option>
+            <option value="all">All Customers</option>
+            <option value="registered">Registered Accounts</option>
+            <option value="guest">Guest Customers</option>
           </select>
 
           {/* Account Status */}
@@ -71,10 +71,10 @@ export default function PatronFilterToolbar({
             }
             className="px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40 cursor-pointer"
           >
-            <option value="all">All Account Status</option>
-            <option value="active">Active Members</option>
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="banned">Restricted / Banned</option>
+            <option value="banned">Blocked / Banned</option>
           </select>
 
           {/* Order Count */}
@@ -85,11 +85,11 @@ export default function PatronFilterToolbar({
             }
             className="px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40 cursor-pointer"
           >
-            <option value="all">Any Order Volume</option>
-            <option value="0">0 Acquisitions</option>
+            <option value="all">All Orders</option>
+            <option value="0">0 Orders</option>
             <option value="1-5">1 – 5 Orders</option>
             <option value="6-20">6 – 20 Orders</option>
-            <option value="20+">20+ VIP Orders</option>
+            <option value="20+">20+ Orders</option>
           </select>
 
           {/* Reset */}

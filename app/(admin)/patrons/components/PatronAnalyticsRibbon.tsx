@@ -1,7 +1,7 @@
 // app/(admin)/patrons/components/PatronAnalyticsRibbon.tsx
 "use client";
 
-import { Users, UserCheck, UserX, UserPlus, DollarSign, ShoppingBag } from "lucide-react";
+import { Users, UserCheck, UserPlus, DollarSign } from "lucide-react";
 
 interface PatronAnalyticsRibbonProps {
   stats: {
@@ -19,30 +19,30 @@ interface PatronAnalyticsRibbonProps {
 export default function PatronAnalyticsRibbon({ stats }: PatronAnalyticsRibbonProps) {
   const cards = [
     {
-      label: "Total Patrons",
+      label: "Total Customers",
       value: stats.totalCustomers.toLocaleString(),
-      subtext: `${stats.registeredCustomers} Members • ${stats.guestCustomers} Guests`,
+      subtext: `${stats.registeredCustomers} Registered • ${stats.guestCustomers} Guests`,
       icon: Users,
       badgeColor: "bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200",
     },
     {
-      label: "Active Store Patrons",
+      label: "Active Customers",
       value: stats.activeCustomers.toLocaleString(),
-      subtext: "Eligible for ordering",
+      subtext: "Able to place orders",
       icon: UserCheck,
       badgeColor: "bg-green-100 dark:bg-green-950/60 text-green-800 dark:text-green-300",
     },
     {
-      label: "Acquisitions This Month",
+      label: "New This Month",
       value: stats.newThisMonth.toLocaleString(),
-      subtext: "New accounts created",
+      subtext: "New accounts joined",
       icon: UserPlus,
       badgeColor: "bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300",
     },
     {
-      label: "Lifetime Patron Volume",
+      label: "Total Customer Spending",
       value: `Rs. ${Math.round(stats.totalRevenue).toLocaleString()}`,
-      subtext: `Avg. Rs. ${Math.round(stats.averageOrderValue).toLocaleString()} / Patron`,
+      subtext: `Avg. Rs. ${Math.round(stats.averageOrderValue).toLocaleString()} / Order`,
       icon: DollarSign,
       badgeColor: "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300",
     },
@@ -68,7 +68,7 @@ export default function PatronAnalyticsRibbon({ stats }: PatronAnalyticsRibbonPr
             <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {c.value}
             </p>
-            <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
               {c.subtext}
             </p>
           </div>

@@ -278,7 +278,7 @@ export default function CouponRulesModal({
               </label>
               <input
                 type="text"
-                placeholder="e.g. Atelier Launch Privilege"
+                placeholder="e.g. Special Holiday Discount"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
@@ -292,7 +292,7 @@ export default function CouponRulesModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/30">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-                Discount Mechanism
+                Discount Type
               </label>
               <select
                 value={formData.discount_type}
@@ -576,7 +576,7 @@ export default function CouponRulesModal({
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-                Redemptions Per Patron
+                Uses Allowed Per Customer
               </label>
               <input
                 type="number"

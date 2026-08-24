@@ -14,7 +14,7 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
         ${logoUrl ? `<img src="${logoUrl}" alt="Talal Wooden Lamps Logo" style="height: 48px; width: 48px; object-fit: contain; border-radius: 4px;" />` : ""}
         <div>
           <h1 class="brand-title">Talal Wooden Lamps</h1>
-          <p class="brand-subtitle">Atelier Inventory Valuation & Stock Audit</p>
+          <p class="brand-subtitle">Inventory & Stock Report</p>
         </div>
       </div>
       <div class="report-meta-box">
@@ -25,19 +25,19 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">Catalog Products</div>
+        <div class="stat-label">Total Products</div>
         <div class="stat-value">${totalProducts.toLocaleString()}</div>
       </div>
       <div class="stat-card" style="border-left-color: ${lowStockCount > 0 ? "#B45309" : "#8E7051"};">
-        <div class="stat-label">Low Stock Alerts</div>
+        <div class="stat-label">Low Stock Items</div>
         <div class="stat-value" style="color: ${lowStockCount > 0 ? "#B45309" : "#241910"};">${lowStockCount.toLocaleString()}</div>
       </div>
       <div class="stat-card" style="border-left-color: ${outOfStockCount > 0 ? "#B91C1C" : "#8E7051"};">
-        <div class="stat-label">Out of Stock Pieces</div>
+        <div class="stat-label">Out of Stock Items</div>
         <div class="stat-value" style="color: ${outOfStockCount > 0 ? "#B91C1C" : "#241910"};">${outOfStockCount.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Total Inventory Valuation</div>
+        <div class="stat-label">Total Inventory Value</div>
         <div class="stat-value">Rs. ${Math.round(totalInventoryValue).toLocaleString()}</div>
       </div>
     </div>
@@ -46,8 +46,8 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
       outOfStockProducts.length > 0
         ? `
       <div class="section-title">
-        <span style="color: #991B1B;">Out of Stock Luminaire Alert</span>
-        <span class="count-tag" style="color: #991B1B;">${outOfStockProducts.length} Items Depleted</span>
+        <span style="color: #991B1B;">Out of Stock Products</span>
+        <span class="count-tag" style="color: #991B1B;">${outOfStockProducts.length} Items</span>
       </div>
       <table>
         <thead>
@@ -60,11 +60,11 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
         <tbody>
           ${outOfStockProducts
             .map(
-              (product: any) => `
+              (p: any) => `
             <tr>
-              <td style="font-weight: 600;">${product.name || "Product"}</td>
-              <td class="text-right font-mono" style="font-weight: 700; color: #991B1B;">${product.inventory?.stock_quantity || 0}</td>
-              <td class="text-right"><span class="badge-status badge-danger">OUT OF STOCK</span></td>
+              <td style="font-weight: 600; color: #241910;">${p.name || "Product"}</td>
+              <td class="text-right" style="font-weight: 700; color: #B91C1C;">0 units</td>
+              <td class="text-right"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; background: #FEE2E2; color: #991B1B; font-size: 10px; font-weight: 700;">OUT OF STOCK</span></td>
             </tr>
           `
             )
@@ -78,28 +78,26 @@ export function generateInventoryHTML(data: any, logoUrl?: string): string {
     ${
       lowStockProducts.length > 0
         ? `
-      <div class="section-title">
-        <span style="color: #92400E;">Low Stock Threshold Warnings</span>
-        <span class="count-tag" style="color: #92400E;">${lowStockProducts.length} Items Below Threshold</span>
+      <div class="section-title" style="margin-top: 24px;">
+        <span style="color: #92400E;">Low Stock Products (Needs Restocking)</span>
+        <span class="count-tag" style="color: #92400E;">${lowStockProducts.length} Items</span>
       </div>
       <table>
         <thead>
           <tr>
             <th>Product Name</th>
             <th class="text-right" style="width: 120px;">Current Stock</th>
-            <th class="text-right" style="width: 120px;">Alert Threshold</th>
             <th class="text-right" style="width: 140px;">Status</th>
           </tr>
         </thead>
         <tbody>
           ${lowStockProducts
             .map(
-              (product: any) => `
+              (p: any) => `
             <tr>
-              <td style="font-weight: 600;">${product.name || "Product"}</td>
-              <td class="text-right font-mono" style="font-weight: 700; color: #92400E;">${product.inventory?.stock_quantity || 0}</td>
-              <td class="text-right font-mono" style="color: #6B7280;">${product.inventory?.low_stock_threshold || 5}</td>
-              <td class="text-right"><span class="badge-status badge-warning">LOW STOCK</span></td>
+              <td style="font-weight: 600; color: #241910;">${p.name || "Product"}</td>
+              <td class="text-right" style="font-weight: 700; color: #B45309;">${p.stock || p.quantity || 0} units</td>
+              <td class="text-right"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; background: #FEF3C7; color: #92400E; font-size: 10px; font-weight: 700;">LOW STOCK</span></td>
             </tr>
           `
             )

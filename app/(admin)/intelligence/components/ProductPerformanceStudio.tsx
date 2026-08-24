@@ -2,8 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, Package, TrendingUp } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Download } from "lucide-react";
 import { reportsApi } from "../../../../lib/api/reports";
 import { exportToPDF } from "../../components/reports/export/exportUtils";
 import Loader from "../../../components/shared/Loader";
@@ -64,10 +63,10 @@ export default function ProductPerformanceStudio({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-theme-surface-light dark:bg-theme-surface-dark p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark shadow-xs">
         <div>
           <h2 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Luminaire Catalog Popularity & Velocity
+            Product Sales & Performance
           </h2>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-            Unit sales, category distribution, and top-selling artisan designs.
+            Unit sales, category breakdown, and top-selling products.
           </p>
         </div>
 
@@ -77,7 +76,7 @@ export default function ProductPerformanceStudio({
           className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 rounded-lg text-xs font-semibold shadow-xs hover:shadow active:scale-[0.99] transition-all self-start sm:self-auto"
         >
           <Download className="w-3.5 h-3.5" />
-          <span>Export Luminaire PDF</span>
+          <span>Export Product PDF</span>
         </button>
       </div>
 
@@ -85,7 +84,7 @@ export default function ProductPerformanceStudio({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1 shadow-xs">
           <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
-            Active Catalog Models
+            Products Sold
           </span>
           <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {report.totalProducts || 0}
@@ -94,7 +93,7 @@ export default function ProductPerformanceStudio({
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1 shadow-xs">
           <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
-            Total Fixtures Sold
+            Total Units Sold
           </span>
           <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {report.totalUnitsSold || 0}
@@ -103,7 +102,7 @@ export default function ProductPerformanceStudio({
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1 shadow-xs">
           <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
-            Gross Catalog Volume
+            Total Product Revenue
           </span>
           <p className="text-xl sm:text-2xl font-serif font-bold text-emerald-600 dark:text-emerald-400">
             Rs. {Math.round(report.totalRevenue || 0).toLocaleString()}
@@ -116,15 +115,15 @@ export default function ProductPerformanceStudio({
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
           <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Model Fulfillment Breakdown
+              Product Sales Breakdown
             </h3>
           </div>
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-theme-card-light/70 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light font-semibold">
-                <th className="py-2.5 px-4">Luminaire Design</th>
+                <th className="py-2.5 px-4">Product Name</th>
                 <th className="py-2.5 px-4">Category</th>
-                <th className="py-2.5 px-4">Units Dispatched</th>
+                <th className="py-2.5 px-4">Units Sold</th>
                 <th className="py-2.5 px-4 text-right">Revenue</th>
               </tr>
             </thead>
@@ -138,7 +137,7 @@ export default function ProductPerformanceStudio({
                     {prod.category || "General"}
                   </td>
                   <td className="py-3 px-4 text-theme-text-secondary-light">
-                    {prod.unitsSold} units
+                    {prod.quantity} units
                   </td>
                   <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
                     Rs. {prod.revenue?.toLocaleString()}

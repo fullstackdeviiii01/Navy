@@ -116,7 +116,7 @@ export default function CarrierServiceModal({
               </label>
               <input
                 type="text"
-                placeholder="e.g. White-Glove Atelier Delivery"
+                placeholder="e.g. Express Courier Delivery"
                 value={formData.display_name}
                 onChange={(e) =>
                   setFormData({ ...formData, display_name: e.target.value })

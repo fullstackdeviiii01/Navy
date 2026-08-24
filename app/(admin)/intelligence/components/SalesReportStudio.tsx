@@ -103,7 +103,7 @@ export default function SalesReportStudio({
             {summary?.totalOrders || 0}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">
-            Fulfilled patron shipments
+            Fulfilled customer orders
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export default function SalesReportStudio({
             Rs. {Math.round(summary?.averageOrderValue || 0).toLocaleString()}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">
-            Ticket size per acquisition
+            Average spent per order
           </p>
         </div>
 
@@ -185,14 +185,14 @@ export default function SalesReportStudio({
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
           <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Leading Revenue Luminaires
+              Top Selling Products
             </h3>
           </div>
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-theme-card-light/70 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light font-semibold">
-                <th className="py-2.5 px-4">Luminaire Model</th>
-                <th className="py-2.5 px-4">Volume Sold</th>
+                <th className="py-2.5 px-4">Product Name</th>
+                <th className="py-2.5 px-4">Units Sold</th>
                 <th className="py-2.5 px-4 text-right">Revenue Generated</th>
               </tr>
             </thead>

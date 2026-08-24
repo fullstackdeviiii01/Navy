@@ -4,15 +4,14 @@
 import { useState } from "react";
 import {
   X,
-  User,
   Mail,
   Phone,
   MapPin,
   ShoppingBag,
-  DollarSign,
-  Calendar,
-  Shield,
   Heart,
+  Calendar,
+  DollarSign,
+  Shield,
   Clock,
 } from "lucide-react";
 
@@ -57,12 +56,12 @@ export default function PatronProfileModal({
         <div className="flex items-center justify-between p-5 border-b border-theme-border-light dark:border-theme-border-dark shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-800 dark:text-neutral-200 text-lg font-bold">
-              {customer.name ? customer.name.charAt(0).toUpperCase() : "P"}
+              {customer.name ? customer.name.charAt(0).toUpperCase() : "C"}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  {customer.name || "Private Patron"}
+                  {customer.name || "Customer"}
                 </h2>
                 <span
                   className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold ${
@@ -71,7 +70,7 @@ export default function PatronProfileModal({
                       : "bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300"
                   }`}
                 >
-                  {customer.isGuest ? "Guest Patron" : "Registered Member"}
+                  {customer.isGuest ? "Guest Customer" : "Registered Customer"}
                 </span>
               </div>
               <p className="text-xs text-theme-text-muted-light mt-0.5">
@@ -100,7 +99,7 @@ export default function PatronProfileModal({
                 : "border-transparent text-theme-text-secondary-light hover:text-theme-text-primary-light"
             }`}
           >
-            Patron Overview
+            Customer Overview
           </button>
           <button
             type="button"
@@ -134,7 +133,7 @@ export default function PatronProfileModal({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
                   <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
-                    Lifetime Spend
+                    Total Spent
                   </span>
                   <p className="text-base font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     Rs. {customer.total_spent?.toLocaleString() || "0"}
@@ -143,7 +142,7 @@ export default function PatronProfileModal({
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
                   <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
-                    Acquisitions
+                    Orders Placed
                   </span>
                   <p className="text-base font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {customer.order_count || 0} Orders
@@ -152,7 +151,7 @@ export default function PatronProfileModal({
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
                   <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
-                    Member Since
+                    Joined Date
                   </span>
                   <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {customer.customer_since
@@ -163,7 +162,7 @@ export default function PatronProfileModal({
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
                   <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
-                    Last Session
+                    Last Visit
                   </span>
                   <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {customer.last_login_at
@@ -176,7 +175,7 @@ export default function PatronProfileModal({
               {/* Contact Details */}
               <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/40 dark:bg-theme-bg-dark/20 space-y-2">
                 <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  Communication Channels
+                  Contact Information
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                   <div className="flex items-center gap-2">
@@ -223,7 +222,7 @@ export default function PatronProfileModal({
                 </div>
               ) : (
                 <div className="text-center py-8 text-theme-text-muted-light">
-                  No saved addresses found for this patron.
+                  No saved addresses found for this customer.
                 </div>
               )}
             </div>
@@ -232,11 +231,11 @@ export default function PatronProfileModal({
           {activeTab === "curation" && (
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Active Bag */}
+                {/* Active Cart */}
                 <div className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-2">
                   <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-1.5">
                     <ShoppingBag className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Active Bag ({customer.cart?.length || 0})</span>
+                    <span>Shopping Cart ({customer.cart?.length || 0})</span>
                   </h4>
                   {customer.cart && customer.cart.length > 0 ? (
                     <div className="space-y-1.5">
@@ -248,7 +247,7 @@ export default function PatronProfileModal({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-theme-text-muted-light text-[11px]">Bag is empty.</p>
+                    <p className="text-theme-text-muted-light text-[11px]">Cart is empty.</p>
                   )}
                 </div>
 
@@ -262,7 +261,7 @@ export default function PatronProfileModal({
                     <div className="space-y-1.5">
                       {customer.wishlist.map((item: any, i: number) => (
                         <div key={i} className="text-[11px] p-2 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg flex justify-between">
-                          <span className="truncate">{item.name || `Fixture #${i+1}`}</span>
+                          <span className="truncate">{item.name || `Product #${i+1}`}</span>
                         </div>
                       ))}
                     </div>
@@ -282,7 +281,7 @@ export default function PatronProfileModal({
             onClick={onClose}
             className="px-5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg shadow-xs hover:shadow active:scale-[0.99] transition-all"
           >
-            Close Dossier
+            Close
           </button>
         </div>
       </div>

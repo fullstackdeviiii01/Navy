@@ -288,7 +288,7 @@ export default function AdminReturnsDirectory() {
                     {/* Customer */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate max-w-[140px]">
-                        {ret.user_id?.name || "Guest Patron"}
+                        {ret.user_id?.name || "Guest Customer"}
                       </p>
                       <p className="text-[10px] text-theme-text-muted-light truncate max-w-[140px]">
                         {ret.user_id?.email || ret.guest_email || "N/A"}

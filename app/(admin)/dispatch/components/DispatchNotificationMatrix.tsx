@@ -1,7 +1,7 @@
 // app/(admin)/dispatch/components/DispatchNotificationMatrix.tsx
 "use client";
 
-import { ShoppingBag, RotateCcw, MessageSquare, Mail, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, RotateCcw, MessageSquare } from "lucide-react";
 
 interface EmailNotifications {
   contact_form: {
@@ -46,7 +46,7 @@ export default function DispatchNotificationMatrix({
 }: DispatchNotificationMatrixProps) {
   return (
     <div className="space-y-5 text-xs">
-      {/* 1. Order Acquisition & Status Notifications */}
+      {/* 1. Order & Shipping Notifications */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl p-5 sm:p-6 border border-theme-border-light dark:border-theme-border-dark shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
           <div className="p-2 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400">
@@ -54,10 +54,10 @@ export default function DispatchNotificationMatrix({
           </div>
           <div>
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Order Acquisition & Status Notifications
+              Order & Shipping Notifications
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Automated email triggers when orders are placed, confirmed, dispatched, or delivered.
+              Automated emails sent when customers place orders and when order status updates.
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function DispatchNotificationMatrix({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light mb-1.5">
-              Atelier Administrator Alert Email
+              Admin Order Alert Email
             </label>
             <input
               type="email"
@@ -84,7 +84,7 @@ export default function DispatchNotificationMatrix({
 
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light mb-1.5">
-              Order Confirmation Subject Template
+              Order Confirmation Subject
             </label>
             <input
               type="text"
@@ -122,7 +122,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Send Confirmation to Patron
+                Send Confirmation to Customer
               </span>
             </label>
 
@@ -140,7 +140,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Send Order Alert to Admin
+                Send New Order Alert to Admin
               </span>
             </label>
 
@@ -219,7 +219,7 @@ export default function DispatchNotificationMatrix({
         </div>
       </div>
 
-      {/* 2. Concierge Returns & Claim Alerts */}
+      {/* 2. Returns & Refunds Alerts */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl p-5 sm:p-6 border border-theme-border-light dark:border-theme-border-dark shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
           <div className="p-2 rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-400">
@@ -227,10 +227,10 @@ export default function DispatchNotificationMatrix({
           </div>
           <div>
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Concierge Returns & Claim Alerts
+              Returns & Refunds Email Alerts
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Automatic notifications across all return lifecycle states and refund disbursements.
+              Automatic status notifications for customer return requests, approvals, and refund payouts.
             </p>
           </div>
         </div>
@@ -270,7 +270,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Master Return Alerts System Enabled
+                Enable Return Email Alerts
               </span>
             </label>
           </div>
@@ -296,7 +296,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Claim Submission
+                Notify on Return Request Filed
               </span>
             </label>
 
@@ -314,7 +314,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Claim Approved
+                Notify on Return Approved
               </span>
             </label>
 
@@ -332,7 +332,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Package Received
+                Notify on Item Received
               </span>
             </label>
 
@@ -368,7 +368,7 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Refund Disbursed
+                Notify on Refund Sent
               </span>
             </label>
 
@@ -386,14 +386,14 @@ export default function DispatchNotificationMatrix({
                 className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Claim Rejected
+                Notify on Return Rejected
               </span>
             </label>
           </div>
         </div>
       </div>
 
-      {/* 3. Client Inquiries & Bespoke Communications */}
+      {/* 3. Contact Form Notifications */}
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl p-5 sm:p-6 border border-theme-border-light dark:border-theme-border-dark shadow-xs space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
           <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
@@ -401,10 +401,10 @@ export default function DispatchNotificationMatrix({
           </div>
           <div>
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Client Inquiries & Bespoke Communications
+              Contact Form Notifications
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Forwards messages submitted from the public contact and bespoke inquiry forms.
+              Forwards messages submitted from your website's contact form.
             </p>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default function DispatchNotificationMatrix({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light mb-1.5">
-              Concierge Recipient Email
+              Support Inbox Email
             </label>
             <input
               type="email"
@@ -464,7 +464,7 @@ export default function DispatchNotificationMatrix({
               className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
             />
             <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Enable Contact & Bespoke Form Forwarding
+              Enable Contact Form Forwarding
             </span>
           </label>
         </div>
