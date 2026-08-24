@@ -74,7 +74,8 @@ export default function AdminOrderDetailView({
           />
           {order.payment_method === "cod" &&
             order.status === "delivered" &&
-            order.payment_status !== "paid" && (
+            !["paid", "refunded", "partially_refunded", "cancelled"].includes(order.payment_status) &&
+            !["refunded", "cancelled", "returned"].includes(order.status) && (
               <button
                 onClick={async () => {
                   await adminOrdersApi.markPaid(order._id);
@@ -110,6 +111,10 @@ export default function AdminOrderDetailView({
                     className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full capitalize ${
                       order.payment_status === "paid"
                         ? "bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-200"
+                        : order.payment_status === "refunded"
+                        ? "bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200"
+                        : order.payment_status === "failed"
+                        ? "bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-200"
                         : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-200"
                     }`}
                   >

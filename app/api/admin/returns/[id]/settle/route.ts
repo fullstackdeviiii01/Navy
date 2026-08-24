@@ -4,8 +4,10 @@ import { getIdTokenFromHeader, verifyIdToken } from "../../../../../../lib/auth"
 import connectDB from "../../../../../../lib/db";
 import Return from "../../../../../models/Return";
 import Order from "../../../../../models/Order";
+import Payment from "../../../../../models/Payment";
 import User from "../../../../../models/User";
 import { EmailService } from "../../../../../../lib/services/emailService";
+import { InvoiceService } from "../../../../../../lib/services/invoiceService";
 
 export async function POST(
   request: NextRequest,
@@ -78,8 +80,9 @@ export async function POST(
     await returnDoc.save();
 
     // Update the associated order status to refunded
+    const orderId = returnDoc.order_id?._id || returnDoc.order_id;
     const updatedOrder = await Order.findByIdAndUpdate(
-      returnDoc.order_id,
+      orderId,
       {
         status: "refunded",
         payment_status: "refunded",
@@ -88,6 +91,22 @@ export async function POST(
       },
       { new: true }
     );
+
+    // Update payment record to refunded
+    await (Payment as any).findOneAndUpdate(
+      { order_id: orderId },
+      {
+        status: "refunded",
+        refunded_at: new Date(),
+      }
+    );
+
+    // Void the invoice
+    try {
+      await InvoiceService.voidForOrder(orderId.toString());
+    } catch (invErr) {
+      console.warn("Failed to void invoice on refund:", invErr);
+    }
 
     // Send confirmation email to customer
     try {

@@ -151,15 +151,23 @@ export default function FulfillmentDataTable({
                     <div className="space-y-1">
                       <span
                         className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                          order.payment_status === "paid"
+                          order.payment_status === "refunded"
+                            ? "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300"
+                            : order.payment_status === "paid"
                             ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
+                            : order.payment_status === "partially_refunded"
+                            ? "bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300"
                             : order.payment_method === "cod"
                             ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
                             : "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
                         }`}
                       >
-                        {order.payment_status === "paid"
+                        {order.payment_status === "refunded"
+                          ? "Refunded"
+                          : order.payment_status === "paid"
                           ? "Paid"
+                          : order.payment_status === "partially_refunded"
+                          ? "Partially Refunded"
                           : order.payment_method === "cod"
                           ? "COD (Unpaid)"
                           : "Pending Verification"}
@@ -183,8 +191,9 @@ export default function FulfillmentDataTable({
                   {/* Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="inline-flex items-center gap-1">
-                      {/* Mark Paid button if unpaid */}
-                      {order.payment_status !== "paid" && (
+                      {/* Mark Paid button only if truly unpaid and NOT refunded/cancelled */}
+                      {!["paid", "refunded", "partially_refunded", "cancelled"].includes(order.payment_status) &&
+                       !["cancelled", "refunded", "returned"].includes(order.status) && (
                         <button
                           type="button"
                           onClick={() => handleMarkPaymentReceived(order._id)}

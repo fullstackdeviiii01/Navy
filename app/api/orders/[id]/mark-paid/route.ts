@@ -46,6 +46,20 @@ export async function POST(
       );
     }
 
+    if (order.payment_status === "refunded" || order.status === "refunded") {
+      return NextResponse.json(
+        { error: "Cannot mark a refunded order as paid." },
+        { status: 400 }
+      );
+    }
+
+    if (order.status === "cancelled") {
+      return NextResponse.json(
+        { error: "Cannot mark a cancelled order as paid." },
+        { status: 400 }
+      );
+    }
+
     // Update order payment status
     order.payment_status = "paid";
     if (order.status === "pending") {

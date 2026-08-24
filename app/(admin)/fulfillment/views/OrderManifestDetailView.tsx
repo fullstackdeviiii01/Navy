@@ -262,12 +262,14 @@ export default function OrderManifestDetailView({
               </h3>
               <span
                 className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
-                  isPaid
+                  order.payment_status === "refunded"
+                    ? "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300"
+                    : isPaid
                     ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
                     : "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
                 }`}
               >
-                {isPaid ? "Paid" : "Pending"}
+                {order.payment_status === "refunded" ? "Refunded" : isPaid ? "Paid" : "Pending"}
               </span>
             </div>
 
@@ -322,8 +324,9 @@ export default function OrderManifestDetailView({
                 </div>
               )}
 
-              {/* Mark as Paid Action if unpaid */}
-              {!isPaid && (
+              {/* Mark as Paid Action ONLY if truly unpaid and NOT refunded/cancelled */}
+              {!isPaid && !["refunded", "partially_refunded", "cancelled"].includes(order.payment_status) &&
+               !["cancelled", "refunded", "returned"].includes(order.status) && (
                 <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
                   <button
                     type="button"
@@ -334,6 +337,14 @@ export default function OrderManifestDetailView({
                     <CheckCircle size={13} />
                     <span>{isMarkingPaid ? "Updating..." : "Mark as Paid"}</span>
                   </button>
+                </div>
+              )}
+
+              {/* Refund Notice if refunded */}
+              {(order.payment_status === "refunded" || order.status === "refunded") && (
+                <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 text-rose-800 dark:text-rose-300 text-xs">
+                  <p className="font-semibold">Refund Completed</p>
+                  <p className="text-[11px] opacity-80 mt-0.5">This order has been processed and refunded to the customer.</p>
                 </div>
               )}
             </div>
