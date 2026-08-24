@@ -19,7 +19,7 @@ export default function QuickActionHub() {
   const actions = [
     {
       label: "Add Product",
-      description: "Create new luminaire listing",
+      description: "Create new product listing",
       icon: Plus,
       href: "/admin/products/new",
       accent: "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900",

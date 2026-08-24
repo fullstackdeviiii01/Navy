@@ -533,7 +533,7 @@ export default function AdminReturnDetailModal({
                     >
                       <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-700 dark:text-emerald-300">
                         <ShieldCheck size={16} />
-                        <span>Confirm Refund Payout Disbursement</span>
+                        <span>Confirm Refund Payment</span>
                       </div>
                       <p className="text-[11px] text-theme-text-muted-light">
                         After transferring {formatPrice(returnDoc.refund_amount)} to the customer's account above, enter the transaction ID below to mark this claim as settled.

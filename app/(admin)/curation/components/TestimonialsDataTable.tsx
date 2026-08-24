@@ -56,7 +56,7 @@ export default function TestimonialsDataTable({
   if (reviews.length === 0) {
     return (
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-12 text-center text-xs text-theme-text-muted-light">
-        No patron testimonials found.
+        No customer reviews found.
       </div>
     );
   }
@@ -67,9 +67,9 @@ export default function TestimonialsDataTable({
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="bg-theme-card-light/70 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold">
-              <th className="py-3 px-4">Patron & Luminaire</th>
+              <th className="py-3 px-4">Customer & Product</th>
               <th className="py-3 px-4">Rating</th>
-              <th className="py-3 px-4">Testimonial Excerpt</th>
+              <th className="py-3 px-4">Review Text</th>
               <th className="py-3 px-4">Media</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4 text-right">Moderation Actions</th>
@@ -81,10 +81,10 @@ export default function TestimonialsDataTable({
                 key={r._id}
                 className="hover:bg-theme-card-light/40 dark:hover:bg-theme-card-dark/30 transition-colors"
               >
-                {/* Patron & Product */}
+                {/* Customer & Product */}
                 <td className="py-3.5 px-4 max-w-[200px]">
                   <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
-                    {r.user_id?.name || "Patron"}
+                    {r.user_id?.name || "Customer"}
                   </p>
                   <p className="text-[11px] text-theme-text-muted-light truncate">
                     {r.product_id?.name || "Product"}
@@ -92,7 +92,7 @@ export default function TestimonialsDataTable({
                   {r.verified_purchase && (
                     <span className="inline-flex items-center gap-0.5 text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
                       <ShieldCheck className="w-2.5 h-2.5" />
-                      Verified Collector
+                      Verified Buyer
                     </span>
                   )}
                 </td>

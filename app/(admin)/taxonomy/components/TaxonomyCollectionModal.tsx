@@ -216,7 +216,7 @@ export default function TaxonomyCollectionModal({
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Pendant Lights, Chandelier Atelier, Table Luminaires"
+              placeholder="e.g. Pendant Lights, Chandeliers, Table Lamps"
               required
               className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
             />

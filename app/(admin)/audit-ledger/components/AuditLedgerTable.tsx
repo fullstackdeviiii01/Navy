@@ -42,12 +42,12 @@ export default function AuditLedgerTable({
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="bg-theme-card-light/70 dark:bg-theme-card-dark/50 border-b border-theme-border-light dark:border-theme-border-dark text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold">
-              <th className="py-3 px-4">Patron Identity</th>
-              <th className="py-3 px-4">Auth Method</th>
-              <th className="py-3 px-4">IP Coordinates</th>
-              <th className="py-3 px-4">Client User-Agent</th>
-              <th className="py-3 px-4">Timestamp</th>
-              <th className="py-3 px-4 text-right">Audit Dossier</th>
+              <th className="py-3 px-4">User / Customer</th>
+              <th className="py-3 px-4">Login Method</th>
+              <th className="py-3 px-4">IP Address</th>
+              <th className="py-3 px-4">Browser / Device</th>
+              <th className="py-3 px-4">Login Time</th>
+              <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
@@ -101,7 +101,7 @@ export default function AuditLedgerTable({
                     type="button"
                     onClick={() => onViewUserDetails(a)}
                     className="p-1.5 text-theme-text-muted-light hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-                    title="Inspect Patron Dossier"
+                    title="View User Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>

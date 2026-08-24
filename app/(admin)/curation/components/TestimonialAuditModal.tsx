@@ -62,7 +62,7 @@ export default function TestimonialAuditModal({
         <div className="flex items-center justify-between p-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div>
             <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Testimonial Moderation & Audit
+              Customer Review Details
             </h3>
             <p className="text-xs text-theme-text-muted-light mt-0.5">
               Reviewing submission for: {review.product_id?.name}
@@ -79,15 +79,15 @@ export default function TestimonialAuditModal({
 
         {/* Content */}
         <div className="p-5 space-y-4 text-xs overflow-y-auto max-h-[70vh]">
-          {/* Patron Header */}
+          {/* Customer Info */}
           <div className="flex items-center justify-between p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center font-bold">
-                {review.user_id?.name ? review.user_id.name.charAt(0) : "P"}
+                {review.user_id?.name ? review.user_id.name.charAt(0) : "C"}
               </div>
               <div>
                 <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  {review.user_id?.name || "Patron"}
+                  {review.user_id?.name || "Customer"}
                 </p>
                 <p className="text-[11px] text-theme-text-muted-light">
                   {review.user_id?.email}
@@ -123,7 +123,7 @@ export default function TestimonialAuditModal({
           {review.images && review.images.length > 0 && (
             <div className="space-y-2 pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
               <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                Patron Uploaded Media ({review.images.length})
+                Customer Photos ({review.images.length})
               </span>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {review.images.map((img, i) => (

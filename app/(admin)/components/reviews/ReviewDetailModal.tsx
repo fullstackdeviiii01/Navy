@@ -126,7 +126,7 @@ export default function ReviewDetailModal({
 
               <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 p-4">
                 <h4 className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
-                  Patron Info
+                  Customer Info
                 </h4>
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">

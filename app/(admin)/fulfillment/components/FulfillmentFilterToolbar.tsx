@@ -38,7 +38,7 @@ export default function FulfillmentFilterToolbar({
         <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-theme-text-muted-light w-3.5 h-3.5 pointer-events-none" />
         <input
           type="text"
-          placeholder="Search by Order #, Patron Name, Email, or Phone..."
+          placeholder="Search by Order #, Customer Name, Email, or Phone..."
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
           className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder:text-theme-text-muted-light focus:outline-none focus:ring-2 focus:ring-neutral-500/40"

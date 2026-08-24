@@ -50,7 +50,7 @@ export function generateSalesHTML(
     </div>
 
     <div class="section-title">
-      <span>Top Selling Luminaires</span>
+      <span>Top Selling Products</span>
       <span class="count-tag">${topProducts.length} Products Tracked</span>
     </div>
 
@@ -58,7 +58,7 @@ export function generateSalesHTML(
       <thead>
         <tr>
           <th style="width: 45px;">Rank</th>
-          <th>Piece / Description</th>
+          <th>Product Name</th>
           <th class="text-right" style="width: 100px;">Units Sold</th>
           <th class="text-right" style="width: 130px;">Total Revenue</th>
         </tr>
@@ -72,7 +72,7 @@ export function generateSalesHTML(
               <tr>
                 <td style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #8E7051;">#0${index + 1}</td>
                 <td>
-                  <div style="font-weight: 600; color: #241910;">${product.name || "Handcrafted Luminaire"}</div>
+                  <div style="font-weight: 600; color: #241910;">${product.name || "Wooden Lamp"}</div>
                 </td>
                 <td class="text-right" style="font-weight: 600;">${product.quantity || 0}</td>
                 <td class="text-right" style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #241910;">Rs. ${Math.round(product.revenue || 0).toLocaleString()}</td>

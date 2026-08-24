@@ -96,7 +96,7 @@ function createPDFDocument(
       <body>
         ${bodyContent}
         <div class="report-footer">
-          <span>TALAL WOODEN LAMPS · CONFIDENTIAL ATELIER INTELLIGENCE</span>
+          <span>TALAL WOODEN LAMPS · CONFIDENTIAL BUSINESS REPORT</span>
           <span>Generated on ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" })}</span>
         </div>
       </body>
