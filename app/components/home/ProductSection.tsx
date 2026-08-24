@@ -51,39 +51,39 @@ export default function ProductSection({
   const displayedProducts = showAll ? products : products.slice(0, 8);
 
   return (
-    <section className={`py-8 sm:py-10 md:py-12 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
+    <section className={`py-4 sm:py-5 md:py-7 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 sm:mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2.5 sm:gap-3 mb-4 sm:mb-6">
           <div>
             {label && (
-              <p className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+              <p className="text-[10px] sm:text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
                 {label}
               </p>
             )}
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
               {title.split(" ")[0]}{" "}
               <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
                 {title.split(" ").slice(1).join(" ")}
               </span>
             </h2>
             {subtitle && (
-              <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-2">
+              <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1.5 sm:mt-2">
                 {subtitle}
               </p>
             )}
           </div>
           <Link
             href={viewAllLink}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
+            className="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs md:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
           >
-            VIEW ALL PIECES
-            <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+            <span>VIEW ALL PIECES</span>
+            <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1 duration-300" />
           </Link>
         </div>
 
         {/* 2-Row Responsive Grid: 4 cols on desktop (8 items), 3 on tablet, 2 on mobile */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {displayedProducts.map((product) => (
             <div key={product._id} className="h-full">
               <ProductCard product={product} />

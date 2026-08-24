@@ -420,7 +420,14 @@ export default function ProductDetailPageContent({ productId }: Props) {
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <RelatedProducts products={relatedProducts} />
+          <RelatedProducts
+            products={relatedProducts}
+            viewAllLink={
+              product.category_id?.slug
+                ? `/products?category=${product.category_id.slug}`
+                : "/products"
+            }
+          />
         )}
       </div>
     </div>

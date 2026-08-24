@@ -116,12 +116,12 @@ export default function StickyProductBar({
             {isVariableProduct && !selectedVariant ? (
               <button
                 onClick={onScrollToOptions}
-                className="px-6 py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs uppercase tracking-[0.15em] transition-colors whitespace-nowrap"
+                className="px-4 sm:px-6 py-3 sm:py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-[11px] sm:text-xs uppercase tracking-[0.15em] transition-colors whitespace-nowrap"
               >
                 SELECT OPTIONS
               </button>
             ) : (
-              <div className="min-w-[140px] sm:min-w-[180px]">
+              <div className="min-w-[120px] sm:min-w-[180px]">
                 <AddToCartButton
                   productId={product._id}
                   quantity={quantity}

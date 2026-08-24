@@ -105,12 +105,12 @@ export default function GuestOrderTrackingPage() {
         
         {/* Search Section */}
         {!order && (
-          <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-8 sm:p-10 shadow-sm max-w-xl mx-auto">
-            <div className="text-center mb-8 pb-6 border-b border-theme-border-light dark:border-theme-border-dark">
-              <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+          <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-5 sm:p-10 shadow-sm max-w-xl mx-auto">
+            <div className="text-center mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-theme-border-light dark:border-theme-border-dark">
+              <p className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
                 ORDER LOOKUP
               </p>
-              <h2 className="text-3xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+              <h2 className="text-2xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1.5 sm:mb-2">
                 Track <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your piece</span>
               </h2>
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">

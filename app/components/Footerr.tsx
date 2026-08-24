@@ -111,7 +111,7 @@ export default function Footerr() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-theme-card-light dark:bg-theme-card-dark border-t border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark transition-colors mt-6 sm:mt-8">
+    <footer className="bg-theme-card-light dark:bg-theme-card-dark border-t border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark transition-colors mt-0">
       
       {/* 1. TOP BRAND LOGO STRIP */}
       <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60">

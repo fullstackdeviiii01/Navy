@@ -256,7 +256,7 @@ export default function Header() {
 
               {/* Instant Professional Product-Only Search Modal / Dropdown */}
               {isSearchOpen && (
-                <div className="absolute right-0 mt-3 w-[310px] sm:w-[380px] md:w-[420px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-[-60px] sm:right-0 mt-3 w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] max-w-[420px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-3.5 sm:p-4 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="flex items-center justify-between pb-2 mb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
                     <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
                       PRODUCT SEARCH

@@ -68,11 +68,11 @@ export default function UserOrderDetailView({
 
             <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark overflow-hidden">
               {/* Header Banner */}
-              <div className="p-6 border-b border-theme-border-light dark:border-theme-border-dark">
+              <div className="p-4 sm:p-6 border-b border-theme-border-light dark:border-theme-border-dark">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <h1 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <h1 className="text-lg sm:text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Order Details
                       </h1>
                       <OrderStatusBadge status={order.status} />
@@ -83,40 +83,40 @@ export default function UserOrderDetailView({
                       <span>{new Date(order.placed_at).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
+                  <div className="flex items-center justify-between md:justify-end gap-4">
+                    <div className="text-left md:text-right">
                       <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
                         Total
                       </p>
-                      <p className="text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
+                      <p className="text-lg sm:text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
                         {formatPrice(order.pricing.total)}
                       </p>
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
                       <DownloadInvoiceButton
                         orderId={order._id}
                         orderNumber={order.order_number}
                         paymentStatus={order.payment_status}
                         isAdmin={false}
                       />
-                    </div>
 
-                    {canCancel && (
-                      <button
-                        onClick={onCancel}
-                        aria-label={`Cancel order ${order.order_number}`}
-                        className="px-3 py-2 text-xs uppercase tracking-wider text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    )}
+                      {canCancel && (
+                        <button
+                          onClick={onCancel}
+                          aria-label={`Cancel order ${order.order_number}`}
+                          className="px-3 py-2 text-xs uppercase tracking-wider text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Order Items */}
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 mb-4">
                   <Package size={14} aria-hidden="true" />
                   Pieces in this order
@@ -270,7 +270,7 @@ export default function UserOrderDetailView({
           {/* Sidebar - Right Side */}
           <div className="lg:col-span-1 space-y-6">
             {/* Order Summary */}
-            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
+            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6">
               <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark pb-3 border-b border-theme-border-light dark:border-theme-border-dark mb-4">
                 Price Breakdown
               </h3>
@@ -311,7 +311,7 @@ export default function UserOrderDetailView({
             </div>
 
             {/* Payment Information */}
-            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 space-y-4">
+            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
                 <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
                   <CreditCard size={14} aria-hidden="true" />
@@ -383,7 +383,7 @@ export default function UserOrderDetailView({
             </div>
 
             {/* Timeline */}
-            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
+            <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6">
               <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 pb-3 border-b border-theme-border-light dark:border-theme-border-dark mb-4">
                 <Calendar size={14} aria-hidden="true" />
                 Timeline

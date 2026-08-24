@@ -108,19 +108,19 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
   ];
 
   return (
-    <section className="bg-theme-card-light/50 dark:bg-theme-card-dark/40 border-y border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors">
+    <section className="bg-theme-card-light/50 dark:bg-theme-card-dark/40 border-y border-theme-border-light dark:border-theme-border-dark py-4 sm:py-5 md:py-7 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
           {/* Left Editorial Narrative Column (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
-            <div className="space-y-4">
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-5 sm:space-y-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
+                <span className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
                   CRAFT & INTEGRITY
                 </span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
                 The purity of <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">handmade light.</span>
               </h2>
 
@@ -129,10 +129,10 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
               </p>
 
               {/* 6 Craft Pillars with Geometric Diamond Bullets */}
-              <div className="grid grid-cols-1 gap-3.5 pt-2">
+              <div className="grid grid-cols-1 gap-3 sm:gap-3.5 pt-1 sm:pt-2">
                 {craftPillars.map((pillar, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    <div className="w-2 h-2 rotate-45 border border-theme-hover-light dark:border-theme-hover-dark bg-theme-hover-light/40 dark:bg-theme-hover-dark/40 shrink-0 mt-1.5" />
+                  <div key={idx} className="flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rotate-45 border border-theme-hover-light dark:border-theme-hover-dark bg-theme-hover-light/40 dark:bg-theme-hover-dark/40 shrink-0 mt-1.5" />
                     <span>
                       <strong className="font-semibold">{pillar.title}:</strong>{" "}
                       <span className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark">{pillar.desc}</span>
@@ -142,24 +142,24 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
               </div>
             </div>
 
-            <div className="pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+            <div className="pt-3 sm:pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
               <Link
                 href="/products?sort=popular"
-                className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group"
+                className="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group"
               >
                 <span>EXPLORE ALL BESTSELLERS</span>
-                <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+                <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1 duration-300" />
               </Link>
             </div>
           </div>
 
           {/* Right Column: 2 Top Sold Product Cards (7 Cols) */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-6">
             {topPieces.map((piece, index) => (
               <Link
                 key={piece._id || index}
                 href={`/product/${piece._id}`}
-                className="group flex flex-col justify-between border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark transition-all duration-300 overflow-hidden"
+                className="group flex flex-col justify-between border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark transition-all duration-300 overflow-hidden shadow-xs"
               >
                 {/* Product Image Showcase - Balanced Editorial Height (aspect 4/3) */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-theme-card-light dark:bg-theme-card-dark border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-center">
@@ -177,12 +177,12 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
                   )}
 
                   {/* Top Badges */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
-                    <span className="px-2 py-0.5 bg-black/75 backdrop-blur-xs text-white font-mono text-[9px] uppercase tracking-[0.12em]">
+                  <div className="absolute top-2 left-2 right-2 sm:top-2.5 sm:left-2.5 sm:right-2.5 flex items-center justify-between z-10">
+                    <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-black/75 backdrop-blur-xs text-white font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.12em]">
                       {piece.badge}
                     </span>
                     {Boolean(piece.purchaseCount && piece.purchaseCount > 0) && (
-                      <span className="px-2 py-0.5 bg-theme-primary text-theme-btn-text font-mono text-[9px] uppercase tracking-wider font-semibold">
+                      <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-theme-primary text-theme-btn-text font-mono text-[8px] sm:text-[9px] uppercase tracking-wider font-semibold">
                         {piece.purchaseCount} SOLD
                       </span>
                     )}
@@ -190,30 +190,25 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
                 </div>
 
                 {/* Card Details */}
-                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3">
+                <div className="p-3 sm:p-5 md:p-6 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
                   <div>
-                    <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark block mb-1">
+                    <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark block mb-0.5 sm:mb-1">
                       {piece.categoryName}
                     </span>
-                    <h3 className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light transition-colors leading-snug">
+                    <h3 className="text-xs sm:text-base lg:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light transition-colors leading-snug line-clamp-2">
                       {piece.name}
                     </h3>
                   </div>
 
-                  <div className="pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 flex items-center justify-between">
+                  <div className="pt-2 sm:pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 flex items-center justify-between">
                     <div>
-                      <span className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <span className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {formatPrice(piece.price)}
                       </span>
-                      {piece.comparePrice && piece.comparePrice > piece.price && (
-                        <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark line-through ml-2">
-                          {formatPrice(piece.comparePrice)}
-                        </span>
-                      )}
                     </div>
 
-                    <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light inline-flex items-center gap-1">
-                      VIEW PIECE
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light inline-flex items-center gap-1">
+                      <span className="hidden sm:inline">VIEW PIECE</span>
                       <ChevronsRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                     </span>
                   </div>

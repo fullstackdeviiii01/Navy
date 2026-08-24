@@ -7,9 +7,9 @@ import { ChevronsRight, Sparkles, Compass, Layers } from "lucide-react";
 
 export default function CollectionShowcase() {
   return (
-    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors overflow-hidden">
+    <section className="bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-4 sm:py-5 md:py-7 transition-colors overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
           
           {/* IMAGE SIDE: Large Architectural Lamp Image with Overlaid "VIEW COLLECTION" Button (6 Cols) */}
           <div className="lg:col-span-6 relative group overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light dark:bg-theme-card-dark">
@@ -35,20 +35,20 @@ export default function CollectionShowcase() {
               </div>
 
               {/* OVERLAID BUTTON: Right inside the image with luxury brass styling */}
-              <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10">
-                <div className="p-4 sm:p-6 bg-black/70 dark:bg-[#140E08]/80 backdrop-blur-md border border-white/15 dark:border-theme-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 group-hover:border-theme-hover-light">
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-8 sm:left-8 sm:right-8 z-10">
+                <div className="p-3 sm:p-6 bg-black/70 dark:bg-[#140E08]/80 backdrop-blur-md border border-white/15 dark:border-theme-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 transition-all duration-300 group-hover:border-theme-hover-light">
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4A359] block mb-1">
+                    <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4A359] block mb-0.5 sm:mb-1">
                       CURATED ANTHOLOGY
                     </span>
-                    <h3 className="text-lg sm:text-xl font-serif text-white leading-tight">
+                    <h3 className="text-base sm:text-xl font-serif text-white leading-tight">
                       Explore All 20 Pieces
                     </h3>
                   </div>
 
                   <Link
                     href="/products"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#A8752B] hover:bg-[#C99648] text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors shrink-0 active:scale-95 shadow-lg"
+                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2.5 sm:px-6 sm:py-3.5 bg-[#A8752B] hover:bg-[#C99648] text-white text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-colors shrink-0 active:scale-95 shadow-lg"
                     aria-label="View our handcrafted lamp collection"
                   >
                     <span>VIEW COLLECTION</span>
@@ -60,15 +60,15 @@ export default function CollectionShowcase() {
           </div>
 
           {/* TEXT SIDE: Editorial Narrative & Collection Philosophy (6 Cols) */}
-          <div className="lg:col-span-6 flex flex-col justify-between space-y-8">
-            <div className="space-y-5">
+          <div className="lg:col-span-6 flex flex-col justify-between space-y-6 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-5">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
+                <span className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
                   THE ATELIER PHILOSOPHY
                 </span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.12]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.12]">
                 Form, shadow, and the{" "}
                 <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
                   warmth of living spaces.

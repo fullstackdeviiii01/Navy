@@ -7,14 +7,14 @@ import { ChevronsRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-8 sm:py-10 md:py-12 transition-colors">
+    <section className="relative w-full bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark py-4 sm:py-6 md:py-8 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Asymmetric 2-Column Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
           
           {/* LEFT: Editorial Narrative & Action Hub (7 Columns) */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-5 sm:space-y-6">
+          <div className="lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5">
             
             {/* Top Atelier Tag */}
             <div className="inline-flex items-center gap-2.5 px-3 py-1 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark self-start">
@@ -25,7 +25,7 @@ export default function HeroSection() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.1] tracking-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.1] tracking-tight">
               Luminaires sculpted in{" "}
               <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark block sm:inline">
                 solid timber & brass.
@@ -38,18 +38,18 @@ export default function HeroSection() {
             </p>
 
             {/* Dual Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1">
               <Link
                 href="/products"
-                className="no-theme-hover inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-3.5 bg-theme-primary hover:bg-[#A8752B] dark:hover:bg-[#C99648] text-theme-btn-text hover:text-white dark:hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-md active:scale-95 group"
+                className="no-theme-hover inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 bg-theme-primary hover:bg-[#A8752B] dark:hover:bg-[#C99648] text-theme-btn-text hover:text-white dark:hover:text-white text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-md active:scale-95 group"
               >
                 <span className="text-inherit">EXPLORE THE COLLECTION</span>
-                <ChevronsRight className="w-4 h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-inherit" />
+                <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1.5 duration-300 text-inherit" />
               </Link>
 
               <Link
                 href="/categories"
-                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:bg-[#241910] dark:hover:bg-[#1A130D] hover:border-[#241910] dark:hover:border-[#1A130D] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-white dark:hover:text-[#F3EBDC] text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:bg-[#241910] dark:hover:bg-[#1A130D] hover:border-[#241910] dark:hover:border-[#1A130D] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-white dark:hover:text-[#F3EBDC] text-[11px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300"
               >
                 <span className="text-inherit">VIEW BY CATEGORY</span>
               </Link>

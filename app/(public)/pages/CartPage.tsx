@@ -118,7 +118,7 @@ export default function CartPage() {
             <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
               SECURE CHECKOUT
             </p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Your <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">basket</span>
             </h2>
           </div>

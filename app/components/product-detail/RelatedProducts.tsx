@@ -1,74 +1,99 @@
 // app/components/product-detail/RelatedProducts.tsx
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import ProductCard from "../product/ProductCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { ChevronsRight } from "lucide-react";
 
 interface RelatedProductsProps {
   products: any[];
   title?: string;
+  subtitle?: string;
+  label?: string;
+  viewAllLink?: string;
 }
 
-export default function RelatedProducts({ products, title = "You may also like" }: RelatedProductsProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 320;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
+export default function RelatedProducts({
+  products,
+  title = "Related Pieces",
+  subtitle = "Complementary handcrafted luminaires curated to illuminate and harmonize your interior spaces.",
+  label = "CURATED COMPANIONS",
+  viewAllLink = "/products",
+}: RelatedProductsProps) {
+  const [showAll, setShowAll] = useState(false);
 
   if (!products || products.length === 0) {
     return null;
   }
 
+  // Display up to 8 products initially (2 rows on desktop / 4 on mobile)
+  const displayedProducts = showAll ? products : products.slice(0, 8);
+
+  const titleParts = title.split(" ");
+  const firstWord = titleParts[0];
+  const restOfTitle = titleParts.slice(1).join(" ");
+
   return (
-    <section className="mt-4 sm:mt-5 pt-4 border-t border-theme-border-light dark:border-theme-border-dark" aria-labelledby="related-products-heading">
-      <div className="flex items-end justify-between mb-3 sm:mb-4">
+    <section
+      className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-theme-border-light dark:border-theme-border-dark"
+      aria-labelledby="related-products-heading"
+    >
+      {/* Section Header - Exactly matched to Homepage ProductSection */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2.5 sm:gap-3 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
         <div>
-          <p className="text-[10px] font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
-            CURATED PIECES
-          </p>
-          <h2 id="related-products-heading" className="text-xl sm:text-2xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {title}
+          {label && (
+            <p className="text-[10px] sm:text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
+              {label}
+            </p>
+          )}
+          <h2
+            id="related-products-heading"
+            className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight"
+          >
+            {firstWord}{" "}
+            {restOfTitle && (
+              <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
+                {restOfTitle}
+              </span>
+            )}
           </h2>
+          {subtitle && (
+            <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1.5 sm:mt-2">
+              {subtitle}
+            </p>
+          )}
         </div>
 
-        <div className="flex gap-2" role="group" aria-label="Scroll related products">
-          <button
-            onClick={() => scroll("left")}
-            className="flex items-center justify-center p-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="flex items-center justify-center p-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        <Link
+          href={viewAllLink}
+          className="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs md:text-sm font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors group shrink-0"
+        >
+          <span>VIEW ALL PIECES</span>
+          <ChevronsRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1 duration-300" />
+        </Link>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        role="list"
-      >
-        {products.map((product) => (
-          <div key={product._id} className="flex-none w-64 sm:w-72" role="listitem">
+      {/* 2-Row Responsive Grid: 4 cols on desktop, 3 on tablet, 2 on mobile */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
+        {displayedProducts.map((product) => (
+          <div key={product._id} className="h-full">
             <ProductCard product={product} />
           </div>
         ))}
       </div>
+
+      {/* Action Button if more products exist */}
+      {products.length > 8 && (
+        <div className="mt-8 sm:mt-10 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="px-8 py-3.5 sm:py-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.2em] font-medium transition-colors"
+          >
+            {showAll ? "SHOW LESS" : `SHOW ALL (${products.length - 8} MORE)`}
+          </button>
+        </div>
+      )}
     </section>
   );
 }
