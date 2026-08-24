@@ -133,7 +133,7 @@ export class EmailService {
   static async sendOrderConfirmationEmail(order: any): Promise<void> {
     const config = await this.getConfiguration();
 
-    if (!config.email_notifications.order_confirmation.enabled) {
+    if (!config.email_notifications?.order_confirmation?.enabled) {
       console.log("📧 [EMAIL DEBUG] Order confirmation emails are disabled");
       return;
     }
@@ -144,37 +144,66 @@ export class EmailService {
     const html = orderConfirmationTemplate(order);
 
     const customerEmail =
-      order.order_type === "guest" ? order.guest_info.email : order.user_id.email;
+      order.order_type === "guest"
+        ? order.guest_info?.email
+        : (order.user_id?.email || order.guest_info?.email);
     const customerName =
-      order.order_type === "guest" ? order.guest_info.name : order.user_id.name;
+      order.order_type === "guest"
+        ? order.guest_info?.name
+        : (order.user_id?.name || order.guest_info?.name || "Customer");
 
-    // Send to customer — respect email_notifications preference
-    if (config.email_notifications.order_confirmation.send_to_customer) {
-      const canSend = await this.isUserEmailEnabled(customerEmail);
-      if (canSend) {
-        await this.sendEmail({
-          to: customerEmail,
-          subject: config.email_notifications.order_confirmation.subject.replace(
+    // 1. Send to customer
+    if (config.email_notifications.order_confirmation.send_to_customer && customerEmail) {
+      try {
+        const canSend = await this.isUserEmailEnabled(customerEmail);
+        if (canSend) {
+          const subjectTemplate =
+            config.email_notifications.order_confirmation.subject ||
+            "Order Confirmation - {{order_number}}";
+          const subject = subjectTemplate.replace(
             "{{order_number}}",
-            order.order_number
-          ),
-          html,
-        });
-      } else {
-        console.log(`📧 [EMAIL DEBUG] User has disabled email notifications: ${customerEmail}`);
+            order.order_number || ""
+          );
+
+          await this.sendEmail({
+            to: customerEmail,
+            subject,
+            html,
+          });
+          console.log(`✅ [EMAIL DEBUG] Order confirmation sent to customer: ${customerEmail}`);
+        } else {
+          console.log(`📧 [EMAIL DEBUG] User has disabled email notifications: ${customerEmail}`);
+        }
+      } catch (custErr) {
+        console.error("❌ [EMAIL DEBUG] Error sending customer order confirmation email:", custErr);
       }
     }
 
-    // Send to admin — always send, not subject to user preference
+    // 2. Send to admin (Dedicated Admin Order Received Template)
+    const adminEmail =
+      config.email_notifications.order_confirmation.admin_email ||
+      config.sender_info?.from_email ||
+      config.smtp_settings?.auth_user;
+
     if (
       config.email_notifications.order_confirmation.send_to_admin &&
-      config.email_notifications.order_confirmation.admin_email
+      adminEmail
     ) {
-      await this.sendEmail({
-        to: config.email_notifications.order_confirmation.admin_email,
-        subject: `New ${order.order_type === "guest" ? "Guest" : "Registered"} Order: ${order.order_number} from ${customerName}`,
-        html,
-      });
+      try {
+        const { adminOrderReceivedTemplate } = await import(
+          "../../lib/emailTemplates/adminOrderReceived"
+        );
+        const adminHtml = adminOrderReceivedTemplate(order);
+
+        await this.sendEmail({
+          to: adminEmail,
+          subject: `📦 [New Order Received] Order #${order.order_number} from ${customerName}`,
+          html: adminHtml,
+        });
+        console.log(`✅ [EMAIL DEBUG] Order notification sent to admin: ${adminEmail}`);
+      } catch (adminErr) {
+        console.error("❌ [EMAIL DEBUG] Error sending admin order notification email:", adminErr);
+      }
     }
   }
 
@@ -271,8 +300,12 @@ export class EmailService {
       }
 
       // Send to admin — always send, not subject to user preference
-      const adminEmail = config.email_notifications.return_notifications.admin_email;
-      const notifyAdmin = config.email_notifications.return_notifications.notify_on_request;
+      const adminEmail =
+        config.email_notifications.return_notifications?.admin_email ||
+        config.email_notifications.order_confirmation?.admin_email ||
+        config.sender_info.from_email ||
+        config.smtp_settings.auth_user;
+      const notifyAdmin = config.email_notifications.return_notifications?.notify_on_request ?? true;
 
       if (adminEmail && notifyAdmin) {
         await this.sendEmail({

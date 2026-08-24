@@ -1,28 +1,24 @@
 // lib/emailTemplates/returnRequest.ts
 export const returnRequestTemplate = (returnRequest: any, order: any) => {
-  const itemsList = (returnRequest.items || [])
-    .map(
-      (item: any) => `
-      <div style="padding: 10px 0; border-bottom: 1px solid #e5e5e5;">
-        <div style="font-weight: 600; color: #333; margin-bottom: 5px;">${item.product_name}</div>
-        ${
-          item.variant_attributes && Object.keys(item.variant_attributes).length > 0
-            ? Object.entries(item.variant_attributes)
-                .map(
-                  ([key, value]) =>
-                    `<span style="display: inline-block; background-color: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 3px; font-size: 11px; margin-right: 5px;">${key}: ${value}</span>`
-                )
-                .join("")
-            : ""
-        }
-        <div style="color: #666; font-size: 14px; margin-top: 5px;">
-          Quantity: ${item.quantity} × Rs. ${Number(item.price || 0).toLocaleString()} = Rs. ${(
-        (item.price || 0) * (item.quantity || 1)
-      ).toLocaleString()}
-        </div>
-      </div>
-    `
-    )
+  const customerName =
+    order.order_type === "guest"
+      ? order.guest_info?.name
+      : (order.user_id?.name || order.guest_info?.name || "Valued Patron");
+
+  const itemsHtml = (returnRequest.items || [])
+    .map((item: any) => {
+      return `
+        <tr>
+          <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #1f2937;">
+            <strong>${item.product_name || "Item"}</strong>
+            <div style="font-size: 11px; color: #6b7280; margin-top: 2px;">Reason: ${item.reason || "Inspection / Exchange"}</div>
+          </td>
+          <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #1f2937; text-align: center;">
+            ${item.quantity || 1}
+          </td>
+        </tr>
+      `;
+    })
     .join("");
 
   return `
@@ -31,120 +27,79 @@ export const returnRequestTemplate = (returnRequest: any, order: any) => {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        body { 
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-          line-height: 1.6; 
-          color: #333; 
-          margin: 0;
-          padding: 0;
-          background-color: #f5f5f5;
-        }
-        .container { 
-          max-width: 600px; 
-          margin: 0 auto; 
-          background-color: #ffffff;
-        }
-        .header { 
-          background: #111827; 
-          color: white; 
-          padding: 40px 20px; 
-          text-align: center; 
-        }
-        .header h1 {
-          margin: 0 0 10px 0;
-          font-size: 24px;
-          font-weight: 600;
-        }
-        .content { 
-          padding: 30px 20px;
-        }
-        .info-box {
-          background: #f9fafb;
-          padding: 20px;
-          border-radius: 8px;
-          margin: 20px 0;
-          border: 1px solid #e5e7eb;
-        }
-        .info-box p {
-          margin: 8px 0;
-          font-size: 14px;
-        }
-        .section-title {
-          font-size: 16px;
-          font-weight: 600;
-          color: #111827;
-          margin: 25px 0 15px 0;
-        }
-        .items-list {
-          background: #ffffff;
-          padding: 15px;
-          border-radius: 8px;
-          border: 1px solid #e5e7eb;
-        }
-        .next-steps {
-          margin-top: 30px;
-          padding: 20px;
-          background: #fffbeb;
-          border-left: 4px solid #f59e0b;
-          border-radius: 4px;
-        }
-        .next-steps p {
-          margin: 5px 0;
-          font-size: 13px;
-        }
-        .footer { 
-          text-align: center; 
-          padding: 20px;
-          background-color: #f9fafb;
-          color: #888; 
-          font-size: 12px;
-          border-top: 1px solid #e5e5e5;
-        }
-      </style>
+      <title>Return Request Received - ${returnRequest.rma_number}</title>
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>Return Claim Received</h1>
-          <p style="margin: 5px 0; opacity: 0.8; font-size: 14px;">Order #${order.order_number}</p>
-        </div>
+    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; background-color: #f8fafc;">
+      <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);">
         
-        <div class="content">
-          <p style="font-size: 15px;">Hello,</p>
-          <p>We have received your return claim for Order <strong>#${order.order_number}</strong>.</p>
-          
-          <div class="info-box">
-            <p><strong>RMA Number:</strong> <span style="font-family: monospace; color: #111827; font-weight: bold;">${returnRequest.rma_number}</span></p>
-            <p><strong>Claim Status:</strong> Under Review</p>
-            <p><strong>Claimed Reason:</strong> ${returnRequest.return_reason?.replace("_", " ")}</p>
-            <p><strong>Estimated Refund:</strong> Rs. ${Number(returnRequest.refund_amount || 0).toLocaleString()}</p>
-          </div>
-          
-          <h3 class="section-title">Items Requested for Return:</h3>
-          <div class="items-list">
-            ${itemsList}
-          </div>
-          
-          ${
-            returnRequest.return_reason_details
-              ? `
-          <h3 class="section-title">Customer Note:</h3>
-          <div class="info-box">
-            <p style="margin: 0; font-style: italic;">"${returnRequest.return_reason_details}"</p>
-          </div>
-          `
-              : ""
-          }
-          
-          <div class="next-steps">
-            <p style="margin: 0; font-weight: 600; color: #92400e;">What Happens Next?</p>
-            <p style="color: #92400e;">Our concierge team is inspecting your return request and evidence. Once approved, you will be able to submit your Bank or JazzCash payout details on your order page to receive your refund transfer.</p>
+        <!-- Header -->
+        <div style="background: #18181b; padding: 26px 20px; text-align: center; color: #ffffff;">
+          <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.25em; text-transform: uppercase; color: #c99648; display: block; margin-bottom: 4px;">
+            CONCIERGE RETURNS & INSPECTIONS
+          </span>
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">
+            Return Claim Received
+          </h1>
+          <div style="margin-top: 8px; display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #fef08a;">
+            RMA #${returnRequest.rma_number}
           </div>
         </div>
-        <div class="footer">
-          Please retain your RMA number for tracking your claim.
+
+        <!-- Body -->
+        <div style="padding: 22px;">
+          <p style="margin: 0 0 14px; font-size: 14px; color: #374151;">
+            Dear <strong>${customerName}</strong>,
+          </p>
+
+          <div style="background-color: #f8fafc; border-left: 4px solid #c99648; padding: 14px 16px; margin-bottom: 20px; border-radius: 0 6px 6px 0;">
+            <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">
+              We have received your return request for <strong>Order #${order.order_number}</strong>. Our concierge team is reviewing your claim and will update you within 24 hours.
+            </p>
+          </div>
+
+          <!-- Items Table -->
+          <div style="margin-bottom: 18px;">
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #475569; letter-spacing: 0.12em; display: block; margin-bottom: 6px;">
+              CLAIMED ITEMS
+            </span>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+              <thead>
+                <tr style="background-color: #f1f5f9;">
+                  <th style="padding: 7px 8px; font-size: 11px; text-transform: uppercase; text-align: left; color: #64748b; border-bottom: 1px solid #e2e8f0;">Piece / Reason</th>
+                  <th style="padding: 7px 8px; font-size: 11px; text-transform: uppercase; text-align: center; color: #64748b; border-bottom: 1px solid #e2e8f0;">Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Meta Card -->
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 20px; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #64748b;">Estimated Refund Amount:</span>
+              <span style="font-weight: 700; color: #c99648;">Rs. ${(returnRequest.refund_amount || 0).toLocaleString()}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #64748b;">Associated Order:</span>
+              <span style="font-weight: 600; color: #0f172a;">#${order.order_number}</span>
+            </div>
+          </div>
+
+          <!-- CTA Button -->
+          <div style="text-align: center; margin-top: 18px; margin-bottom: 8px;">
+            <a href="http://localhost:3000/orders" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 11px 26px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; border-radius: 4px;">
+              Track Return Claim &rarr;
+            </a>
+          </div>
         </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; text-align: center; font-size: 11px; color: #94a3b8;">
+          Talal Wooden Lamps • Concierge Support: concierge@talalwoodenlamps.com
+        </div>
+
       </div>
     </body>
     </html>

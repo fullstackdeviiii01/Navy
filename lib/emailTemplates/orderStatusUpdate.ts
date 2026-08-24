@@ -1,47 +1,44 @@
-// lib/emailTemplates/orderStatusUpdate.ts - UPDATED WITH GUEST SUPPORT
+// lib/emailTemplates/orderStatusUpdate.ts
 export const orderStatusUpdateTemplate = (order: any, status: string) => {
-  // Extract customer info based on order type
-  const customerName = order.order_type === 'guest' 
-    ? order.guest_info.name 
-    : order.user_id.name;
+  const customerName =
+    order.order_type === "guest"
+      ? order.guest_info?.name
+      : (order.user_id?.name || order.guest_info?.name || "Valued Patron");
 
-  const statusConfig: any = {
+  const statusConfig: Record<string, { title: string; subtitle: string; color: string; message: string }> = {
     confirmed: {
-      color: "#3b82f6",
-      icon: "✓",
       title: "Order Confirmed",
-      message:
-        "Great news! Your order has been confirmed and is being prepared.",
+      subtitle: "PAYMENT VERIFIED & ORDER QUEUED",
+      color: "#16a34a",
+      message: "Your payment has been successfully confirmed. Our master woodturners and electricians have begun preparing your luminaire.",
     },
     processing: {
-      color: "#8b5cf6",
-      icon: "⚙",
-      title: "Order Processing",
-      message: "Your order is currently being processed and will ship soon.",
+      title: "Crafting in Progress",
+      subtitle: "ATELIER FABRICATION & ASSEMBLY",
+      color: "#854d0e",
+      message: "Your pieces are currently undergoing final sanding, finishing, and electrical calibration in our workshop.",
     },
     shipped: {
-      color: "#0891b2",
-      icon: "📦",
-      title: "Order Shipped",
-      message: "Your order is on its way to you!",
+      title: "Dispatched via Courier",
+      subtitle: "ON THE WAY TO YOUR DESTINATION",
+      color: "#0284c7",
+      message: "Your luminaire has been securely packed in custom protective casing and handed over to our courier partner for tracked delivery.",
     },
     delivered: {
-      color: "#10b981",
-      icon: "✓",
       title: "Order Delivered",
-      message:
-        "Your order has been successfully delivered. We hope you enjoy your purchase!",
+      subtitle: "PACKAGE SAFELY DELIVERED",
+      color: "#15803d",
+      message: "Your handcrafted lamp has been delivered to your designated address. We hope it illuminates your living space with warmth.",
     },
     cancelled: {
-      color: "#ef4444",
-      icon: "✕",
       title: "Order Cancelled",
-      message:
-        "Your order has been cancelled. If you have any questions, please contact us.",
+      subtitle: "ORDER CANCELLED & VOIDED",
+      color: "#dc2626",
+      message: "Your order has been cancelled. If you have any inquiries regarding refunds or replacements, please contact our concierge.",
     },
   };
 
-  const config = statusConfig[status] || statusConfig.confirmed;
+  const current = statusConfig[status] || statusConfig.confirmed;
 
   return `
     <!DOCTYPE html>
@@ -49,167 +46,65 @@ export const orderStatusUpdateTemplate = (order: any, status: string) => {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        body { 
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-          line-height: 1.6; 
-          color: #333; 
-          margin: 0;
-          padding: 0;
-          background-color: #f5f5f5;
-        }
-        .container { 
-          max-width: 600px; 
-          margin: 0 auto; 
-          background-color: #ffffff;
-        }
-        .header { 
-          background: linear-gradient(135deg, ${config.color} 0%, ${config.color}dd 100%); 
-          color: white; 
-          padding: 40px 20px; 
-          text-align: center; 
-        }
-        .header h1 {
-          margin: 0 0 10px 0;
-          font-size: 28px;
-          font-weight: 600;
-        }
-        .icon {
-          font-size: 60px;
-          margin-bottom: 15px;
-        }
-        .order-number {
-          background-color: rgba(255, 255, 255, 0.2);
-          padding: 10px 20px;
-          border-radius: 5px;
-          display: inline-block;
-          font-family: monospace;
-          font-size: 16px;
-          margin-top: 10px;
-        }
-        .content { 
-          padding: 30px 20px;
-        }
-        .greeting {
-          font-size: 16px;
-          color: #333;
-          margin-bottom: 20px;
-        }
-        .message-box {
-          background-color: #f9fafb;
-          padding: 20px;
-          border-left: 4px solid ${config.color};
-          border-radius: 4px;
-          margin-bottom: 30px;
-        }
-        .tracking-box {
-          background-color: #f0f9ff;
-          border: 1px solid #0891b2;
-          padding: 15px;
-          border-radius: 8px;
-          margin: 20px 0;
-        }
-        .tracking-box p {
-          margin: 5px 0;
-        }
-        .button {
-          display: inline-block;
-          background-color: ${config.color};
-          color: white !important;
-          padding: 12px 30px;
-          text-decoration: none;
-          border-radius: 6px;
-          font-weight: 600;
-          margin-top: 20px;
-        }
-        ${order.order_type === 'guest' ? `
-        .guest-info-box {
-          background-color: #fef3c7;
-          border-left: 4px solid #f59e0b;
-          padding: 15px;
-          border-radius: 4px;
-          margin: 20px 0;
-        }
-        .guest-info-box p {
-          margin: 5px 0;
-          color: #92400e;
-          font-size: 14px;
-        }
-        ` : ''}
-        .footer { 
-          text-align: center; 
-          padding: 20px;
-          background-color: #f9f9f9;
-          color: #888; 
-          font-size: 12px;
-          border-top: 1px solid #e5e5e5;
-        }
-      </style>
+      <title>${current.title} - ${order.order_number}</title>
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          ${config.icon ? `<div class="icon">${config.icon}</div>` : ''}
-          <h1>${config.title}</h1>
-          <div class="order-number">Order #${order.order_number}</div>
-        </div>
+    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; background-color: #f8fafc;">
+      <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);">
         
-        <div class="content">
-          <div class="greeting">
-            Hi ${customerName},
+        <!-- Header -->
+        <div style="background: #18181b; padding: 26px 20px; text-align: center; color: #ffffff;">
+          <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.25em; text-transform: uppercase; color: #c99648; display: block; margin-bottom: 4px;">
+            ${current.subtitle}
+          </span>
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">
+            ${current.title}
+          </h1>
+          <div style="margin-top: 8px; display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #fef08a;">
+            Order #${order.order_number}
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 22px;">
+          <p style="margin: 0 0 14px; font-size: 14px; color: #374151;">
+            Dear <strong>${customerName}</strong>,
+          </p>
+
+          <div style="background-color: #f8fafc; border-left: 4px solid ${current.color}; padding: 14px 16px; margin-bottom: 20px; border-radius: 0 6px 6px 0;">
+            <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">
+              ${current.message}
+            </p>
           </div>
 
-          <div class="message-box">
-            <p style="font-size: 16px; margin: 0;">${config.message}</p>
+          <!-- Order Summary Card -->
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; margin-bottom: 20px; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #64748b;">Current Status:</span>
+              <span style="font-weight: 700; text-transform: uppercase; color: ${current.color};">${status.toUpperCase()}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #64748b;">Grand Total:</span>
+              <span style="font-weight: 600; color: #0f172a;">Rs. ${(order.pricing?.total || 0).toLocaleString()}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #64748b;">Destination:</span>
+              <span style="font-weight: 600; color: #0f172a;">${order.shipping_address?.city || "Pakistan"}</span>
+            </div>
           </div>
 
-          ${
-            status === "shipped" && (order.tracking_number || order.carrier)
-              ? `
-          <div class="tracking-box">
-            <p style="font-weight: 600; margin-bottom: 10px;">Tracking Information</p>
-            ${order.carrier ? `<p><strong>Carrier:</strong> ${order.carrier}</p>` : ""}
-            ${
-              order.tracking_number
-                ? `<p><strong>Tracking Number:</strong> <span style="font-family: monospace;">${order.tracking_number}</span></p>`
-                : ""
-            }
-            <p style="margin-top: 10px; font-size: 14px; color: #666;">You can use this tracking number to monitor your delivery status.</p>
-          </div>
-          `
-              : ""
-          }
-
-          ${order.order_type === 'guest' ? `
-          <div class="guest-info-box">
-            <p><strong>Important for Guest Orders:</strong></p>
-            <p>Save this email! You'll need your order number (#${order.order_number}) to track your shipment or contact support.</p>
-            <p style="margin-top: 10px;">Want easier order tracking? <a href="${process.env.NEXT_PUBLIC_BASE_URL || ""}/sign-up" style="color: #92400e; font-weight: 600;">Create an account →</a></p>
-          </div>
-          ` : ''}
-
-          <div style="margin-top: 30px;">
-            <p style="font-weight: 600; margin-bottom: 10px;">Order Details:</p>
-            <p style="color: #666; margin: 5px 0;">Order Date: ${new Date(
-              order.placed_at,
-            ).toLocaleDateString()}</p>
-            <p style="color: #666; margin: 5px 0;">Total: $${order.pricing.total.toFixed(
-              2,
-            )}</p>
-            <p style="color: #666; margin: 5px 0;">Items: ${
-              order.items.length
-            }</p>
-          </div>
-
-          <div style="text-align: center; margin-top: 30px;">
-            <a href="${process.env.NEXT_PUBLIC_BASE_URL || ""}/orders/${
-              order._id
-            }" class="button">
-              View Full Order Details
+          <!-- CTA Button -->
+          <div style="text-align: center; margin-top: 20px; margin-bottom: 8px;">
+            <a href="http://localhost:3000/order-confirmation/${order._id}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 11px 26px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; border-radius: 4px;">
+              View Live Order Status &rarr;
             </a>
           </div>
         </div>
-        
+
+        <!-- Footer -->
+        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; text-align: center; font-size: 11px; color: #94a3b8;">
+          Talal Wooden Lamps • Support: concierge@talalwoodenlamps.com
+        </div>
+
       </div>
     </body>
     </html>

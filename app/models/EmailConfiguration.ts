@@ -28,7 +28,6 @@ export interface IEmailConfigurationDocument extends Document {
       notify_on_delivered: boolean;
       notify_on_cancelled: boolean;
     };
-    // ADD RETURN NOTIFICATIONS HERE
     return_notifications: {
       enabled: boolean;
       notify_on_request: boolean;
@@ -45,7 +44,7 @@ export interface IEmailConfigurationDocument extends Document {
     from_email: string;
     reply_to: string;
   };
-  updated_by: mongoose.Types.ObjectId;
+  updated_by?: mongoose.Types.ObjectId;
   updated_at: Date;
   created_at: Date;
 }
@@ -55,12 +54,10 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
     smtp_settings: {
       host: {
         type: String,
-        required: true,
         default: "smtp.gmail.com",
       },
       port: {
         type: Number,
-        required: true,
         default: 587,
       },
       secure: {
@@ -69,11 +66,11 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
       },
       auth_user: {
         type: String,
-        required: true,
+        default: "",
       },
       auth_pass: {
         type: String,
-        required: true,
+        default: "",
       },
     },
     email_notifications: {
@@ -84,7 +81,7 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
         },
         recipient_email: {
           type: String,
-          required: true,
+          default: "",
         },
         subject_prefix: {
           type: String,
@@ -106,11 +103,11 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
         },
         admin_email: {
           type: String,
+          default: "",
         },
         subject: {
           type: String,
           default: "Order Placed Successfully - {{order_number}}",
-          immutable: true,
         },
       },
       order_status_update: {
@@ -135,7 +132,6 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
           default: true,
         },
       },
-      // ADD RETURN NOTIFICATIONS SECTION
       return_notifications: {
         enabled: {
           type: Boolean,
@@ -167,21 +163,22 @@ const EmailConfigurationSchema = new Schema<IEmailConfigurationDocument>(
         },
         admin_email: {
           type: String,
+          default: "",
         },
       },
     },
     sender_info: {
       from_name: {
         type: String,
-        required: true,
-        default: "Your Store",
+        default: "Talal Wooden Lamps",
       },
       from_email: {
         type: String,
-        required: true,
+        default: "",
       },
       reply_to: {
         type: String,
+        default: "",
       },
     },
     updated_by: {
