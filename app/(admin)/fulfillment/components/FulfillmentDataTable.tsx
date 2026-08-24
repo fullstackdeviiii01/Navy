@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, Edit3, DollarSign, Package } from "lucide-react";
+import { Eye, Edit3, DollarSign, Package, ExternalLink } from "lucide-react";
 import OrderStatusUpdateModal from "./OrderStatusUpdateModal";
 import { adminOrdersApi } from "../../../../lib/api/orders";
 
@@ -165,14 +165,15 @@ export default function FulfillmentDataTable({
                           : "Pending Verification"}
                       </span>
                       {order.payment_proof_url && (
-                        <div className="block">
+                        <div className="block pt-0.5">
                           <a
                             href={order.payment_proof_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[9px] font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800 hover:underline"
+                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-theme-hover-light dark:text-theme-hover-dark bg-theme-surface-light dark:bg-theme-surface-dark px-2 py-0.5 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light transition-colors"
                           >
-                            📸 Receipt ↗
+                            <span>Receipt</span>
+                            <ExternalLink size={10} />
                           </a>
                         </div>
                       )}

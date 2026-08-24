@@ -556,7 +556,7 @@ export default function AdminReturnDetailModal({
                           </label>
                           <label className="cursor-pointer flex items-center justify-center gap-1 px-3 py-2 rounded bg-theme-surface-light border border-theme-border-light text-xs font-medium hover:border-emerald-500 transition-colors">
                             <Upload size={13} />
-                            <span>{uploadingProof ? "Uploading..." : proofUrl ? "Proof Uploaded ✓" : "Upload Receipt"}</span>
+                            <span>{uploadingProof ? "Uploading..." : proofUrl ? "Proof Uploaded" : "Upload Receipt"}</span>
                             <input
                               type="file"
                               accept="image/*"

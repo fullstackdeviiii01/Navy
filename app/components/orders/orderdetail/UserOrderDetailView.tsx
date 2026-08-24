@@ -6,6 +6,7 @@ import {
   Calendar,
   Truck,
   Star,
+  ExternalLink,
 } from "lucide-react";
 import Image from "next/image";
 import OrderStatusBadge from "../OrderStatusBadge";
@@ -373,9 +374,10 @@ export default function UserOrderDetailView({
                       href={order.payment_proof_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light text-xs font-semibold transition-colors"
+                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light text-xs font-semibold uppercase tracking-wider transition-colors"
                     >
-                      <span>View Uploaded Receipt ↗</span>
+                      <span>View Uploaded Receipt</span>
+                      <ExternalLink size={12} />
                     </a>
                   </div>
                 )}

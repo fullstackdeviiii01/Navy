@@ -135,10 +135,10 @@ export default function ShippingServiceSelector({
           return (
             <label
               key={service._id}
-              className={`block p-4 border cursor-pointer transition-all ${
+              className={`block p-3.5 sm:p-4 border cursor-pointer transition-all ${
                 isSelected
-                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/50 dark:bg-theme-card-dark/40"
-                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50"
+                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/60 dark:bg-theme-card-dark/40 shadow-2xs"
+                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50 bg-theme-bg-light/30 dark:bg-theme-bg-dark/30"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex items-start gap-3">
@@ -156,7 +156,7 @@ export default function ShippingServiceSelector({
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {service.display_name}
                         </p>
                         {isSelected && (
@@ -164,23 +164,21 @@ export default function ShippingServiceSelector({
                         )}
                       </div>
                       {service.description && (
-                        <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1">
+                        <p className="text-[11px] sm:text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1">
                           {service.description}
                         </p>
                       )}
                       {estimatedDelivery && (
-                        <div className="flex items-center gap-1.5 mt-1.5 text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                          <Clock className="w-3.5 h-3.5" />
+                        <div className="flex items-center gap-1.5 mt-1.5 text-[11px] sm:text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                          <Clock className="w-3 h-3" />
                           <span>{estimatedDelivery}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        {service.base_price === 0
-                          ? "FREE"
-                          : formatPrice(service.base_price)}
+                      <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        {formatPrice(service.base_price || 0)}
                       </p>
                     </div>
                   </div>

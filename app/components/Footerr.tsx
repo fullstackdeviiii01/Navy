@@ -118,12 +118,13 @@ export default function Footerr() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4">
           <div className="flex items-center gap-2.5">
             {companyInfo.company_logo ? (
-              <div className="relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
+              <div className="relative h-12 w-12 sm:h-16 sm:w-16 shrink-0">
                 <Image
                   src={companyInfo.company_logo}
                   alt={companyInfo.company_name || "Brand Logo"}
                   fill
-                  className="object-contain"
+                  className="object-contain mix-blend-multiply dark:mix-blend-normal"
+                  sizes="(max-width: 640px) 48px, 64px"
                 />
               </div>
             ) : (

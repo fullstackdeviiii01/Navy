@@ -156,17 +156,17 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const variantOutOfStock = selectedVariant ? selectedVariant.stockQuantity === 0 : false;
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark pb-6 sm:pb-8">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-1">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark pb-6 sm:pb-8 overflow-x-hidden w-full">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-1 w-full overflow-hidden">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb navigation" className="mb-1">
+        <nav aria-label="Breadcrumb navigation" className="mb-1 w-full max-w-full overflow-hidden">
           <ProductBreadcrumb items={breadcrumbItems} />
         </nav>
 
         {/* 2-column grid: images left, info right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 w-full">
           {/* LEFT COLUMN: Product media + Desktop tabs */}
-          <div className="flex flex-col gap-2 sm:gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3 min-w-0 max-w-full overflow-hidden">
             <section aria-label={`${product.name} product media gallery`}>
               {(() => {
                 const activePreviewUrl = selectedVariant?.imageUrl || previewImageUrl || undefined;
@@ -301,7 +301,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
           </div>
 
           {/* RIGHT COLUMN: Info + actions (Natural Free Flow) */}
-          <div>
+          <div className="min-w-0 max-w-full">
             <div className="flex flex-col gap-2 sm:gap-2.5">
               
               {/* Product Info (Title, Category, Main Price) */}

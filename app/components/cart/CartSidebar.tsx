@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
@@ -10,7 +11,7 @@ import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getItemImage } from "../../../lib/utils/productImages";
 
 export default function CartSidebar() {
-  const { cart, isCartOpen, closeCart, refreshCart } = useUser();
+  const { cart, isCartOpen, closeCart, refreshCart, updateCart } = useUser();
   const router = useRouter();
 
   const items = cart?.items || [];
@@ -33,7 +34,10 @@ export default function CartSidebar() {
 
   const handleRemove = async (itemId: string) => {
     try {
-      await cartApi.removeItem(itemId);
+      const data = await cartApi.removeItem(itemId);
+      if (data?.cart) {
+        updateCart(data.cart);
+      }
       await refreshCart();
     } catch (error) {
       console.error("Failed to remove item:", error);
@@ -43,7 +47,10 @@ export default function CartSidebar() {
   const handleQuantityChange = async (itemId: string, newQty: number) => {
     if (newQty < 1) return handleRemove(itemId);
     try {
-      await cartApi.updateQuantity(itemId, newQty);
+      const data = await cartApi.updateQuantity(itemId, newQty);
+      if (data?.cart) {
+        updateCart(data.cart);
+      }
       await refreshCart();
     } catch (error) {
       console.error("Failed to update quantity:", error);
@@ -66,14 +73,14 @@ export default function CartSidebar() {
       />
 
       {/* Sidebar */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-md bg-theme-surface-light dark:bg-theme-surface-dark border-l border-theme-border-light dark:border-theme-border-dark shadow-2xl flex flex-col animate-slide-in-right">
+      <div className="fixed inset-y-0 right-0 w-full max-w-[90vw] sm:max-w-md bg-theme-surface-light dark:bg-theme-surface-dark border-l border-theme-border-light dark:border-theme-border-dark shadow-2xl flex flex-col animate-slide-in-right">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-theme-border-light dark:border-theme-border-dark">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
               YOUR BASKET
             </p>
-            <h2 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h2 className="text-base sm:text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Shopping Cart ({itemCount})
             </h2>
           </div>
@@ -87,10 +94,10 @@ export default function CartSidebar() {
         </div>
 
         {/* Items */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 sm:py-4 space-y-3 sm:space-y-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
-              <p className="text-sm font-serif italic text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6">
+              <p className="text-sm font-serif italic text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-5">
                 Your basket is empty
               </p>
               <button
@@ -105,14 +112,16 @@ export default function CartSidebar() {
               const product = item.product_id;
               const image = getItemImage(item);
               return (
-                <div key={item._id} className="flex gap-4 py-4 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-0">
+                <div key={item._id} className="flex gap-3 sm:gap-4 py-3 sm:py-4 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-0">
                   {/* Image */}
-                  <div className="relative aspect-[4/5] w-20 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden">
+                  <div className="relative aspect-[4/5] w-16 sm:w-20 flex-shrink-0 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light/60 dark:border-theme-border-dark/60 overflow-hidden">
                     {image ? (
-                      <img
+                      <Image
                         src={image}
                         alt={product?.name || "Product"}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="80px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-theme-text-muted-light dark:text-theme-text-muted-dark text-[10px]">
@@ -124,11 +133,11 @@ export default function CartSidebar() {
                   {/* Details */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      <p className="text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                      <p className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                         {product?.name}
                       </p>
                       {item.variant_attributes && Object.keys(item.variant_attributes).length > 0 && (
-                        <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
+                        <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5 truncate">
                           {Object.entries(item.variant_attributes).map(([k, v]) => `${k}: ${v}`).join(", ")}
                         </p>
                       )}
@@ -138,11 +147,11 @@ export default function CartSidebar() {
                     </div>
 
                     {/* Quantity controls */}
-                    <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-theme-border-light/40 dark:border-theme-border-dark/40">
-                      <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark">
+                    <div className="flex items-center justify-between gap-2 mt-2.5 pt-2 border-t border-theme-border-light/40 dark:border-theme-border-dark/40">
+                      <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark shadow-2xs">
                         <button
                           onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="w-6 h-6 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+                          className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-3 h-3" />
@@ -152,7 +161,7 @@ export default function CartSidebar() {
                         </span>
                         <button
                           onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+                          className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-3 h-3" />
@@ -176,29 +185,23 @@ export default function CartSidebar() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-theme-border-light dark:border-theme-border-dark px-6 py-5 space-y-4 bg-theme-card-light/30 dark:bg-theme-card-dark/20">
-            {/* Total */}
+          <div className="border-t border-theme-border-light dark:border-theme-border-dark px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4 bg-theme-card-light/30 dark:bg-theme-card-dark/20">
+            {/* Subtotal */}
             <div className="flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 Subtotal
               </span>
-              <span className="text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <span className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
                 {formatPrice(cart?.subtotal || 0)}
               </span>
             </div>
 
-            {/* Buttons */}
+            {/* View Cart Button */}
             <button
               onClick={handleViewCart}
               className="w-full py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-colors"
             >
-              VIEW BASKET & CHECKOUT
-            </button>
-            <button
-              onClick={closeCart}
-              className="w-full py-3 border border-theme-border-light dark:border-theme-border-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark text-xs uppercase tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
-            >
-              KEEP BROWSING
+              VIEW CART
             </button>
           </div>
         )}

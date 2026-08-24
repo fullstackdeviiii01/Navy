@@ -316,8 +316,8 @@ export default function OrderManifestDetailView({
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold transition-colors"
                   >
+                    <span>View Payment Proof</span>
                     <ExternalLink size={13} className="text-theme-hover-light" />
-                    <span>View Payment Proof (New Tab) ↗</span>
                   </a>
                 </div>
               )}

@@ -278,7 +278,7 @@ export default function ProductMediaCarousel({
 
       {/* Thumbnails Row (Detail variant) */}
       {showThumbnails && media.length > 1 && !isCard && (
-        <div className="relative mt-3 group">
+        <div className="relative mt-3 group w-full max-w-full overflow-hidden">
           <button
             onClick={() => scrollThumbnails("left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1.5 bg-black/70 hover:bg-black/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
@@ -289,7 +289,7 @@ export default function ProductMediaCarousel({
 
           <div
             ref={thumbnailScrollRef}
-            className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1"
+            className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1 w-full max-w-full"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {media.map((item, index) => (

@@ -21,7 +21,7 @@ export default function AddToCartButton({
   variantId,
   onSuccess,
 }: AddToCartButtonProps) {
-  const { refreshCart, openCart } = useUser();
+  const { refreshCart, updateCart, openCart } = useUser();
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -33,7 +33,10 @@ export default function AddToCartButton({
 
     setIsAdding(true);
     try {
-      await cartApi.addItem(productId, quantity, variantId);
+      const data = await cartApi.addItem(productId, quantity, variantId);
+      if (data?.cart) {
+        updateCart?.(data.cart);
+      }
       await refreshCart();
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);

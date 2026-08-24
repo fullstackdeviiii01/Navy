@@ -158,39 +158,31 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark shadow-sm transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
-          
-          {/* 1. START: Pure Monogram Emblem Box Logo (R | L) */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Mobile Menu Trigger */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-1.5 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
-              aria-label="Toggle navigation menu"
-            >
-              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 gap-4">
 
+          {/* 1. START: Brand Logo */}
+          <div className="flex items-center shrink-0">
             <Link
               href="/"
-              className="flex items-center group"
-              aria-label="Rehan Wooden Lamps Home"
+              className="flex items-center group py-0"
+              aria-label={companyInfo.company_name || "Talal Wooden Lamps"}
             >
               {companyInfo.company_logo ? (
-                <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+                <div className="relative h-14 w-14 sm:h-18 sm:w-18 md:h-22 md:w-22 lg:h-24 lg:w-24 -my-2 sm:-my-3 shrink-0 transition-transform duration-300 group-hover:scale-105">
                   <Image
                     src={companyInfo.company_logo}
-                    alt="Logo"
+                    alt={companyInfo.company_name || "Logo"}
                     fill
-                    className="object-contain"
+                    className="object-contain mix-blend-multiply dark:mix-blend-normal"
                     priority
+                    sizes="(max-width: 640px) 56px, (max-width: 768px) 72px, 96px"
                   />
                 </div>
               ) : (
-                /* Pure Monogram Box (R | L) */
+                /* Pure Monogram Box (T | L) */
                 <div className="flex items-center border border-theme-hover-light/70 dark:border-theme-hover-dark/70 bg-theme-surface-light dark:bg-theme-surface-dark px-3 py-1.5 group-hover:border-theme-hover-light transition-all duration-300 shadow-sm">
                   <span className="font-serif text-xl sm:text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
-                    R
+                    T
                   </span>
                   <span className="h-5 w-[1.5px] bg-theme-hover-light dark:bg-theme-hover-dark mx-2 inline-block" />
                   <span className="font-serif text-xl sm:text-2xl text-theme-hover-light dark:text-theme-hover-dark tracking-tight font-normal">
@@ -239,16 +231,15 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* 3. END: Actions Hub (Search, Wishlist, Account, Cart) */}
-          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            
-            {/* Search Trigger */}
+          {/* 3. END: Actions Hub (Search & Cart on mobile; Search, Wishlist, Account, Cart on sm+) */}
+          <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
+
+            {/* Search Trigger (Always visible) */}
             <div className="relative" ref={searchContainerRef}>
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 transition-colors ${
-                  isSearchOpen ? "text-theme-hover-light dark:text-theme-hover-dark bg-theme-surface-light dark:bg-theme-surface-dark" : "text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-                }`}
+                className={`p-2 transition-colors ${isSearchOpen ? "text-theme-hover-light dark:text-theme-hover-dark bg-theme-surface-light dark:bg-theme-surface-dark" : "text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+                  }`}
                 aria-label="Search luminaires"
               >
                 <Search size={19} className="stroke-[1.75]" />
@@ -256,7 +247,7 @@ export default function Header() {
 
               {/* Instant Professional Product-Only Search Modal / Dropdown */}
               {isSearchOpen && (
-                <div className="absolute right-[-60px] sm:right-0 mt-3 w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] max-w-[420px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-3.5 sm:p-4 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="fixed left-3 right-3 top-16 sm:top-18 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[380px] md:w-[420px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-3.5 sm:p-4 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="flex items-center justify-between pb-2 mb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
                     <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
                       PRODUCT SEARCH
@@ -280,7 +271,7 @@ export default function Header() {
                     />
                     <button
                       type="submit"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark p-1"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-hover-light dark:hover:text-theme-text-primary-dark p-1"
                       aria-label="Submit search"
                     >
                       {isSearching ? (
@@ -369,10 +360,10 @@ export default function Header() {
               )}
             </div>
 
-            {/* Wishlist */}
+            {/* Wishlist (Hidden on small screens, included in mobile drawer) */}
             <Link
               href="/wishlist"
-              className="relative p-2 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
+              className="hidden sm:flex relative p-2 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
               aria-label={`Wishlist, ${wishlistCount} items`}
             >
               <Heart size={19} className="stroke-[1.75]" />
@@ -383,16 +374,16 @@ export default function Header() {
               )}
             </Link>
 
-            {/* User Account */}
+            {/* User Account (Hidden on small screens, included in mobile drawer) */}
             <Link
               href={isAuthenticated ? "/account" : "/sign-in"}
-              className="p-2 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
+              className="hidden sm:flex p-2 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
               aria-label="Account details"
             >
               <User size={19} className="stroke-[1.75]" />
             </Link>
 
-            {/* Cart Button */}
+            {/* Cart Button (Always visible) */}
             <button
               onClick={openCart}
               className="relative p-2 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
@@ -406,6 +397,15 @@ export default function Header() {
               )}
             </button>
 
+            {/* Mobile Menu Trigger (After Cart at the far right end) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-1.5 text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors ml-0.5"
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+
           </div>
 
         </div>
@@ -414,67 +414,96 @@ export default function Header() {
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t border-theme-border-light dark:border-theme-border-dark bg-theme-card-light dark:bg-theme-card-dark px-5 py-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200">
-          <Link
-            href="/products"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-          >
-            COLLECTIONS
-          </Link>
-          <Link
-            href="/categories"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-          >
-            CATEGORIES
-          </Link>
-          <Link
-            href="/about"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-          >
-            CRAFTSMANSHIP
-          </Link>
-          <Link
-            href="/contact"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-          >
-            BESPOKE & CONTACT
-          </Link>
-          <Link
-            href="/track-order"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-          >
-            TRACK ORDER
-          </Link>
+          <div className="space-y-3 pb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
+            <Link
+              href="/products"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              COLLECTIONS
+            </Link>
+            <Link
+              href="/categories"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              CATEGORIES
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              CRAFTSMANSHIP
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              BESPOKE & CONTACT
+            </Link>
+            <Link
+              href="/track-order"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              TRACK ORDER
+            </Link>
+          </div>
 
-          <div className="border-t border-theme-border-light/60 dark:border-theme-border-dark/60 pt-4 space-y-2">
+          {/* Quick Actions (Wishlist & Account) inside Mobile Drawer */}
+          <div className="space-y-3 pt-1">
+            <Link
+              href="/wishlist"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center justify-between py-1.5 text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
+            >
+              <span className="flex items-center gap-2.5">
+                <Heart size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                <span>WISHLIST</span>
+              </span>
+              {wishlistCount > 0 && (
+                <span className="bg-theme-hover-light dark:bg-theme-hover-dark text-white text-[10px] font-mono px-2 py-0.5 font-bold">
+                  {wishlistCount} {wishlistCount === 1 ? "ITEM" : "ITEMS"}
+                </span>
+              )}
+            </Link>
+
             {isAuthenticated ? (
-              <>
+              <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2">
                 <Link
                   href="/account"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-xs font-mono text-theme-hover-light dark:text-theme-hover-dark uppercase tracking-wider"
+                  className="flex items-center gap-2.5 text-xs font-mono text-theme-hover-light dark:text-theme-hover-dark uppercase tracking-wider font-medium"
                 >
-                  My Account ({name})
+                  <User size={16} />
+                  <span>My Account ({name || "Profile"})</span>
                 </Link>
                 <button
-                  onClick={handleSignOut}
-                  className="block text-xs text-red-500 font-mono uppercase tracking-wider pt-1"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleSignOut();
+                  }}
+                  className="block text-xs text-red-500 hover:text-red-600 font-mono uppercase tracking-wider pt-1"
                 >
                   Sign Out
                 </button>
-              </>
+              </div>
             ) : (
-              <Link
-                href="/sign-in"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-xs font-mono text-theme-hover-light dark:text-theme-hover-dark uppercase tracking-wider"
-              >
-                Sign In / Register →
-              </Link>
+              <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+                <Link
+                  href="/sign-in"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light uppercase tracking-wider"
+                >
+                  <span className="flex items-center gap-2">
+                    <User size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                    <span>Sign In / Register</span>
+                  </span>
+                  <ChevronsRight size={15} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                </Link>
+              </div>
             )}
           </div>
         </div>

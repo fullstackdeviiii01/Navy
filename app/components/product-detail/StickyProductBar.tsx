@@ -108,6 +108,8 @@ export default function StickyProductBar({
                   quantity={quantity}
                   onQuantityChange={onQuantityChange}
                   max={currentStock}
+                  showLabel={false}
+                  showStock={false}
                 />
               </div>
             )}

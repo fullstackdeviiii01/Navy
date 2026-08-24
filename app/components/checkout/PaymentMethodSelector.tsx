@@ -72,12 +72,12 @@ export default function PaymentMethodSelector({
   const getMethodIcon = (id: string) => {
     switch (id) {
       case "bank_transfer":
-        return <Building2 className="w-4 h-4" />;
+        return <Building2 className="w-4 h-4 shrink-0" />;
       case "jazzcash":
-        return <Smartphone className="w-4 h-4" />;
+        return <Smartphone className="w-4 h-4 shrink-0" />;
       case "cod":
       default:
-        return <Banknote className="w-4 h-4" />;
+        return <Banknote className="w-4 h-4 shrink-0" />;
     }
   };
 
@@ -93,10 +93,10 @@ export default function PaymentMethodSelector({
           return (
             <label
               key={method.id}
-              className={`flex items-start gap-4 p-4 border cursor-pointer transition-all ${
+              className={`flex items-start gap-3 sm:gap-4 p-3.5 sm:p-4 border cursor-pointer transition-all ${
                 isSelected
-                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/50 dark:bg-theme-card-dark/40"
-                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50"
+                  ? "border-theme-hover-light dark:border-theme-hover-dark bg-theme-card-light/60 dark:bg-theme-card-dark/40 shadow-xs"
+                  : "border-theme-border-light/70 dark:border-theme-border-dark/70 hover:border-theme-hover-light/50 bg-theme-bg-light/40 dark:bg-theme-bg-dark/40"
               }`}
             >
               <input
@@ -108,7 +108,7 @@ export default function PaymentMethodSelector({
                 className="mt-0.5 w-4 h-4 accent-[#241910] dark:accent-[#D7D3CF] cursor-pointer flex-shrink-0"
               />
 
-              <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="flex items-start gap-2.5 sm:gap-3 flex-1 min-w-0">
                 <div
                   className={`mt-0.5 flex-shrink-0 ${
                     isSelected
@@ -120,17 +120,17 @@ export default function PaymentMethodSelector({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm uppercase tracking-wider">
+                  <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+                    <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm uppercase tracking-wider">
                       {method.name}
                     </p>
                     {method.requiresProof && (
-                      <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex-shrink-0">
+                      <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 shrink-0">
                         Screenshot Required
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1 leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1 leading-relaxed">
                     {method.description}
                   </p>
                 </div>

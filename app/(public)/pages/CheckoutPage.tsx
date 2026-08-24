@@ -15,10 +15,10 @@ import EmailNotificationModal from "../../components/checkout/EmailNotificationM
 import Loader from "../../components/shared/Loader";
 
 export default function CheckoutPage() {
-  const { authUser, dbUser, loading: userLoading, refreshCart, updateUserProfile, refreshUser } = useUser();
+  const { cart: contextCart, authUser, dbUser, loading: userLoading, refreshCart, updateCart, updateUserProfile, refreshUser } = useUser();
   const router = useRouter();
-  const [cart, setCart] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState<any>(contextCart || null);
+  const [loading, setLoading] = useState(!contextCart);
   const [error, setError] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -39,14 +39,31 @@ export default function CheckoutPage() {
 
   const isGuestCheckout = !authUser;
 
+  // React immediately whenever context cart updates (e.g. if modified in cart sidebar)
   useEffect(() => {
     if (!userLoading) {
-      fetchCart();
+      if (contextCart) {
+        if (!contextCart.items || contextCart.items.length === 0) {
+          router.push("/cart");
+          return;
+        }
+        setCart(contextCart);
+        if (contextCart.selected_shipping_service_id) {
+          setSelectedShippingService(
+            contextCart.selected_shipping_service_id._id ||
+              contextCart.selected_shipping_service_id
+          );
+        }
+        setLoading(false);
+      } else {
+        fetchCart();
+      }
+
       if (dbUser) {
         loadSavedAddresses();
       }
     }
-  }, [userLoading, dbUser]);
+  }, [contextCart, userLoading, dbUser, router]);
 
   const fetchCart = async () => {
     try {
@@ -56,6 +73,7 @@ export default function CheckoutPage() {
         return;
       }
       setCart(data.cart);
+      updateCart?.(data.cart);
 
       if (data.cart.selected_shipping_service_id) {
         setSelectedShippingService(
@@ -112,9 +130,13 @@ export default function CheckoutPage() {
     setShippingLoading(true);
     setError("");
     try {
-      await shippingApi.selectService(serviceId);
+      const data = await shippingApi.selectService(serviceId);
       setSelectedShippingService(serviceId);
-      await fetchCart();
+      if (data?.cart) {
+        setCart(data.cart);
+        updateCart?.(data.cart);
+      }
+      await refreshCart();
     } catch (error: any) {
       setError(error.message || "Failed to select shipping service");
     } finally {
@@ -123,6 +145,12 @@ export default function CheckoutPage() {
   };
 
   const validateCheckoutForm = (): boolean => {
+    if (!cart || !cart.items || cart.items.length === 0) {
+      setError("Your cart is empty. Please add items before checking out.");
+      router.push("/cart");
+      return false;
+    }
+
     if (isGuestCheckout) {
       if (!guestInfo.email || !guestInfo.name || !guestInfo.phone) {
         setError("Please fill in all required contact details");
@@ -225,14 +253,14 @@ export default function CheckoutPage() {
 
     return (
       <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14">
           {/* Header */}
-          <div className="mb-8 border-b border-theme-border-light dark:border-theme-border-dark pb-6">
-            <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
+          <div className="mb-6 sm:mb-8 border-b border-theme-border-light dark:border-theme-border-dark pb-5 sm:pb-6">
+            <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
               STEP 2 OF 2
             </p>
-            <h1 className="text-3xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Payment <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">& verification</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Payment <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">& Verification</span>
             </h1>
           </div>
 
@@ -249,13 +277,13 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14">
         {/* Editorial Header */}
-        <div className="mb-10 border-b border-theme-border-light dark:border-theme-border-dark pb-8">
-          <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-2">
-            CHECKOUT
+        <div className="mb-8 sm:mb-10 border-b border-theme-border-light dark:border-theme-border-dark pb-6 sm:pb-8">
+          <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
+            STEP 1 OF 2 — DELIVERY
           </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2 sm:mb-3 tracking-tight">
             Finalize <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your order</span>
           </h1>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">

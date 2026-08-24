@@ -11,6 +11,7 @@ import {
   User,
   Truck,
   Edit3,
+  ExternalLink,
 } from "lucide-react";
 import OrderStatusBadge from "../OrderStatusBadge";
 import UpdateStatusModal from "../UpdateStatusModal";
@@ -346,8 +347,9 @@ export default function AdminOrderDetailView({
                         alt="Payment verification proof"
                         className="w-full max-h-72 object-contain bg-black/5 dark:bg-black/20 group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity">
-                        Click to view full image ↗
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity gap-1">
+                        <span>View Full Image</span>
+                        <ExternalLink size={13} />
                       </div>
                     </a>
                   </div>

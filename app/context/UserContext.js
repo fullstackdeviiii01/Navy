@@ -270,7 +270,9 @@ export function UserProvider({ children }) {
 
     // Cart data
     cart,
-    cartItemCount: cart?.items?.length || 0,
+    setCart: (newCart) => setCart(newCart),
+    updateCart: (newCart) => setCart(newCart),
+    cartItemCount: cart?.items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0,
 
     // Cart sidebar
     isCartOpen,

@@ -2,7 +2,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Truck } from "lucide-react";
 import CouponSection from "./CouponSection";
 import SaveCartEmail from "./SaveCartEmail";
 import { useUser } from "../../context/UserContext";
@@ -21,38 +20,12 @@ export default function CartSummary({
   const { isAuthenticated } = useUser();
 
   const shippingService = cart.selected_shipping_service_id;
-  const FREE_SHIPPING_THRESHOLD = 15000;
-  const amountToFreeShipping = FREE_SHIPPING_THRESHOLD - (cart.subtotal || 0);
 
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
       <h2 className="text-xl sm:text-2xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark pb-4 border-b border-theme-border-light dark:border-theme-border-dark mb-6">
         Order Summary
       </h2>
-
-      {/* Free Shipping Tracker */}
-      <div className="mb-6 p-3 bg-theme-card-light/60 dark:bg-theme-card-dark/40 border border-theme-border-light/60 dark:border-theme-border-dark/60">
-        <div className="flex items-center gap-2 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-          <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
-          <span>
-            {amountToFreeShipping > 0 ? (
-              <>
-                ADD <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{formatPrice(amountToFreeShipping)}</strong> MORE FOR FREE SHIPPING
-              </>
-            ) : (
-              <span className="text-green-600 dark:text-green-400 font-medium">YOU QUALIFY FOR FREE SHIPPING</span>
-            )}
-          </span>
-        </div>
-        <div className="w-full bg-theme-border-light dark:bg-theme-border-dark h-1.5 overflow-hidden">
-          <div
-            className="bg-theme-hover-light dark:bg-theme-hover-dark h-full transition-all duration-500"
-            style={{
-              width: `${Math.min(100, Math.max(0, ((cart.subtotal || 0) / FREE_SHIPPING_THRESHOLD) * 100))}%`,
-            }}
-          />
-        </div>
-      </div>
 
       <div className="space-y-4">
         {/* Subtotal */}
@@ -85,10 +58,8 @@ export default function CartSummary({
               <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-xs font-normal">
                 Calculated at checkout
               </span>
-            ) : cart.shipping_cost === 0 ? (
-              <span className="text-green-600 dark:text-green-400">FREE</span>
             ) : (
-              formatPrice(cart.shipping_cost)
+              formatPrice(cart.shipping_cost || 0)
             )}
           </span>
         </div>

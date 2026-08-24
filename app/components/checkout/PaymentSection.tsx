@@ -127,18 +127,18 @@ export default function PaymentSection({
         </div>
       )}
 
-      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors space-y-6">
-        {/* Amount to Pay */}
-        <div className="flex items-center justify-between p-4 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark">
+      <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6 lg:p-8 transition-colors space-y-6">
+        {/* Amount to Pay Summary Box */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 sm:p-5 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xs">
           <div>
-            <span className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark block">
+            <span className="text-[11px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark block">
               Total Amount to Pay
             </span>
-            <span className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[10px] sm:text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5 block">
               Including taxes and delivery fee
             </span>
           </div>
-          <span className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
+          <span className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold tracking-tight">
             {formatPrice(cart?.total || 0)}
           </span>
         </div>
@@ -158,14 +158,14 @@ export default function PaymentSection({
           {/* 1. Cash On Delivery */}
           {selectedMethod === "cod" && (
             <div className="space-y-5">
-              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
-                <div className="flex items-center gap-2 mb-2 text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-                  <h4 className="font-serif italic text-base">
+              <div className="p-4 sm:p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
+                <div className="flex items-center gap-2 mb-2.5 text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+                  <h4 className="font-serif italic text-base sm:text-lg">
                     Cash on Delivery Terms
                   </h4>
                 </div>
-                <ul className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark space-y-1.5 pl-5 list-disc">
+                <ul className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark space-y-1.5 pl-4 sm:pl-5 list-disc leading-relaxed">
                   <li>Payment will be collected in cash at your doorstep upon delivery.</li>
                   <li>Please keep the exact amount ({formatPrice(cart?.total || 0)}) ready for the courier.</li>
                   <li>You will receive an order confirmation email with your tracking link immediately.</li>
@@ -176,9 +176,16 @@ export default function PaymentSection({
                 type="button"
                 onClick={handleSubmitOrder}
                 disabled={processing}
-                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40"
+                className="w-full py-3.5 sm:py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40 shadow-sm flex items-center justify-center gap-2"
               >
-                {processing ? "CONFIRMING ORDER..." : "PLACE ORDER WITH CASH ON DELIVERY"}
+                {processing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>CONFIRMING ORDER...</span>
+                  </>
+                ) : (
+                  <span>PLACE ORDER WITH CASH ON DELIVERY</span>
+                )}
               </button>
             </div>
           )}
@@ -186,11 +193,11 @@ export default function PaymentSection({
           {/* 2. Direct Bank Transfer (Meezan Bank) */}
           {selectedMethod === "bank_transfer" && (
             <div className="space-y-6">
-              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
+              <div className="p-4 sm:p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
                   <div className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-                    <h4 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <Building2 className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+                    <h4 className="font-serif italic text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       Meezan Bank Details
                     </h4>
                   </div>
@@ -199,7 +206,7 @@ export default function PaymentSection({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
                   <div className="space-y-3">
                     <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
                       <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
@@ -219,8 +226,8 @@ export default function PaymentSection({
                       </span>
                     </div>
 
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
-                      <div>
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                      <div className="min-w-0">
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Account Number
                         </span>
@@ -231,7 +238,7 @@ export default function PaymentSection({
                       <button
                         type="button"
                         onClick={() => copyToClipboard("00300112798032", "bank_acc")}
-                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1"
+                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
                       >
                         {copiedField === "bank_acc" ? (
                           <>
@@ -247,8 +254,8 @@ export default function PaymentSection({
                       </button>
                     </div>
 
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
-                      <div className="min-w-0 pr-2">
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                      <div className="min-w-0 pr-1">
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           IBAN
                         </span>
@@ -259,7 +266,7 @@ export default function PaymentSection({
                       <button
                         type="button"
                         onClick={() => copyToClipboard("PK00300112798032", "bank_iban")}
-                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 flex-shrink-0"
+                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
                       >
                         {copiedField === "bank_iban" ? (
                           <>
@@ -282,7 +289,7 @@ export default function PaymentSection({
                       <QrCode className="w-3.5 h-3.5" />
                       <span>Scan Bank QR Code</span>
                     </div>
-                    <div className="relative w-40 h-40 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
+                    <div className="relative w-32 h-32 sm:w-36 sm:h-36 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
                       <img
                         src="/QR/BankQR.png"
                         alt="Meezan Bank Transfer QR Code"
@@ -304,11 +311,11 @@ export default function PaymentSection({
           {/* 3. JazzCash */}
           {selectedMethod === "jazzcash" && (
             <div className="space-y-6">
-              <div className="p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
+              <div className="p-4 sm:p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
                   <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-                    <h4 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <Phone className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+                    <h4 className="font-serif italic text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       JazzCash Mobile Account
                     </h4>
                   </div>
@@ -317,7 +324,7 @@ export default function PaymentSection({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
                   <div className="space-y-3">
                     <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
                       <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
@@ -328,8 +335,8 @@ export default function PaymentSection({
                       </span>
                     </div>
 
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
-                      <div>
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                      <div className="min-w-0">
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Mobile Number
                         </span>
@@ -340,7 +347,7 @@ export default function PaymentSection({
                       <button
                         type="button"
                         onClick={() => copyToClipboard("03130538686", "jazz_num")}
-                        className="px-2.5 py-1 text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1"
+                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
                       >
                         {copiedField === "jazz_num" ? (
                           <>
@@ -370,7 +377,7 @@ export default function PaymentSection({
                       <QrCode className="w-3.5 h-3.5" />
                       <span>Scan JazzCash QR</span>
                     </div>
-                    <div className="relative w-40 h-40 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
+                    <div className="relative w-32 h-32 sm:w-36 sm:h-36 border border-theme-border-light dark:border-theme-border-dark p-2 bg-white">
                       <img
                         src="/QR/JazzCashQR.png"
                         alt="JazzCash Payment QR Code"
@@ -392,15 +399,17 @@ export default function PaymentSection({
       </div>
 
       {/* Back Button */}
-      <button
-        type="button"
-        onClick={onBack}
-        disabled={processing || uploadingProof}
-        className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors disabled:opacity-50"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        <span>Back to Delivery Details</span>
-      </button>
+      <div className="pt-2 pb-6">
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={processing || uploadingProof}
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors disabled:opacity-50"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Back to Delivery Details</span>
+        </button>
+      </div>
     </div>
   );
 
@@ -409,7 +418,7 @@ export default function PaymentSection({
       <div className="space-y-4">
         {/* Upload Box */}
         <div className="p-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-1">
             <label className="block text-xs uppercase tracking-wider font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Upload {methodLabel} Receipt *
             </label>
@@ -444,7 +453,7 @@ export default function PaymentSection({
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light cursor-pointer bg-theme-bg-light dark:bg-theme-bg-dark transition-all text-center group">
+            <label className="flex flex-col items-center justify-center gap-2 p-5 sm:p-6 border-2 border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light cursor-pointer bg-theme-bg-light dark:bg-theme-bg-dark transition-all text-center group">
               <Upload className="w-5 h-5 text-theme-hover-light dark:text-theme-hover-dark group-hover:scale-110 transition-transform" />
               <span className="text-xs uppercase tracking-wider font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 Click or drag transaction screenshot
@@ -472,7 +481,7 @@ export default function PaymentSection({
             value={referenceNumber}
             onChange={(e) => setReferenceNumber(e.target.value)}
             placeholder="e.g. 2389148729"
-            className="w-full px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
+            className="w-full px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm focus:outline-none focus:border-theme-hover-light"
           />
         </div>
 
@@ -481,7 +490,7 @@ export default function PaymentSection({
           type="button"
           onClick={handleSubmitOrder}
           disabled={processing || uploadingProof || !proofFile}
-          className={`w-full py-4 px-6 text-xs uppercase tracking-[0.2em] font-medium transition-all ${
+          className={`w-full py-3.5 sm:py-4 px-6 text-xs uppercase tracking-[0.2em] font-medium transition-all ${
             !proofFile
               ? "bg-theme-border-light dark:bg-theme-border-dark text-theme-text-muted-light dark:text-theme-text-muted-dark cursor-not-allowed opacity-60"
               : "bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text shadow-sm"
