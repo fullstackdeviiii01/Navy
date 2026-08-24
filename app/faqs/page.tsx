@@ -2,13 +2,12 @@
 import { Metadata } from "next";
 import FAQPage from "../components/faq/FAQPage";
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: "FAQ",
-    description: "Find answers to commonly asked questions",
-  };
-}
+export const metadata: Metadata = {
+  title: "Frequently Asked Questions | Atelier FAQ & Guidance",
+  description:
+    "Explore answers regarding our handcrafted solid wood luminaires, bespoke commissions, domestic shipping across Pakistan, warranty, and care recommendations.",
+};
 
-export default async function FAQ() {
+export default function FAQ() {
   return <FAQPage />;
 }
