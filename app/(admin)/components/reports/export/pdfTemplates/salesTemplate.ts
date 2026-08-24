@@ -10,8 +10,6 @@ export function generateSalesHTML(
     totalRevenue: 0,
     totalOrders: 0,
     averageOrderValue: 0,
-    revenueGrowth: 0,
-    ordersGrowth: 0,
   };
 
   const topProducts = data?.topProducts || [];
@@ -40,21 +38,14 @@ export function generateSalesHTML(
       <div class="stat-card">
         <div class="stat-label">Total Revenue</div>
         <div class="stat-value">Rs. ${Math.round(summary.totalRevenue || 0).toLocaleString()}</div>
-        <div class="stat-change ${summary.revenueGrowth >= 0 ? "positive" : "negative"}">
-          ${summary.revenueGrowth >= 0 ? "▲ +" : "▼ "}${Number(summary.revenueGrowth || 0).toFixed(1)}% vs previous period
-        </div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Orders Completed</div>
         <div class="stat-value">${(summary.totalOrders || 0).toLocaleString()}</div>
-        <div class="stat-change ${summary.ordersGrowth >= 0 ? "positive" : "negative"}">
-          ${summary.ordersGrowth >= 0 ? "▲ +" : "▼ "}${Number(summary.ordersGrowth || 0).toFixed(1)}% vs previous period
-        </div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Average Order Value</div>
         <div class="stat-value">Rs. ${Math.round(summary.averageOrderValue || 0).toLocaleString()}</div>
-        <div class="stat-change" style="color: #7A736C;">Per completed order</div>
       </div>
     </div>
 
