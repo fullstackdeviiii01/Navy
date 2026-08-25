@@ -38,7 +38,9 @@ export default function InteractiveRevenueChart({
   );
 
   const formatXAxis = (date: string) => {
-    const d = new Date(date);
+    if (!date) return "";
+    const parts = date.split("-").map(Number);
+    const d = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(date);
     if (timeRange === "7d") {
       return d.toLocaleDateString("en-US", { weekday: "short" });
     } else if (timeRange === "30d") {

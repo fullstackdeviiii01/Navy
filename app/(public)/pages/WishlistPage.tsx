@@ -61,8 +61,8 @@ export default function WishlistPage() {
                 ({wishlistCount})
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Your <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Collection</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Your Saved Pieces
             </h1>
             <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-2">
               Artisanal pieces curated for your living spaces and architectural projects.
@@ -93,7 +93,7 @@ export default function WishlistPage() {
                 <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
                   EMPTY WISHLIST
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                <h2 className="text-2xl sm:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   Your collection is currently empty
                 </h2>
                 <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto leading-relaxed">

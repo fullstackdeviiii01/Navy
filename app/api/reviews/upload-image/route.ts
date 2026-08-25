@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     // Check if user is authenticated OR has valid guest session
     const token = getIdTokenFromHeader(request);
     const sessionId = getSessionIdFromRequest(request);
-    
+
     if (!token && !sessionId) {
       return NextResponse.json(
         { error: "Authentication required" },
@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type (supports JPEG, PNG, WebP, AVIF, GIF, etc.)
-    const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
+    const isImage =
+      file.type.startsWith("image/") ||
+      /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
     if (!isImage) {
       return NextResponse.json(
         { error: "Invalid file type. Please upload an image" },
@@ -69,15 +71,15 @@ export async function POST(request: NextRequest) {
       await mkdir(uploadDir, { recursive: true });
     }
 
-    // Convert file to buffer, compress and convert to WebP
+    // Convert file to buffer, compress and convert to WebP via Sharp
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    
+
     const compressedBuffer = await sharp(buffer)
       .webp({ quality: 80 })
       .resize(1200, 1200, {
-        fit: 'inside',
-        withoutEnlargement: true
+        fit: "inside",
+        withoutEnlargement: true,
       })
       .toBuffer();
 
@@ -93,12 +95,11 @@ export async function POST(request: NextRequest) {
       url: publicUrl,
       filename,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Image upload failed:", error);
     return NextResponse.json(
-      { error: "Failed to upload image" },
+      { error: error.message || "Failed to upload image" },
       { status: 500 }
     );
   }
 }
-

@@ -178,7 +178,7 @@ export default function ReviewCard({
 
         {/* Content: Title & Text */}
         <div className="space-y-2 mb-4">
-          <h4 className="text-sm sm:text-base font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h4 className="text-sm sm:text-base font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {review.title}
           </h4>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">

@@ -2,6 +2,7 @@
 "use client";
 
 import { X, Star, Check, Trash2, Image, ShieldCheck, User } from "lucide-react";
+import { openImagePreview } from "../../../../lib/utils/mediaPreview";
 
 interface Review {
   _id: string;
@@ -127,9 +128,19 @@ export default function TestimonialAuditModal({
               </span>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {review.images.map((img, i) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark">
-                    <img src={img.url} alt={img.caption || "Review media"} className="w-full h-full object-cover" />
-                  </div>
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() =>
+                      openImagePreview(
+                        img.url,
+                        `${review.user_id?.name || "Customer"}'s Review Photo #${i + 1}`
+                      )
+                    }
+                    className="aspect-square rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark group relative cursor-pointer"
+                  >
+                    <img src={img.url} alt={img.caption || "Review media"} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  </button>
                 ))}
               </div>
             </div>

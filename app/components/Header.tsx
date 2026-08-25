@@ -164,11 +164,11 @@ export default function Header() {
           <div className="flex items-center shrink-0">
             <Link
               href="/"
-              className="flex items-center group py-0"
+              className="flex items-center py-0"
               aria-label={companyInfo.company_name || "Talal Wooden Lamps"}
             >
               {companyInfo.company_logo ? (
-                <div className="relative h-14 w-14 sm:h-18 sm:w-18 md:h-22 md:w-22 lg:h-24 lg:w-24 -my-2 sm:-my-3 shrink-0 transition-transform duration-300 group-hover:scale-105">
+                <div className="relative h-14 w-14 sm:h-18 sm:w-18 md:h-22 md:w-22 lg:h-24 lg:w-24 -my-2 sm:-my-3 shrink-0">
                   <Image
                     src={companyInfo.company_logo}
                     alt={companyInfo.company_name || "Logo"}
@@ -180,7 +180,7 @@ export default function Header() {
                 </div>
               ) : (
                 /* Pure Monogram Box (T | L) */
-                <div className="flex items-center border border-theme-hover-light/70 dark:border-theme-hover-dark/70 bg-theme-surface-light dark:bg-theme-surface-dark px-3 py-1.5 group-hover:border-theme-hover-light transition-all duration-300 shadow-sm">
+                <div className="flex items-center border border-theme-hover-light/70 dark:border-theme-hover-dark/70 bg-theme-surface-light dark:bg-theme-surface-dark px-3 py-1.5 hover:border-theme-hover-light transition-colors duration-300 shadow-sm">
                   <span className="font-serif text-xl sm:text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
                     T
                   </span>

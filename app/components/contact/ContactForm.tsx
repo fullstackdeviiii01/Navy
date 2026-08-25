@@ -55,7 +55,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
 
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 sm:p-8">
-      <h3 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-6">
+      <h3 className="text-xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-6">
         Send Us a Message
       </h3>
 

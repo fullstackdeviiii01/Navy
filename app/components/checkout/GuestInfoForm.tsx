@@ -90,7 +90,7 @@ export default function GuestInfoForm({
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
       <div className="flex items-center justify-between pb-4 mb-5 border-b border-theme-border-light dark:border-theme-border-dark">
-        <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Contact Information
         </h3>
         <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-theme-hover-light dark:text-theme-hover-dark">

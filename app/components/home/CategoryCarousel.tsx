@@ -33,8 +33,8 @@ export default function CategoryCarousel({ categories }: CategoryCarouselProps) 
             <p className="text-[10px] sm:text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
               CURATED COLLECTIONS
             </p>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Shop by <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Category</span>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Shop by Category
             </h2>
           </div>
 

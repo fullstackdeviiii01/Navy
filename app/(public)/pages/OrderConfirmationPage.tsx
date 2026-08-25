@@ -28,6 +28,7 @@ import {
 import Loader from "../../components/shared/Loader";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getItemImage } from "../../../lib/utils/productImages";
+import { openImagePreview } from "../../../lib/utils/mediaPreview";
 
 interface Props {
   orderId: string;
@@ -80,7 +81,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
           <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center mb-4">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-base sm:text-lg font-serif italic font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+          <h2 className="text-base sm:text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
             Unable to Find Order
           </h2>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-6 leading-relaxed">
@@ -136,8 +137,8 @@ export default function OrderConfirmationPage({ orderId }: Props) {
             </div>
 
             {/* Title */}
-            <h1 className="text-xl sm:text-3xl md:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
-              Thank You, <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">{customerName}</span>
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Thank You, {customerName}
             </h1>
 
             {/* Subtitle / Description */}
@@ -480,16 +481,20 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                 </div>
 
                 {order.payment_proof_url && (
-                  <a
-                    href={order.payment_proof_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold uppercase tracking-wider transition-colors bg-theme-card-light/40 dark:bg-theme-card-dark/30 shadow-2xs"
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openImagePreview(
+                        order.payment_proof_url,
+                        `Order #${order.order_number} Payment Receipt`
+                      )
+                    }
+                    className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold uppercase tracking-wider transition-colors bg-theme-card-light/40 dark:bg-theme-card-dark/30 shadow-2xs cursor-pointer"
                   >
                     <Receipt className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
                     <span>View Uploaded Receipt</span>
                     <ExternalLink className="w-3.5 h-3.5 ml-0.5 text-theme-text-muted-light" />
-                  </a>
+                  </button>
                 )}
               </div>
             </div>

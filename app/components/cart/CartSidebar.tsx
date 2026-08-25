@@ -81,7 +81,7 @@ export default function CartSidebar() {
             <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
               YOUR BASKET
             </p>
-            <h2 className="text-base sm:text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h2 className="text-base sm:text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Shopping Cart ({itemCount})
             </h2>
           </div>
@@ -98,7 +98,7 @@ export default function CartSidebar() {
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 sm:py-4 space-y-3 sm:space-y-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
-              <p className="text-sm font-serif italic text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-5">
+              <p className="text-sm font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-5">
                 Your basket is empty
               </p>
               <button

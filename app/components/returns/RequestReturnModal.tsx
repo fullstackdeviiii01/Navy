@@ -353,26 +353,26 @@ export default function RequestReturnModal({
             />
           </div>
 
-          {/* Step 4: Photo / Video Evidence */}
+          {/* Step 4: Photo Evidence */}
           <div className="space-y-2">
             <label className="block text-[11px] uppercase font-bold tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              4. Photos / Videos of Issue (Recommended)
+              4. Photos of Issue (Recommended)
             </label>
             <div className="flex items-center gap-3 flex-wrap">
               <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs rounded transition-colors">
                 <Upload size={14} className="text-theme-hover-light" />
-                <span>{uploading ? "Uploading Evidence..." : "Attach Photos / Videos"}</span>
+                <span>{uploading ? "Uploading Evidence..." : "Attach Photos"}</span>
                 <input
                   type="file"
                   multiple
-                  accept="image/*,video/*"
+                  accept="image/*"
                   onChange={handleFileUpload}
                   disabled={uploading}
                   className="hidden"
                 />
               </label>
               <span className="text-[10px] text-theme-text-muted-light">
-                Up to 20MB per file
+                Up to 20MB per photo
               </span>
             </div>
 
@@ -380,19 +380,12 @@ export default function RequestReturnModal({
             {mediaUrls.length > 0 && (
               <div className="flex gap-2 flex-wrap pt-2">
                 {mediaUrls.map((url, i) => {
-                  const isVideo = url.endsWith(".mp4") || url.endsWith(".webm") || url.includes("video");
                   return (
                     <div
                       key={i}
                       className="relative w-16 h-16 rounded border border-theme-border-light overflow-hidden group bg-black/5"
                     >
-                      {isVideo ? (
-                        <div className="w-full h-full flex items-center justify-center bg-black text-white">
-                          <Video size={16} />
-                        </div>
-                      ) : (
-                        <img src={url} alt="Evidence" className="w-full h-full object-cover" />
-                      )}
+                      <img src={url} alt="Evidence" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => removeMedia(i)}

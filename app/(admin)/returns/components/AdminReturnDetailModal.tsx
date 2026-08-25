@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { adminReturnsApi } from "../../../../lib/api/returns";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
+import { openImagePreview } from "../../../../lib/utils/mediaPreview";
 
 interface AdminReturnDetailModalProps {
   isOpen: boolean;
@@ -318,20 +319,24 @@ export default function AdminReturnDetailModal({
                 </div>
               </div>
 
-              {/* 4. Uploaded Photos / Videos Proof */}
+              {/* 4. Uploaded Photos Proof */}
               {returnDoc.media_urls && returnDoc.media_urls.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-[11px] uppercase font-bold tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    Customer Photo / Video Evidence ({returnDoc.media_urls.length})
+                    Customer Photo Evidence ({returnDoc.media_urls.length})
                   </span>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
                     {returnDoc.media_urls.map((url: string, idx: number) => (
-                      <a
+                      <button
+                        type="button"
                         key={idx}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative h-24 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/10 flex items-center justify-center"
+                        onClick={() =>
+                          openImagePreview(
+                            url,
+                            `Return Claim #${returnDoc.rma_number} Evidence Photo #${idx + 1}`
+                          )
+                        }
+                        className="group relative h-24 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/10 flex items-center justify-center cursor-pointer"
                       >
                         {url.endsWith(".mp4") || url.endsWith(".webm") ? (
                           <div className="flex flex-col items-center gap-1 text-white">
@@ -348,7 +353,7 @@ export default function AdminReturnDetailModal({
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                           <ExternalLink size={14} />
                         </div>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>

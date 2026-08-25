@@ -164,7 +164,7 @@ export default function ReviewForm({
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 sm:p-8">
       <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-4 mb-6">
-        <h3 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <h3 className="text-xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
           {isEdit ? "Edit Your Review" : "Write a Customer Review"}
         </h3>
         <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark mt-1">
@@ -248,7 +248,7 @@ export default function ReviewForm({
         <div className="space-y-4 pt-2 border-t border-theme-border-light dark:border-theme-border-dark">
           <div>
             <span className="block text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-2">
-              Attach Photos & Videos (Optional)
+              Attach Photos (Optional)
             </span>
             
             <div className="flex flex-wrap gap-4">
@@ -275,8 +275,8 @@ export default function ReviewForm({
                 </label>
               )}
 
-              {/* Video Upload Trigger */}
-              {videos.length < 2 && (
+              {/* Video Upload Trigger (Commented out to improve site speed and performance) */}
+              {/* {videos.length < 2 && (
                 <label className="cursor-pointer border border-dashed border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light p-4 flex flex-col items-center justify-center gap-1.5 w-32 h-28 text-center bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 transition-colors">
                   <input
                     type="file"
@@ -296,7 +296,7 @@ export default function ReviewForm({
                     </>
                   )}
                 </label>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -323,8 +323,8 @@ export default function ReviewForm({
             </div>
           )}
 
-          {/* Uploaded Videos Preview */}
-          {videos.length > 0 && (
+          {/* Uploaded Videos Preview (Commented out) */}
+          {/* {videos.length > 0 && (
             <div>
               <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light mb-2">
                 Attached Videos ({videos.length}/2)
@@ -344,7 +344,7 @@ export default function ReviewForm({
                 ))}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Submit / Cancel Buttons */}

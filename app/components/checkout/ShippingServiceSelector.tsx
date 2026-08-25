@@ -73,7 +73,7 @@ export default function ShippingServiceSelector({
       <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
         <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
           <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Delivery Method
           </h3>
         </div>
@@ -89,7 +89,7 @@ export default function ShippingServiceSelector({
       <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
         <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
           <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Delivery Method
           </h3>
         </div>
@@ -105,7 +105,7 @@ export default function ShippingServiceSelector({
       <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6">
         <div className="flex items-center gap-2 pb-4 mb-4 border-b border-theme-border-light dark:border-theme-border-dark">
           <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Delivery Method
           </h3>
         </div>
@@ -121,7 +121,7 @@ export default function ShippingServiceSelector({
       <div className="flex items-center justify-between pb-4 mb-5 border-b border-theme-border-light dark:border-theme-border-dark">
         <div className="flex items-center gap-2">
           <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
-          <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Delivery Method
           </h3>
         </div>

@@ -15,9 +15,9 @@ interface ProductFiltersProps {
   onStockChange: (inStock: boolean) => void;
   selectedRating: number;
   onRatingChange: (rating: number) => void;
-  selectedBrands: string[];
-  onBrandChange: (brands: string[]) => void;
-  availableBrands: string[];
+  selectedBrands?: string[];
+  onBrandChange?: (brands: string[]) => void;
+  availableBrands?: string[];
 }
 
 export default function ProductFilters({
@@ -30,9 +30,6 @@ export default function ProductFilters({
   onStockChange,
   selectedRating,
   onRatingChange,
-  selectedBrands,
-  onBrandChange,
-  availableBrands,
 }: ProductFiltersProps) {
   const [expandedSection, setExpandedSection] = useState<string>("categories");
   const [localPriceRange, setLocalPriceRange] = useState({ min: 0, max: 0 });
@@ -256,56 +253,6 @@ export default function ProductFilters({
         </div>
       </div>
 
-      {/* Brands Filter */}
-      {availableBrands.length > 0 && (
-        <div className="border-b border-theme-border-light/60 dark:border-theme-border-dark/60 pb-3">
-          <button
-            aria-label="Toggle product brands"
-            onClick={() => toggleSection("brands")}
-            className="flex items-center justify-between w-full text-left font-serif text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors py-1"
-          >
-            <span>Brands</span>
-            {expandedSection === "brands" ? (
-              <ChevronUp className="w-3.5 h-3.5" />
-            ) : (
-              <ChevronDown className="w-3.5 h-3.5" />
-            )}
-          </button>
-          <div
-            className={`transition-all duration-300 ease-in-out overflow-hidden ${
-              expandedSection === "brands"
-                ? "max-h-56 opacity-100 mt-2"
-                : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
-              {availableBrands.map((brand) => (
-                <label
-                  key={brand}
-                  className="flex items-center gap-2 cursor-pointer py-1 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    aria-label="Product Brands check"
-                    checked={selectedBrands.includes(brand)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        onBrandChange([...selectedBrands, brand]);
-                      } else {
-                        onBrandChange(
-                          selectedBrands.filter((b) => b !== brand),
-                        );
-                      }
-                    }}
-                    className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
-                  />
-                  <span>{brand}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* In Stock Filter */}
       <div className="pt-1">

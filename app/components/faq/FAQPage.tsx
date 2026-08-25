@@ -167,8 +167,8 @@ export default function FAQPage() {
           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-theme-hover-light dark:text-theme-hover-dark">
             CONCIERGE KNOWLEDGE BASE
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
-            Frequently Asked <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Questions</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            Frequently Asked Questions
           </h1>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-xl mx-auto leading-relaxed">
             Everything you need to know regarding our handcrafted solid wood luminaires, tailored bespoke commissions, domestic shipping, and care guidelines.
@@ -277,7 +277,7 @@ export default function FAQPage() {
           ) : (
             <div className="border border-dashed border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-center py-16 px-4 space-y-3">
               <HelpCircle className="w-8 h-8 text-theme-hover-light mx-auto" />
-              <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 No matching inquiries found
               </h3>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-sm mx-auto">

@@ -21,6 +21,7 @@ import { adminOrdersApi } from "../../../../../lib/api/orders";
 import ShippingAddress from "../../../../components/orders/orderdetail/ShippingAddress";
 import BillingAddress from "../../../../components/orders/orderdetail/BillingAddress";
 import DownloadInvoiceButton from "../../../../components/invoice/DownloadInvoiceButton";
+import { openImagePreview } from "../../../../../lib/utils/mediaPreview";
 
 interface AdminOrderDetailViewProps {
   order: any;
@@ -341,11 +342,15 @@ export default function AdminOrderDetailView({
                     <p className="font-medium text-xs uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-2">
                       Submitted Screenshot / Receipt:
                     </p>
-                    <a
-                      href={order.payment_proof_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block group relative overflow-hidden rounded-lg border border-theme-border-light dark:border-theme-border-dark"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openImagePreview(
+                          order.payment_proof_url,
+                          `Order #${order.order_number} Payment Receipt`
+                        )
+                      }
+                      className="w-full text-left block group relative overflow-hidden rounded-lg border border-theme-border-light dark:border-theme-border-dark cursor-pointer"
                     >
                       <img
                         src={order.payment_proof_url}
@@ -353,10 +358,10 @@ export default function AdminOrderDetailView({
                         className="w-full max-h-72 object-contain bg-black/5 dark:bg-black/20 group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity gap-1">
-                        <span>View Full Image</span>
+                        <span>View Full Receipt</span>
                         <ExternalLink size={13} />
                       </div>
-                    </a>
+                    </button>
                   </div>
                 ) : order.payment_method !== "cod" ? (
                   <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">

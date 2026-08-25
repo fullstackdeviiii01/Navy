@@ -86,8 +86,8 @@ function CategoriesPageContent() {
                   • {allCategories.length} CATEGORIES ({totalPieces} PIECES)
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-                Curated <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Categories</span>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight tracking-tight">
+                Curated Categories
               </h1>
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-3 leading-relaxed max-w-2xl">
                 Explore our distinct luminaire families, from monumental arc floor lamps and hand-carved timber table lights to authentic Louis Comfort Tiffany stained glass works.
@@ -194,7 +194,7 @@ function CategoriesPageContent() {
             <div className="inline-flex items-center justify-center w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark">
               <Search className="w-6 h-6 text-theme-text-muted-light dark:text-theme-text-muted-dark" />
             </div>
-            <h2 className="font-serif italic text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h2 className="font-serif font-medium text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark">
               No matching collections
             </h2>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto leading-relaxed">

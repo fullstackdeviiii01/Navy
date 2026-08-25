@@ -9,6 +9,8 @@ export async function deleteReviewImages(imageUrls: string[]) {
 
   for (const imageUrl of imageUrls) {
     try {
+      if (!imageUrl || imageUrl.startsWith("data:")) continue;
+
       const filename = imageUrl.split("/").pop();
       if (!filename) continue;
 

@@ -155,13 +155,12 @@ export default function PaymentSection({
 
         {/* Selected Method Details Panel */}
         <div className="pt-6 border-t border-theme-border-light dark:border-theme-border-dark">
-          {/* 1. Cash On Delivery */}
           {selectedMethod === "cod" && (
             <div className="space-y-5">
               <div className="p-4 sm:p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark">
                 <div className="flex items-center gap-2 mb-2.5 text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   <Truck className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
-                  <h4 className="font-serif italic text-base sm:text-lg">
+                  <h4 className="font-serif font-medium text-base sm:text-lg">
                     Cash on Delivery Terms
                   </h4>
                 </div>
@@ -190,14 +189,13 @@ export default function PaymentSection({
             </div>
           )}
 
-          {/* 2. Direct Bank Transfer (Meezan Bank) */}
           {selectedMethod === "bank_transfer" && (
             <div className="space-y-6">
               <div className="p-4 sm:p-5 bg-theme-card-light/40 dark:bg-theme-card-dark/30 border border-theme-border-light dark:border-theme-border-dark space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
                   <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
-                    <h4 className="font-serif italic text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <h4 className="font-serif font-medium text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       Meezan Bank Details
                     </h4>
                   </div>
@@ -208,26 +206,8 @@ export default function PaymentSection({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
                   <div className="space-y-3">
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
-                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                        Bank Name
-                      </span>
-                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Meezan Bank
-                      </span>
-                    </div>
-
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
-                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                        Account Title
-                      </span>
-                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Rehan Ahmad
-                      </span>
-                    </div>
-
                     <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
-                      <div className="min-w-0">
+                      <div>
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Account Number
                         </span>
@@ -315,7 +295,7 @@ export default function PaymentSection({
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-theme-border-light dark:border-theme-border-dark">
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
-                    <h4 className="font-serif italic text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <h4 className="font-serif font-medium text-base sm:text-lg text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       JazzCash Mobile Account
                     </h4>
                   </div>

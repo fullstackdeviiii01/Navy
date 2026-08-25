@@ -110,8 +110,8 @@ export default function GuestOrderTrackingPage() {
               <p className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
                 ORDER LOOKUP
               </p>
-              <h2 className="text-2xl sm:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1.5 sm:mb-2">
-                Track <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your piece</span>
+              <h2 className="text-2xl sm:text-4xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight mb-1.5 sm:mb-2">
+                Track Your Order
               </h2>
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                 Follow the progress of your handcrafted order from our workshop to your door.
@@ -207,7 +207,7 @@ export default function GuestOrderTrackingPage() {
         {!order && !loading && searched && !error && (
           <div className="text-center py-12 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark max-w-xl mx-auto mt-6" role="status">
             <Package className="w-8 h-8 text-theme-hover-light dark:text-theme-hover-dark mx-auto mb-3" aria-hidden="true" />
-            <h3 className="text-lg font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
+            <h3 className="text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-1">
               No Order Found
             </h3>
             <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">

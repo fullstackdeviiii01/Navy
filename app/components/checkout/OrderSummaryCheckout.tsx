@@ -29,7 +29,7 @@ export default function OrderSummaryCheckout({
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark transition-colors">
       {/* Header */}
       <div className="p-5 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
-        <h2 className="text-base font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <h2 className="text-base font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Order Summary
         </h2>
         <span className="text-[11px] uppercase tracking-[0.15em] text-theme-text-muted-light dark:text-theme-text-muted-dark">

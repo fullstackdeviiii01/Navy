@@ -16,6 +16,7 @@ import DownloadInvoiceButton from "../../invoice/DownloadInvoiceButton";
 import ReturnStatusCard from "../../returns/ReturnStatusCard";
 import { returnsApi } from "../../../../lib/api/returns";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
+import { openImagePreview } from "../../../../lib/utils/mediaPreview";
 
 interface UserOrderDetailViewProps {
   order: any;
@@ -73,7 +74,7 @@ export default function UserOrderDetailView({
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <h1 className="text-lg sm:text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <h1 className="text-lg sm:text-xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Order Details
                       </h1>
                       <OrderStatusBadge status={order.status} />
@@ -370,15 +371,19 @@ export default function UserOrderDetailView({
 
                 {order.payment_proof_url && (
                   <div className="pt-1">
-                    <a
-                      href={order.payment_proof_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light text-xs font-semibold uppercase tracking-wider transition-colors"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openImagePreview(
+                          order.payment_proof_url,
+                          `Order #${order.order_number} Payment Receipt`
+                        )
+                      }
+                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light text-theme-text-primary-light text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
                     >
                       <span>View Uploaded Receipt</span>
                       <ExternalLink size={12} />
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>

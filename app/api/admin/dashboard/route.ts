@@ -134,7 +134,11 @@ export async function GET(request: NextRequest) {
         {
           $group: {
             _id: {
-              $dateToString: { format: "%Y-%m-%d", date: "$placed_at" },
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$placed_at",
+                timezone: "+05:00",
+              },
             },
             revenue: {
               $sum: {
@@ -297,21 +301,31 @@ export async function GET(request: NextRequest) {
         ? Math.round(((totalOrders - prevOrders) / prevOrders) * 100 * 10) / 10
         : 0;
 
-    // Fill missing days in sales chart with zero values
+    // Fill missing days in sales chart with zero values in Pakistan Standard Time (PKT, UTC+5)
+    const getPktDateString = (d: Date): string => {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Karachi",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(d);
+    };
+
     const salesMap = new Map<string, { date: string; revenue: number; orders: number }>(
       salesDataAgg.map((d: any) => [d.date, d])
     );
     const filledSalesData: Array<{ date: string; revenue: number; orders: number }> = [];
-    const cursor = new Date(startDate);
-    cursor.setHours(0, 0, 0, 0);
-    while (cursor <= now) {
-      const key = cursor.toISOString().split("T")[0];
+    const daysCount =
+      range === "7d" ? 7 : range === "90d" ? 90 : range === "1y" ? 365 : 30;
+
+    for (let i = daysCount - 1; i >= 0; i--) {
+      const dayDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const key = getPktDateString(dayDate);
       filledSalesData.push(
         salesMap.has(key)
           ? salesMap.get(key)!
           : { date: key, revenue: 0, orders: 0 }
       );
-      cursor.setDate(cursor.getDate() + 1);
     }
 
     // Format revenue by category

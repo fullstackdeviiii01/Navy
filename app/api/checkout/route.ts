@@ -46,7 +46,9 @@ export async function POST(request: NextRequest) {
         !proof_url ||
         typeof proof_url !== "string" ||
         proof_url.trim().length < 5 ||
-        (!proof_url.startsWith("/uploads/payment-proofs/") && !proof_url.startsWith("http"))
+        (!proof_url.startsWith("/uploads/payment-proofs/") &&
+         !proof_url.startsWith("data:image/") &&
+         !proof_url.startsWith("http"))
       ) {
         return NextResponse.json(
           {

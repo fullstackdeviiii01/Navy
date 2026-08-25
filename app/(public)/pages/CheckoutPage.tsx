@@ -267,8 +267,8 @@ export default function CheckoutPage() {
             <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
               STEP 2 OF 2
             </p>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
-              Payment <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">& Verification</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Payment & Verification
             </h1>
           </div>
 
@@ -291,8 +291,8 @@ export default function CheckoutPage() {
           <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
             STEP 1 OF 2 — DELIVERY
           </p>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2 sm:mb-3 tracking-tight">
-            Finalize <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">your order</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2 sm:mb-3 tracking-tight">
+            Finalize Your Order
           </h1>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
             Complete your delivery details to ensure handcrafted care from workshop to your room.

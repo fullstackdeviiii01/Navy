@@ -87,11 +87,8 @@ export default function BespokeInquiryBanner() {
               <span className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark block mb-1.5 sm:mb-2">
                 PROJECTS & BESPOKE INQUIRIES
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight mb-3 sm:mb-4">
-                Have a specific room in mind?{" "}
-                <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
-                  Let us tailor the light.
-                </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight tracking-tight mb-3 sm:mb-4">
+                Have a specific room in mind? Let us tailor the light.
               </h2>
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed max-w-2xl">
                 Whether you are outfitting an entire residence, sourcing fixtures for a dining table, or seeking bespoke timber finishes to complement architectural millwork, we work closely with homeowners and architects.

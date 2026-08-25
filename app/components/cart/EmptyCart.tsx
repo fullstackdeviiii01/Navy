@@ -15,7 +15,7 @@ export default function EmptyCart() {
         <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
           BAG IS EMPTY
         </p>
-        <h2 className="text-2xl sm:text-3xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <h2 className="text-2xl sm:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
           Your cart contains no pieces
         </h2>
         <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-md mx-auto leading-relaxed">

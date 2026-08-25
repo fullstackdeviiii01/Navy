@@ -45,7 +45,7 @@ export default function CategoryGrid({
         <div className="inline-flex items-center justify-center w-14 h-14 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark">
           <Tag className="w-6 h-6 text-theme-hover-light dark:text-theme-hover-dark" />
         </div>
-        <h3 className="font-serif italic text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <h3 className="font-serif font-medium text-2xl text-theme-text-primary-light dark:text-theme-text-primary-dark">
           No categories found
         </h3>
         <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-sm mx-auto">

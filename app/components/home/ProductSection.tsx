@@ -61,11 +61,8 @@ export default function ProductSection({
                 {label}
               </p>
             )}
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-              {title.split(" ")[0]}{" "}
-              <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
-                {title.split(" ").slice(1).join(" ")}
-              </span>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight tracking-tight">
+              {title}
             </h2>
             {subtitle && (
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1.5 sm:mt-2">

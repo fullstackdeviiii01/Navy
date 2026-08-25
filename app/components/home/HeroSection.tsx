@@ -25,11 +25,8 @@ export default function HeroSection() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.1] tracking-tight">
-              Luminaires sculpted in{" "}
-              <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark block sm:inline">
-                solid timber & brass.
-              </span>
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.1] tracking-tight">
+              Luminaires sculpted in solid timber & brass.
             </h1>
 
             {/* Subtitle / Description */}

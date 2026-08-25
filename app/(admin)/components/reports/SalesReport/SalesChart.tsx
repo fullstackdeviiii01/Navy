@@ -19,7 +19,12 @@ export default function SalesChart({ dailyData }: SalesChartProps) {
             <XAxis
               dataKey="date"
               tick={{ fill: "#9CA3AF", fontSize: 10 }}
-              tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              tickFormatter={(value) => {
+                if (!value) return "";
+                const parts = value.split("-").map(Number);
+                const d = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(value);
+                return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+              }}
             />
             <YAxis tick={{ fill: "#9CA3AF", fontSize: 10 }} />
             <Tooltip
@@ -29,8 +34,13 @@ export default function SalesChart({ dailyData }: SalesChartProps) {
                 borderRadius: "8px",
                 fontSize: "12px",
               }}
-              labelFormatter={(value) => new Date(value).toLocaleDateString()}
-              formatter={(value) => [`$${value}`, "Revenue"]}
+              labelFormatter={(value) => {
+                if (!value) return "";
+                const parts = value.split("-").map(Number);
+                const d = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(value);
+                return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+              }}
+              formatter={(value) => [`Rs. ${Number(value || 0).toLocaleString()}`, "Revenue"]}
             />
             <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} dot={false} />
           </LineChart>

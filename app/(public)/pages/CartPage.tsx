@@ -107,8 +107,8 @@ export default function CartPage() {
             Selected Luminaires
           </p>
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Shopping <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Cart</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              Shopping Cart
             </h1>
             <span className="text-xs uppercase tracking-[0.15em] text-theme-text-muted-light dark:text-theme-text-muted-dark">
               {cart.items.length} {cart.items.length === 1 ? "Piece" : "Pieces"} Selected

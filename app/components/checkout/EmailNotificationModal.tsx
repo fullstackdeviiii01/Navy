@@ -18,7 +18,7 @@ export default function EmailNotificationModal({
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <Bell className="w-5 h-5 text-theme-hover-light dark:text-theme-hover-dark" />
-            <h3 className="text-base font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-base font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Enable Order Notifications?
             </h3>
           </div>

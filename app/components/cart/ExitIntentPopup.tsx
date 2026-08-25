@@ -81,8 +81,8 @@ export default function ExitIntentPopup({
             <p className="text-[10px] uppercase tracking-[0.25em] font-medium text-theme-hover-light dark:text-theme-hover-dark mb-2">
               SAVE YOUR ORDER
             </p>
-            <h3 className="text-2xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-              Save your basket
+            <h3 className="text-2xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+              Save Your Basket
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
               Keep your selected handcrafted pieces safe and receive reminders.

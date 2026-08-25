@@ -1,17 +1,30 @@
 // app/lib/utils/reports/aggregationUtils.ts
 // ============================================
 export function generateDailyBreakdown(orders: any[], start: Date, end: Date) {
+  const getPktDateString = (d: Date): string => {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Karachi",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(d);
+  };
+
   const dailyMap = new Map();
   const current = new Date(start);
+  const endStr = getPktDateString(end);
 
-  while (current <= end) {
-    const dateStr = current.toISOString().split("T")[0];
-    dailyMap.set(dateStr, { date: dateStr, revenue: 0, orders: 0 });
+  while (current <= end || getPktDateString(current) === endStr) {
+    const dateStr = getPktDateString(current);
+    if (!dailyMap.has(dateStr)) {
+      dailyMap.set(dateStr, { date: dateStr, revenue: 0, orders: 0 });
+    }
+    if (dateStr === endStr) break;
     current.setDate(current.getDate() + 1);
   }
 
   orders.forEach((order) => {
-    const dateStr = new Date(order.placed_at).toISOString().split("T")[0];
+    const dateStr = getPktDateString(new Date(order.placed_at));
     if (dailyMap.has(dateStr)) {
       const day = dailyMap.get(dateStr);
       day.revenue += order.pricing.total;

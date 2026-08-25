@@ -226,7 +226,7 @@ export default function Footerr() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/care-guide"
                   className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
                 >
                   Care Guide

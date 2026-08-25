@@ -80,24 +80,14 @@ export default function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
             <ExternalLink className="w-3 h-3 opacity-70" />
           </Link>
 
-          {/* Admin Profile Chip */}
-          <div className="flex items-center gap-2.5 pl-2.5 border-l border-theme-border-light dark:border-theme-border-dark">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 shrink-0">
-              <img
-                src={
-                  avatar ||
-                  "https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
-                }
-                alt={name || "Admin"}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="hidden md:flex flex-col text-left leading-none">
+          {/* Admin Profile Chip (No Image) */}
+          <div className="flex items-center gap-2 pl-2.5 border-l border-theme-border-light dark:border-theme-border-dark">
+            <div className="flex flex-col text-left leading-none">
               <span className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {name || "Admin"}
               </span>
               <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light font-medium mt-0.5">
-                Admin
+                Administrator
               </span>
             </div>
           </div>

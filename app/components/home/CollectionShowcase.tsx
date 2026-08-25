@@ -68,11 +68,8 @@ export default function CollectionShowcase() {
                 </span>
               </div>
 
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.12]">
-                Form, shadow, and the{" "}
-                <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">
-                  warmth of living spaces.
-                </span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-[1.15] sm:leading-[1.12] tracking-tight">
+                Form, shadow, and the warmth of living spaces.
               </h2>
 
               <p className="text-xs sm:text-sm md:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">

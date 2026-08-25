@@ -23,6 +23,7 @@ import OrderLineItemsSummary from "../components/OrderLineItemsSummary";
 import CustomerDossierCard from "../components/CustomerDossierCard";
 import DownloadInvoiceButton from "../../../components/invoice/DownloadInvoiceButton";
 import { adminOrdersApi } from "../../../../lib/api/orders";
+import { openImagePreview } from "../../../../lib/utils/mediaPreview";
 
 interface OrderManifestDetailViewProps {
   order: any;
@@ -309,18 +310,22 @@ export default function OrderManifestDetailView({
                 </div>
               )}
 
-              {/* Payment Proof Button (Opens in New Tab) */}
+              {/* Payment Proof Button */}
               {order.payment_proof_url && (
                 <div className="pt-1">
-                  <a
-                    href={order.payment_proof_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold transition-colors"
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openImagePreview(
+                        order.payment_proof_url,
+                        `Order #${order.order_number} Payment Receipt`
+                      )
+                    }
+                    className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    <span>View Payment Proof</span>
+                    <span>View Payment Receipt</span>
                     <ExternalLink size={13} className="text-theme-hover-light" />
-                  </a>
+                  </button>
                 </div>
               )}
 

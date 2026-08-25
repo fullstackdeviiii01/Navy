@@ -120,8 +120,8 @@ export default function CraftsmanshipSpotlight({ products }: CraftsmanshipSpotli
                 </span>
               </div>
 
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-                The purity of <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">handmade light.</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight tracking-tight">
+                The Purity of Handmade Light
               </h2>
 
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">

@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   LayoutDashboard,
   Box,
@@ -17,14 +18,13 @@ import {
   Truck,
   Mail,
   BarChart3,
-  Activity,
-  Store,
   LogOut,
   ChevronDown,
   X,
 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { siteSettingsApi } from "../../../lib/api/siteSettings";
 
 interface AdminSidebarProps {
   isOpen?: boolean;
@@ -54,8 +54,32 @@ type NavSection = {
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { name, avatar, logout } = useUser();
+  const { name, logout } = useUser();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [companyInfo, setCompanyInfo] = useState<{
+    company_name?: string;
+    company_logo?: string;
+  }>({
+    company_name: "Rehan Wooden Lamps",
+    company_logo: "",
+  });
+
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      try {
+        const data = await siteSettingsApi.getCompanyInfo();
+        if (data?.company_info) {
+          setCompanyInfo({
+            company_name: data.company_info.company_name || "Rehan Wooden Lamps",
+            company_logo: data.company_info.company_logo || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch company info for sidebar:", error);
+      }
+    };
+    fetchCompanyInfo();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -211,20 +235,33 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       >
         {/* Brand Header */}
         <div className="flex-shrink-0 px-5 py-4 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
-          <Link href="/admin/dashboard" onClick={onClose} className="flex items-center gap-2.5 group">
-            {/* Monogram Emblem (R | L) */}
-            <div className="flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded-md shadow-xs shrink-0 group-hover:border-neutral-900 dark:group-hover:border-neutral-100 transition-colors">
-              <span className="font-serif text-base text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
-                R
-              </span>
-              <span className="h-3 w-[1px] bg-theme-border-light dark:border-theme-border-dark mx-1.5 inline-block" />
-              <span className="font-serif text-base text-neutral-500 tracking-tight font-normal">
-                L
-              </span>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-serif text-xs tracking-wider font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                REHAN LAMPS
+          <Link href="/admin/dashboard" onClick={onClose} className="flex items-center gap-2.5 group min-w-0">
+            {companyInfo.company_logo ? (
+              <div className="relative h-9 w-9 shrink-0">
+                <Image
+                  src={companyInfo.company_logo}
+                  alt={companyInfo.company_name || "Logo"}
+                  fill
+                  className="object-contain mix-blend-multiply dark:mix-blend-normal"
+                  sizes="36px"
+                  priority
+                />
+              </div>
+            ) : (
+              /* Monogram Emblem (R | L) fallback */
+              <div className="flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded-md shadow-xs shrink-0 group-hover:border-neutral-900 dark:group-hover:border-neutral-100 transition-colors">
+                <span className="font-serif text-base text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
+                  R
+                </span>
+                <span className="h-3 w-[1px] bg-theme-border-light dark:border-theme-border-dark mx-1.5 inline-block" />
+                <span className="font-serif text-base text-neutral-500 tracking-tight font-normal">
+                  L
+                </span>
+              </div>
+            )}
+            <div className="flex flex-col leading-none min-w-0">
+              <span className="font-serif text-xs tracking-wider font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                {companyInfo.company_name || "REHAN LAMPS"}
               </span>
               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-theme-text-muted-light font-medium mt-0.5">
                 Admin Panel
@@ -339,21 +376,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         </nav>
 
         {/* Footer Actions */}
-        <div className="flex-shrink-0 p-3 border-t border-theme-border-light dark:border-theme-border-dark space-y-1 bg-theme-surface-light/50 dark:bg-theme-surface-dark/50">
-          <Link
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onClose}
-            className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light hover:bg-theme-card-light dark:hover:bg-theme-card-dark rounded-lg transition-colors"
-          >
-            <Store className="w-3.5 h-3.5 opacity-75" />
-            <span>View Website</span>
-          </Link>
+        <div className="flex-shrink-0 p-3 border-t border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light/50 dark:bg-theme-surface-dark/50">
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors text-left"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors border border-rose-200/60 dark:border-rose-900/40"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>

@@ -203,8 +203,8 @@ export default function ProductReviewSection({
           <p className="text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
             CLIENT FEEDBACK
           </p>
-          <h2 className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            Verified <span className="italic font-normal font-serif text-theme-hover-light dark:text-theme-hover-dark">Reviews</span>
+          <h2 className="text-2xl sm:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            Customer Reviews
           </h2>
         </div>
 
@@ -318,7 +318,7 @@ export default function ProductReviewSection({
       {!hasReviews && (
         <div className="border border-dashed border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-center py-16 px-4 space-y-4">
           <MessageSquare className="w-8 h-8 text-theme-hover-light dark:text-theme-hover-dark mx-auto" />
-          <h3 className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
             No Reviews Yet
           </h3>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-sm mx-auto">

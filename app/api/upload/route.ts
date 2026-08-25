@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 10);
-    const ext = file.name.split(".").pop() || (isPdf ? "pdf" : isVideo ? "mp4" : "jpg");
+    const ext = isImage ? "webp" : isPdf ? "pdf" : file.name.split(".").pop() || "mp4";
     const sanitizedExt = ext.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
     const filename = `media_${timestamp}_${randomString}.${sanitizedExt}`;
 
@@ -50,8 +51,22 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    let finalBuffer = buffer;
+
+    if (isImage) {
+      // Compress and convert to WebP via Sharp
+      finalBuffer = await sharp(buffer)
+        .webp({ quality: 80 })
+        .resize(1400, 1400, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .toBuffer();
+    }
+
     const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
+    await writeFile(filepath, finalBuffer);
 
     const publicUrl = `/uploads/returns/${filename}`;
 
