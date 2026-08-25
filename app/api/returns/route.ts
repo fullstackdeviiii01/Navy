@@ -59,7 +59,10 @@ export async function POST(request: NextRequest) {
       }
     } else {
       const sessionId = getSessionIdFromRequest(request);
-      if (order.order_type !== "guest" || order.session_id !== sessionId) {
+      const isGuestMatch =
+        order.order_type === "guest" ||
+        (sessionId && order.session_id === sessionId);
+      if (!isGuestMatch) {
         return NextResponse.json({ error: "Unauthorized session for guest order" }, { status: 401 });
       }
     }

@@ -42,7 +42,10 @@ export async function GET(
       }
     } else {
       const sessionId = getSessionIdFromRequest(request);
-      if (order.order_type !== "guest" || order.session_id !== sessionId) {
+      const isGuestMatch =
+        order.order_type === "guest" ||
+        (sessionId && order.session_id === sessionId);
+      if (!isGuestMatch) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     }

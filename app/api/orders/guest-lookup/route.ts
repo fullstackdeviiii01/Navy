@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "../../../../lib/db";
 import Order from "../../../models/Order";
 import "../../../models/Return";
+import { createSessionCookie } from "../../../../lib/auth/session";
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,7 +45,14 @@ export async function GET(request: NextRequest) {
       (order as any).return_status = (order as any).return_status.status;
     }
 
-    return NextResponse.json({ order });
+    const response = NextResponse.json({ order });
+
+    // Attach guest session cookie if session_id is associated with the order
+    if (order.session_id) {
+      response.headers.set("Set-Cookie", createSessionCookie(order.session_id));
+    }
+
+    return response;
   } catch (error) {
     console.error("Guest order lookup failed:", error);
     return NextResponse.json(
