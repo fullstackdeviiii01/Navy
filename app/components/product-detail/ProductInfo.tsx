@@ -130,19 +130,9 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
 
         {/* Stock Badge */}
         <div>
-          {isOutOfStock ? (
-            <span className="inline-block px-2.5 py-0.5 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-[10px] uppercase tracking-wider font-medium">
-              Out of Stock
-            </span>
-          ) : isLowStock ? (
-            <span className="inline-block px-2.5 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-[10px] uppercase tracking-wider font-medium">
-              Low Stock • Only {stockQuantity} left
-            </span>
-          ) : (
-            <span className="inline-block px-2.5 py-0.5 bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-300 text-[10px] uppercase tracking-wider font-medium">
-              In Stock • {stockQuantity} units
-            </span>
-          )}
+          <span className="inline-block px-2.5 py-0.5 bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-300 text-[10px] uppercase tracking-wider font-medium">
+            In Stock
+          </span>
         </div>
       </div>
     </div>

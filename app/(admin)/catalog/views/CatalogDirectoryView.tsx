@@ -61,6 +61,14 @@ export default function CatalogDirectoryView() {
     totalPages: 0,
   });
 
+  const [catalogStats, setCatalogStats] = useState({
+    total: 0,
+    active: 0,
+    drafts: 0,
+    variable: 0,
+    lowStock: 0,
+  });
+
   useEffect(() => {
     fetchProducts();
   }, [pagination.page, statusFilter, categoryFilter, inStockFilter]);
@@ -79,6 +87,9 @@ export default function CatalogDirectoryView() {
 
       setProducts(data.products || []);
       setPagination(data.pagination || { total: 0, page: 1, limit: 20, totalPages: 0 });
+      if (data.stats) {
+        setCatalogStats(data.stats);
+      }
     } catch (error) {
       console.error("Failed to fetch products:", error);
     } finally {
@@ -106,13 +117,6 @@ export default function CatalogDirectoryView() {
     }
   };
 
-  const activeCount = products.filter((p) => p.status === "active").length;
-  const lowOrOutStockCount = products.filter((p) => {
-    const qty = p.hasVariants && p.variantInventory ? p.variantInventory.totalStock : (p.inventory?.stock_quantity ?? 0);
-    return qty <= 10;
-  }).length;
-  const variantProductsCount = products.filter((p) => p.hasVariants && (p.variants?.length || 0) > 0).length;
-
   return (
     <div className="space-y-6">
       {/* Action Header */}
@@ -134,7 +138,7 @@ export default function CatalogDirectoryView() {
             </div>
           </div>
           <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {pagination.total}
+            {catalogStats.total || pagination.total}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
             Registered master products
@@ -152,7 +156,7 @@ export default function CatalogDirectoryView() {
             </div>
           </div>
           <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {activeCount}
+            {catalogStats.active}
           </p>
           <p className="text-[11px] text-green-700 dark:text-green-400 font-medium">
             Live on customer catalog
@@ -170,7 +174,7 @@ export default function CatalogDirectoryView() {
             </div>
           </div>
           <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {lowOrOutStockCount}
+            {catalogStats.lowStock}
           </p>
           <p className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
             ≤ 10 items remaining
@@ -188,7 +192,7 @@ export default function CatalogDirectoryView() {
             </div>
           </div>
           <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {variantProductsCount}
+            {catalogStats.variable || catalogStats.total || pagination.total}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
             Multi-finish lamp designs

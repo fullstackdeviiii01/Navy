@@ -488,10 +488,10 @@ export default function FinishMatrixStudio({
             </div>
             <div>
               <h4 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Color Swatches & Photos (Optional)
+                Color Variants & Photos (Optional)
               </h4>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Specify color names, hex swatches, and upload photos dedicated to each color.
+                Enter color names and upload photos dedicated to each color.
               </p>
             </div>
           </div>
@@ -514,7 +514,7 @@ export default function FinishMatrixStudio({
         {colorItems.length === 0 ? (
           <div className="py-8 text-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl p-4 space-y-2">
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              No specific color swatches configured for this product.
+              No color variants configured for this product.
             </p>
             <button
               type="button"
@@ -532,77 +532,33 @@ export default function FinishMatrixStudio({
                 key={color.id || cIdx}
                 className="p-3.5 sm:p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/40 space-y-3"
               >
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3">
                   {/* Color Name Input */}
                   <div className="flex-1">
                     <label className="block text-[11px] uppercase tracking-wider font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-                      Finish Name <span className="text-red-500">*</span>
+                      Color Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={color.name}
                       onChange={(e) => updateColorItem(cIdx, { name: e.target.value })}
-                      placeholder="e.g. American Walnut, Warm Brass, Matte Black"
+                      placeholder="e.g. Walnut, Oak, Matte Black, Natural"
                       className="w-full px-3 py-1.5 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                     />
                   </div>
 
-                  {/* Hex Color Picker & Input */}
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
-                        Swatch Hex
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <div className="relative w-8 h-8 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden flex-shrink-0 cursor-pointer">
-                          <input
-                            type="color"
-                            value={color.hex.startsWith("#") && color.hex.length === 7 ? color.hex : "#5D4037"}
-                            onChange={(e) => updateColorItem(cIdx, { hex: e.target.value })}
-                            className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-0 p-0"
-                          />
-                        </div>
-                        <input
-                          type="text"
-                          value={color.hex}
-                          onChange={(e) => updateColorItem(cIdx, { hex: e.target.value })}
-                          placeholder="#5D4037"
-                          className="w-24 px-2 py-1.5 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Remove Color Button */}
-                  <div className="self-end lg:self-center pt-2 lg:pt-0">
+                  <div className="self-end pb-0.5">
                     <button
                       type="button"
                       onClick={() => removeColorItem(cIdx)}
-                      className="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg border border-red-200 dark:border-red-900/60 transition-colors text-xs inline-flex items-center gap-1"
+                      className="px-3 py-1.5 text-red-600 hover:text-white hover:bg-red-600 rounded-lg border border-red-200 dark:border-red-900/60 transition-colors text-xs inline-flex items-center gap-1.5"
                       title="Remove Color"
                     >
                       <FaTrash size={11} />
-                      <span className="text-[11px]">Delete</span>
+                      <span className="text-[11px] font-semibold">Delete</span>
                     </button>
                   </div>
-                </div>
-
-                {/* Quick Luxury Presets */}
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light font-semibold mr-1">
-                    Presets:
-                  </span>
-                  {LUXURY_PALETTE_PRESETS.map((preset) => (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      onClick={() => updateColorItem(cIdx, { hex: preset.hex, name: color.name || preset.name })}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 border border-theme-border-light/60 dark:border-theme-border-dark/60 rounded text-[10px] bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light transition-colors"
-                    >
-                      <span className="w-2.5 h-2.5 rounded-full border border-black/20" style={{ backgroundColor: preset.hex }} />
-                      <span>{preset.name}</span>
-                    </button>
-                  ))}
                 </div>
 
                 {/* Color-Specific Media (Photos & Videos) Uploader */}
@@ -611,14 +567,12 @@ export default function FinishMatrixStudio({
                     <label className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark flex items-center gap-1.5">
                       <span className="flex items-center gap-1 text-theme-hover-light dark:text-theme-hover-dark">
                         <FaImage size={11} />
-                        <span>/</span>
-                        <FaVideo size={11} />
                       </span>
-                      <span>Finish Media for {color.name || "this finish"}</span>
+                      <span>Photos for {color.name || "this color"}</span>
                     </label>
 
                     <span className="text-[10px] text-theme-text-muted-light font-mono">
-                      {color.existingImages.length + color.newFiles.length} Photos • {(color.existingVideos?.length || 0) + (color.newVideoFiles?.length || 0)} Videos
+                      {color.existingImages.length + color.newFiles.length} Photos
                     </span>
                   </div>
 

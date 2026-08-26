@@ -150,36 +150,26 @@ export async function POST(request: NextRequest) {
       let itemPrice = item.price_at_addition;
 
       if (product.hasVariants && item.variant_id) {
-        const variant = product.variants.find(
+        const variant = product.variants?.find(
           (v: any) => v._id?.toString() === item.variant_id?.toString()
         );
-        if (!variant || !variant.isAvailable || variant.stockQuantity < item.quantity) {
-          return NextResponse.json(
-            { error: `Insufficient stock for ${product.name}` },
-            { status: 400 }
+        if (variant) {
+          itemPrice = variant.price;
+          // Decrement stock in background
+          await (Product as any).updateOne(
+            { _id: product._id, "variants._id": item.variant_id },
+            {
+              $inc: {
+                "variants.$.stockQuantity": -item.quantity,
+                "inventory.stock_quantity": -item.quantity,
+                "variantInventory.totalStock": -item.quantity,
+              },
+              $set: { updated_at: new Date() },
+            }
           );
         }
-        itemPrice = variant.price;
-        // Atomically update variant stock and product totals
-        await (Product as any).updateOne(
-          { _id: product._id, "variants._id": item.variant_id },
-          {
-            $inc: {
-              "variants.$.stockQuantity": -item.quantity,
-              "inventory.stock_quantity": -item.quantity,
-              "variantInventory.totalStock": -item.quantity,
-            },
-            $set: { updated_at: new Date() },
-          }
-        );
       } else {
-        if (product.inventory?.stock_quantity < item.quantity) {
-          return NextResponse.json(
-            { error: `Insufficient stock for ${product.name}` },
-            { status: 400 }
-          );
-        }
-        // Atomically update simple product inventory stock
+        // Decrement stock in background
         await (Product as any).updateOne(
           { _id: product._id },
           {

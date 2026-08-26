@@ -42,7 +42,7 @@ export default function CollectionShowcase() {
                       CURATED ANTHOLOGY
                     </span>
                     <h3 className="text-base sm:text-xl font-serif text-white leading-tight">
-                      Explore All 20 Pieces
+                      Explore Full Collection
                     </h3>
                   </div>
 
@@ -118,7 +118,7 @@ export default function CollectionShowcase() {
             <div className="pt-6 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
                 <span>CATALOG INDEX:</span>
-                <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">20 UNIQUE PIECES</span>
+                <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">ACTIVE ATELIER DESIGNS</span>
               </div>
 
               <Link

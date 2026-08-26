@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getIdTokenFromHeader, verifyIdToken } from "../../../lib/auth";
 import connectDB from "../../../lib/db";
 import Category from "../../models/Category";
+import Product from "../../models/Product";
 import User from "../../models/User";
 
 export async function GET(request: NextRequest) {
@@ -21,7 +22,22 @@ export async function GET(request: NextRequest) {
       .sort({ name: 1 })
       .lean();
 
-    return NextResponse.json({ categories });
+    // Dynamically compute live, fresh product count for each category
+    const categoriesWithLiveCounts = await Promise.all(
+      categories.map(async (cat: any) => {
+        const productFilter: any = { category_id: cat._id };
+        if (!includeInactive) {
+          productFilter.status = "active";
+        }
+        const liveCount = await Product.countDocuments(productFilter);
+        return {
+          ...cat,
+          product_count: liveCount,
+        };
+      })
+    );
+
+    return NextResponse.json({ categories: categoriesWithLiveCounts });
   } catch (error) {
     console.error("Categories fetch failed:", error);
     return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });

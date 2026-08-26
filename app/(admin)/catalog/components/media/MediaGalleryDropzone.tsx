@@ -116,10 +116,6 @@ export default function MediaGalleryDropzone({
                     key={i}
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-white dark:bg-black/40 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 shadow-2xs"
                   >
-                    <span
-                      className="w-2 h-2 rounded-full border border-black/20 shrink-0"
-                      style={{ backgroundColor: c.hex || "#5D4037" }}
-                    />
                     <span>{c.name}: {count} photo{count === 1 ? "" : "s"}</span>
                   </span>
                 );

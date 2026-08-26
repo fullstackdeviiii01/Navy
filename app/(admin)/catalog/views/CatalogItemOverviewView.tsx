@@ -393,16 +393,12 @@ export default function CatalogItemOverviewView({
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="w-4 h-4 rounded-full border border-black/20 shrink-0 shadow-xs"
-                          style={{ backgroundColor: hex }}
-                        />
                         <span className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {val}
                         </span>
                       </div>
                       <span className="text-[10px] font-mono text-theme-text-muted-light">
-                        {hex}
+                        {imgs.length} Photos
                       </span>
                     </div>
 
@@ -587,12 +583,6 @@ export default function CatalogItemOverviewView({
                               key={aIdx}
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-[11px]"
                             >
-                              {attr.name === "color" && hex && (
-                                <span
-                                  className="w-2 h-2 rounded-full border border-black/20 shrink-0"
-                                  style={{ backgroundColor: hex }}
-                                />
-                              )}
                               <span className="text-theme-text-muted-light capitalize">
                                 {attr.name}:
                               </span>

@@ -128,28 +128,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-snug line-clamp-2 group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-colors">
             {product.name}
           </h3>
-
-          {/* Color preview dots */}
-          {colorOption && colorOption.values?.length > 0 && (
-            <div className="flex items-center gap-1 mt-1.5" aria-hidden="true">
-              {colorOption.values.slice(0, 5).map((colorVal: string, idx: number) => {
-                const hex = colorOption.colorHexCodes?.[colorVal] || "#5D4037";
-                return (
-                  <span
-                    key={idx}
-                    className="w-2.5 h-2.5 rounded-none border border-black/20 dark:border-white/20 inline-block flex-shrink-0"
-                    style={{ backgroundColor: hex }}
-                    title={colorVal}
-                  />
-                );
-              })}
-              {colorOption.values.length > 5 && (
-                <span className="text-[9px] text-theme-text-muted-light">
-                  +{colorOption.values.length - 5}
-                </span>
-              )}
-            </div>
-          )}
         </div>
 
         <div className="flex items-center justify-between gap-2 mt-2">

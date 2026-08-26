@@ -64,7 +64,7 @@ export default function StickyProductBar({
     "/placeholder-image.png";
 
   const isReadyToBuy = !isVariableProduct || Boolean(selectedVariant);
-  const isDisabled = isOutOfStock || (isVariableProduct && !selectedVariant) || variantOutOfStock;
+  const isDisabled = isVariableProduct && !selectedVariant;
 
   return (
     <div
@@ -102,12 +102,11 @@ export default function StickyProductBar({
           {/* Right: Quantity + Action */}
           <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
             {/* Quantity Selector */}
-            {isReadyToBuy && !isOutOfStock && !variantOutOfStock && (
+            {isReadyToBuy && (
               <div className="hidden sm:flex items-center">
                 <ProductQuantity
                   quantity={quantity}
                   onQuantityChange={onQuantityChange}
-                  max={currentStock}
                   showLabel={false}
                   showStock={false}
                 />

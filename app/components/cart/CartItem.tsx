@@ -109,19 +109,11 @@ export default function CartItem({
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) return;
-    if (newQuantity > availableStock) {
-      alert(`Only ${availableStock} items available in stock`);
-      return;
-    }
     setLocalQuantity(newQuantity);
     onUpdateQuantity(item._id, newQuantity);
   };
 
   const incrementQuantity = () => {
-    if (localQuantity >= availableStock) {
-      alert(`Only ${availableStock} items available in stock`);
-      return;
-    }
     handleQuantityChange(localQuantity + 1);
   };
 
@@ -133,11 +125,7 @@ export default function CartItem({
 
   const handleDirectInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
-    if (value > availableStock) {
-      alert(`Only ${availableStock} items available in stock`);
-      setLocalQuantity(availableStock);
-      onUpdateQuantity(item._id, availableStock);
-    } else if (value < 1) {
+    if (value < 1) {
       setLocalQuantity(1);
       onUpdateQuantity(item._id, 1);
     } else {
@@ -243,21 +231,6 @@ export default function CartItem({
               </div>
             )}
 
-            {/* Stock Alerts */}
-            {(isOutOfStock || isLowStock) && (
-              <div className="mb-2">
-                {isOutOfStock ? (
-                  <span className="text-[11px] uppercase tracking-wider text-red-600 dark:text-red-400 font-medium">
-                    Out of Stock
-                  </span>
-                ) : (
-                  <span className="text-[11px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-medium">
-                    Only {availableStock} left in stock
-                  </span>
-                )}
-              </div>
-            )}
-
             <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
               {formatPrice(item.price_at_addition)} each
             </p>
@@ -269,7 +242,7 @@ export default function CartItem({
             <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark">
               <button
                 onClick={decrementQuantity}
-                disabled={updating || localQuantity <= 1 || isOutOfStock}
+                disabled={updating || localQuantity <= 1}
                 className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 aria-label="Decrease quantity"
               >
@@ -280,16 +253,15 @@ export default function CartItem({
                 type="number"
                 aria-label="Product quantity"
                 min="1"
-                max={availableStock}
                 value={localQuantity}
                 onChange={handleDirectInput}
-                disabled={updating || isOutOfStock}
+                disabled={updating}
                 className="w-12 h-8 text-center bg-transparent border-x border-theme-border-light dark:border-theme-border-dark text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
 
               <button
                 onClick={incrementQuantity}
-                disabled={updating || localQuantity >= availableStock || isOutOfStock}
+                disabled={updating}
                 className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 aria-label="Increase quantity"
               >

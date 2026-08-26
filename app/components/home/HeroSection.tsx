@@ -56,10 +56,10 @@ export default function HeroSection() {
             <div className="pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 grid grid-cols-3 gap-3 max-w-lg">
               <div>
                 <span className="font-mono text-xs sm:text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                  20 PIECES
+                  ORIGINAL
                 </span>
                 <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  Handmade Catalog
+                  Handmade Designs
                 </span>
               </div>
 

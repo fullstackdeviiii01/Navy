@@ -188,7 +188,7 @@ export default function CatalogItemGrid({
                       </div>
                     </td>
 
-                    {/* Title & Finish Swatches */}
+                    {/* Title */}
                     <td className="py-3 px-4 max-w-[220px]">
                       <button
                         type="button"
@@ -197,31 +197,6 @@ export default function CatalogItemGrid({
                       >
                         {product.name}
                       </button>
-
-                      {/* Finish Pills Preview */}
-                      {colorOpt && colorOpt.values && colorOpt.values.length > 0 && (
-                        <div className="flex items-center gap-1 mt-1">
-                          {colorOpt.values.slice(0, 4).map((val: string, i: number) => {
-                            const rawHex = colorOpt.colorHexCodes || {};
-                            const hex =
-                              (typeof rawHex.get === "function" ? rawHex.get(val) : rawHex[val]) ||
-                              "#5D4037";
-                            return (
-                              <span
-                                key={i}
-                                title={val}
-                                className="w-2.5 h-2.5 rounded-full border border-black/20 shrink-0"
-                                style={{ backgroundColor: hex }}
-                              />
-                            );
-                          })}
-                          {colorOpt.values.length > 4 && (
-                            <span className="text-[9px] font-mono text-theme-text-muted-light">
-                              +{colorOpt.values.length - 4}
-                            </span>
-                          )}
-                        </div>
-                      )}
                     </td>
 
                     {/* Category */}

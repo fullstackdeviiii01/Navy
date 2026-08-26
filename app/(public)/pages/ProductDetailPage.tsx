@@ -344,7 +344,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
               {/* Main action block: Quantity + Total Price + Add to Cart */}
               <div className="space-y-2 pt-0.5">
                 {/* Quantity + total price */}
-                {!isOutOfStock && (!isVariableProduct || selectedVariant) && (
+                {(!isVariableProduct || selectedVariant) && (
                   <div
                     className="space-y-1.5"
                     role="region"
@@ -353,7 +353,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
                     <ProductQuantity
                       quantity={quantity}
                       onQuantityChange={setQuantity}
-                      max={currentStock}
                     />
                     <div className="flex items-baseline justify-between pt-1.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
                       <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -366,19 +365,6 @@ export default function ProductDetailPageContent({ productId }: Props) {
                         {formatPrice(totalPrice)}
                       </span>
                     </div>
-                  </div>
-                )}
-
-                {/* Stock warning for selected variant */}
-                {variantOutOfStock && (
-                  <div
-                    className="p-2 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs"
-                    role="alert"
-                    aria-live="polite"
-                  >
-                    <p className="font-medium text-xs">
-                      This variant is currently out of stock.
-                    </p>
                   </div>
                 )}
 
@@ -407,7 +393,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
                         product.images?.find((img: any) => img.is_primary)?.url ||
                         product.images?.[0]?.url
                       }
-                      disabled={isOutOfStock || variantOutOfStock || false}
+                      disabled={false}
                     />
                   )}
                 </div>

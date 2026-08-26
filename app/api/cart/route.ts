@@ -161,14 +161,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (variant.isAvailable === false || (typeof variant.stockQuantity === "number" && variant.stockQuantity < quantity)) {
-        console.warn("⚠️ [API POST /api/cart] Variant unavailable or insufficient stock:", variant.stockQuantity);
-        return NextResponse.json(
-          { error: "Variant unavailable or insufficient stock" },
-          { status: 400 }
-        );
-      }
-
       price = variant.price;
       stockQuantity = typeof variant.stockQuantity === "number" ? variant.stockQuantity : stockQuantity;
 
@@ -180,14 +172,6 @@ export async function POST(request: NextRequest) {
         });
       }
       console.log("🎨 [API POST /api/cart] Matched variant price:", price, "attributes:", variantAttributes, "variant imageUrl:", variant.imageUrl);
-    } else {
-      if (stockQuantity < quantity) {
-        console.warn("⚠️ [API POST /api/cart] Simple product insufficient stock:", stockQuantity);
-        return NextResponse.json(
-          { error: "Insufficient stock" },
-          { status: 400 }
-        );
-      }
     }
 
     const resolvedProductName = clientProductName || product.name || "Product";

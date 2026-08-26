@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get("page") || "1");
     const limit = parseInt(url.searchParams.get("limit") || "20");
-    const status = url.searchParams.get("status") || "all";
+    const status = url.searchParams.get("status") || "active";
     const category = url.searchParams.get("category");
     const categorySlug = url.searchParams.get("categorySlug");
     const search = url.searchParams.get("search");
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     const sort: any = {};
     sort[sortBy] = sortOrder === "asc" ? 1 : -1;
 
-    const [products, total] = await Promise.all([
+    const [products, total, totalCatalog, activeCount, draftCount, variableCount, lowStockCount] = await Promise.all([
       (Product as any)
         .find(query)
         .populate("category_id", "name slug")
@@ -72,6 +72,11 @@ export async function GET(request: NextRequest) {
         .limit(limit)
         .lean(),
       Product.countDocuments(query),
+      Product.countDocuments({}),
+      Product.countDocuments({ status: "active" }),
+      Product.countDocuments({ status: "draft" }),
+      Product.countDocuments({ hasVariants: true }),
+      Product.countDocuments({ "inventory.stock_quantity": { $lte: 10 } }),
     ]);
 
     return NextResponse.json({
@@ -81,6 +86,13 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         totalPages: Math.ceil(total / limit),
+      },
+      stats: {
+        total: totalCatalog,
+        active: activeCount,
+        drafts: draftCount,
+        variable: variableCount,
+        lowStock: lowStockCount,
       },
     });
   } catch (error) {
