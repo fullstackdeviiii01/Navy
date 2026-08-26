@@ -225,10 +225,14 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
 
   this.tax_amount = 0;
   
-  // Calculate shipping cost from selected service
-  this.shipping_cost = 0;
-  if (shippingService && shippingService.is_active) {
+  // Calculate shipping cost: Free shipping on orders over Rs. 15,000
+  const netSubtotal = this.subtotal - this.discount_amount;
+  if (netSubtotal >= 15000 || this.subtotal >= 15000) {
+    this.shipping_cost = 0;
+  } else if (shippingService && shippingService.is_active) {
     this.shipping_cost = shippingService.base_price || 0;
+  } else {
+    this.shipping_cost = 0;
   }
 
   this.total = this.subtotal - this.discount_amount + this.tax_amount + this.shipping_cost;

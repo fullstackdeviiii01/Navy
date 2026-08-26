@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         { $expr: { $lt: ["$used_count", "$usage_limit"] } }
       ]
     })
-    .select('code discount_type discount_value max_discount applicable_to')
+    .select('code description discount_type discount_value min_order_amount max_discount applicable_to')
     .lean();
 
     // Convert ObjectIds to strings for client-side comparison

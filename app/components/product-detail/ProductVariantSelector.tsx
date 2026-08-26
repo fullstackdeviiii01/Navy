@@ -226,12 +226,7 @@ export default function ProductVariantSelector({
           const selectedValue = currentSelection[attributeOption.name];
           const isColorOption =
             attributeOption.name.toLowerCase() === "color" ||
-            attributeOption.displayName.toLowerCase() === "color" ||
-            attributeOption.name.toLowerCase().includes("finish") ||
-            attributeOption.displayName.toLowerCase().includes("finish") ||
-            attributeOption.name.toLowerCase().includes("shade") ||
-            (attributeOption.colorHexCodes && Object.keys(attributeOption.colorHexCodes).length > 0) ||
-            (attributeOption.colorImages && Object.keys(attributeOption.colorImages).length > 0);
+            attributeOption.displayName.toLowerCase() === "color";
 
           return (
             <div key={attributeOption.name} className="space-y-1.5">
@@ -259,50 +254,62 @@ export default function ProductVariantSelector({
                     const isDisabled = !inStock;
 
                     const hexMatch = value.match(/#(?:[0-9a-fA-F]{3}){1,2}\b/);
-                    const hexCode =
-                      attributeOption.colorHexCodes?.[value] ||
-                      (hexMatch ? hexMatch[0] : null);
                     const cleanDisplayName = hexMatch ? value.replace(hexMatch[0], "").trim() : value;
 
-                    // Color Option: Circular Drops (Pure elegant color circles with ring highlight)
+                    // COLOR OPTION: Render Product Photo Thumbnail (if image available)
                     if (isColorOption) {
-                      const colorBg = hexCode || "#5D4037";
-                      return (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() =>
-                            !isDisabled && handleSelect(attributeOption.name, value)
-                          }
-                          disabled={isDisabled}
-                          title={`${cleanDisplayName || value}${!inStock ? " (Out of stock)" : ""}`}
-                          className={`
-                            relative w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 flex items-center justify-center p-[2px]
-                            ${
-                              isSelected
-                                ? "ring-2 ring-offset-2 ring-theme-hover-light dark:ring-theme-hover-dark dark:ring-offset-theme-bg-dark scale-105"
-                                : inStock
-                                  ? "hover:scale-110 ring-1 ring-black/10 dark:ring-white/20"
-                                  : "opacity-35 cursor-not-allowed ring-1 ring-black/10"
+                      const colorThumb =
+                        attributeOption.colorImages?.[value]?.[0] ||
+                        variantImageMap[attributeOption.name]?.[value] ||
+                        variants.find((v) =>
+                          v.attributes?.some(
+                            (a) => a.value.toLowerCase() === value.toLowerCase()
+                          )
+                        )?.imageUrl;
+
+                      if (colorThumb) {
+                        return (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() =>
+                              !isDisabled && handleSelect(attributeOption.name, value)
                             }
-                          `}
-                          aria-label={`${cleanDisplayName || value}${isSelected ? " (selected)" : ""}${!inStock ? " (sold out)" : ""}`}
-                          aria-pressed={isSelected}
-                        >
-                          <span
-                            className="w-full h-full rounded-full border border-black/15 shadow-inner"
-                            style={{ backgroundColor: colorBg }}
-                          />
-                          {!inStock && (
-                            <span className="absolute inset-0 flex items-center justify-center">
-                              <span className="w-full h-[1.5px] bg-red-500/80 -rotate-45" />
-                            </span>
-                          )}
-                        </button>
-                      );
+                            disabled={isDisabled}
+                            title={`${cleanDisplayName || value}${!inStock ? " (Out of stock)" : ""}`}
+                            className={`
+                              relative w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden border-2 transition-all duration-200 p-0.5 flex-shrink-0 group
+                              ${
+                                isSelected
+                                  ? "border-theme-primary ring-2 ring-theme-primary/30 scale-105 shadow-md"
+                                  : inStock
+                                    ? "border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark hover:scale-105"
+                                    : "opacity-40 cursor-not-allowed border-theme-border-light/40"
+                              }
+                            `}
+                            aria-label={`${cleanDisplayName || value}${isSelected ? " (selected)" : ""}${!inStock ? " (sold out)" : ""}`}
+                            aria-pressed={isSelected}
+                          >
+                            <div className="relative w-full h-full rounded-[4px] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                              <Image
+                                src={colorThumb}
+                                alt={cleanDisplayName || value}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform"
+                                sizes="52px"
+                              />
+                            </div>
+                            {!inStock && (
+                              <span className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                <span className="w-full h-[1.5px] bg-red-500/90 -rotate-45" />
+                              </span>
+                            )}
+                          </button>
+                        );
+                      }
                     }
 
-                    // All other attributes (Quantity, Size, Material, etc.): Clean Text Pills
+                    // All other attributes (Finish, Size, Material, or Color without image): Clean Text Pills
                     return (
                       <button
                         key={value}

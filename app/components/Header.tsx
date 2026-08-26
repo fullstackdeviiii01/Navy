@@ -19,6 +19,7 @@ import {
 import { useUser } from "../context/UserContext";
 import { useWishlist } from "../context/WishlistContext";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
+import TopAnnouncementBar from "./shared/TopAnnouncementBar";
 
 interface CompanyInfo {
   company_name?: string;
@@ -157,6 +158,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-theme-bg-light dark:bg-theme-bg-dark border-b border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark shadow-sm transition-colors">
+      <TopAnnouncementBar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 gap-4">
 

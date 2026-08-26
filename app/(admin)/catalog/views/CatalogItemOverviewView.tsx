@@ -149,7 +149,7 @@ export default function CatalogItemOverviewView({
             className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg shadow-xs hover:shadow active:scale-[0.99] transition-all"
           >
             <FaEdit className="w-3 h-3" />
-            <span>Edit Luminaire</span>
+            <span>Edit Product</span>
           </Link>
 
           {/* Manage Variants */}

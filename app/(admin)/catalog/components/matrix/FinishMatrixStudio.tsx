@@ -114,11 +114,7 @@ export default function FinishMatrixStudio({
     const colorOpt = variantOptions.find(
       (opt) =>
         opt.name.toLowerCase() === "color" ||
-        opt.displayName?.toLowerCase() === "color" ||
-        opt.name.toLowerCase().includes("finish") ||
-        opt.displayName?.toLowerCase().includes("finish") ||
-        (opt.colorHexCodes && Object.keys(opt.colorHexCodes).length > 0) ||
-        (opt.colorImages && Object.keys(opt.colorImages).length > 0)
+        opt.displayName?.toLowerCase() === "color"
     );
 
     if (colorOpt && colorItems.length === 0) {
@@ -151,7 +147,7 @@ export default function FinishMatrixStudio({
           const matchedVar = variants.find((v) =>
             v.attributes?.some(
               (a) =>
-                (a.name.toLowerCase() === "color" || a.name.toLowerCase().includes("finish")) &&
+                a.name.toLowerCase() === "color" &&
                 a.value.toLowerCase() === val.toLowerCase()
             )
           );
@@ -185,9 +181,7 @@ export default function FinishMatrixStudio({
     const nonColorOptions = variantOptions.filter(
       (opt) =>
         opt.name.toLowerCase() !== "color" &&
-        opt.displayName?.toLowerCase() !== "color" &&
-        !opt.name.toLowerCase().includes("finish") &&
-        !opt.displayName?.toLowerCase().includes("finish")
+        opt.displayName?.toLowerCase() !== "color"
     );
     const inputs: { [key: number]: string } = {};
     nonColorOptions.forEach((option, index) => {
@@ -199,9 +193,7 @@ export default function FinishMatrixStudio({
   const nonColorOptions = variantOptions.filter(
     (opt) =>
       opt.name.toLowerCase() !== "color" &&
-      opt.displayName?.toLowerCase() !== "color" &&
-      !opt.name.toLowerCase().includes("finish") &&
-      !opt.displayName?.toLowerCase().includes("finish")
+      opt.displayName?.toLowerCase() !== "color"
   );
 
   const syncAllOptionsAndVariants = (
@@ -259,7 +251,6 @@ export default function FinishMatrixStudio({
       const colorAttr = attrs.find(
         (a) =>
           a.name.toLowerCase() === "color" ||
-          a.name.toLowerCase().includes("finish") ||
           validColors.some((c) => c.name.trim().toLowerCase() === a.value.toLowerCase())
       );
       const matchedColor = colorAttr ? validColors.find((c) => c.name.trim().toLowerCase() === colorAttr.value.toLowerCase()) : null;
@@ -497,10 +488,10 @@ export default function FinishMatrixStudio({
             </div>
             <div>
               <h4 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Color & Material Finish Studio
+                Color Swatches & Photos (Optional)
               </h4>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Specify finish tones, color swatches, and upload photos dedicated to each finish.
+                Specify color names, hex swatches, and upload photos dedicated to each color.
               </p>
             </div>
           </div>
@@ -510,7 +501,7 @@ export default function FinishMatrixStudio({
             className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg shadow-xs hover:shadow active:scale-[0.99] transition-all"
           >
             <FaPlus size={10} />
-            <span>Add Color Finish</span>
+            <span>Add Color</span>
           </button>
         </div>
 
@@ -523,7 +514,7 @@ export default function FinishMatrixStudio({
         {colorItems.length === 0 ? (
           <div className="py-8 text-center border-2 border-dashed border-theme-border-light dark:border-theme-border-dark rounded-xl p-4 space-y-2">
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              No custom finishes configured for this model.
+              No specific color swatches configured for this product.
             </p>
             <button
               type="button"

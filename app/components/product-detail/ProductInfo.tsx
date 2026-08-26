@@ -74,11 +74,16 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
 
   return (
     <div className="space-y-2.5 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
-      {/* Category / Craftsmanship Tag */}
-      <div className="flex items-center gap-2 text-[11px] font-medium tracking-[0.22em] uppercase text-theme-hover-light dark:text-theme-hover-dark">
-        {categoryName && <span>{categoryName}</span>}
-        {categoryName && <span>•</span>}
-        <span>HANDCRAFTED</span>
+      {/* Category / Handmade Craftsmanship Badges */}
+      <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.22em] uppercase">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#8A5E22]/15 border border-[#8A5E22]/35 text-theme-hover-light dark:text-theme-hover-dark font-semibold">
+          ✦ 100% SOLID WOOD HANDMADE
+        </span>
+        {categoryName && (
+          <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            {categoryName}
+          </span>
+        )}
       </div>
 
       {/* Product Title */}
@@ -88,14 +93,10 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
 
       {/* Brand & Rating Inline */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5 text-xs">
-        {product.brand && (
-          <span className="uppercase tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
-            BY {product.brand}
-          </span>
-        )}
-        {product.brand && (
-          <span className="text-theme-text-muted-light/40 dark:text-theme-text-muted-dark/40">•</span>
-        )}
+        <span className="uppercase tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
+          BY TALAL WOODEN LAMP
+        </span>
+        <span className="text-theme-text-muted-light/40 dark:text-theme-text-muted-dark/40">•</span>
         <div className="flex items-center gap-1.5">
           <Rating rating={product.rating_average} count={product.rating_count} size="sm" showCount={false} />
           <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">

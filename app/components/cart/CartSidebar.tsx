@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { X, Minus, Plus, Trash2, Truck } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -93,6 +93,31 @@ export default function CartSidebar() {
             <X size={20} />
           </button>
         </div>
+
+        {/* Free Shipping Meter */}
+        {items.length > 0 && (
+          <div className="bg-theme-surface-light dark:bg-theme-surface-dark border-b border-theme-border-light dark:border-theme-border-dark px-4 sm:px-6 py-2.5">
+            {cart?.subtotal >= 15000 ? (
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                <Truck className="w-4 h-4" />
+                <span>You have unlocked FREE DELIVERY!</span>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] sm:text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                  <span>Add <strong className="text-theme-primary">{formatPrice(15000 - (cart?.subtotal || 0))}</strong> for Free Delivery</span>
+                  <span>{Math.min(100, Math.round(((cart?.subtotal || 0) / 15000) * 100))}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-theme-primary transition-all duration-500 rounded-full"
+                    style={{ width: `${Math.min(100, Math.max(5, ((cart?.subtotal || 0) / 15000) * 100))}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 sm:py-4 space-y-3 sm:space-y-4">

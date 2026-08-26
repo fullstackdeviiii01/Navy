@@ -230,11 +230,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         const updatedColorOptIdx = preparedVariantOptions.findIndex(
           (opt) =>
             opt.name.toLowerCase() === "color" ||
-            opt.displayName.toLowerCase() === "color" ||
-            opt.name.toLowerCase().includes("finish") ||
-            opt.displayName.toLowerCase().includes("finish") ||
-            (opt.colorHexCodes && Object.keys(opt.colorHexCodes).length > 0) ||
-            (opt.colorImages && Object.keys(opt.colorImages).length > 0)
+            opt.displayName.toLowerCase() === "color"
         );
 
         const colorHexCodes: Record<string, string> = {};
@@ -249,52 +245,46 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
           let finalImagesForColor = [...(item.existingImages || [])];
           if (item.newFiles && item.newFiles.length > 0) {
             setUploadingImages(true);
-            const uploadedColorFiles = await uploadFiles(item.newFiles);
-            const newUrls = uploadedColorFiles.map((u) => u.url);
-            finalImagesForColor = [...finalImagesForColor, ...newUrls];
+            const uploaded = await uploadFiles(item.newFiles);
+            finalImagesForColor = [...finalImagesForColor, ...uploaded.map((u) => u.url)];
             setUploadingImages(false);
           }
-          colorImages[colorName] = finalImagesForColor;
+          if (finalImagesForColor.length > 0) {
+            colorImages[colorName] = finalImagesForColor;
+          }
 
           let finalVideosForColor = [...(item.existingVideos || [])];
           if (item.newVideoFiles && item.newVideoFiles.length > 0) {
             setUploadingVideos(true);
-            const uploadedColorVideos = await uploadVideoFiles(item.newVideoFiles);
-            const newVideoUrls = uploadedColorVideos.map((v) => v.url);
-            finalVideosForColor = [...finalVideosForColor, ...newVideoUrls];
+            const uploadedVids = await uploadVideoFiles(item.newVideoFiles);
+            finalVideosForColor = [...finalVideosForColor, ...uploadedVids.map((v) => v.url)];
             setUploadingVideos(false);
           }
-          colorVideos[colorName] = finalVideosForColor;
+          if (finalVideosForColor.length > 0) {
+            colorVideos[colorName] = finalVideosForColor;
+          }
         }
 
-        const validColorNames = colorItems.map((c) => c.name.trim()).filter(Boolean);
+        const newColorOption: VariantOption = {
+          name: "color",
+          displayName: "Color",
+          values: colorItems.map((c) => c.name.trim()).filter(Boolean),
+          colorHexCodes,
+          colorImages,
+          colorVideos,
+          position: 0,
+        };
 
         if (updatedColorOptIdx >= 0) {
-          preparedVariantOptions[updatedColorOptIdx] = {
-            ...preparedVariantOptions[updatedColorOptIdx],
-            values: validColorNames,
-            colorHexCodes,
-            colorImages,
-            colorVideos,
-          };
-        } else if (validColorNames.length > 0) {
-          preparedVariantOptions.unshift({
-            name: "color",
-            displayName: "Color",
-            values: validColorNames,
-            colorHexCodes,
-            colorImages,
-            colorVideos,
-            position: 0,
-          });
+          preparedVariantOptions[updatedColorOptIdx] = newColorOption;
+        } else {
+          preparedVariantOptions.unshift(newColorOption);
         }
 
         preparedVariants = preparedVariants.map((v) => {
           const colorAttr = v.attributes?.find(
             (a) =>
               a.name?.toLowerCase() === "color" ||
-              a.name?.toLowerCase().includes("finish") ||
-              a.name?.toLowerCase().includes("shade") ||
               Boolean(colorImages[a.value])
           );
           if (colorAttr && colorImages[colorAttr.value] && colorImages[colorAttr.value].length > 0) {
@@ -441,8 +431,8 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             </h1>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
               {mode === "edit"
-                ? `Managing catalog entry: ${formData.name || productId}`
-                : "Create a handcrafted luminaire entry with rich media, colors, and variant specifications."}
+                ? `Managing catalog product: ${formData.name || productId}`
+                : "Create a new product with rich images, variants, and specifications."}
             </p>
           </div>
         </div>
@@ -520,7 +510,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
               </label>
               <input
                 type="text"
-                placeholder="e.g. Celestial Brass Pendant Lamp"
+                placeholder="e.g. Minimalist Wooden Table Lamp"
                 value={formData.name}
                 onChange={(e) => updateFormData({ name: e.target.value })}
                 required
@@ -530,35 +520,22 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-                Brand / Artisan Line
+                Primary Category *
               </label>
-              <input
-                type="text"
-                placeholder="e.g. Rehan Lamps Atelier"
-                value={formData.brand}
-                onChange={(e) => updateFormData({ brand: e.target.value })}
-                className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
+              <select
+                value={formData.category_id}
+                onChange={(e) => updateFormData({ category_id: e.target.value })}
+                required
+                className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer"
+              >
+                <option value="">Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
-              Primary Category *
-            </label>
-            <select
-              value={formData.category_id}
-              onChange={(e) => updateFormData({ category_id: e.target.value })}
-              required
-              className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40 cursor-pointer"
-            >
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
           </div>
 
           <div>
@@ -571,46 +548,6 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                 value={formData.description}
                 config={joditConfig}
                 onBlur={(newContent) => updateFormData({ description: newContent })}
-              />
-            </div>
-          </div>
-
-          {/* Care, Shipping, Return info cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Care & Maintenance
-              </label>
-              <textarea
-                value={formData.care_guide}
-                onChange={(e) => updateFormData({ care_guide: e.target.value })}
-                rows={3}
-                placeholder="e.g. Clean with a dry microfiber cloth. Avoid harsh solvents."
-                className="w-full px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Shipping & Handling Note
-              </label>
-              <textarea
-                value={formData.shipping_info}
-                onChange={(e) => updateFormData({ shipping_info: e.target.value })}
-                rows={3}
-                placeholder="e.g. Free insured White Glove Delivery on orders over Rs. 50,000."
-                className="w-full px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                Return Policy Details
-              </label>
-              <textarea
-                value={formData.return_info}
-                onChange={(e) => updateFormData({ return_info: e.target.value })}
-                rows={3}
-                placeholder="e.g. 7-day complimentary exchange on unmounted fixtures."
-                className="w-full px-3 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               />
             </div>
           </div>
