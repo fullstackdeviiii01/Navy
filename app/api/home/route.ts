@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const productFields =
       "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo";
 
-    // New Arrivals (most recently created active products)
+    // New Arrivals (most recently created active products - 3 rows / 12 items)
     const newArrivals = await (Product as any)
       .find({
         status: "active",
@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
       .select(productFields)
       .populate("category_id", "name slug")
       .sort({ created_at: -1 })
-      .limit(8)
+      .limit(12)
       .lean();
 
-    // Best Sellers (highest sales volume active products)
+    // Best Sellers (highest sales volume active products - 3 rows / 12 items)
     const bestSellers = await (Product as any)
       .find({
         status: "active",
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       .select(productFields)
       .populate("category_id", "name slug")
       .sort({ purchase_count: -1, created_at: -1 })
-      .limit(8)
+      .limit(12)
       .lean();
 
     return NextResponse.json({

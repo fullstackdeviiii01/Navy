@@ -47,8 +47,8 @@ export default function ProductSection({
 
   if (!products || products.length === 0) return null;
 
-  // By default, display 2 rows (8 products on desktop / 4 on mobile)
-  const displayedProducts = showAll ? products : products.slice(0, 8);
+  // By default, display 3 rows (12 products on desktop / 4 rows on tablet / 6 on mobile)
+  const displayedProducts = showAll ? products : products.slice(0, 12);
 
   return (
     <section className={`py-4 sm:py-5 md:py-7 border-b border-theme-border-light dark:border-theme-border-dark ${bgClass} transition-colors`}>
@@ -79,7 +79,7 @@ export default function ProductSection({
           </Link>
         </div>
 
-        {/* 2-Row Responsive Grid: 4 cols on desktop (8 items), 3 on tablet, 2 on mobile */}
+        {/* 3-Row Responsive Grid: 4 cols on desktop (12 items / 3 rows), 3 on tablet (4 rows), 2 on mobile (6 rows) */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {displayedProducts.map((product) => (
             <div key={product._id} className="h-full">
@@ -89,13 +89,13 @@ export default function ProductSection({
         </div>
 
         {/* Action Button if more products exist */}
-        {products.length > 8 && (
+        {products.length > 12 && (
           <div className="mt-10 sm:mt-12 text-center">
             <button
               onClick={() => setShowAll(!showAll)}
               className="px-8 py-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.2em] font-medium transition-colors"
             >
-              {showAll ? "SHOW LESS" : `SHOW ALL (${products.length - 8} MORE)`}
+              {showAll ? "SHOW LESS" : `SHOW ALL (${products.length - 12} MORE)`}
             </button>
           </div>
         )}
