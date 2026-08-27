@@ -1,7 +1,7 @@
 // app/(admin)/catalog/views/CatalogItemOverviewView.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -15,6 +15,7 @@ import {
   FaMoneyBillWave,
   FaVideo,
   FaPlay,
+  FaSlidersH,
 } from "react-icons/fa";
 import { productsApi } from "../../../../lib/api/products";
 import Loader from "../../../components/shared/Loader";
@@ -78,9 +79,22 @@ export default function CatalogItemOverviewView({
     );
   }
 
-  const isVariableProduct = product.hasVariants && product.variants?.length > 0;
-  const colorOpt = product.variantOptions?.find(
-    (opt: any) => opt.name === "color" || opt.displayName?.toLowerCase() === "color"
+  const isVariableProduct =
+    product?.hasVariants ||
+    (product?.variantOptions && product.variantOptions.length > 0);
+
+  const specEntries = useMemo(() => {
+    if (!product?.attributes || typeof product.attributes !== "object") return [];
+    const raw = typeof (product.attributes as any).entries === "function" 
+      ? Array.from((product.attributes as any).entries()) 
+      : Object.entries(product.attributes);
+    return raw.filter(
+      ([_, val]: any) => val !== null && val !== undefined && String(val).trim().length > 0
+    );
+  }, [product?.attributes]);
+
+  const colorOpt = product?.variantOptions?.find(
+    (opt: any) => opt.name?.toLowerCase() === "color" || opt.displayName?.toLowerCase() === "color"
   );
   const totalStock = isVariableProduct
     ? product.variantInventory?.totalStock ?? product.inventory?.stock_quantity ?? 0
@@ -508,6 +522,64 @@ export default function CatalogItemOverviewView({
           </div>
         )}
       </div>
+
+      {/* Technical Specifications & Craftsmanship Attributes */}
+      {specEntries.length > 0 && (
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <FaSlidersH className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  Technical Specifications & Attributes ({specEntries.length})
+                </h3>
+              </div>
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                Technical parameters displayed in the customer storefront specifications table.
+              </p>
+            </div>
+            <Link
+              href={`/admin/products/${productId}/edit`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 dark:bg-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-semibold rounded-lg transition-colors self-start sm:self-auto"
+            >
+              <FaEdit className="w-3 h-3" />
+              <span>Edit Specifications</span>
+            </Link>
+          </div>
+
+          <div className="overflow-hidden border border-theme-border-light/70 dark:border-theme-border-dark/70 rounded-lg">
+            <table className="w-full text-left text-xs border-collapse">
+              <tbody>
+                {specEntries.map(([key, val]: any, idx: number) => {
+                  const label = String(key)
+                    .replace(/__([^_]+)_/g, " ($1)")
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c: string) => c.toUpperCase())
+                    .trim();
+
+                  return (
+                    <tr
+                      key={key}
+                      className={`border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-b-0 ${
+                        idx % 2 === 0
+                          ? "bg-theme-bg-light/40 dark:bg-theme-bg-dark/30"
+                          : "bg-theme-surface-light dark:bg-theme-surface-dark"
+                      }`}
+                    >
+                      <td className="py-2.5 px-4 font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark w-1/3 sm:w-1/4">
+                        {label}
+                      </td>
+                      <td className="py-2.5 px-4 text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                        {String(val)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Full Variant Combination Matrix */}
       {isVariableProduct && (

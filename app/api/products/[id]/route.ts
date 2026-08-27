@@ -65,6 +65,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     product.markModified("variants");
     product.markModified("images");
     product.markModified("videos");
+    product.markModified("attributes");
     await product.save();
 
     // Update product counts if category changed

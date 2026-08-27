@@ -1,7 +1,7 @@
 // app/components/cart/CartItem.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Trash2, Minus, Plus, Video, PlayCircle, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -55,7 +55,24 @@ export default function CartItem({
   updating,
 }: CartItemProps) {
   const [localQuantity, setLocalQuantity] = useState(item.quantity);
+  const [inputValue, setInputValue] = useState(String(item.quantity));
   const [showVideo, setShowVideo] = useState(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Keep local quantity in sync with parent cart changes
+  useEffect(() => {
+    setLocalQuantity(item.quantity);
+    setInputValue(String(item.quantity));
+  }, [item.quantity]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const productObj: any =
     item.product_id && typeof item.product_id === "object" ? item.product_id : {};
@@ -107,30 +124,47 @@ export default function CartItem({
     productObj.videos?.find((v: any) => v.is_primary) ||
     productObj.videos?.[0];
 
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity < 1) return;
-    setLocalQuantity(newQuantity);
-    onUpdateQuantity(item._id, newQuantity);
+  const triggerQuantitySync = (targetQuantity: number) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      onUpdateQuantity(item._id, targetQuantity);
+    }, 450);
   };
 
   const incrementQuantity = () => {
-    handleQuantityChange(localQuantity + 1);
+    const nextQty = localQuantity + 1;
+    setLocalQuantity(nextQty);
+    setInputValue(String(nextQty));
+    triggerQuantitySync(nextQty);
   };
 
   const decrementQuantity = () => {
-    if (localQuantity > 1) {
-      handleQuantityChange(localQuantity - 1);
-    }
+    if (localQuantity <= 1) return;
+    const nextQty = localQuantity - 1;
+    setLocalQuantity(nextQty);
+    setInputValue(String(nextQty));
+    triggerQuantitySync(nextQty);
   };
 
   const handleDirectInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 1;
-    if (value < 1) {
+    const valStr = e.target.value;
+    setInputValue(valStr);
+
+    const parsed = parseInt(valStr, 10);
+    if (!isNaN(parsed) && parsed >= 1) {
+      setLocalQuantity(parsed);
+      triggerQuantitySync(parsed);
+    }
+  };
+
+  const handleInputBlur = () => {
+    const parsed = parseInt(inputValue, 10);
+    if (isNaN(parsed) || parsed < 1) {
       setLocalQuantity(1);
+      setInputValue("1");
       onUpdateQuantity(item._id, 1);
-    } else {
-      setLocalQuantity(value);
-      onUpdateQuantity(item._id, value);
     }
   };
 
@@ -241,8 +275,9 @@ export default function CartItem({
             {/* Square Quantity Selector */}
             <div className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark">
               <button
+                type="button"
                 onClick={decrementQuantity}
-                disabled={updating || localQuantity <= 1}
+                disabled={localQuantity <= 1}
                 className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 aria-label="Decrease quantity"
               >
@@ -253,16 +288,16 @@ export default function CartItem({
                 type="number"
                 aria-label="Product quantity"
                 min="1"
-                value={localQuantity}
+                value={inputValue}
                 onChange={handleDirectInput}
-                disabled={updating}
-                className="w-12 h-8 text-center bg-transparent border-x border-theme-border-light dark:border-theme-border-dark text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onBlur={handleInputBlur}
+                className="w-12 h-8 text-center bg-transparent border-x border-theme-border-light dark:border-theme-border-dark text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
 
               <button
+                type="button"
                 onClick={incrementQuantity}
-                disabled={updating}
-                className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
                 aria-label="Increase quantity"
               >
                 <Plus className="w-3.5 h-3.5" />

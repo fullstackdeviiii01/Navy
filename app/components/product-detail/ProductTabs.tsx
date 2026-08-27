@@ -1,7 +1,7 @@
 // app/components/product-detail/ProductTabs.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Plus, Minus, Truck, Sparkles, ShieldCheck, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import JoditHtmlContent from "../shared/JoditHtmlContent";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -23,6 +23,68 @@ interface ProductTabsProps {
   careGuide?: string;
   shippingInfo?: string;
   returnInfo?: string;
+  attributes?: Record<string, any>;
+  specifications?: string;
+}
+
+const SPEC_LABEL_MAP: Record<string, string> = {
+  material: "Material & Construction",
+  main_material: "Primary Material",
+  materials: "Materials",
+  primary_material: "Primary Material",
+  base_material: "Base Material",
+  shade_material: "Shade Material",
+  lampshade_material: "Lampshade Material",
+  finish: "Finish & Polish",
+  finish_type: "Finish Type",
+  care: "Care & Maintenance",
+  bulb_socket: "Bulb Socket",
+  light_socket: "Light Socket",
+  light_source_cap: "Socket / Cap Type",
+  light_source: "Light Source",
+  bulb_type: "Bulb Type",
+  bulb_compatibility: "Bulb Compatibility",
+  voltage: "Voltage Compatibility",
+  wattage: "Maximum Wattage",
+  wattage_voltage: "Wattage & Voltage",
+  maximum_power: "Max Power Output",
+  max_wattage: "Maximum Wattage",
+  control: "Control & Switch",
+  switch_type: "Switch Mechanism",
+  switch: "Switch Mechanism",
+  cord: "Power Cord",
+  power_cord: "Power Cord",
+  cord_length: "Cord Length",
+  wire_length: "Wire Length",
+  power_supply: "Power Supply",
+  dimensions: "Dimensions",
+  lamp_height: "Total Lamp Height",
+  height: "Height",
+  base_height: "Base Height",
+  wood_base_height: "Wooden Base Height",
+  base_diameter: "Base Diameter",
+  shade_dimensions: "Shade Dimensions",
+  shade_diameter: "Shade Diameter",
+  width: "Width",
+  depth: "Depth",
+  weight: "Product Weight",
+  item_weight: "Item Weight",
+  candle_compatibility: "Candle Compatibility",
+  construction: "Construction Type",
+  light_color: "Light Color / Temperature",
+  color_temperature: "Color Temperature",
+};
+
+function formatSpecKey(key: string): string {
+  const lower = key.toLowerCase().trim();
+  if (SPEC_LABEL_MAP[lower]) {
+    return SPEC_LABEL_MAP[lower];
+  }
+  return key
+    .replace(/__([^_]+)_/g, " ($1)")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+    .trim();
 }
 
 export default function ProductTabs({
@@ -30,9 +92,12 @@ export default function ProductTabs({
   shippingInfo,
   careGuide,
   returnInfo,
+  attributes,
+  specifications,
 }: ProductTabsProps) {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     description: true,
+    specifications: true,
     shipping: false,
     care: false,
     returns: false,
@@ -83,8 +148,19 @@ export default function ProductTabs({
     return null;
   };
 
+  // Convert attributes to array of key-value pairs
+  const specEntries = useMemo(() => {
+    if (!attributes || typeof attributes !== "object") return [];
+    return Object.entries(attributes).filter(
+      ([_, val]) => val !== null && val !== undefined && String(val).trim().length > 0
+    );
+  }, [attributes]);
+
+  const hasSpecs = specEntries.length > 0 || (specifications && specifications.trim().length > 0);
+
   const sections = [
     { id: "description", label: "Editorial Description" },
+    ...(hasSpecs ? [{ id: "specifications", label: "Technical Specifications" }] : []),
     { id: "shipping", label: "Shipping & Delivery" },
     { id: "care", label: "Wood Care & Maintenance Guide" },
     { id: "returns", label: "Product Replacement Guarantee" },
@@ -118,6 +194,40 @@ export default function ProductTabs({
                   {section.id === "description" && (
                     <div className="prose dark:prose-invert max-w-none">
                       <JoditHtmlContent content={description} />
+                    </div>
+                  )}
+
+                  {section.id === "specifications" && (
+                    <div className="space-y-3">
+                      {specEntries.length > 0 ? (
+                        <div className="overflow-hidden border border-theme-border-light dark:border-theme-border-dark rounded-md bg-theme-surface-light/40 dark:bg-theme-surface-dark/30">
+                          <table className="w-full text-left border-collapse">
+                            <tbody>
+                              {specEntries.map(([key, val], idx) => (
+                                <tr
+                                  key={key}
+                                  className={`border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-b-0 ${
+                                    idx % 2 === 0
+                                      ? "bg-transparent"
+                                      : "bg-theme-surface-light/80 dark:bg-theme-surface-dark/60"
+                                  }`}
+                                >
+                                  <td className="py-2.5 px-3 sm:px-4 text-[11px] sm:text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark w-2/5 sm:w-1/3 align-top">
+                                    {formatSpecKey(key)}
+                                  </td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-[11px] sm:text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark align-top">
+                                    {String(val)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : specifications ? (
+                        <div className="prose dark:prose-invert max-w-none">
+                          <JoditHtmlContent content={specifications} />
+                        </div>
+                      ) : null}
                     </div>
                   )}
 

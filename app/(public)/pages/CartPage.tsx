@@ -19,7 +19,6 @@ export default function CartPage() {
   const cart = contextCart;
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
-    setUpdating(true);
     setError("");
     try {
       const data = await cartApi.updateQuantity(itemId, quantity);
@@ -29,8 +28,6 @@ export default function CartPage() {
       await refreshCart();
     } catch (err: any) {
       setError(err.message || "Failed to update cart");
-    } finally {
-      setUpdating(false);
     }
   };
 

@@ -307,7 +307,7 @@ export default function ProductDetailPageContent({ productId }: Props) {
               })()}
             </section>
 
-            {/* Desktop tabs (Description, Shipping, Care, Returns) */}
+            {/* Desktop tabs (Description, Specifications, Shipping, Care, Returns) */}
             <section
               className="hidden lg:block"
               aria-label="Product details"
@@ -315,6 +315,8 @@ export default function ProductDetailPageContent({ productId }: Props) {
               <ProductTabs
                 productId={product._id}
                 description={product.description}
+                attributes={product.attributes}
+                specifications={product.specifications}
                 careGuide={product.care_guide}
                 shippingInfo={product.shipping_info}
                 returnInfo={product.return_info}
@@ -413,6 +415,8 @@ export default function ProductDetailPageContent({ productId }: Props) {
           <ProductTabs
             productId={product._id}
             description={product.description}
+            attributes={product.attributes}
+            specifications={product.specifications}
             careGuide={product.care_guide}
             shippingInfo={product.shipping_info}
             returnInfo={product.return_info}

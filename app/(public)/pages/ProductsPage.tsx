@@ -244,25 +244,27 @@ function ProductsPageContent() {
           </div>
         </header>
 
-        {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-5 flex items-center justify-between gap-3">
+        {/* Mobile Filter Toggle & Sort Bar */}
+        <div className="lg:hidden mb-5 grid grid-cols-2 gap-2 sm:gap-3 w-full">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center gap-2 px-3.5 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-[11px] sm:text-xs uppercase tracking-[0.08em] sm:tracking-[0.15em] font-medium hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
             aria-label={showMobileFilters ? "Hide product filters" : "Show product filters"}
             aria-expanded={showMobileFilters}
             aria-controls="mobile-filters"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>{showMobileFilters ? "Hide Filters" : "Filters"}</span>
+            <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{showMobileFilters ? "Hide Filters" : "Filters"}</span>
             {activeFiltersCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 bg-theme-primary text-theme-btn-text text-[10px] font-mono leading-none">
+              <span className="ml-1 px-1.5 py-0.5 bg-theme-primary text-theme-btn-text text-[10px] font-mono leading-none shrink-0">
                 {activeFiltersCount}
               </span>
             )}
           </button>
 
-          <ProductSort sortBy={filters.sortBy} onSortChange={setSortBy} />
+          <div className="w-full min-w-0">
+            <ProductSort sortBy={filters.sortBy} onSortChange={setSortBy} className="w-full" />
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">

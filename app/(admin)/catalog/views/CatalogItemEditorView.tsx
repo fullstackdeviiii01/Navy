@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaTrash, FaListUl, FaSlidersH } from "react-icons/fa";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { productsApi } from "../../../../lib/api/products";
 import MediaAssetsManager from "../components/media/MediaAssetsManager";
@@ -40,6 +40,16 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [colorItems, setColorItems] = useState<any[]>([]);
   const [existingProduct, setExistingProduct] = useState<any>(null);
+
+  const [attributesList, setAttributesList] = useState<{ key: string; value: string }[]>([
+    { key: "material", value: "" },
+    { key: "finish", value: "" },
+    { key: "dimensions", value: "" },
+    { key: "bulb_socket", value: "E27" },
+    { key: "voltage", value: "AC 110-240V" },
+    { key: "control", value: "Inline On/Off switch" },
+    { key: "care", value: "Wipe with a soft, dry cloth" },
+  ]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -134,6 +144,19 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
       if (hasVars) {
         setVariantOptions(p.variantOptions || []);
         setVariants(p.variants || []);
+      }
+
+      if (p.attributes && typeof p.attributes === "object") {
+        const rawEntries = typeof p.attributes.entries === "function" 
+          ? Array.from(p.attributes.entries()) 
+          : Object.entries(p.attributes);
+        const list = rawEntries.map(([k, v]) => ({
+          key: String(k),
+          value: String(v || ""),
+        }));
+        if (list.length > 0) {
+          setAttributesList(list);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch product:", error);
@@ -334,6 +357,15 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         return;
       }
 
+      const attributesMap: Record<string, string> = {};
+      attributesList.forEach((item) => {
+        const k = item.key.trim();
+        const v = item.value.trim();
+        if (k && v) {
+          attributesMap[k] = v;
+        }
+      });
+
       const productPayload: any = {
         name: formData.name,
         description: formData.description,
@@ -346,6 +378,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         images: allImages,
         videos: allVideos,
         hasVariants,
+        attributes: attributesMap,
         shipping: existingProduct?.shipping || {
           requires_shipping: true,
           is_fragile: false,
@@ -550,6 +583,96 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                 onBlur={(newContent) => updateFormData({ description: newContent })}
               />
             </div>
+          </div>
+        </div>
+
+        {/* Technical Specifications & Craftsmanship Attributes Studio */}
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <FaSlidersH className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  Technical Specifications & Attributes ({attributesList.length})
+                </h3>
+              </div>
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                Technical parameters displayed in the customer storefront specification table (Material, Dimensions, Voltage, Socket, Finish, etc.).
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setAttributesList((prev) => [...prev, { key: "", value: "" }]);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 dark:bg-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-semibold rounded-lg transition-colors self-start sm:self-auto shrink-0"
+            >
+              <FaPlus className="w-3 h-3" />
+              <span>Add Specification</span>
+            </button>
+          </div>
+
+          <div className="space-y-2.5">
+            {attributesList.map((attr, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-lg border border-theme-border-light/70 dark:border-theme-border-dark/70 bg-theme-bg-light/50 dark:bg-theme-bg-dark/40 flex flex-col sm:flex-row sm:items-center gap-2.5"
+              >
+                <div className="w-full sm:w-1/3">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1">
+                    Specification Name / Key
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. material, bulb_socket, dimensions"
+                    value={attr.key}
+                    onChange={(e) => {
+                      const updated = [...attributesList];
+                      updated[idx].key = e.target.value;
+                      setAttributesList(updated);
+                    }}
+                    className="w-full px-3 py-1.5 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-md bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-full sm:flex-1">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark mb-1">
+                    Specification Detail / Value
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Solid American Walnut & Natural Oak"
+                    value={attr.value}
+                    onChange={(e) => {
+                      const updated = [...attributesList];
+                      updated[idx].value = e.target.value;
+                      setAttributesList(updated);
+                    }}
+                    className="w-full px-3 py-1.5 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-md bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttributesList((prev) => prev.filter((_, i) => i !== idx));
+                  }}
+                  title="Remove this specification"
+                  className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md transition-colors self-end sm:self-center mt-1 sm:mt-5"
+                >
+                  <FaTrash className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+
+            {attributesList.length === 0 && (
+              <div className="text-center py-6 border border-dashed border-theme-border-light dark:border-theme-border-dark rounded-lg">
+                <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                  No technical specifications configured yet. Click "Add Specification" to add parameters.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
