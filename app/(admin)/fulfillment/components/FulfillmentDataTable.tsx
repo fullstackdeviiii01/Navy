@@ -65,7 +65,7 @@ export default function FulfillmentDataTable({
               <th className="py-3 px-4">Order # & Date</th>
               <th className="py-3 px-4">Customer</th>
               <th className="py-3 px-4">Items</th>
-              <th className="py-3 px-4">Total</th>
+              <th className="py-3 px-4">Total (Rs)</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4">Payment</th>
               <th className="py-3 px-4 text-right">Actions</th>
@@ -85,7 +85,7 @@ export default function FulfillmentDataTable({
                 >
                   {/* Order ID */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span className="font-mono font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
+                    <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
                       {order.order_number}
                     </span>
                     <span className="text-[10px] text-theme-text-muted-light">
@@ -123,7 +123,7 @@ export default function FulfillmentDataTable({
                   {/* Total & Payment Method */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                      Rs. {order.pricing?.total?.toLocaleString() || "0"}
+                      {order.pricing?.total?.toLocaleString() || "0"}
                     </span>
                     <span className="text-[10px] text-theme-text-muted-light uppercase font-medium">
                       {order.payment_method === "bank_transfer"

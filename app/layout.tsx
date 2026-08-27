@@ -14,7 +14,7 @@ const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata = {
-  title: "Rehan Wooden Lamps | Handcrafted Architectural Lighting",
+  title: "Talal Wooden Lamps | Handcrafted Architectural Lighting",
   description: "Artisanal solid-wood lighting and bespoke architectural luminaires.",
 };
 

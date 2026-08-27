@@ -18,7 +18,7 @@ const STATIC_FAQS: StaticFAQItem[] = [
     id: "bespoke-commissions",
     category: "Ordering & Bespoke",
     question: "Do you accept custom dimensions or bespoke architectural lighting commissions?",
-    answer: "Yes. Our atelier collaborates directly with architects, interior designers, and private collectors. Custom requests can include bespoke timber profiles, tailored cord lengths, custom brass patina finishes, and specialized lamp shade dimensions. Please reach out through our Bespoke & Contact page to initiate a consultation.",
+    answer: "Yes. Our atelier collaborates directly with architects, interior designers, and private collectors. Custom requests can include bespoke timber profiles, tailored cord lengths, custom brass patina finishes, and specialized lamp shade dimensions. Please reach out through our Contact page to initiate a consultation.",
   },
   {
     id: "order-modification",

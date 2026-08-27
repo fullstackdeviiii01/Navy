@@ -62,7 +62,7 @@ export default function TestimonialAuditModal({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div>
-            <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Customer Review Details
             </h3>
             <p className="text-xs text-theme-text-muted-light mt-0.5">
@@ -111,7 +111,7 @@ export default function TestimonialAuditModal({
           {/* Testimonial Content */}
           <div className="space-y-2">
             {review.title && (
-              <h4 className="font-serif font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h4 className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 "{review.title}"
               </h4>
             )}

@@ -80,7 +80,7 @@ export default function PromotionsDataTable({
                         <Tag className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <span className="font-mono font-bold text-xs tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark block">
+                        <span className="font-bold text-xs tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark block">
                           {c.code}
                         </span>
                         {c.description && (
@@ -94,7 +94,7 @@ export default function PromotionsDataTable({
 
                   {/* Value */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-serif">
+                    <span className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       {c.discount_type === "percentage"
                         ? `${c.discount_value}% OFF`
                         : `Rs. ${c.discount_value.toLocaleString()} FLAT`}

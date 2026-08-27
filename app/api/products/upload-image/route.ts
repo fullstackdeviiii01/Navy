@@ -10,10 +10,8 @@ import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("Image upload request received");
     
     const token = getIdTokenFromHeader(request);
-    console.log("Token:", token ? "Present" : "Missing");
     
     if (!token) {
       console.error("Upload failed: No token provided");
@@ -21,7 +19,6 @@ export async function POST(request: NextRequest) {
     }
 
     const decodedToken = await verifyIdToken(token);
-    console.log("Decoded token:", decodedToken ? "Valid" : "Invalid");
     
     if (!decodedToken) {
       console.error("Upload failed: Invalid token");
@@ -31,7 +28,6 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const adminUser = await (User as any).findOne({ email: decodedToken.email });
-    console.log("Admin user:", adminUser ? `Found (${adminUser.role})` : "Not found");
     
     if (!adminUser || adminUser.role !== "admin") {
       console.error("Upload failed: Access denied for user", decodedToken.email);
@@ -40,7 +36,6 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get("image") as File;
-    console.log("FormData file:", file ? `${file.name} (${file.size} bytes, ${file.type})` : "Missing");
 
     if (!file) {
       console.error("Upload failed: No image provided in formData");

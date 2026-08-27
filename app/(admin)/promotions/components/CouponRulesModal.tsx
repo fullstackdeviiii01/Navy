@@ -229,7 +229,7 @@ export default function CouponRulesModal({
               <Tag className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {coupon ? "Edit Promotion Voucher" : "Create New Promotion Voucher"}
               </h3>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -268,7 +268,7 @@ export default function CouponRulesModal({
                   setFormData({ ...formData, code: e.target.value })
                 }
                 required
-                className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono uppercase font-bold border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm uppercase font-bold border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
               />
             </div>
 
@@ -325,7 +325,7 @@ export default function CouponRulesModal({
                   })
                 }
                 required
-                className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
           </div>
@@ -346,7 +346,7 @@ export default function CouponRulesModal({
                     min_order_amount: parseFloat(e.target.value) || 0,
                   })
                 }
-                className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
 
@@ -366,7 +366,7 @@ export default function CouponRulesModal({
                       max_discount: e.target.value ? parseFloat(e.target.value) : null,
                     })
                   }
-                  className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                  className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
                 />
               </div>
             )}
@@ -509,7 +509,7 @@ export default function CouponRulesModal({
                           />
                           <span className="truncate text-xs font-medium">{prod.name}</span>
                         </div>
-                        <span className="text-[10px] font-mono text-theme-text-muted-light shrink-0">
+                        <span className="text-[10px] text-theme-text-muted-light shrink-0">
                           Rs. {prod.pricing?.price?.toLocaleString() || prod.price}
                         </span>
                       </label>
@@ -570,7 +570,7 @@ export default function CouponRulesModal({
                     usage_limit: e.target.value ? parseInt(e.target.value) : null,
                   })
                 }
-                className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
 
@@ -588,7 +588,7 @@ export default function CouponRulesModal({
                     per_user_limit: parseInt(e.target.value) || 1,
                   })
                 }
-                className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
           </div>

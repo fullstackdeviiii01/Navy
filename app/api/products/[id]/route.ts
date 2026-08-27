@@ -141,7 +141,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     // Delete associated media files
     const mediaResults = await deleteProductMedia(imageUrls, videoUrls);
     
-    console.log(`Deleted ${mediaResults.totalDeleted} media files, ${mediaResults.totalFailed} failed`);
 
     // Update category product count
     if (categoryId) {

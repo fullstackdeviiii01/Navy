@@ -25,7 +25,7 @@ export default function InventoryHealthRadar({ products = [] }: InventoryHealthR
     <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-2xl border border-theme-border-light dark:border-theme-border-dark p-5 sm:p-6 shadow-xs space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
-          <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-500" />
             <span>Low Stock Alerts</span>
           </h3>

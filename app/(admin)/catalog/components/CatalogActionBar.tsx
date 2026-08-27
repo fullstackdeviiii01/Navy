@@ -20,7 +20,7 @@ export default function CatalogActionBar({
             <FaBoxOpen className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               Product Catalog Directory
             </h1>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">

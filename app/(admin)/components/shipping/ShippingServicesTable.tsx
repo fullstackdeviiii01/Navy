@@ -74,9 +74,6 @@ export default function ShippingServicesTable({
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                Sort Order
-              </th>
               <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Actions
               </th>
@@ -89,15 +86,18 @@ export default function ShippingServicesTable({
                 className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <td className="px-6 py-4">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {service.display_name}
-                    </p>
-                    {service.description && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">
-                        {service.description}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                      <Truck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {service.display_name}
                       </p>
-                    )}
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {service.name}
+                      </p>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -126,11 +126,6 @@ export default function ShippingServicesTable({
                     )}
                     {service.is_active ? "Active" : "Inactive"}
                   </button>
-                </td>
-                <td className="px-6 py-4">
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {service.sort_order}
-                  </p>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">

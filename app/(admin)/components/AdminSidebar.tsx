@@ -60,7 +60,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     company_name?: string;
     company_logo?: string;
   }>({
-    company_name: "Rehan Wooden Lamps",
+    company_name: "Talal Wooden Lamps",
     company_logo: "",
   });
 
@@ -70,7 +70,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         const data = await siteSettingsApi.getCompanyInfo();
         if (data?.company_info) {
           setCompanyInfo({
-            company_name: data.company_info.company_name || "Rehan Wooden Lamps",
+            company_name: data.company_info.company_name || "Talal Wooden Lamps",
             company_logo: data.company_info.company_logo || "",
           });
         }
@@ -250,20 +250,20 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             ) : (
               /* Monogram Emblem (R | L) fallback */
               <div className="flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded-md shadow-xs shrink-0 group-hover:border-neutral-900 dark:group-hover:border-neutral-100 transition-colors">
-                <span className="font-serif text-base text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
+                <span className="text-base text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight font-normal">
                   R
                 </span>
                 <span className="h-3 w-[1px] bg-theme-border-light dark:border-theme-border-dark mx-1.5 inline-block" />
-                <span className="font-serif text-base text-neutral-500 tracking-tight font-normal">
+                <span className="text-base text-neutral-500 tracking-tight font-normal">
                   L
                 </span>
               </div>
             )}
             <div className="flex flex-col leading-none min-w-0">
-              <span className="font-serif text-xs tracking-wider font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
-                {companyInfo.company_name || "REHAN LAMPS"}
+              <span className="text-xs tracking-wider font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+                {companyInfo.company_name || "TALAL WOODEN LAMPS"}
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-theme-text-muted-light font-medium mt-0.5">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-theme-text-muted-light font-medium mt-0.5">
                 Admin Panel
               </span>
             </div>
@@ -285,7 +285,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           {navSections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {section.sectionTitle && (
-                <p className="px-3 pb-1 text-[9px] uppercase font-mono tracking-[0.2em] font-semibold text-theme-text-muted-light">
+                <p className="px-3 pb-1 text-[9px] uppercase tracking-[0.2em] font-semibold text-theme-text-muted-light">
                   {section.sectionTitle}
                 </p>
               )}

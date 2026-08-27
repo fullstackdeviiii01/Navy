@@ -174,7 +174,7 @@ export const commonPDFStyles = `
       background: #FAF8F5;
     }
 
-    .font-mono {
+    .{
       font-family: 'JetBrains Mono', monospace;
     }
 

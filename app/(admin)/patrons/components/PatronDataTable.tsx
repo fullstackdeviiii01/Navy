@@ -59,7 +59,7 @@ export default function PatronDataTable({
               <th className="py-3 px-4">Customer</th>
               <th className="py-3 px-4">Account Type</th>
               <th className="py-3 px-4">Total Orders</th>
-              <th className="py-3 px-4">Total Spent</th>
+              <th className="py-3 px-4">Total Spent (Rs)</th>
               <th className="py-3 px-4">Joined Date</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4 text-right">Actions</th>
@@ -71,11 +71,11 @@ export default function PatronDataTable({
                 key={c._id}
                 className="hover:bg-theme-card-light/40 dark:hover:bg-theme-card-dark/30 transition-colors"
               >
-                {/* Customer Name & Email */}
+                {/* Customer Info */}
                 <td className="py-3.5 px-4 whitespace-nowrap">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-800 dark:text-neutral-200 font-bold shrink-0">
-                      {c.name ? c.name.charAt(0).toUpperCase() : "C"}
+                    <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center font-bold text-xs text-neutral-700 dark:text-neutral-300">
+                      {c.name ? c.name.charAt(0).toUpperCase() : "U"}
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
@@ -113,8 +113,8 @@ export default function PatronDataTable({
 
                 {/* Total Spent */}
                 <td className="py-3.5 px-4 whitespace-nowrap">
-                  <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark font-serif">
-                    Rs. {c.total_spent?.toLocaleString() || "0"}
+                  <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    {c.total_spent?.toLocaleString() || "0"}
                   </span>
                 </td>
 

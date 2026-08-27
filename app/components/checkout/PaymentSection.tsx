@@ -209,9 +209,37 @@ export default function PaymentSection({
                     <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
                       <div>
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                          Recipient Name / Account Title
+                        </span>
+                        <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
+                          Talal Ahmad
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => copyToClipboard("Talal Ahmad", "bank_title")}
+                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                      >
+                        {copiedField === "bank_title" ? (
+                          <>
+                            <Check className="w-3 h-3 text-green-400" />
+                            <span>COPIED</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>COPY</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Account Number
                         </span>
-                        <span className="font-mono text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
+                        <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
                           00300112798032
                         </span>
                       </div>
@@ -239,7 +267,7 @@ export default function PaymentSection({
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           IBAN
                         </span>
-                        <span className="font-mono text-[11px] sm:text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold break-all">
+                        <span className="text-[11px] sm:text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold break-all">
                           PK00300112798032
                         </span>
                       </div>
@@ -277,7 +305,7 @@ export default function PaymentSection({
                       />
                     </div>
                     <span className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
-                      Scan with Raast or 1Link banking app
+                      Scan and pay
                     </span>
                   </div>
                 </div>
@@ -308,10 +336,10 @@ export default function PaymentSection({
                   <div className="space-y-3">
                     <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
                       <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                        Account Title
+                        Account Title / Recipient Name
                       </span>
-                      <span className="font-medium text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Rehan Ahmad
+                      <span className="font-bold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        Talal Ahmad
                       </span>
                     </div>
 
@@ -320,7 +348,7 @@ export default function PaymentSection({
                         <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
                           Mobile Number
                         </span>
-                        <span className="font-mono text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
+                        <span className="text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
                           03130538686
                         </span>
                       </div>
@@ -365,7 +393,7 @@ export default function PaymentSection({
                       />
                     </div>
                     <span className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-2">
-                      Scan directly in your JazzCash App
+                      Scan and pay
                     </span>
                   </div>
                 </div>

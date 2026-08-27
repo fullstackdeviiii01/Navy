@@ -120,7 +120,7 @@ export default function ShowreelUploadManager({
             Short cinematic clips showing illumination and textures (Max 50MB, &lt;30s).
           </p>
         </div>
-        <span className="text-xs font-mono text-theme-text-muted-light">
+        <span className="text-xs text-theme-text-muted-light">
           {videos.length + newVideos.length} Videos
         </span>
       </div>
@@ -183,7 +183,7 @@ export default function ShowreelUploadManager({
           <span className="text-[11px] uppercase tracking-wider font-semibold">
             Upload Video
           </span>
-          <span className="text-[9px] text-theme-text-muted-light mt-0.5 font-mono">
+          <span className="text-[9px] text-theme-text-muted-light mt-0.5">
             MP4, WebM, MOV (&lt;30s)
           </span>
           <input

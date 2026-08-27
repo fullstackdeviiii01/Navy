@@ -190,7 +190,7 @@ export default function AdminReturnDetailModal({
         <div className="p-5 sm:p-6 border-b border-theme-border-light dark:border-theme-border-dark flex items-center justify-between">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-base sm:text-lg font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <span className="text-base sm:text-lg font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {returnDoc?.rma_number || "RMA Details"}
               </span>
               {returnDoc && (
@@ -261,7 +261,7 @@ export default function AdminReturnDetailModal({
                   <span className="text-[10px] uppercase font-bold text-theme-text-muted-light block">
                     Total Refund Amount
                   </span>
-                  <p className="font-serif font-bold text-sm text-theme-hover-light dark:text-theme-hover-dark">
+                  <p className="font-bold text-sm text-theme-hover-light dark:text-theme-hover-dark">
                     {formatPrice(returnDoc.refund_amount)}
                   </p>
                 </div>
@@ -303,7 +303,7 @@ export default function AdminReturnDetailModal({
                           )}
                         </div>
                         <div>
-                          <p className="font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                          <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                             {item.product_name}
                           </p>
                           <p className="text-[10px] text-theme-text-muted-light uppercase">
@@ -311,7 +311,7 @@ export default function AdminReturnDetailModal({
                           </p>
                         </div>
                       </div>
-                      <p className="font-semibold font-mono text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {formatPrice((item.price || 0) * (item.quantity || 1))}
                       </p>
                     </div>
@@ -412,7 +412,7 @@ export default function AdminReturnDetailModal({
                         <span className="text-[9px] uppercase text-theme-text-muted-light block">
                           Account / IBAN Number
                         </span>
-                        <p className="font-mono font-bold text-theme-hover-light truncate">
+                        <p className="font-bold text-theme-hover-light truncate">
                           {returnDoc.payout_details.account_number}
                         </p>
                       </div>
@@ -437,7 +437,7 @@ export default function AdminReturnDetailModal({
                       <span className="text-[10px] uppercase opacity-75 block">
                         Transaction Reference / TID
                       </span>
-                      <span className="font-mono font-bold">
+                      <span className="font-bold">
                         {returnDoc.settlement.transaction_reference}
                       </span>
                     </div>
@@ -555,7 +555,7 @@ export default function AdminReturnDetailModal({
                             placeholder="e.g. MEZN-987654321 / JZ-12345"
                             value={trxRef}
                             onChange={(e) => setTrxRef(e.target.value)}
-                            className="w-full px-3 py-2 rounded bg-theme-surface-light border border-theme-border-light font-mono text-xs focus:outline-none focus:border-emerald-500"
+                            className="w-full px-3 py-2 rounded bg-theme-surface-light border border-theme-border-light text-xs focus:outline-none focus:border-emerald-500"
                           />
                         </div>
 

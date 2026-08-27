@@ -15,25 +15,20 @@ export default function BuildTriggerButton() {
     if (pollRef.current) {
       clearInterval(pollRef.current);
       pollRef.current = null;
-      console.log("[BuildButton] Polling stopped.");
     }
   };
 
   const startPolling = () => {
     stopPolling();
-    console.log("[BuildButton] Starting polling every 5 seconds...");
 
     pollRef.current = setInterval(async () => {
-      console.log("[BuildButton] Polling /api/build/status...");
 
       try {
         const res = await fetch("/api/build/status");
         const data = await res.json();
 
-        console.log("[BuildButton] Poll response:", data);
 
         if (data.status === "done") {
-          console.log("[BuildButton] Build is done!");
           stopPolling();
           setStatus("done");
           setTimeout(() => setStatus("idle"), 4000);
@@ -45,7 +40,6 @@ export default function BuildTriggerButton() {
           setTimeout(() => setStatus("idle"), 4000);
 
         } else {
-          console.log("[BuildButton] Build still in progress, status:", data.status);
         }
 
       } catch (err: any) {
@@ -57,11 +51,9 @@ export default function BuildTriggerButton() {
   const handleBuild = async () => {
     if (!confirm("Trigger a production build? This takes 2-3 minutes.")) return;
 
-    console.log("[BuildButton] Build triggered by user.");
     setStatus("loading");
 
     try {
-      console.log("[BuildButton] Getting auth token...");
       const token = await authUser?.getIdToken();
 
       if (!token) {
@@ -69,7 +61,6 @@ export default function BuildTriggerButton() {
         throw new Error("Not authenticated");
       }
 
-      console.log("[BuildButton] Sending POST to /api/build/trigger...");
 
       const res = await fetch("/api/build/trigger", {
         method: "POST",
@@ -80,13 +71,11 @@ export default function BuildTriggerButton() {
       });
 
       const data = await res.json();
-      console.log("[BuildButton] Trigger response:", res.status, data);
 
       if (!res.ok) {
         throw new Error(data.error || `Server error: ${res.status}`);
       }
 
-      console.log("[BuildButton] Build started successfully. Starting poll...");
       startPolling();
 
     } catch (err: any) {

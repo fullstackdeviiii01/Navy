@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ChevronsRight,
+  ChevronRight,
   Loader2,
   Package,
 } from "lucide-react";
@@ -48,6 +49,18 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState<ProductSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -222,7 +235,7 @@ export default function Header() {
               href="/contact"
               className="text-[11px] xl:text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors font-medium py-1"
             >
-              BESPOKE & CONTACT
+              CONTACT
             </Link>
 
             <Link
@@ -413,101 +426,156 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Full-Height Slide-Over Navigation Drawer */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-theme-border-light dark:border-theme-border-dark bg-theme-card-light dark:bg-theme-card-dark px-5 py-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200">
-          <div className="space-y-3 pb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
-            <Link
-              href="/products"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              COLLECTIONS
-            </Link>
-            <Link
-              href="/categories"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              CATEGORIES
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              CRAFTSMANSHIP
-            </Link>
-            <Link
-              href="/contact"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              BESPOKE & CONTACT
-            </Link>
-            <Link
-              href="/track-order"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              TRACK ORDER
-            </Link>
-          </div>
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation Menu">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
 
-          {/* Quick Actions (Wishlist & Account) inside Mobile Drawer */}
-          <div className="space-y-3 pt-1">
-            <Link
-              href="/wishlist"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center justify-between py-1.5 text-xs font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark"
-            >
-              <span className="flex items-center gap-2.5">
-                <Heart size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
-                <span>WISHLIST</span>
-              </span>
-              {wishlistCount > 0 && (
-                <span className="bg-theme-hover-light dark:bg-theme-hover-dark text-white text-[10px] font-mono px-2 py-0.5 font-bold">
-                  {wishlistCount} {wishlistCount === 1 ? "ITEM" : "ITEMS"}
-                </span>
-              )}
-            </Link>
-
-            {isAuthenticated ? (
-              <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2">
-                <Link
-                  href="/account"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-2.5 text-xs font-mono text-theme-hover-light dark:text-theme-hover-dark uppercase tracking-wider font-medium"
-                >
-                  <User size={16} />
-                  <span>My Account ({name || "Profile"})</span>
-                </Link>
+          {/* Slide-over Drawer Panel */}
+          <div className="fixed inset-y-0 right-0 w-full max-w-[85vw] sm:max-w-sm bg-theme-surface-light dark:bg-theme-surface-dark border-l border-theme-border-light dark:border-theme-border-dark shadow-2xl flex flex-col justify-between overflow-y-auto animate-slide-in-right">
+            {/* Upper Content Area */}
+            <div>
+              {/* Header inside Drawer */}
+              <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-theme-border-light dark:border-theme-border-dark">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
+                    ATELIER MENU
+                  </p>
+                  <h2 className="text-base sm:text-lg font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    {companyInfo.company_name || "Talal Wooden Lamps"}
+                  </h2>
+                </div>
                 <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleSignOut();
-                  }}
-                  className="block text-xs text-red-500 hover:text-red-600 font-mono uppercase tracking-wider pt-1"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1.5 text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark transition-colors cursor-pointer"
+                  aria-label="Close navigation"
                 >
-                  Sign Out
+                  <X size={20} />
                 </button>
               </div>
-            ) : (
-              <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+
+              {/* Main Navigation Links */}
+              <nav className="px-5 sm:px-6 py-5 space-y-1">
                 <Link
-                  href="/sign-in"
+                  href="/products"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light uppercase tracking-wider"
+                  className="flex items-center justify-between py-3 text-xs sm:text-sm font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark border-b border-theme-border-light/40 dark:border-theme-border-dark/40 transition-colors"
                 >
-                  <span className="flex items-center gap-2">
-                    <User size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
-                    <span>Sign In / Register</span>
-                  </span>
-                  <ChevronsRight size={15} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                  <span>COLLECTIONS</span>
+                  <ChevronRight size={15} className="text-theme-text-muted-light dark:text-theme-text-muted-dark" />
                 </Link>
+                <Link
+                  href="/categories"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 text-xs sm:text-sm font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark border-b border-theme-border-light/40 dark:border-theme-border-dark/40 transition-colors"
+                >
+                  <span>CATEGORIES</span>
+                  <ChevronRight size={15} className="text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+                </Link>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 text-xs sm:text-sm font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark border-b border-theme-border-light/40 dark:border-theme-border-dark/40 transition-colors"
+                >
+                  <span>CRAFTSMANSHIP</span>
+                  <ChevronRight size={15} className="text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+                </Link>
+                <Link
+                  href="/contact"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 text-xs sm:text-sm font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark border-b border-theme-border-light/40 dark:border-theme-border-dark/40 transition-colors"
+                >
+                  <span>CONTACT</span>
+                  <ChevronRight size={15} className="text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+                </Link>
+                <Link
+                  href="/track-order"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 text-xs sm:text-sm font-mono uppercase tracking-[0.22em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark border-b border-theme-border-light/40 dark:border-theme-border-dark/40 transition-colors"
+                >
+                  <span>TRACK ORDER</span>
+                  <ChevronRight size={15} className="text-theme-text-muted-light dark:text-theme-text-muted-dark" />
+                </Link>
+              </nav>
+
+              {/* Wishlist & Account Section */}
+              <div className="px-5 sm:px-6 pt-2 space-y-3">
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/40 dark:bg-theme-card-dark/30 text-xs font-mono uppercase tracking-[0.18em] text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light transition-colors"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Heart size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                    <span>WISHLIST</span>
+                  </span>
+                  {wishlistCount > 0 && (
+                    <span className="bg-theme-hover-light dark:bg-theme-hover-dark text-white text-[10px] font-mono px-2 py-0.5 font-bold">
+                      {wishlistCount} {wishlistCount === 1 ? "ITEM" : "ITEMS"}
+                    </span>
+                  )}
+                </Link>
+
+                {isAuthenticated ? (
+                  <div className="p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/40 dark:bg-theme-card-dark/30 space-y-2">
+                    <Link
+                      href="/account"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-2.5 text-xs font-mono text-theme-hover-light dark:text-theme-hover-dark uppercase tracking-wider font-semibold"
+                    >
+                      <User size={16} />
+                      <span>My Account ({name || "Profile"})</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleSignOut();
+                      }}
+                      className="block text-[11px] text-red-500 hover:text-red-600 font-mono uppercase tracking-wider pt-1 cursor-pointer"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/sign-in"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 border border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/40 dark:bg-theme-card-dark/30 text-xs font-mono text-theme-text-primary-light dark:text-theme-text-primary-dark hover:border-theme-hover-light uppercase tracking-wider transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <User size={16} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                      <span>Sign In / Register</span>
+                    </span>
+                    <ChevronsRight size={15} className="text-theme-hover-light dark:text-theme-hover-dark" />
+                  </Link>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Bottom Atelier Footer */}
+            <div className="p-5 sm:px-6 border-t border-theme-border-light dark:border-theme-border-dark bg-theme-card-light/50 dark:bg-theme-card-dark/50 text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark space-y-1">
+              <p className="font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                Handmade Natural Luminaires
+              </p>
+              <p className="text-[10px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                Sahiwal & Lahore, Pakistan
+              </p>
+            </div>
           </div>
+
+          <style jsx>{`
+            @keyframes slide-in-right {
+              from { transform: translateX(100%); }
+              to { transform: translateX(0); }
+            }
+            .animate-slide-in-right {
+              animation: slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+          `}</style>
         </div>
       )}
     </header>

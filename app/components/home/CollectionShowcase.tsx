@@ -80,8 +80,8 @@ export default function CollectionShowcase() {
                 Every contour is turned by hand on wood lathes, finished with natural beeswax and organic botanical oils that allow the timber to breathe and develop a living patina over decades of daily illumination.
               </p>
 
-              {/* 3 Core Collection Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+              {/* 3 Core Collection Pillars (Hidden on Mobile) */}
+              <div className="hidden sm:grid sm:grid-cols-3 gap-4 pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
                 <div className="p-4 border border-theme-border-light/60 dark:border-theme-border-dark/60 bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5">
                   <div className="w-2 h-2 rotate-45 bg-theme-hover-light dark:bg-theme-hover-dark mb-2" />
                   <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -105,7 +105,7 @@ export default function CollectionShowcase() {
                 <div className="p-4 border border-theme-border-light/60 dark:border-theme-border-dark/60 bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5">
                   <div className="w-2 h-2 rotate-45 bg-theme-hover-light dark:bg-theme-hover-dark mb-2" />
                   <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    2700K Ambiance
+                    Warm Ambiance
                   </h4>
                   <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-snug">
                     Gentle glare-free dispersion tailored for residential sanctuaries.

@@ -18,14 +18,6 @@ export const cartApi = {
     productName?: string,
     productImage?: string
   ) => {
-    console.log("🌐 [cartApi.addItem] Sending POST /api/cart with payload:", {
-      product_id: productId,
-      quantity,
-      variant_id: variantId,
-      variant_attributes: variantAttributes,
-      product_name: productName,
-      product_image: productImage,
-    });
 
     const response = await fetch("/api/cart", {
       method: "POST",
@@ -41,7 +33,6 @@ export const cartApi = {
       }),
     });
     const result = await handleResponse(response);
-    console.log("🌐 [cartApi.addItem] Received result from /api/cart:", result);
     return result;
   },
 

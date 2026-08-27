@@ -20,7 +20,7 @@ export const contactFormTemplate = (data: {
         <!-- Header -->
         <div style="background: #18181b; padding: 28px 24px; text-align: center; color: #ffffff;">
           <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.25em; text-transform: uppercase; color: #d4af37; display: block; margin-bottom: 6px;">
-            REHAN WOODEN LAMPS • CUSTOMER CONTACT
+            TALAL WOODEN LAMPS • CUSTOMER CONTACT
           </span>
           <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">
             ✉️ New Customer Message
@@ -66,7 +66,7 @@ ${data.message}
 
           <!-- Reply CTA -->
           <div style="text-align: center; margin-top: 24px; margin-bottom: 8px;">
-            <a href="mailto:${data.email}?subject=Re: ${encodeURIComponent(data.subject || "Your Inquiry with Rehan Wooden Lamps")}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 12px 28px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; border-radius: 6px;">
+            <a href="mailto:${data.email}?subject=Re: ${encodeURIComponent(data.subject || "Your Inquiry with Talal Wooden Lamps")}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 12px 28px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; border-radius: 6px;">
               Reply Directly to Customer &rarr;
             </a>
           </div>
@@ -74,7 +74,7 @@ ${data.message}
 
         <!-- Footer -->
         <div style="background-color: #fafafa; border-top: 1px solid #e4e4e7; padding: 14px 20px; text-align: center; font-size: 11px; color: #a1a1aa;">
-          Rehan Wooden Lamps • Notification System
+          Talal Wooden Lamps • Notification System
         </div>
 
       </div>

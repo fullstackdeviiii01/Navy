@@ -63,7 +63,7 @@ export default function OrderLineItemsSummary({
                     {Object.entries(item.variant_attributes).map(([key, val]) => (
                       <span
                         key={key}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono"
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-theme-text-secondary-light dark:text-theme-text-secondary-dark"
                       >
                         {key}: {val}
                       </span>

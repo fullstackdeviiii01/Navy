@@ -45,7 +45,7 @@ export default function StaffProfileModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   {user.name || "Unnamed User"}
                 </h3>
                 <span
@@ -78,23 +78,23 @@ export default function StaffProfileModal({
           {/* Quick Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+              <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                 Spend
               </span>
-              <p className="text-sm font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <p className="text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 Rs. {user.total_spent?.toLocaleString() || "0"}
               </p>
             </div>
             <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+              <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                 Orders
               </span>
-              <p className="text-sm font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <p className="text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {user.order_count || 0}
               </p>
             </div>
             <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+              <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                 Member Since
               </span>
               <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
@@ -104,7 +104,7 @@ export default function StaffProfileModal({
               </p>
             </div>
             <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-              <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+              <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                 Last Login
               </span>
               <p className="text-xs font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">

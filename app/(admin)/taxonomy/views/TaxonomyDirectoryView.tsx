@@ -141,14 +141,14 @@ export default function TaxonomyDirectoryView() {
         {/* Total Categories */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Total Categories
             </span>
             <div className="p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200">
               <FaTags className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {totalCollections}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -159,14 +159,14 @@ export default function TaxonomyDirectoryView() {
         {/* Active Categories */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Active Categories
             </span>
             <div className="p-1.5 rounded-lg bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400">
               <FaCheckCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {activeCollections}
           </p>
           <p className="text-[11px] text-green-700 dark:text-green-400 font-medium">
@@ -177,14 +177,14 @@ export default function TaxonomyDirectoryView() {
         {/* Products Linked */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Total Products
             </span>
             <div className="p-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
               <FaBoxes className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {totalAssignedProducts}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -195,14 +195,14 @@ export default function TaxonomyDirectoryView() {
         {/* Empty Categories Warning */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Empty Categories
             </span>
             <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
               <FaExclamationCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {emptyCollections}
           </p>
           <p className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">

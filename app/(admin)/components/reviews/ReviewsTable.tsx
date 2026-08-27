@@ -100,7 +100,7 @@ export default function ReviewsTable({
                   />
                 </div>
                 <div>
-                  <h3 className="font-serif italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <h3 className="italic text-base text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {product.name}
                   </h3>
                   <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">

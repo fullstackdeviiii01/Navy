@@ -23,7 +23,7 @@ export default function AuditIdentityModal({
         <div className="flex items-center justify-between p-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-5 h-5 text-purple-600" />
-            <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Authentication Audit Dossier
             </h3>
           </div>
@@ -39,13 +39,13 @@ export default function AuditIdentityModal({
         {/* Content */}
         <div className="p-5 space-y-3.5 text-xs">
           <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-            <span className="text-[10px] uppercase font-mono font-semibold text-theme-text-muted-light">
+            <span className="text-[10px] uppercase font-semibold text-theme-text-muted-light">
               Account Subject
             </span>
             <p className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {user.name || "Unnamed User"}
             </p>
-            <p className="font-mono text-[11px] text-theme-text-secondary-light">
+            <p className="text-[11px] text-theme-text-secondary-light">
               {user.email}
             </p>
           </div>
@@ -57,7 +57,7 @@ export default function AuditIdentityModal({
             </div>
             <div className="flex justify-between py-1 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
               <span className="text-theme-text-muted-light">IP Address:</span>
-              <span className="font-mono font-semibold">{user.ip || "127.0.0.1"}</span>
+              <span className="font-semibold">{user.ip || "127.0.0.1"}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
               <span className="text-theme-text-muted-light">Event Timestamp:</span>
@@ -67,10 +67,10 @@ export default function AuditIdentityModal({
 
           {user.user_agent && (
             <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl space-y-1">
-              <span className="text-[10px] uppercase font-mono font-semibold text-neutral-500">
+              <span className="text-[10px] uppercase font-semibold text-neutral-500">
                 Client Device Identifier
               </span>
-              <p className="text-[11px] font-mono text-neutral-700 dark:text-neutral-300 break-words">
+              <p className="text-[11px] text-neutral-700 dark:text-neutral-300 break-words">
                 {user.user_agent}
               </p>
             </div>

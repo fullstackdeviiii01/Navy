@@ -54,7 +54,7 @@ export default function AdminOrderDetailView({
           <h1 className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Order Details
           </h1>
-          <p className="text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono mt-1">
+          <p className="text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark mt-1">
             {order.order_number}
           </p>
         </div>
@@ -243,7 +243,7 @@ export default function AdminOrderDetailView({
                     {order.tracking_number && (
                       <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         <span className="font-medium">Tracking:</span>{" "}
-                        <span className="font-mono">
+                        <span className="">
                           {order.tracking_number}
                         </span>
                       </p>
@@ -332,7 +332,7 @@ export default function AdminOrderDetailView({
                     <p className="text-[11px] uppercase font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark mb-0.5">
                       Transaction / Reference ID
                     </p>
-                    <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-mono font-bold">
+                    <p className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
                       {order.bank_reference}
                     </p>
                   </div>

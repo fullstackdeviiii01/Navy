@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Return & Refund Policy | Rehan Wooden Lamps",
+  title: "Return & Refund Policy | Talal Wooden Lamps",
   description:
     "Explore our 7-day inspection guarantee, replacement procedures, transit damage coverage, and transparent refund process.",
 };
@@ -233,7 +233,7 @@ export default function RefundPolicyPage() {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
-            Every Rehan Wooden Lamp includes a comprehensive 1-year warranty against manufacturing defects, structural timber cracking under normal ambient conditions, switch malfunctions, and internal socket wiring faults. If an issue arises within your first year of ownership, contact our workshop and we will repair or service your luminaire free of charge.
+            Every Talal Wooden Lamp includes a comprehensive 1-year warranty against manufacturing defects, structural timber cracking under normal ambient conditions, switch malfunctions, and internal socket wiring faults. If an issue arises within your first year of ownership, contact our workshop and we will repair or service your luminaire free of charge.
           </p>
         </div>
 

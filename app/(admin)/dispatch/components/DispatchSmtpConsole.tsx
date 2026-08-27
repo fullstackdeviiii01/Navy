@@ -43,11 +43,11 @@ export default function DispatchSmtpConsole({
           </label>
           <input
             type="text"
-            placeholder="smtp.gmail.com or mail.rehanlamps.com"
+            placeholder="smtp.gmail.com or mail.talalwoodenlamps.com"
             value={smtpSettings.host}
             onChange={(e) => onSMTPChange("host", e.target.value)}
             required
-            className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+            className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
           />
         </div>
 
@@ -61,7 +61,7 @@ export default function DispatchSmtpConsole({
             value={smtpSettings.port}
             onChange={(e) => onSMTPChange("port", parseInt(e.target.value) || 587)}
             required
-            className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+            className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
           />
         </div>
 
@@ -71,7 +71,7 @@ export default function DispatchSmtpConsole({
           </label>
           <input
             type="text"
-            placeholder="dispatch@rehanwoodenlamps.com"
+            placeholder="dispatch@talalwoodenlamps.com"
             value={smtpSettings.auth_user}
             onChange={(e) => onSMTPChange("auth_user", e.target.value)}
             required
@@ -89,7 +89,7 @@ export default function DispatchSmtpConsole({
             value={smtpSettings.auth_pass}
             onChange={(e) => onSMTPChange("auth_pass", e.target.value)}
             required
-            className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+            className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
           />
         </div>
       </div>

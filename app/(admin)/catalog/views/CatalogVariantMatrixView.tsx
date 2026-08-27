@@ -73,7 +73,7 @@ export default function CatalogVariantMatrixView({
             <FaArrowLeft className="w-3.5 h-3.5" />
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               Variant Matrix Studio
             </h1>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">

@@ -94,7 +94,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("📥 [API POST /api/cart] Received request body:", body);
     const {
       product_id,
       quantity,
@@ -133,7 +132,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("📦 [API POST /api/cart] Found product:", product.name, "(hasVariants:", product.hasVariants, ")");
 
     let price = product.pricing?.price || 0;
     let stockQuantity = product.inventory?.stock_quantity || 99;
@@ -171,7 +169,6 @@ export async function POST(request: NextRequest) {
           }
         });
       }
-      console.log("🎨 [API POST /api/cart] Matched variant price:", price, "attributes:", variantAttributes, "variant imageUrl:", variant.imageUrl);
     }
 
     const resolvedProductName = clientProductName || product.name || "Product";
@@ -181,10 +178,6 @@ export async function POST(request: NextRequest) {
       product.images?.[0]?.url ||
       "";
 
-    console.log("🖼️ [API POST /api/cart] Final resolved name and image:", {
-      name: resolvedProductName,
-      image: resolvedImage,
-    });
 
     let cart;
     let sessionId: string | null = null;
@@ -227,7 +220,6 @@ export async function POST(request: NextRequest) {
       if (Object.keys(variantAttributes).length > 0) {
         existingItem.variant_attributes = variantAttributes;
       }
-      console.log("🔄 [API POST /api/cart] Updated existing item in cart:", existingItem);
     } else {
       const newItem: any = {
         product_id: product._id,
@@ -239,7 +231,6 @@ export async function POST(request: NextRequest) {
         variant_attributes: variantAttributes,
       };
       cart.items.push(newItem);
-      console.log("➕ [API POST /api/cart] Pushed new item to cart:", newItem);
     }
 
     const shippingServiceForCalc = cart.selected_shipping_service_id
@@ -251,19 +242,11 @@ export async function POST(request: NextRequest) {
     await cart.calculateTotals(couponForCalc, shippingServiceForCalc);
     await cart.save();
 
-    console.log("💾 [API POST /api/cart] Saved cart successfully. Total items:", cart.items.length);
 
     const populatedCart = await cart.populate({
       path: "items.product_id",
     });
 
-    console.log("📤 [API POST /api/cart] Populated cart response items:", populatedCart.items.map((i: any) => ({
-      product_name: i.product_name || i.product_id?.name,
-      product_image: i.product_image || i.product_id?.images?.[0]?.url,
-      qty: i.quantity,
-      price: i.price_at_addition,
-      variant_attributes: i.variant_attributes
-    })));
 
     const response = NextResponse.json({
       success: true,

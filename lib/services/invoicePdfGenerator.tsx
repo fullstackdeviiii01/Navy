@@ -223,7 +223,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 
       // INVOICE Heading Right Column
       doc.font(F.bold).fontSize(20).fillColor(COLOR_PRIMARY)
-         .text("TAX INVOICE", MARGIN, hY, { width: CONTENT_W, align: "right", characterSpacing: 1.5 });
+         .text("INVOICE", MARGIN, hY, { width: CONTENT_W, align: "right", characterSpacing: 1.5 });
 
       // Meta Data Right Column
       const metaRows: [string, string][] = [

@@ -108,7 +108,7 @@ export default function AttributeOptionsEditor({
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl max-w-2xl w-full border border-theme-border-light dark:border-theme-border-dark shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="border-b border-theme-border-light dark:border-theme-border-dark p-4.5 flex justify-between items-center shrink-0">
-          <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Manage Product Options & Specifications
           </h3>
           <button

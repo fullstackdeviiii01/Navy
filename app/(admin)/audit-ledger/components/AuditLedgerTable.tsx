@@ -81,7 +81,7 @@ export default function AuditLedgerTable({
                 </td>
 
                 {/* IP */}
-                <td className="py-3.5 px-4 whitespace-nowrap font-mono text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                   {a.ip || "127.0.0.1"}
                 </td>
 

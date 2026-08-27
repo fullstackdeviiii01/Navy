@@ -50,7 +50,7 @@ export default function MatrixGeneratorEngine({
       <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl max-w-md w-full border border-theme-border-light dark:border-theme-border-dark shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="border-b border-theme-border-light dark:border-theme-border-dark p-4.5 flex justify-between items-center">
-          <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Generate Variant Combinations
           </h3>
           <button

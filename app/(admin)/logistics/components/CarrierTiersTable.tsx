@@ -46,7 +46,6 @@ export default function CarrierTiersTable({
               <th className="py-3 px-4">Carrier Service Tier</th>
               <th className="py-3 px-4">Estimated Transit</th>
               <th className="py-3 px-4">Base Freight Tariff</th>
-              <th className="py-3 px-4">Sort Order</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
@@ -67,7 +66,7 @@ export default function CarrierTiersTable({
                       <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {service.display_name}
                       </p>
-                      <p className="text-[10px] text-theme-text-muted-light font-mono">
+                      <p className="text-[10px] text-theme-text-muted-light">
                         {service.name}
                       </p>
                     </div>
@@ -88,14 +87,9 @@ export default function CarrierTiersTable({
 
                 {/* Price */}
                 <td className="py-3.5 px-4 whitespace-nowrap">
-                  <span className="font-bold text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <span className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     Rs. {service.base_price?.toLocaleString() || 0}
                   </span>
-                </td>
-
-                {/* Sort Order */}
-                <td className="py-3.5 px-4 whitespace-nowrap text-theme-text-muted-light font-mono">
-                  #{service.sort_order || 0}
                 </td>
 
                 {/* Status */}

@@ -133,7 +133,7 @@ export default function TaxonomyCollectionModal({
         {/* Header */}
         <div className="border-b border-theme-border-light dark:border-theme-border-dark p-4 sm:p-5 flex justify-between items-center shrink-0">
           <div>
-            <h3 className="text-base sm:text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-base sm:text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {category ? "Edit Collection" : "Create New Collection"}
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -200,7 +200,7 @@ export default function TaxonomyCollectionModal({
                   <FaUpload className="text-xs" />
                   <span>{uploading ? "Uploading..." : imagePreview ? "Change Cover Image" : "Upload Cover Image"}</span>
                 </label>
-                <span className="text-[11px] text-theme-text-muted-light ml-2 font-mono">
+                <span className="text-[11px] text-theme-text-muted-light ml-2">
                   JPG, PNG, WebP (&lt;5MB)
                 </span>
               </div>

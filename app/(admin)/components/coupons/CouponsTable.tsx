@@ -93,7 +93,7 @@ export default function CouponsTable({
                         aria-hidden="true"
                       />
                       <div className="min-w-0 flex-1">
-                        <span className="font-mono font-semibold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark truncate block">
+                        <span className="font-semibold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark truncate block">
                           {coupon.code}
                         </span>
                         {coupon.description && (

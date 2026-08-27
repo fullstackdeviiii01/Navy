@@ -108,7 +108,7 @@ export default function CatalogItemOverviewView({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
                 {product.name}
               </h1>
               <span
@@ -171,14 +171,14 @@ export default function CatalogItemOverviewView({
         {/* Pricing Metric */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               {isVariableProduct ? "Variant Price Range" : "Selling Price"}
             </span>
             <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600">
               <FaMoneyBillWave className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {isVariableProduct && product.variantPricing
               ? `${formatPrice(product.variantPricing.minPrice)}${
                   product.variantPricing.priceVaries
@@ -195,14 +195,14 @@ export default function CatalogItemOverviewView({
         {/* Stock Level */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Inventory Units
             </span>
             <div className="p-1.5 rounded-lg bg-green-50 dark:bg-green-950/40 text-green-600">
               <FaBoxes className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {totalStock}
           </p>
           <p className="text-[11px] text-green-700 dark:text-green-400 font-medium">
@@ -213,14 +213,14 @@ export default function CatalogItemOverviewView({
         {/* Variants Count */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Model Structure
             </span>
             <div className="p-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600">
               <FaLayerGroup className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {isVariableProduct ? `${product.variants?.length || 0} Variants` : "Simple"}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -231,7 +231,7 @@ export default function CatalogItemOverviewView({
         {/* Category & Brand */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Collection Line
             </span>
             <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600">
@@ -242,7 +242,7 @@ export default function CatalogItemOverviewView({
             {product.category_id?.name || "Unassigned"}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark truncate">
-            {product.brand || "Rehan Lamps"}
+            {product.brand || "Talal Wooden Lamps"}
           </p>
         </div>
       </div>
@@ -265,7 +265,7 @@ export default function CatalogItemOverviewView({
                     Unified gallery of general product photography, showreels, and finish-specific media.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light/80 dark:bg-theme-bg-dark/60 px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark self-start sm:self-auto">
+                <span className="text-xs text-theme-text-muted-light bg-theme-bg-light/80 dark:bg-theme-bg-dark/60 px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark self-start sm:self-auto">
                   {photoCount} Photos • {videoCount} Videos ({allMedia.length} Total)
                 </span>
               </div>
@@ -397,7 +397,7 @@ export default function CatalogItemOverviewView({
                           {val}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-theme-text-muted-light">
+                      <span className="text-[10px] text-theme-text-muted-light">
                         {imgs.length} Photos
                       </span>
                     </div>

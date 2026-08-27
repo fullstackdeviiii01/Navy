@@ -31,7 +31,7 @@ export default function IntelligenceFilterToolbar({
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
-          <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
             Reports & Analytics
           </h1>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">

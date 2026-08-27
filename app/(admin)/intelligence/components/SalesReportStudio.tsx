@@ -63,7 +63,7 @@ export default function SalesReportStudio({
       {/* Header with Export */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-theme-surface-light dark:bg-theme-surface-dark p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark shadow-xs">
         <div>
-          <h2 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h2 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Fiscal Turnover & Margin Ledger
           </h2>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -84,10 +84,10 @@ export default function SalesReportStudio({
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs">
-          <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
+          <span className="text-[11px] uppercase font-semibold text-theme-text-muted-light">
             Total Revenue
           </span>
-          <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Rs. {Math.round(summary?.totalRevenue || 0).toLocaleString()}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">
@@ -96,10 +96,10 @@ export default function SalesReportStudio({
         </div>
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs">
-          <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
+          <span className="text-[11px] uppercase font-semibold text-theme-text-muted-light">
             Total Orders
           </span>
-          <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {summary?.totalOrders || 0}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">
@@ -108,10 +108,10 @@ export default function SalesReportStudio({
         </div>
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs">
-          <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
+          <span className="text-[11px] uppercase font-semibold text-theme-text-muted-light">
             Avg. Order Value
           </span>
-          <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Rs. {Math.round(summary?.averageOrderValue || 0).toLocaleString()}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">
@@ -120,10 +120,10 @@ export default function SalesReportStudio({
         </div>
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs">
-          <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light">
+          <span className="text-[11px] uppercase font-semibold text-theme-text-muted-light">
             Net Margin Estimate
           </span>
-          <p className="text-xl sm:text-2xl font-serif font-bold text-emerald-600 dark:text-emerald-400">
+          <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
             Rs. {Math.round((summary?.totalRevenue || 0) * 0.42).toLocaleString()}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light">

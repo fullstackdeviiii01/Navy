@@ -142,7 +142,7 @@ export default function Footerr() {
 
             <div className="flex flex-col leading-none">
               <span className="font-serif text-base sm:text-lg tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">
-                {companyInfo.company_name || "REHAN WOODEN LAMPS"}
+                {companyInfo.company_name || "TALAL WOODEN LAMPS"}
               </span>
               <span className="text-[9px] font-mono uppercase tracking-[0.22em] text-theme-hover-light dark:text-theme-hover-dark mt-0.5">
                 HANDCRAFTED • 2026
@@ -366,7 +366,7 @@ export default function Footerr() {
           
           {/* Copyright */}
           <p className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono">
-            {companyInfo.copyright_text || `© ${currentYear} ${companyInfo.company_name || "Rehan Wooden Lamps"}. All rights reserved.`}
+            {companyInfo.copyright_text || `© ${currentYear} ${companyInfo.company_name || "Talal Wooden Lamps"}. All rights reserved.`}
           </p>
 
           {/* Social Media Links */}

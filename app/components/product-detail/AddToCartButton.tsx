@@ -38,14 +38,6 @@ export default function AddToCartButton({
     }
 
     setIsAdding(true);
-    console.log("🛒 [AddToCartButton] Initiating Add to Cart:", {
-      productId,
-      quantity,
-      variantId,
-      variantAttributes,
-      productName,
-      productImage,
-    });
 
     try {
       const data = await cartApi.addItem(
@@ -57,10 +49,8 @@ export default function AddToCartButton({
         productImage
       );
 
-      console.log("✅ [AddToCartButton] Server returned cart response:", data);
 
       if (data?.cart) {
-        console.log("⚡ [AddToCartButton] Setting context cart immediately with:", data.cart);
         updateCart?.(data.cart);
       }
 

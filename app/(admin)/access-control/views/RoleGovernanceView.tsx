@@ -98,7 +98,7 @@ export default function RoleGovernanceView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               User Roles & Permissions
             </h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300">
@@ -116,10 +116,10 @@ export default function RoleGovernanceView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/30 flex items-center justify-between">
           <div>
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-purple-900 dark:text-purple-200">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-purple-900 dark:text-purple-200">
               Administrators
             </span>
-            <p className="text-2xl font-bold font-serif text-purple-900 dark:text-purple-100 mt-1">
+            <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 mt-1">
               {adminUsers.length}
             </p>
             <p className="text-[11px] text-purple-700 dark:text-purple-300">
@@ -133,10 +133,10 @@ export default function RoleGovernanceView() {
 
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark flex items-center justify-between">
           <div>
-            <span className="text-[11px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
               Regular Users
             </span>
-            <p className="text-2xl font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark mt-1">
+            <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark mt-1">
               {regularUsers.length}
             </p>
             <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">

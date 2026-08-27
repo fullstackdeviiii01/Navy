@@ -11,7 +11,7 @@ import { getHomeDataSSR } from "../lib/api/home";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Home | Rehan Wooden Lamps",
+    title: "Home | Talal Wooden Lamps",
     description: "Artisanal handcrafted lighting luminaires and architectural lamps",
   };
 }

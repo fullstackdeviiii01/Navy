@@ -5,7 +5,6 @@ import EmailConfiguration from "../../models/EmailConfiguration";
 import User from "../../models/User";
 
 export async function GET(request: NextRequest) {
-  console.log("🔵 [API DEBUG] === FETCH EMAIL CONFIGURATION ===");
   try {
     const token = getIdTokenFromHeader(request);
     if (!token) {
@@ -20,7 +19,6 @@ export async function GET(request: NextRequest) {
     }
 
     await connectDB();
-    console.log("✅ [API DEBUG] Database connected");
 
     const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
@@ -32,11 +30,9 @@ export async function GET(request: NextRequest) {
     }
 
     let config = await (EmailConfiguration as any).findOne();
-    console.log(`🔵 [API DEBUG] Config found in DB: ${!!config}`);
 
     // Create default configuration if none exists
     if (!config) {
-      console.log("🔵 [API DEBUG] Creating default email configuration...");
       config = await EmailConfiguration.create({
         smtp_settings: {
           host: "smtp.gmail.com",
@@ -84,16 +80,9 @@ export async function GET(request: NextRequest) {
         },
         updated_by: user._id,
       });
-      console.log("✅ [API DEBUG] Default email configuration created");
     }
 
     // Log the configuration details
-    console.log("📧 [CONFIG DEBUG] Email Configuration:");
-    console.log(`   - SMTP Host: ${config.smtp_settings.host}`);
-    console.log(`   - SMTP Port: ${config.smtp_settings.port}`);
-    console.log(`   - From Email: ${config.sender_info.from_email}`);
-    console.log(`   - Return notifications enabled: ${config.email_notifications.return_notifications?.enabled}`);
-    console.log(`   - Return admin email: ${config.email_notifications.return_notifications?.admin_email || "Not set"}`);
 
     return NextResponse.json({ config });
   } catch (error) {

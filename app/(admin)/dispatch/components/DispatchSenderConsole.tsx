@@ -41,7 +41,7 @@ export default function DispatchSenderConsole({
           </label>
           <input
             type="text"
-            placeholder="Rehan Wooden Lamps"
+            placeholder="Talal Wooden Lamps"
             value={senderInfo.from_name}
             onChange={(e) => onSenderInfoChange("from_name", e.target.value)}
             required

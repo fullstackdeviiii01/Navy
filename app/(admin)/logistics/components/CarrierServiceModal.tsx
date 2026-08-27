@@ -89,7 +89,7 @@ export default function CarrierServiceModal({
               <Truck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {service ? "Edit Carrier Route" : "Add New Logistics Service"}
               </h3>
               <p className="text-xs text-theme-text-muted-light mt-0.5">
@@ -138,7 +138,7 @@ export default function CarrierServiceModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 required
-                className="w-full px-3.5 py-2 text-xs sm:text-sm font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
               />
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function CarrierServiceModal({
                   })
                 }
                 required
-                className="w-full px-3 py-1.5 text-xs font-mono font-bold border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3 py-1.5 text-xs font-bold border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
 
@@ -193,7 +193,7 @@ export default function CarrierServiceModal({
                     estimated_days_min: parseInt(e.target.value) || 1,
                   })
                 }
-                className="w-full px-3 py-1.5 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3 py-1.5 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
 
@@ -211,7 +211,7 @@ export default function CarrierServiceModal({
                     estimated_days_max: parseInt(e.target.value) || 1,
                   })
                 }
-                className="w-full px-3 py-1.5 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
+                className="w-full px-3 py-1.5 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
           </div>

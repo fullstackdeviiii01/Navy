@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Wood Care & Maintenance Guide | Rehan Wooden Lamps",
+  title: "Wood Care & Maintenance Guide | Talal Wooden Lamps",
   description:
     "Essential care tips, cleaning instructions, bulb recommendations, and maintenance advice for handcrafted solid wood luminaires.",
 };
@@ -83,7 +83,7 @@ export default function CareGuidePage() {
             Care & Maintenance
           </h1>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-2xl leading-relaxed">
-            Your Rehan Wooden Lamp is crafted from genuine solid hardwoods designed to last for generations. Follow these simple guidelines to preserve its natural beauty and flawless performance.
+            Your Talal Wooden Lamp is crafted from genuine solid hardwoods designed to last for generations. Follow these simple guidelines to preserve its natural beauty and flawless performance.
           </p>
         </div>
 

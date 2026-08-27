@@ -11,14 +11,12 @@ export interface EmailOptions {
 
 export class EmailService {
   private static async getConfiguration() {
-    console.log("📧 [EMAIL DEBUG] Getting email configuration...");
     try {
       const config = await (EmailConfiguration as any).findOne();
       if (!config) {
         console.error("❌ [EMAIL DEBUG] Email configuration not found in database");
         throw new Error("Email configuration not found");
       }
-      console.log("✅ [EMAIL DEBUG] Email configuration found");
       return config;
     } catch (error) {
       console.error("❌ [EMAIL DEBUG] Error getting configuration:", error);
@@ -42,7 +40,6 @@ export class EmailService {
   }
 
   private static async createTransporter() {
-    console.log("📧 [EMAIL DEBUG] Creating email transporter...");
     try {
       const config = await this.getConfiguration();
 
@@ -63,7 +60,6 @@ export class EmailService {
 
       try {
         await transporter.verify();
-        console.log("✅ [EMAIL DEBUG] SMTP connection verified successfully");
       } catch (verifyError) {
         console.error("❌ [EMAIL DEBUG] SMTP connection verification failed:", verifyError);
         throw verifyError;
@@ -77,9 +73,6 @@ export class EmailService {
   }
 
   static async sendEmail(options: EmailOptions): Promise<void> {
-    console.log("📧 [EMAIL DEBUG] === STARTING EMAIL SEND ===");
-    console.log(`📧 [EMAIL DEBUG] To: ${options.to}`);
-    console.log(`📧 [EMAIL DEBUG] Subject: ${options.subject}`);
 
     try {
       const config = await this.getConfiguration();
@@ -94,13 +87,10 @@ export class EmailService {
       };
 
       const info = await transporter.sendMail(mailOptions);
-      console.log("✅ [EMAIL DEBUG] Email sent successfully!");
-      console.log(`📧 [EMAIL DEBUG] Message ID: ${info.messageId}`);
     } catch (error: any) {
       console.error("❌ [EMAIL DEBUG] Email send failed:", error.message);
       throw error;
     } finally {
-      console.log("📧 [EMAIL DEBUG] === EMAIL SEND COMPLETE ===");
     }
   }
 
@@ -114,7 +104,6 @@ export class EmailService {
     const config = await this.getConfiguration();
 
     if (!config.email_notifications.contact_form.enabled) {
-      console.log("📧 [EMAIL DEBUG] Contact form emails are disabled");
       return;
     }
 
@@ -134,7 +123,6 @@ export class EmailService {
     const config = await this.getConfiguration();
 
     if (!config.email_notifications?.order_confirmation?.enabled) {
-      console.log("📧 [EMAIL DEBUG] Order confirmation emails are disabled");
       return;
     }
 
@@ -170,9 +158,7 @@ export class EmailService {
             subject,
             html,
           });
-          console.log(`✅ [EMAIL DEBUG] Order confirmation sent to customer: ${customerEmail}`);
         } else {
-          console.log(`📧 [EMAIL DEBUG] User has disabled email notifications: ${customerEmail}`);
         }
       } catch (custErr) {
         console.error("❌ [EMAIL DEBUG] Error sending customer order confirmation email:", custErr);
@@ -200,7 +186,6 @@ export class EmailService {
           subject: `📦 [New Order Received] Order #${order.order_number} from ${customerName}`,
           html: adminHtml,
         });
-        console.log(`✅ [EMAIL DEBUG] Order notification sent to admin: ${adminEmail}`);
       } catch (adminErr) {
         console.error("❌ [EMAIL DEBUG] Error sending admin order notification email:", adminErr);
       }
@@ -211,7 +196,6 @@ export class EmailService {
     const config = await this.getConfiguration();
 
     if (!config.email_notifications.order_status_update.enabled) {
-      console.log("📧 [EMAIL DEBUG] Order status update emails are disabled");
       return;
     }
 
@@ -226,7 +210,6 @@ export class EmailService {
     }
 
     if (!shouldSend) {
-      console.log(`📧 [EMAIL DEBUG] Email notifications disabled for status: ${status}`);
       return;
     }
 
@@ -235,7 +218,6 @@ export class EmailService {
 
     const canSend = await this.isUserEmailEnabled(customerEmail);
     if (!canSend) {
-      console.log(`📧 [EMAIL DEBUG] User has disabled email notifications: ${customerEmail}`);
       return;
     }
 
@@ -252,12 +234,10 @@ export class EmailService {
   }
 
   static async sendReturnRequestEmail(returnRequest: any, order: any): Promise<void> {
-    console.log("📧 [RETURN DEBUG] === SENDING RETURN REQUEST EMAIL ===");
     try {
       const config = await this.getConfiguration();
 
       if (!config.email_notifications.return_notifications?.enabled) {
-        console.log("📧 [RETURN DEBUG] Return notifications are disabled - skipping email");
         return;
       }
 
@@ -296,7 +276,6 @@ export class EmailService {
           html,
         });
       } else {
-        console.log(`📧 [RETURN DEBUG] User has disabled email notifications: ${customerEmail}`);
       }
 
       // Send to admin — always send, not subject to user preference
@@ -327,19 +306,16 @@ export class EmailService {
         });
       }
 
-      console.log("✅ [RETURN DEBUG] Return request emails sent successfully");
     } catch (error) {
       console.error("❌ [RETURN DEBUG] Failed to send return request email:", error);
     }
   }
 
   static async sendReturnStatusUpdateEmail(returnRequest: any, status: string): Promise<void> {
-    console.log("📧 [RETURN DEBUG] === SENDING RETURN STATUS UPDATE EMAIL ===");
     try {
       const config = await this.getConfiguration();
 
       if (!config.email_notifications.return_notifications?.enabled) {
-        console.log("📧 [RETURN DEBUG] Return notifications are disabled - skipping email");
         return;
       }
 
@@ -353,7 +329,6 @@ export class EmailService {
       }
 
       if (!shouldNotify) {
-        console.log(`📧 [RETURN DEBUG] Notifications disabled for return status: ${status}`);
         return;
       }
 
@@ -375,7 +350,6 @@ export class EmailService {
 
       const canSend = await this.isUserEmailEnabled(customerEmail);
       if (!canSend) {
-        console.log(`📧 [RETURN DEBUG] User has disabled email notifications: ${customerEmail}`);
         return;
       }
 
@@ -390,19 +364,16 @@ export class EmailService {
         html,
       });
 
-      console.log("✅ [RETURN DEBUG] Return status update email sent successfully");
     } catch (error) {
       console.error("❌ [RETURN DEBUG] Failed to send return status update email:", error);
     }
   }
 
   static async sendRefundConfirmationEmail(returnRequest: any, order: any): Promise<void> {
-    console.log("📧 [REFUND DEBUG] === SENDING REFUND CONFIRMATION EMAIL ===");
     try {
       const config = await this.getConfiguration();
 
       if (!config.email_notifications.return_notifications?.enabled) {
-        console.log("📧 [REFUND DEBUG] Return notifications are disabled - skipping email");
         return;
       }
 
@@ -424,7 +395,6 @@ export class EmailService {
 
       const canSend = await this.isUserEmailEnabled(customerEmail);
       if (!canSend) {
-        console.log(`📧 [REFUND DEBUG] User has disabled email notifications: ${customerEmail}`);
         return;
       }
 
@@ -439,7 +409,6 @@ export class EmailService {
         html,
       });
 
-      console.log("✅ [REFUND DEBUG] Refund confirmation email sent successfully");
     } catch (error) {
       console.error("❌ [REFUND DEBUG] Failed to send refund confirmation email:", error);
     }

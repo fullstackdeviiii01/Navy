@@ -21,6 +21,32 @@ export default function StoreExecutiveDashboard() {
 
   useEffect(() => {
     fetchDashboard(false);
+
+    // Silent background auto-sync every 15 seconds (no full page reload or flashing)
+    const interval = setInterval(() => {
+      adminDashboardApi
+        .getDashboardData(timeRange)
+        .then((freshData) => {
+          if (freshData) setData(freshData);
+        })
+        .catch(() => {});
+    }, 15000);
+
+    // Also re-sync silently when the admin switches back to this browser tab
+    const handleFocus = () => {
+      adminDashboardApi
+        .getDashboardData(timeRange)
+        .then((freshData) => {
+          if (freshData) setData(freshData);
+        })
+        .catch(() => {});
+    };
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, [timeRange]);
 
   const fetchDashboard = async (isManualRefresh = false) => {
@@ -73,7 +99,7 @@ export default function StoreExecutiveDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               Store Dashboard
             </h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">

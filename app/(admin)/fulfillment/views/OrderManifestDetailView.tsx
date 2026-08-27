@@ -117,7 +117,7 @@ export default function OrderManifestDetailView({
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
                 Order #{order.order_number}
               </h1>
               <span
@@ -168,7 +168,7 @@ export default function OrderManifestDetailView({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {/* 1. Order Status */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Order Status
           </span>
           <p className="text-sm sm:text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark capitalize">
@@ -178,7 +178,7 @@ export default function OrderManifestDetailView({
 
         {/* 2. Payment Status */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Payment Method
           </span>
           <p className="text-sm sm:text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
@@ -197,14 +197,14 @@ export default function OrderManifestDetailView({
 
         {/* 3. Shipping Carrier */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Shipping Carrier
           </span>
           <p className="text-sm sm:text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {order.carrier || "Standard Delivery"}
           </p>
           {order.tracking_number && (
-            <span className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 block truncate">
+            <span className="text-[10px] text-indigo-600 dark:text-indigo-400 block truncate">
               {order.tracking_number}
             </span>
           )}
@@ -212,10 +212,10 @@ export default function OrderManifestDetailView({
 
         {/* 4. Total Amount */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Total Amount
           </span>
-          <p className="text-base sm:text-lg font-serif font-bold text-theme-hover-light dark:text-theme-hover-dark">
+          <p className="text-base sm:text-lg font-bold text-theme-hover-light dark:text-theme-hover-dark">
             Rs. {order.pricing?.total?.toLocaleString() || "0"}
           </p>
         </div>
@@ -288,10 +288,10 @@ export default function OrderManifestDetailView({
               {order.bank_reference && (
                 <div className="p-2.5 rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="text-[9px] uppercase font-mono text-theme-text-muted-light block">
+                    <span className="text-[9px] uppercase text-theme-text-muted-light block">
                       Transaction Ref / ID
                     </span>
-                    <span className="font-mono font-bold text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark truncate block">
+                    <span className="font-bold text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark truncate block">
                       {order.bank_reference}
                     </span>
                   </div>

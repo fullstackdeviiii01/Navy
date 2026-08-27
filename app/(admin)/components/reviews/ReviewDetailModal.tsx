@@ -84,7 +84,7 @@ export default function ReviewDetailModal({
               <p className="text-[10px] uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
                 MODERATION
               </p>
-              <h3 id="review-detail-title" className="text-xl font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h3 id="review-detail-title" className="text-xl italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 Review Details
               </h3>
             </div>
@@ -117,7 +117,7 @@ export default function ReviewDetailModal({
                     <p className="text-xs sm:text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
                       {review.product_id?.name}
                     </p>
-                    <p className="text-[10px] font-mono text-theme-text-muted-light truncate">
+                    <p className="text-[10px] text-theme-text-muted-light truncate">
                       ID: {review.product_id?._id}
                     </p>
                   </div>
@@ -157,7 +157,7 @@ export default function ReviewDetailModal({
                       />
                     ))}
                   </div>
-                  <span className="text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark font-serif">
+                  <span className="text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {review.rating}.0 / 5.0
                   </span>
                 </div>
@@ -183,7 +183,7 @@ export default function ReviewDetailModal({
 
               {/* Title & Comment */}
               <div className="space-y-2">
-                <h5 className="text-base font-serif italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                <h5 className="text-base italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   {review.title}
                 </h5>
                 <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">

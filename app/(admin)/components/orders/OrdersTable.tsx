@@ -47,7 +47,7 @@ export default function OrdersTable({
                   Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-muted-light dark:text-theme-text-secondary-dark uppercase tracking-wider">
-                  Total
+                  Total (Rs)
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-muted-light dark:text-theme-text-secondary-dark uppercase tracking-wider">
                   Status
@@ -68,7 +68,7 @@ export default function OrdersTable({
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-mono font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      <div className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         {order.order_number}
                       </div>
                       <div className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
@@ -98,7 +98,7 @@ export default function OrdersTable({
                     {new Date(order.placed_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    ${order.pricing.total.toFixed(2)}
+                    {(order.pricing?.total || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <OrderStatusBadge status={order.status} />

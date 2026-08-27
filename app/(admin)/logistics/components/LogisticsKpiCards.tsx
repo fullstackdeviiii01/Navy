@@ -67,14 +67,14 @@ export default function LogisticsKpiCards({ services }: LogisticsKpiCardsProps) 
             className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              <span className="text-[11px] uppercase font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
                 {c.label}
               </span>
               <div className={`p-1.5 rounded-lg ${c.badgeColor}`}>
                 <Icon className="w-3.5 h-3.5" />
               </div>
             </div>
-            <p className="text-xl sm:text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <p className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {c.value}
             </p>
             <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">

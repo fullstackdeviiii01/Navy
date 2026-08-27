@@ -426,7 +426,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             <FaArrowLeft className="w-3.5 h-3.5" />
           </button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               {mode === "edit" ? "Edit Product" : "Create New Product"}
             </h1>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -584,7 +584,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
           </div>
 
           {mode === "edit" && (
-            <p className="text-[11px] text-theme-text-muted-light font-mono mt-2">
+            <p className="text-[11px] text-theme-text-muted-light mt-2">
               Note: Structure configuration type is locked after product creation.
             </p>
           )}
@@ -652,7 +652,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                     value={formData.stock_quantity}
                     onChange={(e) => updateFormData({ stock_quantity: e.target.value })}
                     required
-                    className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                    className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                   />
                 </div>
                 <div>
@@ -665,7 +665,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                     placeholder="10"
                     value={formData.low_stock_threshold}
                     onChange={(e) => updateFormData({ low_stock_threshold: e.target.value })}
-                    className="w-full px-3.5 py-2 text-xs font-mono border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                    className="w-full px-3.5 py-2 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                   />
                 </div>
               </div>

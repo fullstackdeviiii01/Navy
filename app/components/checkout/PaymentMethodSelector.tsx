@@ -37,7 +37,7 @@ export const STATIC_PAYMENT_METHODS: StaticPaymentMethod[] = [
     requiresProof: true,
     details: {
       bank_name: "Meezan Bank",
-      recipient_name: "Rehan Ahmad",
+      recipient_name: "Talal Ahmad",
       account_number: "00300112798032",
       iban: "PK00300112798032",
       qr_code: "/QR/BankQR.png",
@@ -51,7 +51,7 @@ export const STATIC_PAYMENT_METHODS: StaticPaymentMethod[] = [
     description: "Send payment via JazzCash mobile account / QR scan and upload screenshot.",
     requiresProof: true,
     details: {
-      account_title: "Rehan Ahmad",
+      account_title: "Talal Ahmad",
       mobile_number: "03130538686",
       qr_code: "/QR/JazzCashQR.png",
       instructions: "Send the total amount to our JazzCash account or scan the QR code, then upload the receipt screenshot below.",

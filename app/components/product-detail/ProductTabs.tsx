@@ -265,7 +265,7 @@ export default function ProductTabs({
                       ) : (
                         <div className="space-y-2 pt-2 border-t border-theme-border-light/40 dark:border-theme-border-dark/40 text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
                           <p>
-                            • <strong>Inspection Window:</strong> If your lamp arrives with any damage or defect during courier transit, contact us within 7 days for an immediate replacement at zero additional shipping cost.
+                            • <strong>Inspection Window:</strong> If your lamp arrives with any damage or defect during courier transit, contact us within 14 days for an immediate replacement at zero additional shipping cost.
                           </p>
                           <p>
                             • <strong>Simple Claim Process:</strong> Simply send a photo/video of the parcel to our customer support via WhatsApp or email, and our team will dispatch a fresh unit right away.

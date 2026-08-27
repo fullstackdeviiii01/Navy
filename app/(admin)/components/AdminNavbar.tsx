@@ -86,7 +86,7 @@ export default function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
               <span className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 {name || "Admin"}
               </span>
-              <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light font-medium mt-0.5">
+              <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light font-medium mt-0.5">
                 Administrator
               </span>
             </div>

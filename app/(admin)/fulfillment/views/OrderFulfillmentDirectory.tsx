@@ -37,12 +37,28 @@ export default function OrderFulfillmentDirectory() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetchOrders();
+    fetchOrders(false);
+
+    // Silent background auto-sync every 15 seconds (no full page reload or flashing)
+    const interval = setInterval(() => {
+      fetchOrders(true);
+    }, 15000);
+
+    // Also re-sync silently when the admin switches back to this browser tab
+    const handleFocus = () => {
+      fetchOrders(true);
+    };
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, [filters]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const data = await adminOrdersApi.getAll(filters);
       setOrders(data.orders || []);
       setPagination(data.pagination || { total: 0, page: 1, totalPages: 1 });
@@ -65,9 +81,9 @@ export default function OrderFulfillmentDirectory() {
 
       setStats(statsData);
     } catch (err: any) {
-      setError(err.message || "Failed to load orders.");
+      if (!silent) setError(err.message || "Failed to load orders.");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -109,7 +125,7 @@ export default function OrderFulfillmentDirectory() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               Orders & Deliveries
             </h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">

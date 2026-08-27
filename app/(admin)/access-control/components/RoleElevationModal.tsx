@@ -33,7 +33,7 @@ export default function RoleElevationModal({
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-theme-border-light dark:border-theme-border-dark">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-purple-600" />
-            <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Authorize Administrator Elevation
             </h3>
           </div>
@@ -51,7 +51,7 @@ export default function RoleElevationModal({
           <div className="p-3.5 rounded-xl border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/30 text-purple-900 dark:text-purple-200 space-y-1">
             <p className="font-semibold text-sm">Target Member Account:</p>
             <p className="font-bold">{user.name || "Unnamed User"}</p>
-            <p className="font-mono text-[11px] text-purple-700 dark:text-purple-300">
+            <p className="text-[11px] text-purple-700 dark:text-purple-300">
               {user.email}
             </p>
           </div>

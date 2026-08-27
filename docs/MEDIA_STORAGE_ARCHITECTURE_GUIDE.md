@@ -5,7 +5,7 @@
 
 ## 1. Executive Summary & Background
 
-This document is the definitive master record of our complete architectural review, problem diagnosis, hosting evaluation, and implementation strategies for handling dynamic media (images, videos, PDFs) across the **Rehan Wooden Lamps** eCommerce platform.
+This document is the definitive master record of our complete architectural review, problem diagnosis, hosting evaluation, and implementation strategies for handling dynamic media (images, videos, PDFs) across the **Talal Wooden Lamps** eCommerce platform.
 
 ### All Application Media Domains Covered:
 1. **Customer Payment Proofs** (`/api/upload/payment-proof`): Bank transfer and JazzCash transaction screenshots attached during checkout.
@@ -250,7 +250,7 @@ export async function getStorageDestination(
 ## 7. Guest & Registered Order Tracking & Returns Investigation
 
 ### The Issue Identified
-When testing the public `/track-order` lookup page, entering a valid order number (`ORD-MT87KFBA-627WE`) and email (`rehan.fullstack@gmail.com`) returned `Order not found`.
+When testing the public `/track-order` lookup page, entering a valid order number (`ORD-MT87KFBA-627WE`) and email (`talalwoodenlamp@gmail.com`) returned `Order not found`.
 
 ### Root Cause
 [`app/api/orders/guest-lookup/route.ts`](file:///c:/Users/PMLS/Downloads/Navy/Navy/app/api/orders/guest-lookup/route.ts) had a hardcoded filter `order_type: "guest"`, which caused it to reject any order placed while signed into a user account.

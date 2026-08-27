@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronsRight } from "lucide-react";
+import { ChevronsRight, TreePine, Hammer, SunMedium } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -31,7 +31,7 @@ export default function HeroSection() {
 
             {/* Subtitle / Description */}
             <p className="text-xs sm:text-sm md:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed max-w-xl">
-              Turned by hand on wood lathes from sustainably harvested American walnut, natural oak, and unlacquered architectural brass. Calibrated 2700K ambient illumination designed to anchor distinctive living spaces.
+              Turned by hand on wood lathes from sustainably harvested American walnut, natural oak, and unlacquered architectural brass. Warm ambient illumination designed to anchor distinctive living spaces.
             </p>
 
             {/* Dual Action Buttons */}
@@ -52,33 +52,48 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            {/* Quick Metrics Bar */}
-            <div className="pt-4 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 grid grid-cols-3 gap-3 max-w-lg">
-              <div>
-                <span className="font-mono text-xs sm:text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                  ORIGINAL
-                </span>
-                <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  Handmade Designs
-                </span>
+            {/* Craftsmanship Pillars / Value Highlights (Hidden on Mobile) */}
+            <div className="hidden sm:grid sm:grid-cols-3 pt-5 border-t border-theme-border-light/70 dark:border-theme-border-dark/70 gap-4 max-w-xl">
+              <div className="flex items-center gap-3 p-2.5 sm:p-0 rounded-lg sm:rounded-none bg-theme-surface-light/70 sm:bg-transparent dark:bg-theme-surface-dark/50 sm:dark:bg-transparent border sm:border-0 border-theme-border-light/60 dark:border-theme-border-dark/60">
+                <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-theme-hover-light/10 dark:bg-theme-hover-dark/15 flex items-center justify-center shrink-0 text-theme-hover-light dark:text-theme-hover-dark">
+                  <TreePine className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Solid Hardwood
+                  </h4>
+                  <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    Natural Walnut & Oak
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <span className="font-mono text-xs sm:text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                  100% SOLID
-                </span>
-                <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  Hardwood & Brass
-                </span>
+              <div className="flex items-center gap-3 p-2.5 sm:p-0 rounded-lg sm:rounded-none bg-theme-surface-light/70 sm:bg-transparent dark:bg-theme-surface-dark/50 sm:dark:bg-transparent border sm:border-0 border-theme-border-light/60 dark:border-theme-border-dark/60">
+                <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-theme-hover-light/10 dark:bg-theme-hover-dark/15 flex items-center justify-center shrink-0 text-theme-hover-light dark:text-theme-hover-dark">
+                  <Hammer className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Atelier Turned
+                  </h4>
+                  <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    By Master Woodturners
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <span className="font-mono text-xs sm:text-sm font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                  2700K WARMTH
-                </span>
-                <span className="text-[10px] uppercase font-mono tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                  Eye-Comfort Glow
-                </span>
+              <div className="flex items-center gap-3 p-2.5 sm:p-0 rounded-lg sm:rounded-none bg-theme-surface-light/70 sm:bg-transparent dark:bg-theme-surface-dark/50 sm:dark:bg-transparent border sm:border-0 border-theme-border-light/60 dark:border-theme-border-dark/60">
+                <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-theme-hover-light/10 dark:bg-theme-hover-dark/15 flex items-center justify-center shrink-0 text-theme-hover-light dark:text-theme-hover-dark">
+                  <SunMedium className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Warm Ambient Light
+                  </h4>
+                  <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                    Cozy, Glare-Free Glow
+                  </p>
+                </div>
               </div>
             </div>
 

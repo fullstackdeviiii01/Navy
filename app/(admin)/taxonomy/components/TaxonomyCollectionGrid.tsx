@@ -88,7 +88,7 @@ export default function TaxonomyCollectionGrid({
                     <div className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       {category.name}
                     </div>
-                    <span className="font-mono text-[11px] text-theme-text-muted-light">
+                    <span className="text-[11px] text-theme-text-muted-light">
                       /{category.slug}
                     </span>
                   </td>
@@ -175,7 +175,7 @@ export default function TaxonomyCollectionGrid({
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-theme-text-muted-light bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800">
                   <FaImage className="text-3xl opacity-40 mb-1" />
-                  <span className="text-[10px] font-mono uppercase tracking-wider opacity-60">
+                  <span className="text-[10px] uppercase tracking-wider opacity-60">
                     No Imagery
                   </span>
                 </div>
@@ -206,7 +206,7 @@ export default function TaxonomyCollectionGrid({
               </p>
 
               <div className="flex items-center justify-between pt-1">
-                <span className="font-mono text-[11px] text-theme-text-muted-light truncate max-w-[140px]">
+                <span className="text-[11px] text-theme-text-muted-light truncate max-w-[140px]">
                   /{category.slug}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">

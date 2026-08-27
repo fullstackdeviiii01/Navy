@@ -60,7 +60,7 @@ export default function PatronProfileModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                <h2 className="text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   {customer.name || "Customer"}
                 </h2>
                 <span
@@ -132,25 +132,25 @@ export default function PatronProfileModal({
               {/* Financial & Activity Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-                  <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+                  <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                     Total Spent
                   </span>
-                  <p className="text-base font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <p className="text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     Rs. {customer.total_spent?.toLocaleString() || "0"}
                   </p>
                 </div>
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-                  <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+                  <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                     Orders Placed
                   </span>
-                  <p className="text-base font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                  <p className="text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {customer.order_count || 0} Orders
                   </p>
                 </div>
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-                  <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+                  <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                     Joined Date
                   </span>
                   <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -161,7 +161,7 @@ export default function PatronProfileModal({
                 </div>
 
                 <div className="p-3 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-1">
-                  <span className="text-[10px] uppercase font-mono text-theme-text-muted-light font-semibold">
+                  <span className="text-[10px] uppercase text-theme-text-muted-light font-semibold">
                     Last Visit
                   </span>
                   <p className="text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">

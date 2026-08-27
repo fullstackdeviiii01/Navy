@@ -86,7 +86,7 @@ export default function MediaGalleryDropzone({
           </p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded border border-theme-border-light dark:border-theme-border-dark">
+          <span className="text-xs text-theme-text-muted-light bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded border border-theme-border-light dark:border-theme-border-dark">
             {images.length + newImages.length} General {colorImagesCount > 0 ? `+ ${colorImagesCount} Color (${totalAllPhotos} Total)` : "Photos"}
           </span>
         </div>
@@ -169,7 +169,7 @@ export default function MediaGalleryDropzone({
           <span className="text-[11px] uppercase tracking-wider font-semibold">
             Add Photos
           </span>
-          <span className="text-[9px] text-theme-text-muted-light mt-0.5 font-mono">
+          <span className="text-[9px] text-theme-text-muted-light mt-0.5">
             JPG, PNG, WebP
           </span>
           <input

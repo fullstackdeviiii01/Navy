@@ -60,7 +60,7 @@ export default function UpdateStatusModal({
             <p className="text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark">
               Order Number
             </p>
-            <p className="font-mono font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {order.order_number}
             </p>
           </div>

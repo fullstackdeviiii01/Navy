@@ -33,7 +33,7 @@ export default function RealtimeSalesRadar({ data = [] }: RealtimeSalesRadarProp
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
           <div>
-            <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+            <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
               <PieChart className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
               <span>Sales by Category</span>
             </h3>
@@ -80,7 +80,7 @@ export default function RealtimeSalesRadar({ data = [] }: RealtimeSalesRadarProp
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-right shrink-0">
-                    <span className="font-mono text-[11px] text-theme-text-muted-light">
+                    <span className="text-[11px] text-theme-text-muted-light">
                       {Math.round(item.percentage)}%
                     </span>
                     <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -103,7 +103,7 @@ export default function RealtimeSalesRadar({ data = [] }: RealtimeSalesRadarProp
       {totalRevenue > 0 && (
         <div className="pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 flex items-center justify-between text-xs">
           <span className="text-theme-text-muted-light font-medium">Total Category Revenue</span>
-          <span className="font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Rs. {totalRevenue.toLocaleString()}
           </span>
         </div>

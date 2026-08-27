@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy | Rehan Wooden Lamps",
+  title: "Shipping & Delivery Policy | Talal Wooden Lamps",
   description:
     "Learn about our insured domestic shipping across Pakistan, delivery timeframes by city, fragile packaging standards, and tracking.",
 };

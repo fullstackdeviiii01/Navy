@@ -106,9 +106,9 @@ export default function DispatchConfigurationView() {
       },
     },
     sender_info: {
-      from_name: "Rehan Wooden Lamps",
-      from_email: "noreply@rehanwoodenlamps.com",
-      reply_to: "support@rehanwoodenlamps.com",
+      from_name: "Talal Wooden Lamps",
+      from_email: "noreply@talalwoodenlamps.com",
+      reply_to: "support@talalwoodenlamps.com",
     },
   });
 
@@ -220,7 +220,7 @@ export default function DispatchConfigurationView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
               Email Settings
             </h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200">

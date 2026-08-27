@@ -27,7 +27,7 @@ export default function BasicInfoForm({
           onChange={(e) => onCodeChange(e.target.value.toUpperCase())}
           placeholder="SUMMER2024"
           required
-          className="w-full px-2 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-theme-primary"
+          className="w-full px-2 sm:px-4 py-1.5 sm:py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs sm:text-sm uppercase focus:outline-none focus:ring-2 focus:ring-theme-primary"
         />
       </div>
 

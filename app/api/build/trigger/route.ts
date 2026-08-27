@@ -10,14 +10,12 @@ const STATUS_FILE = "/tmp/ecomm-build-status.json";
 function writeStatus(status: "building" | "done" | "failed") {
   try {
     writeFileSync(STATUS_FILE, JSON.stringify({ status, at: Date.now() }));
-    console.log(`[Build Trigger] Status written: ${status}`);
   } catch (err: any) {
     console.error("[Build Trigger] Failed to write status file:", err.message);
   }
 }
 
 export async function POST(request: NextRequest) {
-  console.log("[Build Trigger] POST request received.");
 
   try {
     const token = getIdTokenFromHeader(request);
@@ -26,17 +24,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No token provided" }, { status: 401 });
     }
 
-    console.log("[Build Trigger] Verifying auth token...");
     const decodedToken = await verifyIdToken(token);
     if (!decodedToken) {
       console.warn("[Build Trigger] Token verification failed.");
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    console.log("[Build Trigger] Token verified. UID:", decodedToken.uid);
 
     await connectDB();
-    console.log("[Build Trigger] DB connected. Looking up user...");
 
     const adminUser = await (User as any).findOne({ email: decodedToken.email });
 
@@ -50,11 +45,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    console.log("[Build Trigger] Admin confirmed. Marking status as 'building'...");
     writeStatus("building");
 
     const SCRIPT = "/home/sysfoc/build-ecomm.sh";
-    console.log("[Build Trigger] Executing script:", SCRIPT);
 
     // Fire and forget — do NOT await
     exec(SCRIPT, (error, stdout, stderr) => {
@@ -63,14 +56,11 @@ export async function POST(request: NextRequest) {
         console.error("[Build Trigger] stderr:", stderr);
         writeStatus("failed");
       } else {
-        console.log("[Build Trigger] Script completed successfully.");
-        console.log("[Build Trigger] stdout:", stdout);
         if (stderr) console.warn("[Build Trigger] stderr (non-fatal):", stderr);
         // Status is already written as 'done' by the shell script itself
       }
     });
 
-    console.log("[Build Trigger] Script fired in background. Returning 200.");
     return NextResponse.json({ success: true, message: "Build started. Poll /api/build/status for updates." });
 
   } catch (error: any) {

@@ -181,7 +181,7 @@ export default function CatalogItemGrid({
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
-                          <span className="text-[9px] font-mono text-theme-text-muted-light">
+                          <span className="text-[9px] text-theme-text-muted-light">
                             NO IMG
                           </span>
                         )}
@@ -193,7 +193,7 @@ export default function CatalogItemGrid({
                       <button
                         type="button"
                         onClick={() => router.push(`/admin/products/${product._id}`)}
-                        className="font-serif font-semibold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark text-left transition-colors truncate block w-full"
+                        className="font-semibold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark text-left transition-colors truncate block w-full"
                       >
                         {product.name}
                       </button>
@@ -214,7 +214,7 @@ export default function CatalogItemGrid({
                             {formatPrice(product.variantPricing.minPrice)}
                             {product.variantPricing.priceVaries && ` – ${formatPrice(product.variantPricing.maxPrice)}`}
                           </span>
-                          <span className="block text-[10px] text-theme-hover-light dark:text-theme-hover-dark font-mono">
+                          <span className="block text-[10px] text-theme-hover-light dark:text-theme-hover-dark">
                             {product.variants?.length} Finishes/Variants
                           </span>
                         </div>
@@ -338,7 +338,7 @@ export default function CatalogItemGrid({
                       : formatPrice(product.pricing?.price || 0)}
                   </span>
                   {isVariable && (
-                    <span className="text-[10px] text-theme-hover-light ml-1 font-mono">
+                    <span className="text-[10px] text-theme-hover-light ml-1">
                       ({product.variants?.length} variants)
                     </span>
                   )}

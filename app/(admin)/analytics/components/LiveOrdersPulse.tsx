@@ -65,7 +65,7 @@ export default function LiveOrdersPulse({ orders = [] }: LiveOrdersPulseProps) {
     <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-2xl border border-theme-border-light dark:border-theme-border-dark p-5 sm:p-6 shadow-xs space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
         <div>
-          <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
             <ShoppingBag className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
             <span>Recent Orders</span>
           </h3>
@@ -91,7 +91,7 @@ export default function LiveOrdersPulse({ orders = [] }: LiveOrdersPulseProps) {
               <th className="py-3 px-4">Order # & Date</th>
               <th className="py-3 px-4">Customer</th>
               <th className="py-3 px-4">Items</th>
-              <th className="py-3 px-4">Total</th>
+              <th className="py-3 px-4">Total (Rs)</th>
               <th className="py-3 px-4">Order Status</th>
               <th className="py-3 px-4">Payment</th>
               <th className="py-3 px-4 text-right">Action</th>
@@ -111,7 +111,7 @@ export default function LiveOrdersPulse({ orders = [] }: LiveOrdersPulseProps) {
                 >
                   {/* Order Number & Date */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span className="font-mono font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
+                    <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark block">
                       {order.order_number}
                     </span>
                     <span className="text-[10px] text-theme-text-muted-light">
@@ -140,8 +140,8 @@ export default function LiveOrdersPulse({ orders = [] }: LiveOrdersPulseProps) {
 
                   {/* Total */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span className="font-bold font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                      Rs. {order.pricing?.total?.toLocaleString() || "0"}
+                    <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                      {(order.pricing?.total || 0).toLocaleString()}
                     </span>
                   </td>
 

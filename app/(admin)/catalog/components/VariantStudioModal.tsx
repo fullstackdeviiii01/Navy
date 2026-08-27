@@ -25,7 +25,7 @@ export default function VariantStudioModal({
         {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b border-theme-border-light dark:border-theme-border-dark pb-4">
           <div>
-            <h3 className="text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h3 className="text-lg font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Variant Matrix Studio
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -45,7 +45,6 @@ export default function VariantStudioModal({
           productId={product._id}
           hasVariants={product.hasVariants || false}
           onToggleVariants={(enabled) => {
-            console.log("Variants toggled:", enabled);
           }}
         />
 

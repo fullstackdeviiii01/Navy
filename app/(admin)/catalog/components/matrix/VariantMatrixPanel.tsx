@@ -258,7 +258,7 @@ export default function VariantMatrixPanel({
       {/* Main Toggle */}
       <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark flex items-center justify-between">
         <div>
-          <h3 className="text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Variable Product Features
           </h3>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">

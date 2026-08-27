@@ -487,7 +487,7 @@ export default function FinishMatrixStudio({
               <FaPalette className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h4 className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 Color Variants & Photos (Optional)
               </h4>
               <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -571,7 +571,7 @@ export default function FinishMatrixStudio({
                       <span>Photos for {color.name || "this color"}</span>
                     </label>
 
-                    <span className="text-[10px] text-theme-text-muted-light font-mono">
+                    <span className="text-[10px] text-theme-text-muted-light">
                       {color.existingImages.length + color.newFiles.length} Photos
                     </span>
                   </div>
@@ -695,7 +695,7 @@ export default function FinishMatrixStudio({
       {/* 2. ADDITIONAL VARIANT OPTIONS (e.g. Size, Material, Cord Length) */}
       <div className="space-y-4 pt-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <h4 className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Additional Specifications (e.g. Size, Dimension, Drop Length)
           </h4>
           <button
@@ -775,7 +775,7 @@ export default function FinishMatrixStudio({
       {variants.length > 0 && showVariantTable && (
         <div className="space-y-3 pt-3 border-t border-theme-border-light dark:border-theme-border-dark">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <h4 className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Generated Variant Permutations ({variants.length} combinations)
             </h4>
             <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -856,7 +856,7 @@ export default function FinishMatrixStudio({
                           min="0"
                           value={variant.stockQuantity}
                           onChange={(e) => updateVariant(index, "stockQuantity", parseInt(e.target.value) || 0)}
-                          className="w-16 px-2 py-1 border border-theme-border-light dark:border-theme-border-dark rounded bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono"
+                          className="w-16 px-2 py-1 border border-theme-border-light dark:border-theme-border-dark rounded bg-theme-surface-light dark:bg-theme-surface-dark text-xs"
                         />
                       </td>
 

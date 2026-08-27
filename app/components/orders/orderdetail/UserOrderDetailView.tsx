@@ -71,48 +71,46 @@ export default function UserOrderDetailView({
             <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark overflow-hidden">
               {/* Header Banner */}
               <div className="p-4 sm:p-6 border-b border-theme-border-light dark:border-theme-border-dark">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-lg sm:text-xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="space-y-1.5 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <h1 className="text-base sm:text-xl font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                         Order Details
                       </h1>
                       <OrderStatusBadge status={order.status} />
                     </div>
-                    <div className="flex items-center gap-3 mt-2 text-xs uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-mono">
-                      <span>{order.order_number}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
+                      <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-wider">
+                        {order.order_number}
+                      </span>
                       <span>•</span>
-                      <span>{new Date(order.placed_at).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(order.placed_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between md:justify-end gap-4">
-                    <div className="text-left md:text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                        Total
-                      </p>
-                      <p className="text-lg sm:text-xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">
-                        {formatPrice(order.pricing.total)}
-                      </p>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <DownloadInvoiceButton
-                        orderId={order._id}
-                        orderNumber={order.order_number}
-                        paymentStatus={order.payment_status}
-                        isAdmin={false}
-                      />
+                  <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-1 sm:pt-0">
+                    <DownloadInvoiceButton
+                      orderId={order._id}
+                      orderNumber={order.order_number}
+                      paymentStatus={order.payment_status}
+                      isAdmin={false}
+                    />
 
-                      {canCancel && (
-                        <button
-                          onClick={onCancel}
-                          aria-label={`Cancel order ${order.order_number}`}
-                          className="px-3 py-2 text-xs uppercase tracking-wider text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      )}
-                    </div>
+                    {canCancel && (
+                      <button
+                        onClick={onCancel}
+                        aria-label={`Cancel order ${order.order_number}`}
+                        className="px-3.5 py-2 text-xs uppercase tracking-wider font-semibold text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                      >
+                        Cancel Order
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

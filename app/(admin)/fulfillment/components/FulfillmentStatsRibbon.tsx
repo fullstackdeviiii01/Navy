@@ -78,14 +78,14 @@ export default function FulfillmentStatsRibbon({ stats }: FulfillmentStatsRibbon
             className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1.5 shadow-xs"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
                 {item.label}
               </span>
               <div className={`p-1 rounded-md ${item.badgeColor}`}>
                 <Icon className="w-3 h-3" />
               </div>
             </div>
-            <p className="text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               {item.value}
             </p>
           </div>

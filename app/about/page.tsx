@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us & Craftsmanship | Rehan Wooden Lamps",
+  title: "About Us & Craftsmanship | Talal Wooden Lamps",
   description:
-    "Discover the story, sustainable timber craftsmanship, and lighting philosophy behind Rehan Wooden Lamps.",
+    "Discover the story, sustainable timber craftsmanship, and lighting philosophy behind Talal Wooden Lamps.",
 };
 
 export default function AboutPage() {
@@ -116,7 +116,7 @@ export default function AboutPage() {
             The Art of Living Wood
           </h1>
           <p className="text-sm sm:text-base text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-3xl leading-relaxed">
-            Rehan Wooden Lamps was founded with a singular conviction: that lighting fixtures should not be mass-produced plastic commodities, but sculptural wood artifacts that bring warmth, natural soul, and serenity to modern interiors.
+            Talal Wooden Lamps was founded with a singular conviction: that lighting fixtures should not be mass-produced plastic commodities, but sculptural wood artifacts that bring warmth, natural soul, and serenity to modern interiors.
           </p>
         </div>
 
@@ -141,7 +141,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  Rehan Wooden Lamps
+                  Talal Wooden Lamps
                 </h3>
                 <p className="text-[11px] text-theme-text-muted-light uppercase tracking-wider">
                   Handcrafted Solid Wood Lighting

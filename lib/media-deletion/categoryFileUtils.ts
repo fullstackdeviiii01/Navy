@@ -24,13 +24,11 @@ export async function deleteCategoryImage(imageUrl: string): Promise<boolean> {
 
     // Check if file exists
     if (!existsSync(filepath)) {
-      console.log(`Image file not found: ${filepath}`);
       return false;
     }
 
     // Delete the file
     await unlink(filepath);
-    console.log(`Successfully deleted image: ${filepath}`);
     return true;
   } catch (error) {
     console.error("Error deleting category image:", error);

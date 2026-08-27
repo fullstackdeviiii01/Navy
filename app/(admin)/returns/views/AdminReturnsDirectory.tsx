@@ -112,7 +112,7 @@ export default function AdminReturnsDirectory() {
       {/* 1. Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
         <div>
-          <h1 className="text-xl sm:text-2xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
             Returns & Refunds Hub
           </h1>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
@@ -135,40 +135,40 @@ export default function AdminReturnsDirectory() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Total Claims */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Total Claims
           </span>
-          <p className="text-2xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {stats.total}
           </p>
         </div>
 
         {/* Pending Review */}
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-amber-700 dark:text-amber-300">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-amber-700 dark:text-amber-300">
             Pending Review
           </span>
-          <p className="text-2xl font-serif font-bold text-amber-800 dark:text-amber-200">
+          <p className="text-2xl font-bold text-amber-800 dark:text-amber-200">
             {stats.pending}
           </p>
         </div>
 
         {/* Approved / Awaiting Payout */}
         <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-emerald-700 dark:text-emerald-300">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-300">
             Approved Claims
           </span>
-          <p className="text-2xl font-serif font-bold text-emerald-800 dark:text-emerald-200">
+          <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-200">
             {stats.approved}
           </p>
         </div>
 
         {/* Total Refunded Sum */}
         <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-theme-text-muted-light">
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
             Settled Refunds
           </span>
-          <p className="text-xl font-serif font-bold text-theme-hover-light dark:text-theme-hover-dark">
+          <p className="text-xl font-bold text-theme-hover-light dark:text-theme-hover-dark">
             {formatPrice(stats.totalRefundedAmount)}
           </p>
         </div>
@@ -215,7 +215,7 @@ export default function AdminReturnsDirectory() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/30 text-[10px] uppercase font-mono font-bold text-theme-text-muted-light">
+              <tr className="border-b border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/30 text-[10px] uppercase font-bold text-theme-text-muted-light">
                 <th className="py-3.5 px-4">RMA / Date</th>
                 <th className="py-3.5 px-4">Order #</th>
                 <th className="py-3.5 px-4">Customer</th>
@@ -250,7 +250,7 @@ export default function AdminReturnsDirectory() {
                     {/* RMA / Date */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {ret.rma_number}
                         </span>
                         <button
@@ -279,7 +279,7 @@ export default function AdminReturnsDirectory() {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <Link
                         href={`/admin/orders/${ret.order_id?._id || ret.order_id}`}
-                        className="font-mono font-semibold text-theme-hover-light hover:underline"
+                        className="font-semibold text-theme-hover-light hover:underline"
                       >
                         #{ret.order_id?.order_number || "View Order"}
                       </Link>
@@ -306,7 +306,7 @@ export default function AdminReturnsDirectory() {
                     </td>
 
                     {/* Refund Amount */}
-                    <td className="py-3.5 px-4 whitespace-nowrap font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    <td className="py-3.5 px-4 whitespace-nowrap font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                       {formatPrice(ret.refund_amount)}
                     </td>
 

@@ -211,7 +211,7 @@ export default function MediaAssetsManager({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-mono text-theme-text-muted-light bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark">
+          <span className="text-xs text-theme-text-muted-light bg-theme-bg-light dark:bg-theme-bg-dark px-2.5 py-1 rounded-lg border border-theme-border-light dark:border-theme-border-dark">
             {images.length + newImages.length} Photos • {videos.length + newVideos.length} Videos
             {(colorPhotosCount > 0 || colorVideosCount > 0) && ` • ${colorPhotosCount + colorVideosCount} Color Media`}
             {` (${totalAllMedia} Total)`}
@@ -381,7 +381,7 @@ export default function MediaAssetsManager({
           <span className="text-[11px] uppercase tracking-wider font-semibold">
             Add Media
           </span>
-          <span className="text-[9px] text-theme-text-muted-light mt-0.5 font-mono">
+          <span className="text-[9px] text-theme-text-muted-light mt-0.5">
             Photos or Videos
           </span>
           <input

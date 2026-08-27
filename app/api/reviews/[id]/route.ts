@@ -149,7 +149,6 @@ export async function DELETE(
     // Delete associated media files
     const mediaResults = await deleteReviewMedia(imageUrls, videoUrls);
     
-    console.log(`Deleted ${mediaResults.totalDeleted} review media files, ${mediaResults.totalFailed} failed`);
 
     return NextResponse.json({
       success: true,

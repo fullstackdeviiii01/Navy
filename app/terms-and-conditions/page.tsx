@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | Rehan Wooden Lamps",
+  title: "Terms & Conditions | Talal Wooden Lamps",
   description:
     "Read our terms and conditions of purchase, artisanal timber characteristics, ordering, warranty, and intellectual property.",
 };
@@ -87,7 +87,7 @@ export default function TermsConditionsPage() {
       title: "6. Intellectual Property",
       content: (
         <p>
-          All product photographs, luminaire designs, brand identity assets, logos, and website text on Rehan Wooden Lamps are the intellectual property of our atelier and protected by applicable copyright and trademark laws.
+          All product photographs, luminaire designs, brand identity assets, logos, and website text on Talal Wooden Lamps are the intellectual property of our atelier and protected by applicable copyright and trademark laws.
         </p>
       ),
     },
