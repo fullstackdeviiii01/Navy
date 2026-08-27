@@ -20,7 +20,7 @@ export default function HeroSection() {
             <div className="inline-flex items-center gap-2.5 px-3 py-1 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark self-start">
               <span className="w-1.5 h-1.5 rotate-45 bg-theme-hover-light dark:bg-theme-hover-dark" />
               <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.22em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
-                HANDCRAFTED ARCHIVE • 2026
+                HANDMADE COLLECTION • 2026
               </span>
             </div>
 

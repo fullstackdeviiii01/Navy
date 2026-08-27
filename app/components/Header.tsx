@@ -262,116 +262,126 @@ export default function Header() {
 
               {/* Instant Professional Product-Only Search Modal / Dropdown */}
               {isSearchOpen && (
-                <div className="fixed left-3 right-3 top-16 sm:top-18 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[380px] md:w-[420px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-3.5 sm:p-4 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="flex items-center justify-between pb-2 mb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
-                      PRODUCT SEARCH
-                    </span>
-                    <button
-                      onClick={() => setIsSearchOpen(false)}
-                      className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark text-xs font-mono"
-                    >
-                      ESC / ✕
-                    </button>
-                  </div>
+                <>
+                  {/* Backdrop for mobile */}
+                  <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 sm:hidden"
+                    onClick={() => setIsSearchOpen(false)}
+                  />
 
-                  <form onSubmit={handleSearchSubmit} className="relative mb-3">
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search lamps, timber, finishes..."
-                      className="w-full bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder-theme-text-muted-light/60 dark:placeholder-theme-text-muted-dark/60 text-xs px-3.5 py-3 border border-theme-border-light dark:border-theme-border-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark pr-10 font-sans"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-hover-light dark:hover:text-theme-text-primary-dark p-1"
-                      aria-label="Submit search"
-                    >
-                      {isSearching ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <Search size={16} />
-                      )}
-                    </button>
-                  </form>
-
-                  {/* Product-Only Search Results Dropdown (NO PRICE, TRUE IMAGES ONLY) */}
-                  <div className="max-h-[320px] overflow-y-auto space-y-2 divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
-                    {isSearching && (
-                      <div className="py-6 text-center text-xs font-mono text-theme-text-muted-light dark:text-theme-text-muted-dark flex items-center justify-center gap-2">
-                        <Loader2 size={14} className="animate-spin text-theme-hover-light dark:text-theme-hover-dark" />
-                        <span>Searching product catalog...</span>
-                      </div>
-                    )}
-
-                    {!isSearching && searchQuery.trim() && searchResults.length === 0 && (
-                      <div className="py-6 text-center space-y-2">
-                        <Package className="w-8 h-8 text-theme-text-muted-light/40 dark:text-theme-text-muted-dark/40 mx-auto" />
-                        <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">No products found matching &ldquo;{searchQuery}&rdquo;</p>
-                        <Link
-                          href="/products"
-                          onClick={() => setIsSearchOpen(false)}
-                          className="inline-block text-[11px] font-mono uppercase tracking-wider text-theme-hover-light dark:text-theme-hover-dark hover:underline"
-                        >
-                          View All Lamps →
-                        </Link>
-                      </div>
-                    )}
-
-                    {!isSearching &&
-                      searchResults.map((product) => {
-                        const rawImage =
-                          product.images?.[0]?.url ||
-                          (typeof product.images?.[0] === "string" ? product.images[0] : null) ||
-                          (product as any).imageUrl ||
-                          null;
-
-                        return (
-                          <button
-                            key={product._id}
-                            onClick={() => handleProductClick(product._id)}
-                            className="w-full pt-2.5 first:pt-0 flex items-center gap-3 p-2 hover:bg-theme-surface-light dark:hover:bg-theme-surface-dark text-left transition-colors group"
-                          >
-                            <div className="relative w-12 h-12 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark shrink-0 overflow-hidden flex items-center justify-center">
-                              {rawImage ? (
-                                <Image
-                                  src={rawImage}
-                                  alt={product.name}
-                                  fill
-                                  className="object-cover group-hover:scale-105 transition-transform"
-                                  sizes="48px"
-                                />
-                              ) : (
-                                <span className="font-mono text-[8px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-center px-1">
-                                  NO IMAGE
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark truncate transition-colors">
-                                {product.name}
-                              </h4>
-                            </div>
-                            <ChevronsRight className="w-4 h-4 text-theme-text-muted-light/60 dark:text-theme-text-muted-dark/60 group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-transform group-hover:translate-x-1 shrink-0" />
-                          </button>
-                        );
-                      })}
-                  </div>
-
-                  {/* View All Products Link at Bottom of Search */}
-                  {searchQuery.trim() && (
-                    <div className="pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 mt-2">
+                  <div className="fixed left-3 right-3 top-16 sm:top-18 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[400px] md:w-[440px] max-h-[calc(100dvh-5.5rem)] sm:max-h-[75vh] flex flex-col bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark shadow-2xl p-3.5 sm:p-4 z-50 animate-in fade-in slide-in-from-top-2 rounded-lg sm:rounded-none">
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-theme-border-light/60 dark:border-theme-border-dark/60 shrink-0">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-theme-hover-light dark:text-theme-hover-dark font-medium">
+                        PRODUCT SEARCH
+                      </span>
                       <button
-                        onClick={handleSearchSubmit}
-                        className="w-full py-2 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-[10px] font-mono uppercase tracking-[0.18em] font-medium transition-colors text-center"
+                        onClick={() => setIsSearchOpen(false)}
+                        className="text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-text-primary-light dark:hover:text-theme-text-primary-dark text-xs font-mono"
                       >
-                        VIEW ALL MATCHING PRODUCTS →
+                        ESC / ✕
                       </button>
                     </div>
-                  )}
-                </div>
+
+                    {/* Search Input Form */}
+                    <form onSubmit={handleSearchSubmit} className="relative mb-3 shrink-0">
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search lamps, timber, finishes..."
+                        className="w-full bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark placeholder-theme-text-muted-light/60 dark:placeholder-theme-text-muted-dark/60 text-xs px-3.5 py-2.5 sm:py-3 border border-theme-border-light dark:border-theme-border-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark pr-10 font-sans"
+                      />
+                      <button
+                        type="submit"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-theme-hover-light dark:text-theme-hover-dark hover:text-theme-hover-light dark:hover:text-theme-text-primary-dark p-1"
+                        aria-label="Submit search"
+                      >
+                        {isSearching ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Search size={16} />
+                        )}
+                      </button>
+                    </form>
+
+                    {/* Product-Only Search Results Dropdown (Scrollable Container) */}
+                    <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60 pr-1">
+                      {isSearching && (
+                        <div className="py-6 text-center text-xs font-mono text-theme-text-muted-light dark:text-theme-text-muted-dark flex items-center justify-center gap-2">
+                          <Loader2 size={14} className="animate-spin text-theme-hover-light dark:text-theme-hover-dark" />
+                          <span>Searching product catalog...</span>
+                        </div>
+                      )}
+
+                      {!isSearching && searchQuery.trim() && searchResults.length === 0 && (
+                        <div className="py-6 text-center space-y-2">
+                          <Package className="w-8 h-8 text-theme-text-muted-light/40 dark:text-theme-text-muted-dark/40 mx-auto" />
+                          <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">No products found matching &ldquo;{searchQuery}&rdquo;</p>
+                          <Link
+                            href="/products"
+                            onClick={() => setIsSearchOpen(false)}
+                            className="inline-block text-[11px] font-mono uppercase tracking-wider text-theme-hover-light dark:text-theme-hover-dark hover:underline"
+                          >
+                            View All Lamps →
+                          </Link>
+                        </div>
+                      )}
+
+                      {!isSearching &&
+                        searchResults.map((product) => {
+                          const rawImage =
+                            product.images?.[0]?.url ||
+                            (typeof product.images?.[0] === "string" ? product.images[0] : null) ||
+                            (product as any).imageUrl ||
+                            null;
+
+                          return (
+                            <button
+                              key={product._id}
+                              onClick={() => handleProductClick(product._id)}
+                              className="w-full pt-2 first:pt-0 flex items-center gap-3 p-2 hover:bg-theme-surface-light dark:hover:bg-theme-surface-dark text-left transition-colors group rounded-sm"
+                            >
+                              <div className="relative w-12 h-12 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark shrink-0 overflow-hidden flex items-center justify-center">
+                                {rawImage ? (
+                                  <Image
+                                    src={rawImage}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform"
+                                    sizes="48px"
+                                  />
+                                ) : (
+                                  <span className="font-mono text-[8px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-center px-1">
+                                    NO IMAGE
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-xs sm:text-sm font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark truncate transition-colors">
+                                  {product.name}
+                                </h4>
+                              </div>
+                              <ChevronsRight className="w-4 h-4 text-theme-text-muted-light/60 dark:text-theme-text-muted-dark/60 group-hover:text-theme-hover-light dark:group-hover:text-theme-hover-dark transition-transform group-hover:translate-x-1 shrink-0" />
+                            </button>
+                          );
+                        })}
+                    </div>
+
+                    {/* View All Products Link at Bottom of Search (Pinned Footer) */}
+                    {searchQuery.trim() && (
+                      <div className="pt-2.5 sm:pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 mt-2 shrink-0">
+                        <button
+                          onClick={handleSearchSubmit}
+                          className="w-full py-2.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] font-medium transition-colors text-center shadow-xs"
+                        >
+                          VIEW ALL MATCHING PRODUCTS →
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
 
