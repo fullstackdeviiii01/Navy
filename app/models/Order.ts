@@ -95,7 +95,6 @@ export interface IOrderDocument extends Document {
   customer_notes?: string;
   admin_notes?: string;
   placed_at: Date;
-  auto_confirm: boolean;
   has_active_return?: boolean;
   return_status?: string;
   confirmed_at?: Date;
@@ -189,7 +188,6 @@ const OrderSchema = new Schema<IOrderDocument>(
     order_number: {
       type: String,
       unique: true,
-      index: true,
       default: function () {
         const timestamp = Date.now().toString(36).toUpperCase();
         const random = Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -216,7 +214,6 @@ const OrderSchema = new Schema<IOrderDocument>(
     },
     session_id: {
       type: String,
-      index: true,
     },
     items: {
       type: [OrderItemSchema],
@@ -265,7 +262,6 @@ const OrderSchema = new Schema<IOrderDocument>(
     has_active_return: { type: Boolean, default: false },
     return_status: { type: String, default: null },
     placed_at: { type: Date, default: Date.now },
-    auto_confirm: { type: Boolean, default: false },
     confirmed_at: { type: Date },
     shipped_at: { type: Date },
     delivered_at: { type: Date },

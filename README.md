@@ -397,19 +397,16 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 
 ---
 
-### Step 12: Implement Track Order & Auto Order Confirmation
+### Step 12: Implement Track Order (Auto Confirmation Removed)
 **Status:** ✅ DONE
-**Description:** Implement order tracking by order number + email. Implement automatic order confirmation for night-time orders.
+**Description:** Implement order tracking by order number + email. All orders require manual admin verification (auto-confirmation and cron jobs removed).
 **Details:**
-- ~~Track order page~~ — Already existed (`app/track-order/page.tsx`)
-- ~~Add auto_confirm field to Order model~~ — Added `auto_confirm: Boolean, default: false`
-- ~~Create /api/cron/auto-confirm-orders route~~ — Runs every 30 min; auto-confirms night orders (10PM-6AM) after 30-min delay
-- ~~Update vercel.json~~ — Added cron schedule (`*/30 * * * *`)
+- ~~Track order page~~ — Exists (`app/track-order/page.tsx`)
+- ~~Strict manual order confirmation~~ — Auto-confirmation and background cron jobs completely removed; orders require explicit admin review & confirmation
 **Files Affected:**
-- `app/models/Order.ts` (added auto_confirm field)
-- `app/api/cron/auto-confirm-orders/route.ts` (new)
-- `vercel.json` (added cron schedule)
-**Verification:** ✅ Build compiles. Night orders auto-confirm. Track order works with order number + email.
+- `app/models/Order.ts`
+- `app/track-order/page.tsx`
+**Verification:** ✅ Build compiles. Track order works with order number + email. All orders require admin review.
 
 ---
 
