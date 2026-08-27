@@ -304,15 +304,14 @@ export default function ProductDetailPageContent({ productId }: Props) {
               })()}
             </section>
 
-            {/* Desktop tabs (Description, Specifications, Shipping, Care) */}
+            {/* Desktop tabs (Description, Shipping, Care, Returns) */}
             <section
               className="hidden lg:block"
-              aria-label="Product details and specifications"
+              aria-label="Product details"
             >
               <ProductTabs
                 productId={product._id}
                 description={product.description}
-                specifications={product.specifications || product.attributes}
                 careGuide={product.care_guide}
                 shippingInfo={product.shipping_info}
                 returnInfo={product.return_info}
@@ -406,12 +405,11 @@ export default function ProductDetailPageContent({ productId }: Props) {
         {/* Mobile tabs */}
         <section
           className="lg:hidden mb-4 sm:mb-6"
-          aria-label="Product details and specifications"
+          aria-label="Product details"
         >
           <ProductTabs
             productId={product._id}
             description={product.description}
-            specifications={product.specifications || product.attributes}
             careGuide={product.care_guide}
             shippingInfo={product.shipping_info}
             returnInfo={product.return_info}
@@ -425,9 +423,9 @@ export default function ProductDetailPageContent({ productId }: Props) {
           className="pt-4 sm:pt-5 border-t border-theme-border-light dark:border-theme-border-dark mb-2"
         >
           <div className="max-w-5xl">
-            <h3 className="font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3 tracking-tight">
+            {/* <h3 className="font-serif text-lg sm:text-xl text-theme-text-primary-light dark:text-theme-text-primary-dark mb-3 tracking-tight">
               Customer Reviews & Ratings
-            </h3>
+            </h3> */}
             <ProductReviewSection productId={product._id} />
           </div>
         </section>
