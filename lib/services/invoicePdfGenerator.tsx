@@ -15,6 +15,7 @@ export interface InvoiceData {
   paymentMethod: string;
   paymentStatus: string;
   currency: string;
+  documentType?: "receipt" | "invoice";
   company: {
     name: string;
     address: string;
@@ -166,14 +167,17 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 
   return new Promise((resolve, reject) => {
     try {
+      const isReceipt = data.documentType === "receipt";
+      const docHeading = isReceipt ? "ORDER RECEIPT" : "INVOICE";
+
       const doc = new PDFDocument({
         size: "A4",
         margins: { top: MARGIN, bottom: 64, left: MARGIN, right: MARGIN },
         bufferPages: true,
         info: {
-          Title:   `Invoice ${data.invoiceNumber} - Talal Wooden Lamps`,
+          Title:   isReceipt ? `Order Receipt #${data.orderNumber} - Talal Wooden Lamps` : `Invoice ${data.invoiceNumber} - Talal Wooden Lamps`,
           Author:  data.company.name || "Talal Wooden Lamps",
-          Subject: `Official Tax Receipt for Order #${data.orderNumber}`,
+          Subject: isReceipt ? `Order Receipt for #${data.orderNumber}` : `Official Tax Invoice for Order #${data.orderNumber}`,
         },
       });
 
@@ -184,7 +188,11 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 
       const isPaid = data.paymentStatus === "paid";
       const isCOD  = data.paymentMethod === "cod";
-      const stamp  = isPaid ? "PAID" : isCOD ? "PAY ON DELIVERY" : "PENDING VERIFICATION";
+      const stamp  = isPaid
+        ? "PAID"
+        : isCOD
+        ? (isReceipt ? "CASH ON DELIVERY" : "PAY ON DELIVERY")
+        : (isReceipt ? "ORDER CONFIRMED" : "PENDING VERIFICATION");
       const stampColor = isPaid ? "#15803D" : isCOD ? "#241910" : "#B45309";
 
       // ── 1. BRAND HEADER WITH LOGO ─────────────────────────────────────────────
@@ -221,17 +229,24 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
            .text(line, MARGIN, hY + 54 + i * 11.5, { width: CONTENT_W / 2 - 20, lineBreak: false });
       });
 
-      // INVOICE Heading Right Column
-      doc.font(F.bold).fontSize(20).fillColor(COLOR_PRIMARY)
-         .text("INVOICE", MARGIN, hY, { width: CONTENT_W, align: "right", characterSpacing: 1.5 });
+      // Heading Right Column (ORDER RECEIPT vs INVOICE)
+      doc.font(F.bold).fontSize(isReceipt ? 18 : 20).fillColor(COLOR_PRIMARY)
+         .text(docHeading, MARGIN, hY, { width: CONTENT_W, align: "right", characterSpacing: 1.2 });
 
       // Meta Data Right Column
-      const metaRows: [string, string][] = [
-        ["Invoice No.", data.invoiceNumber],
-        ["Invoice Date", data.invoiceDate],
-        ["Order Ref",   `#${data.orderNumber}`],
-        ["Currency",     data.currency || "PKR"],
-      ];
+      const metaRows: [string, string][] = isReceipt
+        ? [
+            ["Receipt Ref",  `#${data.orderNumber}`],
+            ["Order Date",   data.orderDate],
+            ["Payment Type", paymentLabel(data.paymentMethod)],
+            ["Currency",     data.currency || "PKR"],
+          ]
+        : [
+            ["Invoice No.",  data.invoiceNumber],
+            ["Invoice Date", data.invoiceDate],
+            ["Order Ref",    `#${data.orderNumber}`],
+            ["Currency",     data.currency || "PKR"],
+          ];
 
       let mY = hY + 26;
       const lblX = PAGE_W - MARGIN - 210;
@@ -246,7 +261,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
       });
 
       // Status Stamp Pill
-      const sW = stamp === "PENDING VERIFICATION" ? 115 : 90;
+      const sW = stamp === "PENDING VERIFICATION" || stamp === "CASH ON DELIVERY" ? 115 : 90;
       const sX = PAGE_W - MARGIN - sW;
       mY += 4;
       doc.rect(sX, mY, sW, 16).strokeColor(stampColor).lineWidth(1).stroke();
@@ -402,7 +417,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
            { width: CONTENT_W - 140 }
          );
       doc.font(F.bold).fontSize(7).fillColor(COLOR_GOLD)
-         .text(`DOCUMENT ${data.invoiceNumber}`, MARGIN, fY + 8,
+         .text(isReceipt ? `ORDER RECEIPT #${data.orderNumber}` : `DOCUMENT ${data.invoiceNumber}`, MARGIN, fY + 8,
                { width: CONTENT_W, align: "right", characterSpacing: 0.5 });
 
       doc.end();

@@ -29,6 +29,7 @@ import Loader from "../../components/shared/Loader";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getItemImage } from "../../../lib/utils/productImages";
 import { openImagePreview } from "../../../lib/utils/mediaPreview";
+import DownloadInvoiceButton from "../../components/invoice/DownloadInvoiceButton";
 
 interface Props {
   orderId: string;
@@ -534,6 +535,14 @@ export default function OrderConfirmationPage({ orderId }: Props) {
             <Truck className="w-4 h-4 text-white dark:text-neutral-900" />
             <span>Track Order Status</span>
           </Link>
+
+          <DownloadInvoiceButton
+            orderId={order._id}
+            orderNumber={order.order_number}
+            paymentStatus={order.payment_status}
+            isAdmin={false}
+            className="w-full sm:w-auto"
+          />
 
           <Link
             href="/products"

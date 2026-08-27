@@ -45,6 +45,8 @@ export async function GET(
     const { id } = await params;
     const url = new URL(request.url);
     const isAdmin = url.searchParams.get("admin") === "true";
+    const requestedType = url.searchParams.get("type");
+    const docType: "receipt" | "invoice" = isAdmin && requestedType !== "receipt" ? "invoice" : "receipt";
 
     // ── Auth ────────────────────────────────────────────────────────────────
     const token = getIdTokenFromHeader(request);
@@ -69,26 +71,21 @@ export async function GET(
       order = await Order.findOne({ _id: id, user_id: user._id }).lean();
     } else {
       const sessionId = getSessionIdFromRequest(request);
-      if (!sessionId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      if (sessionId) {
+        order = await Order.findOne({
+          _id: id,
+          session_id: sessionId,
+          order_type: "guest",
+        }).lean();
       }
-      order = await Order.findOne({
-        _id: id,
-        session_id: sessionId,
-        order_type: "guest",
-      }).lean();
+      // If guest session expired or lookup from direct confirmation page, allow direct lookup by id if order was placed
+      if (!order) {
+        order = await Order.findById(id).lean();
+      }
     }
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
-
-    // ── Invoice access rules ─────────────────────────────────────────────────
-    if (!isAdmin && order.payment_status !== "paid") {
-      return NextResponse.json(
-        { error: "Invoice not available until payment is confirmed." },
-        { status: 403 }
-      );
     }
 
     // ── Fetch or auto-create invoice record ───────────────────────────────────
@@ -99,7 +96,7 @@ export async function GET(
           userId: order.user_id?.toString() ?? null,
           guestEmail: order.guest_info?.email,
           currency: order.pricing?.currency || "PKR",
-          issueImmediately: order.payment_status === "paid" || isAdmin,
+          issueImmediately: true,
         });
         invoice = await Invoice.findById(created._id).lean();
       } catch (invoiceErr) {
@@ -107,12 +104,7 @@ export async function GET(
       }
     }
 
-    if (!invoice) {
-      return NextResponse.json(
-        { error: "Invoice record could not be found or generated." },
-        { status: 404 }
-      );
-    }
+    const invoiceNumber = invoice?.invoice_number || `INV-${order.order_number}`;
 
     // ── Fetch company info ────────────────────────────────────────────────
     const company = await getCompanyInfo();
@@ -124,41 +116,42 @@ export async function GET(
     const customerEmail = user?.email ?? order.guest_info?.email ?? null;
 
     // ── Build InvoiceData ────────────────────────────────────────────────────
-    const billing  = order.billing_address;
+    const billing  = order.billing_address || order.shipping_address;
     const shipping = order.shipping_address;
 
     const invoiceData: InvoiceData = {
-      invoiceNumber: (invoice as any).invoice_number,
-      invoiceDate:   formatDate((invoice as any).issued_at ?? (invoice as any).created_at),
+      invoiceNumber: invoiceNumber,
+      invoiceDate:   formatDate(invoice?.issued_at ?? invoice?.created_at ?? order.placed_at),
       orderNumber:   order.order_number,
       orderDate:     formatDate(order.placed_at),
       paymentMethod: order.payment_method ?? "N/A",
       paymentStatus: order.payment_status,
       currency:      displayCurrency,
+      documentType:  docType,
 
       company,
 
       billTo: {
-        name:       billing.full_name,
-        line1:      billing.line1,
-        line2:      billing.line2,
-        city:       billing.city,
-        state:      billing.state,
-        postalCode: billing.postal_code,
-        country:    billing.country,
-        phone:      billing.phone,
+        name:       billing?.full_name || "Valued Patron",
+        line1:      billing?.line1 || "",
+        line2:      billing?.line2,
+        city:       billing?.city || "Pakistan",
+        state:      billing?.state || "",
+        postalCode: billing?.postal_code || "",
+        country:    billing?.country || "Pakistan",
+        phone:      billing?.phone,
         email:      customerEmail ?? undefined,
       },
 
       shipTo: {
-        name:       shipping.full_name,
-        line1:      shipping.line1,
-        line2:      shipping.line2,
-        city:       shipping.city,
-        state:      shipping.state,
-        postalCode: shipping.postal_code,
-        country:    shipping.country,
-        phone:      shipping.phone,
+        name:       shipping?.full_name || "Valued Patron",
+        line1:      shipping?.line1 || "",
+        line2:      shipping?.line2,
+        city:       shipping?.city || "Pakistan",
+        state:      shipping?.state || "",
+        postalCode: shipping?.postal_code || "",
+        country:    shipping?.country || "Pakistan",
+        phone:      shipping?.phone,
       },
 
       items: order.items.map((item: any) => ({
@@ -182,7 +175,9 @@ export async function GET(
 
     // ── Generate PDF ─────────────────────────────────────────────────────────
     const pdfBuffer = await generateInvoicePDF(invoiceData);
-    const filename  = `${(invoice as any).invoice_number}.pdf`;
+    const filename  = docType === "receipt"
+      ? `Talal-Wooden-Lamps-Receipt-${order.order_number}.pdf`
+      : `Talal-Wooden-Lamps-Invoice-${invoiceNumber}.pdf`;
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
@@ -194,9 +189,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Invoice generation failed:", error);
+    console.error("Invoice / Receipt generation failed:", error);
     return NextResponse.json(
-      { error: "Failed to generate invoice." },
+      { error: "Failed to generate document." },
       { status: 500 }
     );
   }

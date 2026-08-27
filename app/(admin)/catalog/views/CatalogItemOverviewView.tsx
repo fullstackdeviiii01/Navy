@@ -5,18 +5,19 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  FaEdit,
-  FaCog,
-  FaArrowLeft,
-  FaExternalLinkAlt,
-  FaBoxes,
-  FaLayerGroup,
-  FaTag,
-  FaMoneyBillWave,
-  FaVideo,
-  FaPlay,
-  FaSlidersH,
-} from "react-icons/fa";
+  ArrowLeft,
+  Edit3,
+  ExternalLink,
+  SlidersHorizontal,
+  Package,
+  Layers,
+  Tag,
+  Banknote,
+  Sparkles,
+  Play,
+  Video,
+  Sliders,
+} from "lucide-react";
 import { productsApi } from "../../../../lib/api/products";
 import Loader from "../../../components/shared/Loader";
 import JoditHtmlContent from "../../../components/shared/JoditHtmlContent";
@@ -55,9 +56,19 @@ export default function CatalogItemOverviewView({
     }
   };
 
+  const specEntries = useMemo(() => {
+    if (!product?.attributes || typeof product.attributes !== "object") return [];
+    const raw = typeof (product.attributes as any).entries === "function" 
+      ? Array.from((product.attributes as any).entries()) 
+      : Object.entries(product.attributes);
+    return raw.filter(
+      ([_, val]: any) => val !== null && val !== undefined && String(val).trim().length > 0
+    );
+  }, [product?.attributes]);
+
   if (loading) {
     return (
-      <div className="min-h-[350px] flex items-center justify-center bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-12">
+      <div className="min-h-[350px] flex items-center justify-center bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-12">
         <Loader />
       </div>
     );
@@ -65,13 +76,13 @@ export default function CatalogItemOverviewView({
 
   if (!product) {
     return (
-      <div className="text-center py-16 bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-8">
+      <div className="text-center py-16 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-8">
         <p className="text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark">
           Product not found or has been deleted.
         </p>
         <button
           onClick={() => router.push("/admin/products")}
-          className="mt-4 px-4 py-2 text-xs font-semibold bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 rounded-lg shadow-xs"
+          className="mt-4 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 transition-colors shadow-xs"
         >
           Return to Catalog
         </button>
@@ -83,16 +94,6 @@ export default function CatalogItemOverviewView({
     product?.hasVariants ||
     (product?.variantOptions && product.variantOptions.length > 0);
 
-  const specEntries = useMemo(() => {
-    if (!product?.attributes || typeof product.attributes !== "object") return [];
-    const raw = typeof (product.attributes as any).entries === "function" 
-      ? Array.from((product.attributes as any).entries()) 
-      : Object.entries(product.attributes);
-    return raw.filter(
-      ([_, val]: any) => val !== null && val !== undefined && String(val).trim().length > 0
-    );
-  }, [product?.attributes]);
-
   const colorOpt = product?.variantOptions?.find(
     (opt: any) => opt.name?.toLowerCase() === "color" || opt.displayName?.toLowerCase() === "color"
   );
@@ -100,99 +101,123 @@ export default function CatalogItemOverviewView({
     ? product.variantInventory?.totalStock ?? product.inventory?.stock_quantity ?? 0
     : product.inventory?.stock_quantity ?? 0;
 
+  const primaryImgUrl = getPrimaryProductImage(product);
+
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-8 pb-16">
+      {/* Top Breadcrumb / Back Link */}
+      <div>
+        <button
+          type="button"
+          onClick={() => router.push("/admin/products")}
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-medium text-theme-text-muted-light dark:text-theme-text-muted-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Products Catalog</span>
+        </button>
+      </div>
+
       {/* Executive Command Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-theme-border-light/80 dark:border-theme-border-dark/80">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/admin/products")}
-            className="p-2.5 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-text-primary-light hover:border-theme-hover-light transition-colors"
-            title="Back to Catalog"
-          >
-            <FaArrowLeft className="w-3.5 h-3.5" />
-          </button>
-          <div className="w-14 h-14 rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5 shrink-0 relative shadow-xs">
-            <img
-              src={getPrimaryProductImage(product)}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 lg:p-7 shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          
+          {/* Left: Thumbnail & Title Info */}
+          <div className="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
+            <div className="relative aspect-square w-16 h-16 sm:w-20 sm:h-20 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden shrink-0 shadow-2xs">
+              {primaryImgUrl ? (
+                <img
+                  src={primaryImgUrl}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[9px] uppercase tracking-wider text-theme-text-muted-light">
+                  No Image
+                </div>
+              )}
+            </div>
+
+            <div className="min-w-0 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.22em] text-theme-hover-light dark:text-theme-hover-dark font-semibold">
+                  {product.category_id?.name || "Uncategorized"}
+                </span>
+                
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold border ${
+                    product.status === "active"
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+                      : product.status === "draft"
+                        ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+                        : "border-neutral-500/30 bg-neutral-500/10 text-neutral-700 dark:text-neutral-300"
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${product.status === "active" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                  <span>{product.status}</span>
+                </span>
+              </div>
+
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight leading-snug">
                 {product.name}
               </h1>
-              <span
-                className={`inline-flex px-2 py-0.5 text-[10px] uppercase font-bold rounded-full ${
-                  product.status === "active"
-                    ? "bg-green-100 dark:bg-green-950/60 text-green-800 dark:text-green-300"
-                    : product.status === "draft"
-                      ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                }`}
-              >
-                {product.status}
-              </span>
+
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono flex items-center gap-3">
+                <span>Brand: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{product.brand || "Talal Wooden Lamps"}</strong></span>
+                <span>•</span>
+                <span>{isVariableProduct ? `${product.variants?.length || 0} Product Variants` : "Single Model Piece"}</span>
+              </p>
             </div>
-            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5 flex items-center gap-2">
-              <span className="capitalize">{product.category_id?.name || "Uncategorized"}</span>
-            </p>
           </div>
-        </div>
 
-        {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
-          {/* View on Live Storefront */}
-          {product.seo?.slug && (
+          {/* Right: Clean Unified Action Toolbar */}
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-theme-border-light/60 dark:border-theme-border-dark/60">
+            {/* View on Live Storefront */}
+            {product._id && (
+              <Link
+                href={`/product/${product._id}`}
+                target="_blank"
+                className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                <span>Storefront View</span>
+              </Link>
+            )}
+
+            {/* Manage Variants */}
+            {isVariableProduct && (
+              <Link
+                href={`/admin/products/${productId}/variants`}
+                className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                <span>Configure Variants</span>
+              </Link>
+            )}
+
+            {/* Edit Product */}
             <Link
-              href={`/products/${product.seo.slug}`}
-              target="_blank"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark text-xs font-semibold rounded-lg text-theme-text-primary-light dark:text-theme-text-primary-dark transition-colors"
+              href={`/admin/products/${productId}/edit`}
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.18em] font-medium transition-colors shadow-sm"
             >
-              <FaExternalLinkAlt className="w-3 h-3" />
-              <span>Storefront View</span>
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Edit Product</span>
             </Link>
-          )}
+          </div>
 
-          {/* Edit Product */}
-          <Link
-            href={`/admin/products/${productId}/edit`}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold rounded-lg shadow-xs hover:shadow active:scale-[0.99] transition-all"
-          >
-            <FaEdit className="w-3 h-3" />
-            <span>Edit Product</span>
-          </Link>
-
-          {/* Manage Variants */}
-          {isVariableProduct && (
-            <button
-              type="button"
-              onClick={() => router.push(`/admin/products/${productId}/variants`)}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
-            >
-              <FaCog className="w-3 h-3" />
-              <span>Configure Variants</span>
-            </button>
-          )}
         </div>
       </div>
 
       {/* KPI Metric Overview Ribbon */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Pricing Metric */}
-        <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
+        <div className="p-4 sm:p-5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
-              {isVariableProduct ? "Variant Price Range" : "Selling Price"}
+            <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
+              {isVariableProduct ? "Variant Range" : "Selling Price"}
             </span>
-            <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600">
-              <FaMoneyBillWave className="w-3.5 h-3.5" />
-            </div>
+            <Banknote className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {isVariableProduct && product.variantPricing
               ? `${formatPrice(product.variantPricing.minPrice)}${
                   product.variantPricing.priceVaries
@@ -201,68 +226,62 @@ export default function CatalogItemOverviewView({
                 }`
               : formatPrice(product.pricing?.price || 0)}
           </p>
-          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
             PKR Currency
           </p>
         </div>
 
         {/* Stock Level */}
-        <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
+        <div className="p-4 sm:p-5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
               Inventory Units
             </span>
-            <div className="p-1.5 rounded-lg bg-green-50 dark:bg-green-950/40 text-green-600">
-              <FaBoxes className="w-3.5 h-3.5" />
-            </div>
+            <Package className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {totalStock}
+          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            {totalStock} Available
           </p>
-          <p className="text-[11px] text-green-700 dark:text-green-400 font-medium">
+          <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-medium">
             {totalStock > 10 ? "Optimal Stock Level" : totalStock > 0 ? "Low Stock Warning" : "Out of Stock"}
           </p>
         </div>
 
         {/* Variants Count */}
-        <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
+        <div className="p-4 sm:p-5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
               Model Structure
             </span>
-            <div className="p-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600">
-              <FaLayerGroup className="w-3.5 h-3.5" />
-            </div>
+            <Layers className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {isVariableProduct ? `${product.variants?.length || 0} Variants` : "Simple"}
+          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+            {isVariableProduct ? `${product.variants?.length || 0} Variants` : "Simple Piece"}
           </p>
-          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-            {isVariableProduct ? "Multi-attribute variant matrix" : "Single catalog item"}
+          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
+            {isVariableProduct ? "Multi-attribute options" : "Single catalog item"}
           </p>
         </div>
 
         {/* Category & Brand */}
-        <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-1">
+        <div className="p-4 sm:p-5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-theme-text-muted-light dark:text-theme-text-muted-dark">
+            <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
               Collection Line
             </span>
-            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600">
-              <FaTag className="w-3.5 h-3.5" />
-            </div>
+            <Tag className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-base font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate mt-1">
+          <p className="text-base sm:text-lg font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
             {product.category_id?.name || "Unassigned"}
           </p>
-          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark truncate">
+          <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono truncate">
             {product.brand || "Talal Wooden Lamps"}
           </p>
         </div>
       </div>
 
       {/* Media & Finish Palette Gallery */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-5">
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-5 shadow-xs">
         {(() => {
           const allMedia = getAllProductMedia(product);
           const photoCount = allMedia.filter((m) => m.type === "image").length;
@@ -307,9 +326,9 @@ export default function CatalogItemOverviewView({
                     {allMedia.map((item, idx) => (
                       <div
                         key={idx}
-                        className={`relative group rounded-xl overflow-hidden border aspect-square ${
+                        className={`relative group overflow-hidden border aspect-square ${
                           item.type === "video"
-                            ? "border-purple-500/80 bg-black/10"
+                            ? "border-theme-border-light dark:border-theme-border-dark bg-black/10"
                             : "border-theme-border-light dark:border-theme-border-dark bg-black/5"
                         }`}
                       >
@@ -333,8 +352,8 @@ export default function CatalogItemOverviewView({
                               }}
                             />
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
-                              <div className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-xs flex items-center justify-center text-white">
-                                <FaPlay className="ml-0.5" size={10} />
+                              <div className="w-8 h-8 rounded-full bg-black/70 backdrop-blur-xs flex items-center justify-center text-white">
+                                <Play className="ml-0.5 w-3.5 h-3.5 fill-current" />
                               </div>
                             </div>
                           </>
@@ -342,23 +361,18 @@ export default function CatalogItemOverviewView({
 
                         <div className="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none">
                           {item.is_primary && (
-                            <span className="bg-blue-600 text-white text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shadow">
+                            <span className="bg-neutral-900 text-white text-[8px] uppercase font-mono font-bold px-1.5 py-0.5 shadow-sm">
                               Primary
                             </span>
                           )}
                           {item.type === "video" && (
-                            <span className="bg-purple-600 text-white text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1">
-                              <FaVideo size={8} /> Video
+                            <span className="bg-neutral-900 text-white text-[8px] uppercase font-mono font-bold px-1.5 py-0.5 shadow-sm flex items-center gap-1">
+                              <Video className="w-2.5 h-2.5" /> Video
                             </span>
                           )}
                           {item.colorName && (
-                            <span className="bg-purple-800/90 text-white text-[8px] font-semibold px-1.5 py-0.5 rounded shadow backdrop-blur-xs">
+                            <span className="bg-neutral-800 text-white text-[8px] font-mono px-1.5 py-0.5 shadow-sm backdrop-blur-xs">
                               {item.colorName}
-                            </span>
-                          )}
-                          {item.source === "general" && !item.is_primary && item.type === "image" && (
-                            <span className="bg-black/60 text-white text-[8px] uppercase font-semibold px-1.5 py-0.5 rounded shadow">
-                              General
                             </span>
                           )}
                         </div>
@@ -374,7 +388,7 @@ export default function CatalogItemOverviewView({
         {/* Color-Specific Photo & Video Palette */}
         {colorOpt && colorOpt.values?.length > 0 && (
           <div className="space-y-3 pt-2">
-            <span className="text-xs uppercase font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
+            <span className="text-xs uppercase font-mono font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark tracking-wider block">
               Color & Material Finishes
             </span>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -403,7 +417,7 @@ export default function CatalogItemOverviewView({
                 return (
                   <div
                     key={cIdx}
-                    className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-2.5"
+                    className="p-3.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-2.5 shadow-2xs"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -411,7 +425,7 @@ export default function CatalogItemOverviewView({
                           {val}
                         </span>
                       </div>
-                      <span className="text-[10px] text-theme-text-muted-light">
+                      <span className="text-[10px] text-theme-text-muted-light font-mono">
                         {imgs.length} Photos
                       </span>
                     </div>
@@ -422,7 +436,7 @@ export default function CatalogItemOverviewView({
                         {imgs.map((cImg, iIdx) => (
                           <div
                             key={`img-${iIdx}`}
-                            className="w-14 h-14 rounded-lg border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5"
+                            className="w-14 h-14 border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5"
                           >
                             <img
                               src={cImg}
@@ -436,7 +450,7 @@ export default function CatalogItemOverviewView({
                         {vids.map((cVid, vIdx) => (
                           <div
                             key={`vid-${vIdx}`}
-                            className="relative group w-14 h-14 rounded-lg border border-purple-500/80 overflow-hidden bg-black/10"
+                            className="relative group w-14 h-14 border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/10"
                           >
                             <video
                               src={cVid}
@@ -450,16 +464,16 @@ export default function CatalogItemOverviewView({
                               }}
                             />
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none group-hover:opacity-0 transition-opacity">
-                              <FaPlay className="text-white text-[10px]" />
+                              <Play className="text-white w-3 h-3 fill-current" />
                             </div>
-                            <span className="absolute top-0.5 left-0.5 bg-purple-600 text-white text-[7px] uppercase font-bold px-1 rounded">
+                            <span className="absolute top-0.5 left-0.5 bg-neutral-900 text-white text-[7px] uppercase font-mono font-bold px-1">
                               Video
                             </span>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-theme-text-muted-light italic">
+                      <p className="text-[11px] text-theme-text-muted-light italic font-mono">
                         No finish media uploaded
                       </p>
                     )}
@@ -472,7 +486,7 @@ export default function CatalogItemOverviewView({
       </div>
 
       {/* Editorial Description & Details */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4 shadow-xs">
         <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
           <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             Editorial Description & Care Details
@@ -525,11 +539,11 @@ export default function CatalogItemOverviewView({
 
       {/* Technical Specifications & Craftsmanship Attributes */}
       {specEntries.length > 0 && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
             <div>
               <div className="flex items-center gap-2">
-                <FaSlidersH className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                <SlidersHorizontal className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
                 <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                   Technical Specifications & Attributes ({specEntries.length})
                 </h3>
@@ -540,14 +554,14 @@ export default function CatalogItemOverviewView({
             </div>
             <Link
               href={`/admin/products/${productId}/edit`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 dark:bg-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-semibold rounded-lg transition-colors self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-neutral-900 dark:bg-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-semibold uppercase tracking-wider transition-colors self-start sm:self-auto shadow-xs"
             >
-              <FaEdit className="w-3 h-3" />
+              <Edit3 className="w-3.5 h-3.5" />
               <span>Edit Specifications</span>
             </Link>
           </div>
 
-          <div className="overflow-hidden border border-theme-border-light/70 dark:border-theme-border-dark/70 rounded-lg">
+          <div className="overflow-hidden border border-theme-border-light dark:border-theme-border-dark">
             <table className="w-full text-left text-xs border-collapse">
               <tbody>
                 {specEntries.map(([key, val]: any, idx: number) => {
@@ -562,14 +576,14 @@ export default function CatalogItemOverviewView({
                       key={key}
                       className={`border-b border-theme-border-light/60 dark:border-theme-border-dark/60 last:border-b-0 ${
                         idx % 2 === 0
-                          ? "bg-theme-bg-light/40 dark:bg-theme-bg-dark/30"
+                          ? "bg-theme-card-light/40 dark:bg-theme-card-dark/20"
                           : "bg-theme-surface-light dark:bg-theme-surface-dark"
                       }`}
                     >
                       <td className="py-2.5 px-4 font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark w-1/3 sm:w-1/4">
                         {label}
                       </td>
-                      <td className="py-2.5 px-4 text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                      <td className="py-2.5 px-4 text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
                         {String(val)}
                       </td>
                     </tr>
@@ -583,7 +597,7 @@ export default function CatalogItemOverviewView({
 
       {/* Full Variant Combination Matrix */}
       {isVariableProduct && (
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
             <div>
               <h3 className="text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -596,9 +610,9 @@ export default function CatalogItemOverviewView({
             <button
               type="button"
               onClick={() => router.push(`/admin/products/${productId}/variants`)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-3.5 py-2 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-wider font-semibold transition-colors shadow-2xs"
             >
-              <FaCog className="w-3 h-3" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
               <span>Configure Matrix</span>
             </button>
           </div>
@@ -606,7 +620,7 @@ export default function CatalogItemOverviewView({
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 text-[11px] uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold border-b border-theme-border-light dark:border-theme-border-dark">
+                <tr className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 text-[10px] uppercase font-mono tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold border-b border-theme-border-light dark:border-theme-border-dark">
                   <th className="py-2.5 px-3 w-16">Photo</th>
                   <th className="py-2.5 px-3">Attributes & Finish</th>
                   <th className="py-2.5 px-3">Price</th>
@@ -625,20 +639,13 @@ export default function CatalogItemOverviewView({
                     : undefined;
                   const displayImg = v.imageUrl || colorImg || getPrimaryProductImage(product);
 
-                  const rawHex = colorOpt?.colorHexCodes || {};
-                  const hex = colorAttr
-                    ? typeof rawHex.get === "function"
-                      ? rawHex.get(colorAttr.value)
-                      : rawHex[colorAttr.value]
-                    : undefined;
-
                   return (
                     <tr
                       key={v._id || index}
                       className="hover:bg-theme-card-light/30 dark:hover:bg-theme-card-dark/20 transition-colors"
                     >
                       <td className="py-2 px-3">
-                        <div className="w-10 h-10 rounded-lg border border-theme-border-light dark:border-theme-border-light/40 overflow-hidden bg-black/5">
+                        <div className="w-10 h-10 border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-black/5">
                           {displayImg ? (
                             <img src={displayImg} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
@@ -653,7 +660,7 @@ export default function CatalogItemOverviewView({
                           {v.attributes?.map((attr: any, aIdx: number) => (
                             <span
                               key={aIdx}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-[11px]"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-[11px] font-mono"
                             >
                               <span className="text-theme-text-muted-light capitalize">
                                 {attr.name}:
@@ -665,7 +672,7 @@ export default function CatalogItemOverviewView({
                           ))}
                         </div>
                       </td>
-                      <td className="py-2 px-3 font-semibold">
+                      <td className="py-2 px-3 font-semibold font-mono">
                         {formatPrice(v.price)}
                         {v.compareAtPrice && v.compareAtPrice > v.price && (
                           <span className="block text-[10px] text-theme-text-muted-light line-through font-normal">
@@ -673,7 +680,7 @@ export default function CatalogItemOverviewView({
                           </span>
                         )}
                       </td>
-                      <td className="py-2 px-3">
+                      <td className="py-2 px-3 font-mono">
                         <span
                           className={`font-semibold ${
                             v.stockQuantity > 0 ? "text-theme-text-primary-light" : "text-red-500"
@@ -684,13 +691,13 @@ export default function CatalogItemOverviewView({
                       </td>
                       <td className="py-2 px-3 text-right">
                         <span
-                          className={`inline-flex px-2 py-0.5 text-[10px] font-semibold rounded-full ${
+                          className={`inline-flex px-2 py-0.5 text-[10px] font-mono uppercase font-semibold border ${
                             v.isAvailable !== false && v.stockQuantity > 0
-                              ? "bg-green-100 dark:bg-green-950/60 text-green-800 dark:text-green-300"
-                              : "bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300"
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300"
                           }`}
                         >
-                          {v.isAvailable !== false && v.stockQuantity > 0 ? "In Stock" : "Unavailable"}
+                          {v.isAvailable !== false && v.stockQuantity > 0 ? "Active" : "Unavailable"}
                         </span>
                       </td>
                     </tr>

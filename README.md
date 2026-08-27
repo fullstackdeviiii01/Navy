@@ -28,7 +28,7 @@ Converting a full-featured e-commerce platform into a simplified, client-specifi
 **Description:** Create a clean copy of the project, initialize git with the new GitHub account, and set up the initial README.
 **Details:**
 - ~~Copy entire project to a new working directory~~ — Already a copy, original safe in main account
-- ~~Initialize git repo with new account credentials (fullstackdev.rehan01@gmail.com)~~ — Already configured
+- ~~Initialize git repo with new account credentials (talalwoodenlamp@gmail.com)~~ — Already configured
 - ~~Create initial README with this plan~~ — Created with full 15-step plan
 - ~~Verify the copy runs correctly~~ — node_modules present, git configured, remote connected
 **Files Affected:** Project root, README.md

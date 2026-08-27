@@ -67,7 +67,7 @@ Understanding the underlying hosting server environment is crucial to choosing t
 
 ### B. WebSouls cPanel Hosting (CloudLinux + Phusion Passenger + Apache)
 * **Filesystem Structure**: **Persistent, permanent Linux hard drive (150 GB included)**.
-* **Execution Environment**: Your Next.js app runs via Phusion Passenger under your specific cPanel Linux user account (e.g. `rehan`).
+* **Execution Environment**: Your Next.js app runs via Phusion Passenger under your specific cPanel Linux user account (e.g. `talal`).
 * **Permissions**: Node.js has full native read/write permissions to create folders and save files across your `/home/user/` directory.
 * **Verdict for WebSouls**: Files written to disk **never disappear**. You have 150GB of free, permanent storage without needing to pay for third-party cloud services.
 
