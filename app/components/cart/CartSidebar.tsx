@@ -100,12 +100,12 @@ export default function CartSidebar() {
             {cart?.subtotal >= 15000 ? (
               <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
                 <Truck className="w-4 h-4" />
-                <span>You have unlocked FREE DELIVERY!</span>
+                <span>You have unlocked FREE STANDARD DELIVERY!</span>
               </div>
             ) : (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-[11px] sm:text-xs font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                  <span>Add <strong className="text-theme-primary">{formatPrice(15000 - (cart?.subtotal || 0))}</strong> for Free Delivery</span>
+                  <span>Add <strong className="text-theme-primary">{formatPrice(15000 - (cart?.subtotal || 0))}</strong> for Free Standard Delivery</span>
                   <span>{Math.min(100, Math.round(((cart?.subtotal || 0) / 15000) * 100))}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">

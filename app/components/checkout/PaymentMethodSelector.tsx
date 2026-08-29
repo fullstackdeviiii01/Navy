@@ -37,10 +37,10 @@ export const STATIC_PAYMENT_METHODS: StaticPaymentMethod[] = [
     requiresProof: true,
     details: {
       bank_name: "Meezan Bank",
-      recipient_name: "Talal Ahmad",
-      account_number: "00300112798032",
-      iban: "PK00300112798032",
-      qr_code: "/QR/BankQR.png",
+      recipient_name: "Talal Trading Company",
+      account_number: "2105-0106552077",
+      // iban: "PK00300112798032", // Client will provide later
+      // qr_code: "/QR/BankQR.png", // Client will provide later
       instructions: "Transfer the exact order total to our Meezan Bank account and upload the payment receipt below.",
     },
   },
@@ -48,13 +48,13 @@ export const STATIC_PAYMENT_METHODS: StaticPaymentMethod[] = [
     id: "jazzcash",
     name: "JazzCash",
     shortName: "JazzCash",
-    description: "Send payment via JazzCash mobile account / QR scan and upload screenshot.",
+    description: "Send payment via JazzCash mobile account and upload screenshot.",
     requiresProof: true,
     details: {
-      account_title: "Talal Ahmad",
-      mobile_number: "03130538686",
-      qr_code: "/QR/JazzCashQR.png",
-      instructions: "Send the total amount to our JazzCash account or scan the QR code, then upload the receipt screenshot below.",
+      account_title: "Muhammad Aslam Khan",
+      mobile_number: "0322 7040106",
+      // qr_code: "/QR/JazzCashQR.png", // Client will provide later
+      instructions: "Send the total amount to our JazzCash account, then upload the receipt screenshot below.",
     },
   },
 ];

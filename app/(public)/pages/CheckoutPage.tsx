@@ -324,6 +324,7 @@ export default function CheckoutPage() {
               selectedServiceId={selectedShippingService}
               onServiceSelect={handleShippingSelect}
               loading={shippingLoading}
+              cartSubtotal={cart?.subtotal || 0}
             />
 
             <AddressSelection

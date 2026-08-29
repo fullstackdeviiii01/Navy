@@ -203,6 +203,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // ── Ensure totals are strictly recalculated with shipping rules ──────────
+    const shippingServiceDoc = cart.selected_shipping_service_id || null;
+    const couponDoc = cart.applied_coupon_id
+      ? await (await import("../../models/Coupon")).default.findById(cart.applied_coupon_id)
+      : null;
+    await cart.calculateTotals(couponDoc, shippingServiceDoc);
+
     // ── Pricing ───────────────────────────────────────────────────────────────
     const finalTotal =
       cart.subtotal - cart.discount_amount + cart.tax_amount + cart.shipping_cost;

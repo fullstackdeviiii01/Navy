@@ -14,6 +14,7 @@ interface ShippingService {
   estimated_days_min?: number;
   estimated_days_max?: number;
   is_active: boolean;
+  is_standard?: boolean;
   sort_order: number;
 }
 
@@ -41,6 +42,7 @@ export default function CarrierServiceModal({
     estimated_days_min: 2,
     estimated_days_max: 5,
     is_active: true,
+    is_standard: false,
     sort_order: 0,
   });
 
@@ -55,6 +57,7 @@ export default function CarrierServiceModal({
         estimated_days_min: service.estimated_days_min || 2,
         estimated_days_max: service.estimated_days_max || 5,
         is_active: service.is_active ?? true,
+        is_standard: service.is_standard ?? false,
         sort_order: service.sort_order || 0,
       });
     } else {
@@ -67,6 +70,7 @@ export default function CarrierServiceModal({
         estimated_days_min: 2,
         estimated_days_max: 5,
         is_active: true,
+        is_standard: false,
         sort_order: 0,
       });
     }
@@ -214,6 +218,28 @@ export default function CarrierServiceModal({
                 className="w-full px-3 py-1.5 text-xs border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark"
               />
             </div>
+          </div>
+
+          {/* Standard Shipping Designation */}
+          <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10">
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.is_standard}
+                onChange={(e) =>
+                  setFormData({ ...formData, is_standard: e.target.checked })
+                }
+                className="mt-0.5 rounded text-neutral-900 focus:ring-neutral-500"
+              />
+              <div>
+                <span className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark block text-xs">
+                  Set as Standard Shipping (Free Delivery over Rs. 15,000)
+                </span>
+                <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5 leading-relaxed">
+                  Only the method with this tag gets Free Shipping when a customer orders over Rs. 15,000. Enabling this will automatically unmark any other standard tier so only one method is standard.
+                </p>
+              </div>
+            </label>
           </div>
 
           <div className="flex items-center gap-6 pt-1">

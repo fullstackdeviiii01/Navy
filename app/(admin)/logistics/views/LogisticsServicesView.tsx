@@ -18,6 +18,7 @@ interface ShippingService {
   estimated_days_min?: number;
   estimated_days_max?: number;
   is_active: boolean;
+  is_standard?: boolean;
   sort_order: number;
 }
 

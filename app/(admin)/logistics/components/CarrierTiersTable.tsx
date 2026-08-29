@@ -13,6 +13,7 @@ interface ShippingService {
   estimated_days_min?: number;
   estimated_days_max?: number;
   is_active: boolean;
+  is_standard?: boolean;
   sort_order: number;
 }
 
@@ -63,9 +64,20 @@ export default function CarrierTiersTable({
                       <Truck className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        {service.display_name}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                          {service.display_name}
+                        </p>
+                        {service.is_standard ? (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                            ★ Standard (Free &gt; 15k)
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                            Fixed Rate
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[10px] text-theme-text-muted-light">
                         {service.name}
                       </p>

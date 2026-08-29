@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
       estimated_days_min,
       estimated_days_max,
       is_active,
+      is_standard,
       sort_order,
     } = body;
 
@@ -91,6 +92,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If this new service is marked as standard, unmark all other services
+    if (is_standard) {
+      await ShippingService.updateMany(
+        { is_standard: true },
+        { $set: { is_standard: false } }
+      );
+    }
+
     const service = new ShippingService({
       name,
       display_name,
@@ -100,6 +109,7 @@ export async function POST(request: NextRequest) {
       estimated_days_min,
       estimated_days_max,
       is_active: is_active !== undefined ? is_active : true,
+      is_standard: Boolean(is_standard),
       sort_order: sort_order !== undefined ? sort_order : 0,
     });
 

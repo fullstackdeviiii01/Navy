@@ -238,10 +238,10 @@ export default function ProductTabs({
                         <Truck className="w-4 h-4 text-[#8A5E22] shrink-0 mt-0.5" />
                         <div>
                           <h4 className="text-xs sm:text-[13px] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark uppercase tracking-wider">
-                            Free Delivery on orders over Rs. 15,000
+                            Free Standard Delivery on orders over Rs. 15,000
                           </h4>
                           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-                            All orders with a subtotal of Rs. 15,000 or more qualify for complimentary express delivery nationwide. Standard rates apply for smaller orders.
+                            All orders with a subtotal of Rs. 15,000 or more qualify for complimentary Standard Shipping nationwide. Express Shipping is available as an expedited paid option.
                           </p>
                         </div>
                       </div>

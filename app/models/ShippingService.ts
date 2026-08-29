@@ -10,6 +10,7 @@ export interface IShippingServiceDocument extends Document {
   estimated_days_min?: number;
   estimated_days_max?: number;
   is_active: boolean;
+  is_standard: boolean;
   sort_order: number;
   created_at: Date;
   updated_at: Date;
@@ -56,6 +57,11 @@ const ShippingServiceSchema = new Schema<IShippingServiceDocument>(
     is_active: {
       type: Boolean,
       default: true,
+      index: true,
+    },
+    is_standard: {
+      type: Boolean,
+      default: false,
       index: true,
     },
     sort_order: {

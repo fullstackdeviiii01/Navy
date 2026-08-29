@@ -14,18 +14,21 @@ interface ShippingService {
   currency: string;
   estimated_days_min?: number;
   estimated_days_max?: number;
+  is_standard?: boolean;
 }
 
 interface ShippingServiceSelectorProps {
   selectedServiceId: string | null;
   onServiceSelect: (serviceId: string) => void;
   loading?: boolean;
+  cartSubtotal?: number;
 }
 
 export default function ShippingServiceSelector({
   selectedServiceId,
   onServiceSelect,
   loading = false,
+  cartSubtotal = 0,
 }: ShippingServiceSelectorProps) {
   const [services, setServices] = useState<ShippingService[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -116,6 +119,8 @@ export default function ShippingServiceSelector({
     );
   }
 
+  const isOrderOver15k = cartSubtotal >= 15000;
+
   return (
     <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 transition-colors">
       <div className="flex items-center justify-between pb-4 mb-5 border-b border-theme-border-light dark:border-theme-border-dark">
@@ -131,6 +136,13 @@ export default function ShippingServiceSelector({
         {services.map((service) => {
           const isSelected = selectedServiceId === service._id;
           const estimatedDelivery = getEstimatedDelivery(service);
+          const isStandard =
+            service.is_standard === true ||
+            (service.is_standard === undefined &&
+              (service.name || service.display_name || "")
+                .toLowerCase()
+                .includes("standard"));
+          const isFreeForThis = isStandard && isOrderOver15k;
 
           return (
             <label
@@ -155,12 +167,21 @@ export default function ShippingServiceSelector({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                           {service.display_name}
                         </p>
                         {isSelected && (
                           <Check className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark flex-shrink-0" />
+                        )}
+                        {isStandard ? (
+                          <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            Free over Rs. 15,000
+                          </span>
+                        ) : (
+                          <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                            Fixed Rate
+                          </span>
                         )}
                       </div>
                       {service.description && (
@@ -176,10 +197,28 @@ export default function ShippingServiceSelector({
                       )}
                     </div>
 
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        {formatPrice(service.base_price || 0)}
-                      </p>
+                    <div className="text-right flex-shrink-0 pl-2">
+                      {isFreeForThis ? (
+                        <div>
+                          <div className="flex items-center gap-1.5 justify-end">
+                            <span className="line-through text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px]">
+                              {formatPrice(service.base_price || 0)}
+                            </span>
+                            <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                              FREE
+                            </span>
+                          </div>
+                          <span className="text-[9px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block font-medium mt-0.5">
+                            Unlocked
+                          </span>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                            {formatPrice(service.base_price || 0)}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

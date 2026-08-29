@@ -233,14 +233,26 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
 
   this.tax_amount = 0;
   
-  // Calculate shipping cost: Free shipping on orders over Rs. 15,000
+  // Calculate shipping cost: Free shipping on orders >= Rs. 15,000 ONLY applies to Standard Shipping
   const netSubtotal = this.subtotal - this.discount_amount;
-  if (netSubtotal >= 15000 || this.subtotal >= 15000) {
-    this.shipping_cost = 0;
-  } else if (shippingService && shippingService.is_active) {
-    this.shipping_cost = shippingService.base_price || 0;
+  const isOver15k = netSubtotal >= 15000 || this.subtotal >= 15000;
+
+  if (shippingService && shippingService.is_active) {
+    const isStandard =
+      shippingService.is_standard === true ||
+      (shippingService.is_standard === undefined &&
+        (shippingService.name || shippingService.display_name || "")
+          .toLowerCase()
+          .includes("standard"));
+
+    if (isStandard && isOver15k) {
+      this.shipping_cost = 0; // Standard shipping is FREE for orders >= Rs. 15,000
+    } else {
+      this.shipping_cost = shippingService.base_price || 0; // Non-standard (e.g. Express) or standard < 15k
+    }
   } else {
-    this.shipping_cost = 0;
+    // Default standard shipping: free if >= 15k, else standard fee
+    this.shipping_cost = isOver15k ? 0 : 390;
   }
 
   this.total = this.subtotal - this.discount_amount + this.tax_amount + this.shipping_cost;

@@ -204,94 +204,105 @@ export default function PaymentSection({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
-                  <div className="space-y-3">
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                          Recipient Name / Account Title
-                        </span>
-                        <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
-                          Talal Ahmad
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard("Talal Ahmad", "bank_title")}
-                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
-                      >
-                        {copiedField === "bank_title" ? (
-                          <>
-                            <Check className="w-3 h-3 text-green-400" />
-                            <span>COPIED</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>COPY</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                          Account Number
-                        </span>
-                        <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
-                          00300112798032
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard("00300112798032", "bank_acc")}
-                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
-                      >
-                        {copiedField === "bank_acc" ? (
-                          <>
-                            <Check className="w-3 h-3 text-green-400" />
-                            <span>COPIED</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>COPY</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
-                      <div className="min-w-0 pr-1">
-                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                          IBAN
-                        </span>
-                        <span className="text-[11px] sm:text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold break-all">
-                          PK00300112798032
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard("PK00300112798032", "bank_iban")}
-                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
-                      >
-                        {copiedField === "bank_iban" ? (
-                          <>
-                            <Check className="w-3 h-3 text-green-400" />
-                            <span>COPIED</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>COPY</span>
-                          </>
-                        )}
-                      </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-start">
+                  <div className="p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Bank Name
+                      </span>
+                      <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold block truncate">
+                        Meezan Bank
+                      </span>
                     </div>
                   </div>
 
-                  {/* Bank QR Code */}
+                  <div className="p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Account Holder / Title
+                      </span>
+                      <span className="text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold block truncate">
+                        Talal Trading Company
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard("Talal Trading Company", "bank_title")}
+                      className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                    >
+                      {copiedField === "bank_title" ? (
+                        <>
+                          <Check className="w-3 h-3 text-green-400" />
+                          <span>COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>COPY</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="sm:col-span-2 p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Account Number
+                      </span>
+                      <span className="text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold tracking-wide">
+                        2105- 0106552077
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard("21050106552077", "bank_acc")}
+                      className="px-3 py-1.5 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                    >
+                      {copiedField === "bank_acc" ? (
+                        <>
+                          <Check className="w-3 h-3 text-green-400" />
+                          <span>COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>COPY</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* IBAN (Commented out as client will provide later)
+                  <div className="sm:col-span-2 p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0 pr-1">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        IBAN
+                      </span>
+                      <span className="text-[11px] sm:text-xs text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold break-all">
+                        PK00300112798032
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard("PK00300112798032", "bank_iban")}
+                      className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                    >
+                      {copiedField === "bank_iban" ? (
+                        <>
+                          <Check className="w-3 h-3 text-green-400" />
+                          <span>COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>COPY</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  */}
+
+                  {/* Bank QR Code (Commented out as client will provide later)
                   <div className="flex flex-col items-center justify-center p-4 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-center">
                     <div className="flex items-center gap-1.5 text-[11px] font-semibold text-theme-hover-light dark:text-theme-hover-dark mb-2 uppercase tracking-wider">
                       <QrCode className="w-3.5 h-3.5" />
@@ -308,6 +319,7 @@ export default function PaymentSection({
                       Scan and pay
                     </span>
                   </div>
+                  */}
                 </div>
               </div>
 
@@ -332,54 +344,72 @@ export default function PaymentSection({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-start">
-                  <div className="space-y-3">
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-start">
+                  <div className="p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0">
                       <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                        Account Title / Recipient Name
+                        Account Holder / Title
                       </span>
-                      <span className="font-bold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                        Talal Ahmad
+                      <span className="font-bold text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark block truncate">
+                        Muhammad Aslam Khan
                       </span>
                     </div>
-
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
-                          Mobile Number
-                        </span>
-                        <span className="text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
-                          03130538686
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard("03130538686", "jazz_num")}
-                        className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
-                      >
-                        {copiedField === "jazz_num" ? (
-                          <>
-                            <Check className="w-3 h-3 text-green-400" />
-                            <span>COPIED</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>COPY</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="p-3 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
-                      <p className="font-medium mb-1 uppercase tracking-wider text-[10px] text-theme-hover-light dark:text-theme-hover-dark">How to pay:</p>
-                      <p>1. Open JazzCash App → <strong>Send Money → JazzCash Account</strong></p>
-                      <p>2. Enter: <strong>03130538686</strong> and amount: <strong>{formatPrice(cart?.total || 0)}</strong></p>
-                      <p>3. Upload receipt screenshot below.</p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard("Muhammad Aslam Khan", "jazz_title")}
+                      className="px-2.5 py-1 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                    >
+                      {copiedField === "jazz_title" ? (
+                        <>
+                          <Check className="w-3 h-3 text-green-400" />
+                          <span>COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>COPY</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
-                  {/* JazzCash QR Code */}
+                  <div className="p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[10px] uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium block">
+                        Mobile Number
+                      </span>
+                      <span className="text-sm sm:text-base text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold tracking-wide">
+                        0322 7040106
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard("03227040106", "jazz_num")}
+                      className="px-3 py-1.5 text-[10px] sm:text-[11px] uppercase tracking-wider bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light transition-colors flex items-center gap-1 shrink-0"
+                    >
+                      {copiedField === "jazz_num" ? (
+                        <>
+                          <Check className="w-3 h-3 text-green-400" />
+                          <span>COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>COPY</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="sm:col-span-2 p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+                    <p className="font-medium mb-1.5 uppercase tracking-wider text-[10px] text-theme-hover-light dark:text-theme-hover-dark">How to pay:</p>
+                    <p>1. Open JazzCash App → <strong>Send Money → JazzCash Account</strong></p>
+                    <p>2. Enter Mobile Number: <strong>0322 7040106</strong></p>
+                    <p>3. Confirm Account Title: <strong>Muhammad Aslam Khan</strong> and Amount: <strong>{formatPrice(cart?.total || 0)}</strong></p>
+                    <p>4. Upload receipt screenshot below.</p>
+                  </div>
+
+                  {/* JazzCash QR Code (Commented out as client will provide later)
                   <div className="flex flex-col items-center justify-center p-4 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-center">
                     <div className="flex items-center gap-1.5 text-[11px] font-semibold text-theme-hover-light dark:text-theme-hover-dark mb-2 uppercase tracking-wider">
                       <QrCode className="w-3.5 h-3.5" />
@@ -396,6 +426,7 @@ export default function PaymentSection({
                       Scan and pay
                     </span>
                   </div>
+                  */}
                 </div>
               </div>
 

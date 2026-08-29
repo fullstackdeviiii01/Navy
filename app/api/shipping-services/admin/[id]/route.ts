@@ -95,6 +95,7 @@ export async function PUT(
       estimated_days_min,
       estimated_days_max,
       is_active,
+      is_standard,
       sort_order,
     } = body;
 
@@ -119,6 +120,19 @@ export async function PUT(
       service.estimated_days_max = estimated_days_max;
     if (is_active !== undefined) service.is_active = is_active;
     if (sort_order !== undefined) service.sort_order = sort_order;
+
+    if (is_standard !== undefined) {
+      if (is_standard) {
+        // Unmark all other services as standard
+        await ShippingService.updateMany(
+          { _id: { $ne: id }, is_standard: true },
+          { $set: { is_standard: false } }
+        );
+        service.is_standard = true;
+      } else {
+        service.is_standard = false;
+      }
+    }
 
     await service.save();
 
