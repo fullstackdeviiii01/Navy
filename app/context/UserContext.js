@@ -143,19 +143,16 @@ export function UserProvider({ children }) {
             fetchUserProfile(token),
             fetchCart(token),
           ]);
-        } else {
-          // Token is invalid or expired — clear it
+        } else if (response.status === 401 || response.status === 403) {
+          // Token is explicitly rejected or expired by server — clear it
           localStorage.removeItem("auth_token");
           setAuthUser(null);
           setDbUser(null);
           await fetchCart("");
         }
       } catch (error) {
-        console.error("Auth check failed:", error);
-        localStorage.removeItem("auth_token");
-        setAuthUser(null);
-        setDbUser(null);
-        await fetchCart("");
+        // Network error (offline, device wake, connection blip) — do NOT wipe token
+        console.error("Auth check network glitch:", error);
       } finally {
         if (mounted) {
           setLoading(false);
