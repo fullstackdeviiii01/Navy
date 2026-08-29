@@ -11,6 +11,7 @@ export interface InvoiceData {
   invoiceDate: string;
   orderNumber: string;
   orderDate: string;
+  orderStatus?: string;
   paymentMethod: string;
   paymentStatus: string;
   currency: string;
@@ -186,13 +187,64 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
       doc.on("error", reject);
 
       const isPaid = data.paymentStatus === "paid";
-      const isCOD  = data.paymentMethod === "cod";
-      const stamp  = isPaid
-        ? "PAID"
-        : isCOD
-        ? (isReceipt ? "CASH ON DELIVERY" : "PAY ON DELIVERY")
-        : (isReceipt ? "ORDER CONFIRMED" : "PENDING VERIFICATION");
-      const stampColor = isPaid ? "#15803D" : isCOD ? "#241910" : "#B45309";
+      const isCOD  = data.paymentMethod?.toLowerCase() === "cod";
+      const isBankOrJazz = ["bank_transfer", "jazzcash"].includes(data.paymentMethod?.toLowerCase());
+      const orderSt = (data.orderStatus || "pending").toLowerCase();
+
+      // Dynamic, accurate status stamp aligned with real order state
+      let stamp = "PENDING";
+      let stampColor = "#B45309"; // Amber
+
+      if (orderSt === "cancelled") {
+        stamp = "ORDER CANCELLED";
+        stampColor = "#DC2626";
+      } else if (orderSt === "refunded" || data.paymentStatus === "refunded") {
+        stamp = "ORDER REFUNDED";
+        stampColor = "#4B5563";
+      } else if (isPaid) {
+        stamp = "PAID";
+        stampColor = "#15803D";
+      } else if (isCOD) {
+        if (orderSt === "delivered") {
+          stamp = "PAID ON DELIVERY";
+          stampColor = "#15803D";
+        } else if (orderSt === "confirmed" || orderSt === "processing") {
+          stamp = isReceipt ? "ORDER CONFIRMED" : "COD - CONFIRMED";
+          stampColor = "#15803D";
+        } else if (orderSt === "shipped") {
+          stamp = "DISPATCHED";
+          stampColor = "#0284C7";
+        } else {
+          stamp = isReceipt ? "CASH ON DELIVERY" : "PAY ON DELIVERY";
+          stampColor = "#241910";
+        }
+      } else if (isBankOrJazz) {
+        if (orderSt === "confirmed" || orderSt === "processing") {
+          stamp = "PAYMENT VERIFIED";
+          stampColor = "#15803D";
+        } else if (orderSt === "shipped") {
+          stamp = "DISPATCHED";
+          stampColor = "#0284C7";
+        } else if (orderSt === "delivered") {
+          stamp = "DELIVERED";
+          stampColor = "#15803D";
+        } else {
+          // Status is still pending verification
+          stamp = "PENDING VERIFICATION";
+          stampColor = "#B45309";
+        }
+      } else {
+        if (orderSt === "confirmed") {
+          stamp = "CONFIRMED";
+          stampColor = "#15803D";
+        } else if (orderSt === "shipped") {
+          stamp = "DISPATCHED";
+          stampColor = "#0284C7";
+        } else {
+          stamp = "PENDING";
+          stampColor = "#B45309";
+        }
+      }
 
       // ── 1. BRAND HEADER WITH LOGO ─────────────────────────────────────────────
       const hY = MARGIN;
@@ -323,14 +375,16 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 
       const stItems: [string, string][] = [
         ["ORDER NUMBER", `#${data.orderNumber}`],
-        ["PAYMENT METHOD", paymentLabel(data.paymentMethod)],
+        ["ORDER STATUS", (data.orderStatus || "pending").toUpperCase()],
         [
           "PAYMENT STATUS",
           isPaid
             ? "PAID"
-            : ["bank_transfer", "jazzcash"].includes(data.paymentMethod)
-            ? "PENDING VERIFICATION"
-            : "UNPAID",
+            : isBankOrJazz
+            ? (orderSt === "confirmed" || orderSt === "processing" ? "VERIFIED" : "PENDING VERIFICATION")
+            : isCOD
+            ? "CASH ON DELIVERY"
+            : (data.paymentStatus || "unpaid").toUpperCase(),
         ],
       ];
 

@@ -124,6 +124,7 @@ export async function GET(
       invoiceDate:   formatDate(invoice?.issued_at ?? invoice?.created_at ?? order.placed_at),
       orderNumber:   order.order_number,
       orderDate:     formatDate(order.placed_at),
+      orderStatus:   order.status,
       paymentMethod: order.payment_method ?? "N/A",
       paymentStatus: order.payment_status,
       currency:      displayCurrency,
