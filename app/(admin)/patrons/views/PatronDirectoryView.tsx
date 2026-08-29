@@ -255,7 +255,11 @@ export default function PatronDirectoryView() {
     }
 
     try {
-      await usersApi.updateStatus(customerId, { is_banned: !currentBanStatus });
+      const nextBanStatus = !currentBanStatus;
+      await usersApi.updateStatus(customerId, {
+        is_banned: nextBanStatus,
+        is_active: nextBanStatus ? false : true,
+      });
       fetchCustomers();
     } catch (error) {
       console.error("Failed to update block status:", error);

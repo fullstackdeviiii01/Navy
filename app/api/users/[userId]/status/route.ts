@@ -54,9 +54,12 @@ export async function PUT(
 
     if (is_banned !== undefined) {
       userToUpdate.is_banned = is_banned;
-      // If banning, also deactivate
       if (is_banned) {
+        // Banning also deactivates the account
         userToUpdate.is_active = false;
+      } else if (is_active === undefined) {
+        // Unbanning automatically reactivates the account
+        userToUpdate.is_active = true;
       }
     }
 

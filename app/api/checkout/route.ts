@@ -95,13 +95,19 @@ export async function POST(request: NextRequest) {
       : user?.email?.toLowerCase().trim();
 
     if (emailToCheck) {
-      const bannedUser = await (User as any).findOne(
+      const userCheck = await (User as any).findOne(
         { email: emailToCheck },
-        { is_banned: 1 }
+        { is_banned: 1, is_active: 1 }
       );
-      if (bannedUser?.is_banned === true) {
+      if (userCheck?.is_banned === true) {
         return NextResponse.json(
           { error: "This account has been suspended and cannot place orders. Please contact support." },
+          { status: 403 }
+        );
+      }
+      if (userCheck && userCheck.is_active === false) {
+        return NextResponse.json(
+          { error: "This account has been deactivated. Please contact support." },
           { status: 403 }
         );
       }

@@ -34,10 +34,17 @@ export async function POST(request) {
       )
     }
 
-    // Check ban status
+    // Check ban and active status
     if (user.is_banned) {
       return NextResponse.json(
         { error: "This account has been suspended. Please contact support." },
+        { status: 403 }
+      )
+    }
+
+    if (user.is_active === false) {
+      return NextResponse.json(
+        { error: "This account has been deactivated. Please contact support." },
         { status: 403 }
       )
     }

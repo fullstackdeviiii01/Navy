@@ -26,6 +26,20 @@ export async function GET(request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    if (user.is_banned) {
+      return NextResponse.json(
+        { error: "This account has been suspended" },
+        { status: 403 }
+      );
+    }
+
+    if (user.is_active === false) {
+      return NextResponse.json(
+        { error: "This account has been deactivated" },
+        { status: 403 }
+      );
+    }
+
     const { login_history, signup_ip, ...userProfile } = user.toObject();
     return NextResponse.json(userProfile);
   } catch (error) {

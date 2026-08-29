@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import RoleGovernanceTable from "../components/RoleGovernanceTable";
 import RoleElevationModal from "../components/RoleElevationModal";
 import Loader from "../../../components/shared/Loader";
+import { usersApi } from "../../../../lib/api/users";
 import { Shield, ShieldCheck, Search } from "lucide-react";
 
 interface RoleUser {
@@ -36,17 +37,8 @@ export default function RoleGovernanceView() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const token = document.cookie.split("__session=")[1]?.split(";")[0] || localStorage.getItem("auth_token");
-      const response = await fetch("/api/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.users || []);
-      }
+      const data = await usersApi.getAll();
+      setUsers(data.users || []);
     } catch (error) {
       console.error("Failed to fetch users for roles:", error);
     } finally {
@@ -74,19 +66,10 @@ export default function RoleGovernanceView() {
     if (!userToPromote) return;
 
     try {
-      const token = document.cookie.split("__session=")[1]?.split(";")[0] || localStorage.getItem("auth_token");
-      const response = await fetch(`/api/users/${userToPromote._id}/promote`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchUsers();
-        setShowConfirmModal(false);
-        setUserToPromote(null);
-      }
+      await usersApi.promoteToAdmin(userToPromote._id);
+      fetchUsers();
+      setShowConfirmModal(false);
+      setUserToPromote(null);
     } catch (error) {
       console.error("Failed to promote user:", error);
     }

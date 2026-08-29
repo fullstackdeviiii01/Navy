@@ -41,15 +41,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
   const [colorItems, setColorItems] = useState<any[]>([]);
   const [existingProduct, setExistingProduct] = useState<any>(null);
 
-  const [attributesList, setAttributesList] = useState<{ key: string; value: string }[]>([
-    { key: "material", value: "" },
-    { key: "finish", value: "" },
-    { key: "dimensions", value: "" },
-    { key: "bulb_socket", value: "E27" },
-    { key: "voltage", value: "AC 110-240V" },
-    { key: "control", value: "Inline On/Off switch" },
-    { key: "care", value: "Wipe with a soft, dry cloth" },
-  ]);
+  const [attributesList, setAttributesList] = useState<{ key: string; value: string }[]>([]);
 
   const [formData, setFormData] = useState({
     name: "",

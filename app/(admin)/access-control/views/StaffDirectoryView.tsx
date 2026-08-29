@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import StaffManagementTable from "../components/StaffManagementTable";
 import StaffProfileModal from "../components/StaffProfileModal";
 import Loader from "../../../components/shared/Loader";
+import { usersApi } from "../../../../lib/api/users";
 import { Users, Search } from "lucide-react";
 
 interface User {
@@ -39,17 +40,8 @@ export default function StaffDirectoryView() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const token = document.cookie.split("__session=")[1]?.split(";")[0] || localStorage.getItem("auth_token");
-      const response = await fetch("/api/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.users || []);
-      }
+      const data = await usersApi.getAll();
+      setUsers(data.users || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
@@ -70,17 +62,8 @@ export default function StaffDirectoryView() {
 
   const promoteToAdmin = async (userId: string) => {
     try {
-      const token = document.cookie.split("__session=")[1]?.split(";")[0] || localStorage.getItem("auth_token");
-      const response = await fetch(`/api/users/${userId}/promote`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchUsers();
-      }
+      await usersApi.promoteToAdmin(userId);
+      fetchUsers();
     } catch (error) {
       console.error("Failed to promote user:", error);
     }
@@ -91,17 +74,16 @@ export default function StaffDirectoryView() {
     action: "ban" | "unban" | "activate" | "deactivate"
   ) => {
     try {
-      const token = document.cookie.split("__session=")[1]?.split(";")[0] || localStorage.getItem("auth_token");
-      const response = await fetch(`/api/users/${userId}/${action}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchUsers();
+      if (action === "ban") {
+        await usersApi.updateStatus(userId, { is_banned: true, is_active: false });
+      } else if (action === "unban") {
+        await usersApi.updateStatus(userId, { is_banned: false, is_active: true });
+      } else if (action === "activate") {
+        await usersApi.updateStatus(userId, { is_active: true });
+      } else if (action === "deactivate") {
+        await usersApi.updateStatus(userId, { is_active: false });
       }
+      fetchUsers();
     } catch (error) {
       console.error(`Failed to ${action} user:`, error);
     }
