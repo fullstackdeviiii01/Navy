@@ -13,6 +13,7 @@ import ProductBreadcrumb from "../../components/product-detail/ProductBreadcrumb
 import Loader from "../../components/shared/Loader";
 import ProductMediaCarousel from "../../components/product/ProductMediaCarousel";
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
+import ProductWishlistButton from "../../components/product-detail/ProductWishlistButton";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface Props {
@@ -372,33 +373,41 @@ export default function ProductDetailPageContent({ productId }: Props) {
                   </div>
                 )}
 
-                {/* Add to Cart button */}
+                {/* Add to Cart button + Wishlist Heart button */}
                 <div
                   className="pt-0.5"
                   role="region"
                   aria-label="Product actions"
                 >
                   {isVariableProduct && !selectedVariant ? (
-                    <div className="text-center p-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark">
-                      <p className="text-[11px] uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
-                        Please select your options above
-                      </p>
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex-1 h-[50px] flex items-center justify-center px-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-center">
+                        <p className="text-[11px] uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
+                          Please select your options above
+                        </p>
+                      </div>
+                      <ProductWishlistButton productId={product._id} />
                     </div>
                   ) : (
-                    <AddToCartButton
-                      productId={product._id}
-                      quantity={quantity}
-                      variantId={selectedVariant?._id}
-                      variantAttributes={selectedAttributes}
-                      productName={product.name}
-                      productImage={
-                        selectedVariant?.imageUrl ||
-                        previewImageUrl ||
-                        product.images?.find((img: any) => img.is_primary)?.url ||
-                        product.images?.[0]?.url
-                      }
-                      disabled={false}
-                    />
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex-1 min-w-0">
+                        <AddToCartButton
+                          productId={product._id}
+                          quantity={quantity}
+                          variantId={selectedVariant?._id}
+                          variantAttributes={selectedAttributes}
+                          productName={product.name}
+                          productImage={
+                            selectedVariant?.imageUrl ||
+                            previewImageUrl ||
+                            product.images?.find((img: any) => img.is_primary)?.url ||
+                            product.images?.[0]?.url
+                          }
+                          disabled={false}
+                        />
+                      </div>
+                      <ProductWishlistButton productId={product._id} />
+                    </div>
                   )}
                 </div>
               </div>

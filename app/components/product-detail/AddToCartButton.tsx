@@ -73,7 +73,7 @@ export default function AddToCartButton({
     <button
       onClick={handleAddToCart}
       disabled={disabled || isAdding}
-      className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.99]"
+      className="w-full h-[50px] flex items-center justify-center gap-3 px-6 sm:px-8 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.99]"
       aria-label={isAdded ? "Item added to cart" : isAdding ? "Adding item to cart" : "Add item to cart"}
       aria-live="polite"
       aria-atomic="true"

@@ -4,6 +4,7 @@
 import Image from "next/image";
 import AddToCartButton from "./AddToCartButton";
 import ProductQuantity from "./ProductQuantity";
+import ProductWishlistButton from "./ProductWishlistButton";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 
@@ -122,21 +123,24 @@ export default function StickyProductBar({
                 SELECT OPTIONS
               </button>
             ) : (
-              <div className="min-w-[120px] sm:min-w-[180px]">
-                <AddToCartButton
-                  productId={product._id}
-                  quantity={quantity}
-                  variantId={selectedVariant?._id}
-                  variantAttributes={
-                    selectedVariant?.attributes?.reduce((acc: any, a: any) => {
-                      acc[a.name] = a.value;
-                      return acc;
-                    }, {})
-                  }
-                  productName={product.name}
-                  productImage={selectedVariant?.imageUrl || primaryImage}
-                  disabled={isDisabled}
-                />
+              <div className="flex items-center gap-2">
+                <div className="min-w-[120px] sm:min-w-[170px]">
+                  <AddToCartButton
+                    productId={product._id}
+                    quantity={quantity}
+                    variantId={selectedVariant?._id}
+                    variantAttributes={
+                      selectedVariant?.attributes?.reduce((acc: any, a: any) => {
+                        acc[a.name] = a.value;
+                        return acc;
+                      }, {})
+                    }
+                    productName={product.name}
+                    productImage={selectedVariant?.imageUrl || primaryImage}
+                    disabled={isDisabled}
+                  />
+                </div>
+                <ProductWishlistButton productId={product._id} className="py-3 sm:py-3.5 px-3" />
               </div>
             )}
           </div>
