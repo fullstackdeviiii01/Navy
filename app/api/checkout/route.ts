@@ -273,8 +273,9 @@ export async function POST(request: NextRequest) {
 
     // ── Coupon tracking ───────────────────────────────────────────────────────
     if (cart.applied_coupon_id) {
+      const rawCouponId = (cart.applied_coupon_id as any)?._id || cart.applied_coupon_id;
       const couponUsageData: any = {
-        coupon_id: cart.applied_coupon_id,
+        coupon_id: rawCouponId,
         order_id: order._id,
         discount_applied: cart.discount_amount,
         used_at: new Date(),
@@ -287,7 +288,7 @@ export async function POST(request: NextRequest) {
       }
       await new CouponUsage(couponUsageData).save();
       await (await import("../../models/Coupon")).default.findByIdAndUpdate(
-        cart.applied_coupon_id,
+        rawCouponId,
         { $inc: { used_count: 1 } }
       );
     }

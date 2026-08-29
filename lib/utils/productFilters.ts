@@ -11,8 +11,18 @@ export function filtersToApiParams(filters: ProductFilters) {
   };
 
   if (filters.category) {
-  params.categorySlug = filters.category;
-}
+    params.categorySlug = filters.category;
+  }
+
+  // Coupon filter
+  if (filters.coupon) {
+    params.coupon = filters.coupon;
+  }
+
+  // Specific products filter
+  if (filters.products) {
+    params.products = filters.products;
+  }
 
   // Search
   if (filters.search) {

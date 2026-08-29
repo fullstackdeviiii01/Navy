@@ -22,7 +22,7 @@ interface Coupon {
   usage_limit: number | null;
   per_user_limit: number;
   applicable_to: {
-    type: "all" | "categories" | "products";
+    type: "all" | "categories" | "products" | "custom";
     category_ids: string[];
     product_ids: string[];
   };

@@ -34,10 +34,16 @@ export default function CartSummary({
         </div>
 
         {/* Discount */}
-        {cart.discount > 0 && (
-          <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
-            <span>Discount ({cart.coupon_code})</span>
-            <span>-{formatPrice(cart.discount)}</span>
+        {((cart.discount_amount && cart.discount_amount > 0) || (cart.discount && cart.discount > 0)) && (
+          <div className="flex justify-between text-emerald-700 dark:text-emerald-400 font-medium">
+            <span>
+              Discount (
+              {typeof cart.applied_coupon_id === "object" && cart.applied_coupon_id?.code
+                ? cart.applied_coupon_id.code
+                : cart.coupon_code || "Promo"}
+              )
+            </span>
+            <span>-{formatPrice(cart.discount_amount || cart.discount || 0)}</span>
           </div>
         )}
 
@@ -47,20 +53,22 @@ export default function CartSummary({
             Shipping
           </span>
           <span>
-            {cart.shipping_fee === 0
+            {cart.shipping_cost === undefined || cart.shipping_cost === null || !shippingService
               ? "Calculated at checkout"
-              : formatPrice(cart.shipping_fee)}
+              : cart.shipping_cost === 0
+              ? <span className="text-emerald-700 dark:text-emerald-400 font-medium">Free</span>
+              : formatPrice(cart.shipping_cost)}
           </span>
         </div>
 
         {/* Selected shipping service info if any */}
-        {shippingService && (
-          <div className="p-3 bg-theme-card-light/40 dark:bg-theme-card-dark/40 border border-theme-border-light dark:border-theme-border-dark text-[11px]">
+        {typeof shippingService === "object" && Boolean(shippingService?.display_name || shippingService?.name) && (
+          <div className="p-2.5 bg-theme-card-light/40 dark:bg-theme-card-dark/40 border border-theme-border-light dark:border-theme-border-dark text-[11px]">
             <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              {shippingService.display_name}
+              {shippingService.display_name || shippingService.name}
             </p>
             {shippingService.description && (
-              <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5">
+              <p className="text-theme-text-muted-light dark:text-theme-text-muted-dark mt-0.5 text-[10px]">
                 {shippingService.description}
               </p>
             )}

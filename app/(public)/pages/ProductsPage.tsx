@@ -82,6 +82,8 @@ function ProductsPageContent() {
     fetchProducts(1, true);
   }, [
     filters.category,
+    filters.coupon,
+    filters.products,
     filters.search,
     filters.inStock,
     filters.sortBy,

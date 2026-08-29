@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Tag, Check, Calendar, DollarSign, Percent, Layers, Package } from "lucide-react";
+import { X, Tag, Check, Calendar, DollarSign, Percent, Layers, Package, SlidersHorizontal } from "lucide-react";
 import { couponsApi } from "../../../../lib/api/coupons";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { productsApi } from "../../../../lib/api/products";
@@ -42,7 +42,7 @@ export default function CouponRulesModal({
     is_active: true,
     show_on_products: true,
     applicable_to: {
-      type: "all" as "all" | "categories" | "products",
+      type: "all" as "all" | "categories" | "products" | "custom",
       category_ids: [] as string[],
       product_ids: [] as string[],
     },
@@ -90,7 +90,11 @@ export default function CouponRulesModal({
         is_active: coupon.is_active ?? true,
         show_on_products: coupon.show_on_products ?? true,
         applicable_to: {
-          type: coupon.applicable_to?.type || "all",
+          type:
+            coupon.applicable_to?.type === "custom" ||
+            (coupon.applicable_to?.category_ids?.length && coupon.applicable_to?.product_ids?.length)
+              ? "custom"
+              : coupon.applicable_to?.type || "all",
           category_ids:
             coupon.applicable_to?.category_ids?.map((id: any) =>
               typeof id === "object" ? id._id?.toString() : id?.toString()
@@ -182,6 +186,16 @@ export default function CouponRulesModal({
       return;
     }
 
+    if (
+      formData.applicable_to.type === "custom" &&
+      formData.applicable_to.category_ids.length === 0 &&
+      formData.applicable_to.product_ids.length === 0
+    ) {
+      setError("Please select at least one category or piece for combined promotion.");
+      setSaving(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -191,11 +205,11 @@ export default function CouponRulesModal({
         applicable_to: {
           type: formData.applicable_to.type,
           category_ids:
-            formData.applicable_to.type === "categories"
+            formData.applicable_to.type === "categories" || formData.applicable_to.type === "custom"
               ? formData.applicable_to.category_ids
               : [],
           product_ids:
-            formData.applicable_to.type === "products"
+            formData.applicable_to.type === "products" || formData.applicable_to.type === "custom"
               ? formData.applicable_to.product_ids
               : [],
         },
@@ -378,7 +392,7 @@ export default function CouponRulesModal({
               <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1.5">
                 Applicable Catalog Scope *
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
                   onClick={() =>
@@ -387,7 +401,7 @@ export default function CouponRulesModal({
                       applicable_to: { ...formData.applicable_to, type: "all" },
                     })
                   }
-                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                  className={`py-2 px-2.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     formData.applicable_to.type === "all"
                       ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
                       : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
@@ -405,7 +419,7 @@ export default function CouponRulesModal({
                       applicable_to: { ...formData.applicable_to, type: "categories" },
                     })
                   }
-                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                  className={`py-2 px-2.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     formData.applicable_to.type === "categories"
                       ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
                       : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
@@ -423,7 +437,7 @@ export default function CouponRulesModal({
                       applicable_to: { ...formData.applicable_to, type: "products" },
                     })
                   }
-                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                  className={`py-2 px-2.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     formData.applicable_to.type === "products"
                       ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
                       : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
@@ -432,11 +446,29 @@ export default function CouponRulesModal({
                   <Package className="w-3.5 h-3.5" />
                   <span>Specific Pieces</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      applicable_to: { ...formData.applicable_to, type: "custom" },
+                    })
+                  }
+                  className={`py-2 px-2.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                    formData.applicable_to.type === "custom"
+                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border-neutral-900"
+                      : "border-theme-border-light dark:border-theme-border-dark hover:bg-theme-card-light"
+                  }`}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  <span>Combined Scope</span>
+                </button>
               </div>
             </div>
 
             {/* Categories Selector */}
-            {formData.applicable_to.type === "categories" && (
+            {(formData.applicable_to.type === "categories" || formData.applicable_to.type === "custom") && (
               <div className="space-y-2 pt-1">
                 <span className="text-[11px] font-semibold text-theme-text-muted-light block uppercase tracking-wider">
                   Select Categories ({formData.applicable_to.category_ids.length} selected)
@@ -471,7 +503,7 @@ export default function CouponRulesModal({
             )}
 
             {/* Products Selector */}
-            {formData.applicable_to.type === "products" && (
+            {(formData.applicable_to.type === "products" || formData.applicable_to.type === "custom") && (
               <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[11px] font-semibold text-theme-text-muted-light block uppercase tracking-wider">

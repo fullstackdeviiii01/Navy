@@ -99,18 +99,18 @@ export default function GuestOrderTrackingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-12 sm:py-16 transition-colors">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-8 sm:py-12 transition-colors">
+      <main className={`mx-auto px-4 sm:px-6 lg:px-8 transition-all ${order ? "max-w-6xl xl:max-w-7xl" : "max-w-xl"}`}>
         <h1 className="sr-only">Order Tracking</h1>
         
         {/* Search Section */}
         {!order && (
-          <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-5 sm:p-10 shadow-sm max-w-xl mx-auto">
-            <div className="text-center mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-theme-border-light dark:border-theme-border-dark">
-              <p className="text-[10px] sm:text-xs font-medium tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5 sm:mb-2">
+          <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-6 sm:p-10 shadow-xs max-w-xl mx-auto">
+            <div className="text-center mb-6 sm:mb-8 pb-5 border-b border-theme-border-light dark:border-theme-border-dark">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1.5">
                 ORDER LOOKUP
               </p>
-              <h2 className="text-2xl sm:text-4xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight mb-1.5 sm:mb-2">
+              <h2 className="text-2xl sm:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight mb-2">
                 Track Your Order
               </h2>
               <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -159,7 +159,7 @@ export default function GuestOrderTrackingPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40"
+                className="w-full py-4 px-6 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-[0.2em] font-medium transition-all disabled:opacity-40 shadow-xs"
               >
                 {loading ? "SEARCHING..." : "TRACK ORDER"}
               </button>
@@ -175,10 +175,11 @@ export default function GuestOrderTrackingPage() {
         )}
 
         {order && !loading && (
-          <div>
+          <div className="space-y-4">
             <button
+              type="button"
               onClick={resetSearch}
-              className="mb-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs uppercase tracking-[0.18em] font-semibold text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Track Another Order</span>

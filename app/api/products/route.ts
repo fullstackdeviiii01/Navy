@@ -27,11 +27,75 @@ export async function GET(request: NextRequest) {
       query.status = status;
     }
 
-    // If categorySlug provided, find the category ID
-    if (categorySlug) {
-      const category = await (Category as any).findOne({ slug: categorySlug });
-      if (category) {
-        query.category_id = category._id;
+    // If category or categorySlug provided, find the category ID(s)
+    const targetCat = categorySlug || category;
+    if (targetCat) {
+      const catList = targetCat.split(",").map((s) => s.trim()).filter(Boolean);
+      if (catList.length === 1) {
+        const single = catList[0];
+        if (/^[0-9a-fA-F]{24}$/.test(single)) {
+          query.category_id = single;
+        } else {
+          const catDoc = await (Category as any).findOne({
+            $or: [
+              { slug: single },
+              { name: { $regex: `^${single.replace(/-/g, " ")}$`, $options: "i" } },
+            ],
+          });
+          if (catDoc) {
+            query.category_id = catDoc._id;
+          }
+        }
+      } else if (catList.length > 1) {
+        const catDocs = await (Category as any).find({
+          $or: catList.map((item) =>
+            /^[0-9a-fA-F]{24}$/.test(item)
+              ? { _id: item }
+              : { slug: item }
+          ),
+        });
+        if (catDocs.length > 0) {
+          query.category_id = { $in: catDocs.map((c: any) => c._id) };
+        }
+      }
+    }
+
+    // Direct product IDs filter (e.g. ?products=id1,id2)
+    const productsParam = url.searchParams.get("products") || url.searchParams.get("productIds");
+    if (productsParam) {
+      const pIds = productsParam
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => /^[0-9a-fA-F]{24}$/.test(s));
+      if (pIds.length > 0) {
+        query._id = { $in: pIds };
+      }
+    }
+
+    // Coupon-based product filter (e.g. ?coupon=CANDLE500)
+    const couponCode = url.searchParams.get("coupon");
+    if (couponCode) {
+      const CouponModel = (await import("../../models/Coupon")).default;
+      const couponDoc = await (CouponModel as any).findOne({
+        code: couponCode.toUpperCase(),
+        is_active: true,
+      });
+
+      if (couponDoc) {
+        if (couponDoc.applicable_to?.type !== "all") {
+          const conditions: any[] = [];
+          if (couponDoc.applicable_to?.product_ids?.length) {
+            conditions.push({ _id: { $in: couponDoc.applicable_to.product_ids } });
+          }
+          if (couponDoc.applicable_to?.category_ids?.length) {
+            conditions.push({ category_id: { $in: couponDoc.applicable_to.category_ids } });
+          }
+          if (conditions.length === 1) {
+            Object.assign(query, conditions[0]);
+          } else if (conditions.length > 1) {
+            query.$or = conditions;
+          }
+        }
       }
     }
 

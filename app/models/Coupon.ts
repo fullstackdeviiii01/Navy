@@ -56,7 +56,7 @@ const CouponSchema = new Schema<ICouponDocument>(
     applicable_to: {
       type: {
         type: String,
-        enum: ["all", "categories", "products"],
+        enum: ["all", "categories", "products", "custom"],
         default: "all",
       },
       category_ids: [{ type: Schema.Types.ObjectId, ref: "Category" }],
@@ -108,28 +108,21 @@ CouponSchema.methods.appliesToProduct = function (
   // "all" applies to everything
   if (this.applicable_to.type === "all") return true;
 
-  // "products" ONLY applies to specific products in the list
-  if (this.applicable_to.type === "products") {
-    // Must have product_ids array and product must be in the list
-    if (!this.applicable_to.product_ids || this.applicable_to.product_ids.length === 0) {
-      return false;
+  const prodStr = productId?.toString();
+  const catStr = categoryId?.toString();
+
+  // Check specific products
+  if (this.applicable_to.product_ids && this.applicable_to.product_ids.length > 0) {
+    if (this.applicable_to.product_ids.some((id) => id.toString() === prodStr)) {
+      return true;
     }
-    return this.applicable_to.product_ids.some(
-      (id) => id.toString() === productId.toString()
-    );
   }
 
-  // "categories" ONLY applies to products in specific categories
-  if (this.applicable_to.type === "categories") {
-    // Must have category_ids array and product's category must be in the list
-    if (!this.applicable_to.category_ids || this.applicable_to.category_ids.length === 0) {
-      return false;
+  // Check categories
+  if (this.applicable_to.category_ids && this.applicable_to.category_ids.length > 0 && catStr) {
+    if (this.applicable_to.category_ids.some((id) => id.toString() === catStr)) {
+      return true;
     }
-    // Product's category must match one of the selected categories
-    if (!categoryId) return false;
-    return this.applicable_to.category_ids.some(
-      (id) => id.toString() === categoryId.toString()
-    );
   }
 
   return false;

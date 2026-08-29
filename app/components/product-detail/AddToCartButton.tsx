@@ -62,7 +62,7 @@ export default function AddToCartButton({
         onSuccess();
       }
     } catch (error) {
-      console.error("❌ [AddToCartButton] Failed to add to cart:", error);
+      console.error("Failed to add to cart:", error);
       alert("Failed to add item to cart. Please try again.");
     } finally {
       setIsAdding(false);

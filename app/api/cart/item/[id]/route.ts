@@ -4,6 +4,7 @@ import { getIdTokenFromHeader, verifyIdToken } from "../../../../../lib/auth";
 import connectDB from "../../../../../lib/db";
 import Cart from "../../../../models/Cart";
 import User from "../../../../models/User";
+import Coupon from "../../../../models/Coupon";
 import { getSessionIdFromRequest } from "../../../../../lib/auth/session";
 
 
@@ -34,7 +35,7 @@ export async function PUT(
       }
     }
 
-    let cart : any;
+    let cart: any;
     if (user) {
       cart = await Cart.findOne({ user_id: user._id });
     } else {
@@ -60,19 +61,21 @@ export async function PUT(
 
     cart.items[itemIndex].quantity = quantity;
 
-    await cart.populate([
-      { path: "selected_shipping_service_id" },
-      { path: "applied_coupon_id" },
-    ]);
+    const rawCouponId = (cart.applied_coupon_id as any)?._id || cart.applied_coupon_id;
+    const coupon = rawCouponId
+      ? await (Coupon as any).findById(rawCouponId)
+      : null;
+
     await cart.calculateTotals(
-      cart.applied_coupon_id || null,
+      coupon,
       cart.selected_shipping_service_id || null
     );
     await cart.save();
 
-    const populatedCart = await cart.populate({
-      path: "items.product_id",
-    });
+    const populatedCart = await cart.populate([
+      { path: "items.product_id" },
+      { path: "applied_coupon_id", select: "code description discount_type discount_value min_order_amount" },
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -125,19 +128,21 @@ export async function DELETE(
       (item: any) => item._id.toString() !== itemId
     );
 
-    await cart.populate([
-      { path: "selected_shipping_service_id" },
-      { path: "applied_coupon_id" },
-    ]);
+    const rawCouponId = (cart.applied_coupon_id as any)?._id || cart.applied_coupon_id;
+    const coupon = rawCouponId
+      ? await (Coupon as any).findById(rawCouponId)
+      : null;
+
     await cart.calculateTotals(
-      cart.applied_coupon_id || null,
+      coupon,
       cart.selected_shipping_service_id || null
     );
     await cart.save();
 
-    const populatedCart = await cart.populate({
-      path: "items.product_id",
-    });
+    const populatedCart = await cart.populate([
+      { path: "items.product_id" },
+      { path: "applied_coupon_id", select: "code description discount_type discount_value min_order_amount" },
+    ]);
 
     return NextResponse.json({
       success: true,

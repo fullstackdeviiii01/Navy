@@ -16,7 +16,7 @@ interface Coupon {
   usage_limit: number | null;
   per_user_limit: number;
   applicable_to: {
-    type: "all" | "categories" | "products";
+    type: "all" | "categories" | "products" | "custom";
     category_ids: string[];
     product_ids: string[];
   };
@@ -80,11 +80,22 @@ export default function PromotionsDataTable({
                         <Tag className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <span className="font-bold text-xs tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark block">
-                          {c.code}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs tracking-wider text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                            {c.code}
+                          </span>
+                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 uppercase tracking-wider">
+                            {c.applicable_to?.type === "all"
+                              ? "Storewide"
+                              : c.applicable_to?.type === "categories"
+                              ? `${c.applicable_to.category_ids?.length || 0} Cats`
+                              : c.applicable_to?.type === "products"
+                              ? `${c.applicable_to.product_ids?.length || 0} Pcs`
+                              : `Combined (${c.applicable_to?.category_ids?.length || 0} Cats, ${c.applicable_to?.product_ids?.length || 0} Pcs)`}
+                          </span>
+                        </div>
                         {c.description && (
-                          <span className="text-[10px] text-theme-text-muted-light truncate max-w-[160px] block">
+                          <span className="text-[10px] text-theme-text-muted-light truncate max-w-[200px] block">
                             {c.description}
                           </span>
                         )}

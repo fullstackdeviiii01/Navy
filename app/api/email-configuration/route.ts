@@ -8,13 +8,11 @@ export async function GET(request: NextRequest) {
   try {
     const token = getIdTokenFromHeader(request);
     if (!token) {
-      console.error("❌ [API DEBUG] No token provided");
       return NextResponse.json({ error: "No token provided" }, { status: 401 });
     }
 
     const decodedToken = await verifyIdToken(token);
     if (!decodedToken) {
-      console.error("❌ [API DEBUG] Invalid token");
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
@@ -22,7 +20,6 @@ export async function GET(request: NextRequest) {
 
     const user = await (User as any).findOne({ email: decodedToken.email });
     if (!user || user.role !== "admin") {
-      console.error("❌ [API DEBUG] Unauthorized - Admin access required");
       return NextResponse.json(
         { error: "Unauthorized - Admin access required" },
         { status: 403 }
@@ -42,51 +39,39 @@ export async function GET(request: NextRequest) {
           auth_pass: "",
         },
         email_notifications: {
-          contact_form: {
-            enabled: true,
-            recipient_email: "",
-            subject_prefix: "Contact Form:",
-          },
           order_confirmation: {
             enabled: true,
-            send_to_customer: true,
-            send_to_admin: true,
-            admin_email: "",
-            subject: "Order Confirmation - {{order_number}}",
+            subject: "Order Confirmation - Talal Wooden Lamps",
+            template: "order_confirmation_default",
           },
           order_status_update: {
             enabled: true,
-            notify_on_confirmed: true,
-            notify_on_shipped: true,
-            notify_on_delivered: true,
-            notify_on_cancelled: true,
+            subject: "Order Status Update - Talal Wooden Lamps",
+            template: "status_update_default",
           },
-          // ADD DEFAULT RETURN NOTIFICATIONS CONFIGURATION
-          return_notifications: {
+          review_submission: {
             enabled: true,
-            notify_on_request: true,
-            notify_on_approved: true,
-            notify_on_received: true,
-            notify_on_processed: true,
-            notify_on_completed: true,
-            notify_on_rejected: true,
-            admin_email: "",
+            subject: "Thank You for Your Review - Talal Wooden Lamps",
+            template: "review_submission_default",
+          },
+          custom_email: {
+            enabled: true,
+            subject: "Notification from Talal Wooden Lamps",
+            template: "custom_email_default",
           },
         },
-        sender_info: {
-          from_name: "Your Store",
-          from_email: "",
-          reply_to: "",
+        branding: {
+          company_name: "Talal Wooden Lamps",
+          logo_url: "",
+          primary_color: "#18181b",
+          footer_text: "Handcrafted Wooden Lamps - Illuminating Your Spaces with Elegance",
         },
         updated_by: user._id,
       });
     }
 
-    // Log the configuration details
-
     return NextResponse.json({ config });
   } catch (error) {
-    console.error("❌ [API DEBUG] Email configuration fetch failed:", error);
     return NextResponse.json(
       { error: "Failed to fetch email configuration" },
       { status: 500 }

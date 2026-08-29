@@ -109,13 +109,13 @@ export default function TestimonialAuditModal({
           </div>
 
           {/* Testimonial Content */}
-          <div className="space-y-2">
+          <div className="space-y-2 min-w-0">
             {review.title && (
-              <h4 className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <h4 className="font-bold text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark break-words [overflow-wrap:anywhere]">
                 "{review.title}"
               </h4>
             )}
-            <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+            <p className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-line">
               {review.comment}
             </p>
           </div>

@@ -6,6 +6,8 @@ import { useCallback, useMemo } from "react";
 
 export interface ProductFilters {
   category: string;
+  coupon: string;
+  products: string;
   minPrice: number;
   maxPrice: number;
   inStock: boolean;
@@ -31,6 +33,8 @@ export function useProductFilters() {
 
     return {
       category: searchParams.get("category") || "",
+      coupon: searchParams.get("coupon") || "",
+      products: searchParams.get("products") || searchParams.get("productIds") || "",
       minPrice: parseFloat(searchParams.get("minPrice") || "0"),
       maxPrice: parseFloat(searchParams.get("maxPrice") || "0"),
       inStock: searchParams.get("inStock") === "true",
@@ -81,11 +85,12 @@ export function useProductFilters() {
             params.delete(key);
           }
         } else if (key === "featured" || key === "bestseller" || key === "trending" || key === "sale") {
-  if (value === true) {
-    params.set(key, "true");
-  } else {
-    params.delete(key);
-  }} else if (key === "rating") {
+          if (value === true) {
+            params.set(key, "true");
+          } else {
+            params.delete(key);
+          }
+        } else if (key === "rating") {
           if (value && value !== 0) {
             params.set(key, String(value));
           } else {
@@ -103,19 +108,19 @@ export function useProductFilters() {
           } else {
             params.delete(key);
           }
-        } else if (key === "category") {
-  if (value) {
-    params.set(key, String(value)); // This will now be slug instead of ID
-  } else {
-    params.delete(key);
-  }
-} else if (key === "search") {
-  if (value) {
-    params.set(key, String(value));
-  } else {
-    params.delete(key);
-  }
-}
+        } else if (key === "category" || key === "coupon" || key === "products") {
+          if (value) {
+            params.set(key, String(value));
+          } else {
+            params.delete(key);
+          }
+        } else if (key === "search") {
+          if (value) {
+            params.set(key, String(value));
+          } else {
+            params.delete(key);
+          }
+        }
       });
 
       // Update URL

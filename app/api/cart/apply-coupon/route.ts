@@ -116,29 +116,24 @@ export async function POST(request: NextRequest) {
         return true;
       }
 
-      if (coupon.applicable_to.type === "products") {
-        if (
-          !coupon.applicable_to.product_ids ||
-          coupon.applicable_to.product_ids.length === 0
-        ) {
-          return false;
-        }
-        return coupon.applicable_to.product_ids.some(
-          (id: any) => id.toString() === product._id.toString()
-        );
+      const prodId = product._id?.toString();
+      const prodCatId = product.category_id?._id
+        ? product.category_id._id.toString()
+        : product.category_id?.toString();
+
+      if (
+        coupon.applicable_to.product_ids?.length &&
+        coupon.applicable_to.product_ids.some((id: any) => id.toString() === prodId)
+      ) {
+        return true;
       }
 
-      if (coupon.applicable_to.type === "categories") {
-        if (
-          !coupon.applicable_to.category_ids ||
-          coupon.applicable_to.category_ids.length === 0
-        ) {
-          return false;
-        }
-        if (!product.category_id) return false;
-        return coupon.applicable_to.category_ids.some(
-          (id: any) => id.toString() === product.category_id.toString()
-        );
+      if (
+        coupon.applicable_to.category_ids?.length &&
+        prodCatId &&
+        coupon.applicable_to.category_ids.some((id: any) => id.toString() === prodCatId)
+      ) {
+        return true;
       }
 
       return false;

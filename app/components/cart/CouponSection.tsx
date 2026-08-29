@@ -71,20 +71,31 @@ export default function CouponSection({ cart, onUpdate }: CouponSectionProps) {
       </label>
 
       {cart.applied_coupon_id ? (
-        <div className="flex items-center justify-between p-3 border border-green-600/30 bg-green-500/10 text-green-700 dark:text-green-300">
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-            <span className="text-xs uppercase tracking-wider font-medium">
-              Coupon Applied
-            </span>
+        <div className="flex items-center justify-between p-3 border border-emerald-600/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300">
+          <div className="flex items-center gap-2.5">
+            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-xs uppercase tracking-wider font-semibold font-mono">
+                {typeof cart.applied_coupon_id === "object" && cart.applied_coupon_id?.code
+                  ? `PROMO: ${cart.applied_coupon_id.code}`
+                  : "PROMO APPLIED"}
+              </span>
+              {cart.discount_amount > 0 && (
+                <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono">
+                  Saved Rs. {Number(cart.discount_amount).toLocaleString()}
+                </span>
+              )}
+            </div>
           </div>
           <button
+            type="button"
             onClick={handleRemoveCoupon}
             disabled={loading}
-            className="p-1 text-green-700 dark:text-green-300 hover:text-red-500 transition-colors disabled:opacity-50"
+            className="p-1.5 text-emerald-700 dark:text-emerald-300 hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
             aria-label="Remove applied coupon code"
+            title="Remove promo code"
           >
-            <X className="w-4 h-4" />
+            {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-4 h-4" />}
           </button>
         </div>
       ) : (

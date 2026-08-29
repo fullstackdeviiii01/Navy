@@ -5,10 +5,12 @@ const PKR = new Intl.NumberFormat("en-PK", {
   maximumFractionDigits: 0,
 });
 
-export function formatPrice(price: number): string {
-  return PKR.format(price);
+export function formatPrice(price?: number | null): string {
+  const validNum = typeof price === "number" && !Number.isNaN(price) ? price : 0;
+  return PKR.format(validNum);
 }
 
-export function formatPriceRaw(price: number): string {
-  return `Rs. ${price.toLocaleString("en-PK")}`;
+export function formatPriceRaw(price?: number | null): string {
+  const validNum = typeof price === "number" && !Number.isNaN(price) ? price : 0;
+  return `Rs. ${validNum.toLocaleString("en-PK")}`;
 }

@@ -104,9 +104,10 @@ export default function CatalogItemOverviewView({
   const primaryImgUrl = getPrimaryProductImage(product);
 
   return (
-    <div className="space-y-8 pb-16">
-      {/* Top Breadcrumb / Back Link */}
-      <div>
+    <div className="space-y-6 pb-16">
+      {/* Top Action & Navigation Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Back Link */}
         <button
           type="button"
           onClick={() => router.push("/admin/products")}
@@ -115,95 +116,92 @@ export default function CatalogItemOverviewView({
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Products Catalog</span>
         </button>
+
+        {/* Action Toolbar */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* View on Live Storefront */}
+          {product._id && (
+            <Link
+              href={`/product/${product._id}`}
+              target="_blank"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+              <span>Storefront View</span>
+            </Link>
+          )}
+
+          {/* Manage Variants */}
+          {isVariableProduct && (
+            <Link
+              href={`/admin/products/${productId}/variants`}
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+              <span>Configure Variants</span>
+            </Link>
+          )}
+
+          {/* Edit Product */}
+          <Link
+            href={`/admin/products/${productId}/edit`}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.18em] font-medium transition-colors shadow-sm"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>Edit Product</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Executive Command Header */}
-      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 lg:p-7 shadow-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          
-          {/* Left: Thumbnail & Title Info */}
-          <div className="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
-            <div className="relative aspect-square w-16 h-16 sm:w-20 sm:h-20 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden shrink-0 shadow-2xs">
-              {primaryImgUrl ? (
-                <img
-                  src={primaryImgUrl}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[9px] uppercase tracking-wider text-theme-text-muted-light">
-                  No Image
-                </div>
-              )}
-            </div>
-
-            <div className="min-w-0 space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.22em] text-theme-hover-light dark:text-theme-hover-dark font-semibold">
-                  {product.category_id?.name || "Uncategorized"}
-                </span>
-                
-                <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold border ${
-                    product.status === "active"
-                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
-                      : product.status === "draft"
-                        ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
-                        : "border-neutral-500/30 bg-neutral-500/10 text-neutral-700 dark:text-neutral-300"
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${product.status === "active" ? "bg-emerald-500" : "bg-amber-500"}`} />
-                  <span>{product.status}</span>
-                </span>
+      {/* Spacious Product Banner Card */}
+      <div className="bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark p-5 sm:p-7 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
+          {/* Thumbnail */}
+          <div className="relative aspect-square w-20 h-20 sm:w-24 sm:h-24 bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden shrink-0 shadow-2xs">
+            {primaryImgUrl ? (
+              <img
+                src={primaryImgUrl}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[9px] uppercase tracking-wider text-theme-text-muted-light">
+                No Image
               </div>
+            )}
+          </div>
 
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight leading-snug">
-                {product.name}
-              </h1>
+          {/* Details & Title */}
+          <div className="flex-1 min-w-0 space-y-2">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-[11px] font-mono uppercase tracking-[0.22em] text-theme-hover-light dark:text-theme-hover-dark font-semibold">
+                {product.category_id?.name || "Uncategorized"}
+              </span>
+              
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold border ${
+                  product.status === "active"
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+                    : product.status === "draft"
+                      ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+                      : "border-neutral-500/30 bg-neutral-500/10 text-neutral-700 dark:text-neutral-300"
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${product.status === "active" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                <span>{product.status}</span>
+              </span>
+            </div>
 
-              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono flex items-center gap-3">
-                <span>Brand: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{product.brand || "Talal Wooden Lamps"}</strong></span>
-                <span>•</span>
-                <span>{isVariableProduct ? `${product.variants?.length || 0} Product Variants` : "Single Model Piece"}</span>
-              </p>
+            <h1 className="text-2xl sm:text-3xl font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight leading-snug">
+              {product.name}
+            </h1>
+
+            <div className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>Brand: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{product.brand || "Talal Wooden Lamps"}</strong></span>
+              <span className="text-theme-text-muted-light">•</span>
+              <span>Structure: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{isVariableProduct ? `${product.variants?.length || 0} Product Variants` : "Single Model Piece"}</strong></span>
             </div>
           </div>
-
-          {/* Right: Clean Unified Action Toolbar */}
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-theme-border-light/60 dark:border-theme-border-dark/60">
-            {/* View on Live Storefront */}
-            {product._id && (
-              <Link
-                href={`/product/${product._id}`}
-                target="_blank"
-                className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
-              >
-                <ExternalLink className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
-                <span>Storefront View</span>
-              </Link>
-            )}
-
-            {/* Manage Variants */}
-            {isVariableProduct && (
-              <Link
-                href={`/admin/products/${productId}/variants`}
-                className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light dark:bg-theme-bg-dark hover:border-theme-hover-light text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs uppercase tracking-[0.15em] font-medium transition-colors shadow-2xs"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
-                <span>Configure Variants</span>
-              </Link>
-            )}
-
-            {/* Edit Product */}
-            <Link
-              href={`/admin/products/${productId}/edit`}
-              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.18em] font-medium transition-colors shadow-sm"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit Product</span>
-            </Link>
-          </div>
-
         </div>
       </div>
 
@@ -217,7 +215,7 @@ export default function CatalogItemOverviewView({
             </span>
             <Banknote className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-lg sm:text-xl font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {isVariableProduct && product.variantPricing
               ? `${formatPrice(product.variantPricing.minPrice)}${
                   product.variantPricing.priceVaries
@@ -239,7 +237,7 @@ export default function CatalogItemOverviewView({
             </span>
             <Package className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-lg sm:text-xl font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {totalStock} Available
           </p>
           <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-medium">
@@ -255,7 +253,7 @@ export default function CatalogItemOverviewView({
             </span>
             <Layers className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-lg sm:text-xl font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+          <p className="text-lg sm:text-xl font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
             {isVariableProduct ? `${product.variants?.length || 0} Variants` : "Simple Piece"}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono">
@@ -271,7 +269,7 @@ export default function CatalogItemOverviewView({
             </span>
             <Tag className="w-4 h-4 text-theme-hover-light dark:text-theme-hover-dark" />
           </div>
-          <p className="text-base sm:text-lg font-serif font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
+          <p className="text-base sm:text-lg font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark truncate">
             {product.category_id?.name || "Unassigned"}
           </p>
           <p className="text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono truncate">

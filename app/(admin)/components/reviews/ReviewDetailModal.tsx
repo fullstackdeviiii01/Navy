@@ -182,11 +182,11 @@ export default function ReviewDetailModal({
               </div>
 
               {/* Title & Comment */}
-              <div className="space-y-2">
-                <h5 className="text-base italic text-theme-text-primary-light dark:text-theme-text-primary-dark">
+              <div className="space-y-2 min-w-0">
+                <h5 className="text-base italic text-theme-text-primary-light dark:text-theme-text-primary-dark break-words [overflow-wrap:anywhere]">
                   {review.title}
                 </h5>
-                <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+                <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-line">
                   {review.comment}
                 </p>
               </div>

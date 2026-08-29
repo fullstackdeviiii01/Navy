@@ -191,7 +191,13 @@ export default function OrderManifestDetailView({
                 : "text-amber-600 dark:text-amber-400"
             }`}
           >
-            {isPaid ? "Paid ✓" : "Pending Payment"}
+            {isPaid
+              ? "Paid ✓"
+              : ["bank_transfer", "jazzcash"].includes(order.payment_method)
+              ? "Pending Payment Verification"
+              : order.payment_method === "cod"
+              ? "COD (Unpaid)"
+              : "Pending Payment"}
           </span>
         </div>
 
@@ -270,7 +276,13 @@ export default function OrderManifestDetailView({
                     : "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
                 }`}
               >
-                {order.payment_status === "refunded" ? "Refunded" : isPaid ? "Paid" : "Pending"}
+                {order.payment_status === "refunded"
+                  ? "Refunded"
+                  : isPaid
+                  ? "Paid"
+                  : ["bank_transfer", "jazzcash"].includes(order.payment_method)
+                  ? "Pending Verification"
+                  : "Pending"}
               </span>
             </div>
 

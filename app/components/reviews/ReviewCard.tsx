@@ -177,11 +177,11 @@ export default function ReviewCard({
         </div>
 
         {/* Content: Title & Text */}
-        <div className="space-y-2 mb-4">
-          <h4 className="text-sm sm:text-base font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
+        <div className="space-y-2 mb-4 min-w-0">
+          <h4 className="text-sm sm:text-base font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark break-words [overflow-wrap:anywhere]">
             {review.title}
           </h4>
-          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
+          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed break-words [overflow-wrap:anywhere] whitespace-pre-line">
             {review.comment}
           </p>
         </div>

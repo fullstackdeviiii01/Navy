@@ -23,13 +23,35 @@ export default function ActiveFilters({
     value?: any;
   }> = [];
 
+  // Coupon filter
+  if (filters.coupon) {
+    activeFilters.push({
+      type: "coupon",
+      label: `PROMO: ${filters.coupon.toUpperCase()}`,
+    });
+  }
+
+  // Specific products filter
+  if (filters.products) {
+    activeFilters.push({
+      type: "products",
+      label: "SELECTED PRODUCTS",
+    });
+  }
+
   // Category filter
   if (filters.category) {
-    const category = categories.find((c) => c._id === filters.category);
-    if (category) {
+    const slugList = filters.category.split(",").map((s) => s.trim());
+    const matchedCats = categories.filter((c) => slugList.includes(c.slug) || slugList.includes(c._id));
+    if (matchedCats.length > 0) {
       activeFilters.push({
         type: "category",
-        label: `${category.name.toUpperCase()}`,
+        label: `${matchedCats.map((c) => c.name.toUpperCase()).join(" & ")}`,
+      });
+    } else {
+      activeFilters.push({
+        type: "category",
+        label: `${filters.category.toUpperCase().replace(/-/g, " ")}`,
       });
     }
   }

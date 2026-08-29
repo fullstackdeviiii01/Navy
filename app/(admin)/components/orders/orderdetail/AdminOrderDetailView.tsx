@@ -119,7 +119,15 @@ export default function AdminOrderDetailView({
                         : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-200"
                     }`}
                   >
-                    {order.payment_status}
+                    {order.payment_status === "paid"
+                      ? "Paid"
+                      : order.payment_status === "refunded"
+                      ? "Refunded"
+                      : order.payment_status === "failed"
+                      ? "Failed"
+                      : ["bank_transfer", "jazzcash"].includes(order.payment_method)
+                      ? "Pending Verification"
+                      : "Pending"}
                   </span>
                 </div>
                 <div>

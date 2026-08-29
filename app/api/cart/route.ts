@@ -44,19 +44,24 @@ export async function GET(request: NextRequest) {
         await cart.save();
       }
 
-      await cart.populate({
-        path: "items.product_id",
-      });
-
-      if (cart.selected_shipping_service_id) {
-        await cart.populate({
+      await cart.populate([
+        { path: "items.product_id" },
+        {
           path: "selected_shipping_service_id",
           select: "name display_name inventory description base_price currency estimated_days_min estimated_days_max is_active",
+        },
+      ]);
+
+      const rawCouponId = (cart.applied_coupon_id as any)?._id || cart.applied_coupon_id;
+      const coupon = rawCouponId ? await (await import("../../models/Coupon")).default.findById(rawCouponId) : null;
+      const shippingService = cart.selected_shipping_service_id;
+      await cart.calculateTotals(coupon, shippingService);
+
+      if (rawCouponId) {
+        await cart.populate({
+          path: "applied_coupon_id",
+          select: "code description discount_type discount_value min_order_amount",
         });
-        
-        const shippingService = cart.selected_shipping_service_id;
-        const coupon = cart.applied_coupon_id ? await (await import("../../models/Coupon")).default.findById(cart.applied_coupon_id) : null;
-        await cart.calculateTotals(coupon, shippingService);
       }
 
       const response = NextResponse.json({ cart });
@@ -66,19 +71,24 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    await cart.populate({
-      path: "items.product_id",
-    });
-
-    if (cart.selected_shipping_service_id) {
-      await cart.populate({
+    await cart.populate([
+      { path: "items.product_id" },
+      {
         path: "selected_shipping_service_id",
         select: "name display_name description inventory base_price currency estimated_days_min estimated_days_max is_active",
+      },
+    ]);
+    
+    const rawCouponId = (cart.applied_coupon_id as any)?._id || cart.applied_coupon_id;
+    const coupon = rawCouponId ? await (await import("../../models/Coupon")).default.findById(rawCouponId) : null;
+    const shippingService = cart.selected_shipping_service_id;
+    await cart.calculateTotals(coupon, shippingService);
+
+    if (rawCouponId) {
+      await cart.populate({
+        path: "applied_coupon_id",
+        select: "code description discount_type discount_value min_order_amount",
       });
-      
-      const shippingService = cart.selected_shipping_service_id;
-      const coupon = cart.applied_coupon_id ? await (await import("../../models/Coupon")).default.findById(cart.applied_coupon_id) : null;
-      await cart.calculateTotals(coupon, shippingService);
     }
 
     return NextResponse.json({ cart });

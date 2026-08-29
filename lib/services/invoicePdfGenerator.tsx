@@ -1,5 +1,4 @@
 // lib/services/invoicePdfGenerator.tsx
-import "server-only";
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
@@ -122,8 +121,8 @@ function money(amount: number, currency: string): string {
 function paymentLabel(method: string): string {
   const map: Record<string, string> = {
     cod: "Cash on Delivery",
-    bank_transfer: "Direct Bank Transfer",
-    jazzcash: "JazzCash Mobile Account",
+    bank_transfer: "Bank Transfer",
+    jazzcash: "JazzCash",
   };
   return map[method?.toLowerCase()] ?? method ?? "Standard Payment";
 }
@@ -145,8 +144,8 @@ const COL_QTY_W   = 36;
 const COL_PRICE_W = 85;
 const COL_TOTAL_W = 95;
 const COL_ITEM_W  = CONTENT_W - COL_QTY_W - COL_PRICE_W - COL_TOTAL_W;
-const TOT_LBL_W   = 130;
-const TOT_VAL_W   = 95;
+const TOT_LBL_W   = 140;
+const TOT_VAL_W   = 100;
 const TOT_X       = PAGE_W - MARGIN - TOT_LBL_W - TOT_VAL_W;
 
 // Colors
@@ -248,34 +247,44 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
             ["Currency",     data.currency || "PKR"],
           ];
 
-      let mY = hY + 26;
-      const lblX = PAGE_W - MARGIN - 210;
-      const valX = PAGE_W - MARGIN - 110;
+      let mY = hY + 28;
+      const lblW = 90;
+      const valW = 140;
+      const valX = PAGE_W - MARGIN - valW;
+      const lblX = valX - lblW - 8;
 
       metaRows.forEach(([lbl, val]) => {
-        doc.font(F.regular).fontSize(8).fillColor(COLOR_MUTED)
-           .text(lbl, lblX, mY, { width: 95, align: "right" });
-        doc.font(F.monoBold).fontSize(8).fillColor(COLOR_PRIMARY)
-           .text(val, valX, mY, { width: 110, align: "right" });
-        mY += 12;
+        doc.font(F.regular).fontSize(8).fillColor(COLOR_MUTED);
+        doc.text(lbl, lblX, mY, { width: lblW, align: "right" });
+
+        doc.font(F.monoBold).fontSize(8).fillColor(COLOR_PRIMARY);
+        const valH = doc.heightOfString(val, { width: valW, align: "right" });
+        doc.text(val, valX, mY, { width: valW, align: "right" });
+
+        mY += Math.max(13, valH + 3);
       });
 
       // Status Stamp Pill
-      const sW = stamp === "PENDING VERIFICATION" || stamp === "CASH ON DELIVERY" ? 115 : 90;
+      doc.font(F.bold).fontSize(7.5);
+      const measuredStampW = doc.widthOfString(stamp, { characterSpacing: 0.8 });
+      const sW = Math.max(105, measuredStampW + 20);
       const sX = PAGE_W - MARGIN - sW;
-      mY += 4;
+      mY += 6;
       doc.rect(sX, mY, sW, 16).strokeColor(stampColor).lineWidth(1).stroke();
       doc.font(F.bold).fontSize(7.5).fillColor(stampColor)
          .text(stamp, sX, mY + 4, { width: sW, align: "center", characterSpacing: 0.8 });
 
-      // Divider Line
-      const rY = Math.max(hY + 54 + companyLines.length * 11.5 + 8, mY + 26);
+      // Divider Line - Safe offset below whichever header column is taller
+      const leftColBottom = hY + 54 + companyLines.length * 11.5 + 10;
+      const rightColBottom = mY + 22;
+      const rY = Math.max(leftColBottom, rightColBottom);
+
       doc.moveTo(MARGIN, rY).lineTo(PAGE_W - MARGIN, rY)
          .lineWidth(1.5).strokeColor(COLOR_PRIMARY).stroke();
 
       // ── 2. ADDRESSES ──────────────────────────────────────────────────────────
       const aY = rY + 16;
-      const cW = CONTENT_W / 2 - 12;
+      const cW = CONTENT_W / 2 - 14;
 
       function drawAddr(x: number, y: number, lbl: string, addr: any, email?: string) {
         doc.font(F.bold).fontSize(7).fillColor(COLOR_GOLD)
@@ -289,14 +298,23 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
           `${addr.city || ""}${addr.state ? `, ${addr.state}` : ""} ${addr.postalCode || ""}`.trim(),
           addr.country || "Pakistan",
         ].filter(Boolean) as string[];
-        let lY = y + 25;
-        lines.forEach(l => { doc.text(l, x, lY, { width: cW }); lY += 11.5; });
-        if (addr.phone) { doc.text(`Phone: ${addr.phone}`, x, lY + 1, { width: cW }); lY += 11.5; }
-        if (email)      { doc.text(`Email: ${email}`,      x, lY + 1, { width: cW }); }
+        let lY = y + 26;
+        lines.forEach((l) => {
+          const lH = doc.heightOfString(l, { width: cW });
+          doc.text(l, x, lY, { width: cW });
+          lY += Math.max(11.5, lH);
+        });
+        if (addr.phone) {
+          doc.text(`Phone: ${addr.phone}`, x, lY + 2, { width: cW });
+          lY += 12;
+        }
+        if (email) {
+          doc.text(`Email: ${email}`, x, lY + 2, { width: cW });
+        }
       }
 
-      drawAddr(MARGIN,           aY, "BILLING RECIPIENT", data.billTo, data.billTo.email);
-      drawAddr(MARGIN + cW + 24, aY, "SHIPPING DESTINATION", data.shipTo);
+      drawAddr(MARGIN, aY, "BILLING RECIPIENT", data.billTo, data.billTo.email);
+      drawAddr(MARGIN + cW + 28, aY, "SHIPPING DESTINATION", data.shipTo);
 
       // ── 3. META HIGHLIGHT STRIP ───────────────────────────────────────────────
       const stY = aY + 86;
@@ -306,7 +324,14 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
       const stItems: [string, string][] = [
         ["ORDER NUMBER", `#${data.orderNumber}`],
         ["PAYMENT METHOD", paymentLabel(data.paymentMethod)],
-        ["PAYMENT STATUS", (data.paymentStatus ?? "pending").toUpperCase()],
+        [
+          "PAYMENT STATUS",
+          isPaid
+            ? "PAID"
+            : ["bank_transfer", "jazzcash"].includes(data.paymentMethod)
+            ? "PENDING VERIFICATION"
+            : "UNPAID",
+        ],
       ];
 
       stItems.forEach(([lbl, val], i) => {
@@ -314,7 +339,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         doc.font(F.bold).fontSize(6.5).fillColor(COLOR_GOLD)
            .text(lbl, sx, stY + 5, { characterSpacing: 0.8 });
         doc.font(F.bold).fontSize(8).fillColor(COLOR_PRIMARY)
-           .text(val, sx, stY + 14);
+           .text(val, sx, stY + 14, { width: CONTENT_W / 3 - 16, lineBreak: false });
       });
 
       // ── 4. TABLE HEADER ───────────────────────────────────────────────────────
@@ -333,7 +358,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
          .lineWidth(1).strokeColor(COLOR_PRIMARY).stroke();
 
       // ── 5. ITEMS ROWS ─────────────────────────────────────────────────────────
-      let rowY = thL + 5;
+      let rowY = thL + 6;
 
       data.items.forEach((item, idx) => {
         const isLast  = idx === data.items.length - 1;
@@ -342,17 +367,27 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
               .map(([k, v]) => `${k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`)
               .join("  |  ")
           : null;
-        const rowH = variant ? 26 : 20;
+
+        doc.font(F.bold).fontSize(8);
+        const nameH = doc.heightOfString(item.name, { width: COL_ITEM_W - 8 });
+        
+        doc.font(F.regular).fontSize(7);
+        const varH = variant ? doc.heightOfString(variant, { width: COL_ITEM_W - 8 }) : 0;
+        
+        const rowH = Math.max(22, nameH + (variant ? varH + 3 : 0) + 6);
         const numY = rowY + (rowH - 8) / 2;
 
+        // Item Name
         doc.font(F.bold).fontSize(8).fillColor(COLOR_PRIMARY)
-           .text(item.name, MARGIN, rowY + 3, { width: COL_ITEM_W - 4 });
+           .text(item.name, MARGIN, rowY + 3, { width: COL_ITEM_W - 8 });
         
+        // Variant attributes
         if (variant) {
           doc.font(F.regular).fontSize(7).fillColor(COLOR_MUTED)
-             .text(variant, MARGIN, rowY + 14, { width: COL_ITEM_W - 4 });
+             .text(variant, MARGIN, rowY + 3 + nameH + 1, { width: COL_ITEM_W - 8 });
         }
 
+        // Numerical columns
         doc.font(F.mono).fontSize(8).fillColor(COLOR_TEXT)
            .text(String(item.quantity),
                  MARGIN + COL_ITEM_W, numY,
@@ -369,18 +404,18 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
           doc.moveTo(MARGIN, rowY).lineTo(PAGE_W - MARGIN, rowY)
              .lineWidth(0.5).strokeColor(COLOR_BORDER).stroke();
         }
-        rowY += 2;
+        rowY += 3;
       });
 
       // ── 6. TOTALS BREAKDOWN ───────────────────────────────────────────────────
-      rowY += 10;
+      rowY += 8;
 
       const totRows: [string, string][] = [
         ["Subtotal", money(data.pricing.subtotal, data.currency)],
         ...(data.pricing.discountAmount > 0
           ? [["Promotion Discount", `-${money(data.pricing.discountAmount, data.currency)}`] as [string, string]]
           : []),
-        ["Estimated Delivery", money(data.pricing.shippingCost || 0, data.currency)],
+        ["Estimated Delivery", data.pricing.shippingCost === 0 ? "FREE" : money(data.pricing.shippingCost || 0, data.currency)],
       ];
 
       totRows.forEach(([lbl, val]) => {
@@ -391,7 +426,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
            .text(lbl, TOT_X, rowY, { width: TOT_LBL_W });
         doc.font(F.mono).fontSize(8).fillColor(COLOR_TEXT)
            .text(val, TOT_X + TOT_LBL_W, rowY, { width: TOT_VAL_W, align: "right" });
-        rowY += 15;
+        rowY += 14;
       });
 
       // Grand Total Box
@@ -412,7 +447,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
       
       doc.font(F.regular).fontSize(7).fillColor(COLOR_MUTED)
          .text(
-           `Talal Wooden Lamps · Handcrafted with natural materials · For customer concierge & inquiries: ${data.company.email}`,
+           `Talal Wooden Lamps · Handcrafted with natural materials · Concierge: ${data.company.email}`,
            MARGIN, fY + 8,
            { width: CONTENT_W - 140 }
          );

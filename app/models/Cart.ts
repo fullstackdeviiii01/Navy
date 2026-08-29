@@ -187,16 +187,24 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
 
       if (coupon.applicable_to.type === "all") {
         isApplicable = true;
-      } else if (coupon.applicable_to.type === "products") {
-        isApplicable =
-          coupon.applicable_to.product_ids?.some(
-            (id: any) => id.toString() === product._id.toString()
-          ) || false;
-      } else if (coupon.applicable_to.type === "categories") {
-        isApplicable =
-          coupon.applicable_to.category_ids?.some(
-            (id: any) => id.toString() === product.category_id?.toString()
-          ) || false;
+      } else {
+        const prodId = product._id?.toString();
+        const prodCatId = product.category_id?._id
+          ? product.category_id._id.toString()
+          : product.category_id?.toString();
+
+        if (
+          coupon.applicable_to.product_ids?.length &&
+          coupon.applicable_to.product_ids.some((id: any) => id.toString() === prodId)
+        ) {
+          isApplicable = true;
+        } else if (
+          coupon.applicable_to.category_ids?.length &&
+          prodCatId &&
+          coupon.applicable_to.category_ids.some((id: any) => id.toString() === prodCatId)
+        ) {
+          isApplicable = true;
+        }
       }
 
       if (isApplicable) {
