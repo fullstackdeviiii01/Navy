@@ -77,17 +77,30 @@ export async function getLogoBuffer(logoPathOrUrl?: string): Promise<Buffer | nu
           rawBuffer = Buffer.from(arrayBuffer);
         }
       } else {
-        const cleanPath = logoPathOrUrl.replace(/^\//, "");
+        const cleanPath = logoPathOrUrl.replace(/^\/api\/media\//, "").replace(/^\//, "");
+        const persistentPath = path.join(process.cwd(), "data", "uploads", cleanPath);
         const localPath = path.join(process.cwd(), "public", cleanPath);
-        if (fs.existsSync(localPath)) {
+        if (fs.existsSync(persistentPath)) {
+          rawBuffer = await fs.promises.readFile(persistentPath);
+        } else if (fs.existsSync(localPath)) {
           rawBuffer = await fs.promises.readFile(localPath);
         }
       }
     }
 
     if (!rawBuffer) {
+      const persistentCompanyDir = path.join(process.cwd(), "data", "uploads", "company");
       const companyDir = path.join(process.cwd(), "public", "company");
-      if (fs.existsSync(companyDir)) {
+
+      if (fs.existsSync(persistentCompanyDir)) {
+        const files = await fs.promises.readdir(persistentCompanyDir);
+        const logoFiles = files.filter((f) => f.startsWith("company_logo_")).sort().reverse();
+        if (logoFiles.length > 0) {
+          rawBuffer = await fs.promises.readFile(path.join(persistentCompanyDir, logoFiles[0]));
+        }
+      }
+
+      if (!rawBuffer && fs.existsSync(companyDir)) {
         const files = await fs.promises.readdir(companyDir);
         const logoFiles = files.filter((f) => f.startsWith("company_logo_")).sort().reverse();
         if (logoFiles.length > 0) {

@@ -36,10 +36,16 @@ export async function POST(request: NextRequest) {
     const randomString = Math.random().toString(36).substring(2, 15);
     const filename = `proof_${timestamp}_${randomString}.webp`;
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "payment-proofs");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "uploads", "payment-proofs");
+    // if (!existsSync(uploadDir)) {
+    //   await mkdir(uploadDir, { recursive: true });
+    // }
+    // const publicUrl = `/uploads/payment-proofs/${filename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("uploads", "payment-proofs");
 
     // Process image buffer through Sharp: convert to WebP & compress
     const bytes = await file.arrayBuffer();
@@ -56,7 +62,7 @@ export async function POST(request: NextRequest) {
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, compressedBuffer);
 
-    const publicUrl = `/uploads/payment-proofs/${filename}`;
+    const publicUrl = `/api/media/uploads/payment-proofs/${filename}`;
 
     return NextResponse.json({
       success: true,

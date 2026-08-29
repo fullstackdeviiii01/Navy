@@ -64,11 +64,16 @@ export async function POST(request: NextRequest) {
     const randomString = Math.random().toString(36).substring(2, 15);
     const filename = `product_${timestamp}_${randomString}.webp`;
 
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), "public", "products", "images");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "products", "images");
+    // if (!existsSync(uploadDir)) {
+    //   await mkdir(uploadDir, { recursive: true });
+    // }
+    // const publicUrl = `/products/images/${finalFilename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("products", "images");
 
     // Convert file to buffer, compress and convert to WebP
     const bytes = await file.arrayBuffer();
@@ -95,7 +100,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, finalBuffer);
 
     // Return public URL
-    const publicUrl = `/products/images/${finalFilename}`;
+    const publicUrl = `/api/media/products/images/${finalFilename}`;
 
     return NextResponse.json({
       success: true,

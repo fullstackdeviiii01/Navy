@@ -73,13 +73,16 @@ export async function POST(request: NextRequest) {
     const inputFilename = `temp_${timestamp}_${randomString}.mp4`;
     const outputFilename = `review_video_${timestamp}_${randomString}.mp4`;
 
-    // Ensure directories exist
-    const uploadDir = path.join(process.cwd(), "public", "reviews", "videos");
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "reviews", "videos");
+    // const videoUrl = `/reviews/videos/${outputFilename}`;
+    // const thumbnailUrl = `/reviews/videos/${thumbnailFilename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("reviews", "videos");
     const tempDir = path.join(process.cwd(), "temp");
 
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
     if (!existsSync(tempDir)) {
       await mkdir(tempDir, { recursive: true });
     }
@@ -129,8 +132,8 @@ export async function POST(request: NextRequest) {
     const finalSize = finalStats.size;
 
     // Return public URLs
-    const videoUrl = `/reviews/videos/${outputFilename}`;
-    const thumbnailUrl = `/reviews/videos/${thumbnailFilename}`;
+    const videoUrl = `/api/media/reviews/videos/${outputFilename}`;
+    const thumbnailUrl = `/api/media/reviews/videos/${thumbnailFilename}`;
 
     return NextResponse.json({
       success: true,

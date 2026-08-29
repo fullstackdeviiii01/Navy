@@ -14,10 +14,16 @@ export async function deleteReviewImages(imageUrls: string[]) {
       const filename = imageUrl.split("/").pop();
       if (!filename) continue;
 
-      const filepath = path.join(process.cwd(), "public", "reviews", filename);
+      // Check persistent upload path first
+      const persistentPath = path.join(process.cwd(), "data", "uploads", "reviews", filename);
+      // Legacy public path:
+      const legacyPath = path.join(process.cwd(), "public", "reviews", filename);
 
-      if (existsSync(filepath)) {
-        await unlink(filepath);
+      if (existsSync(persistentPath)) {
+        await unlink(persistentPath);
+        deletedFiles.push(filename);
+      } else if (existsSync(legacyPath)) {
+        await unlink(legacyPath);
         deletedFiles.push(filename);
       }
     } catch (error) {
@@ -38,19 +44,29 @@ export async function deleteReviewVideos(videoUrls: string[]) {
       const filename = videoUrl.split("/").pop();
       if (!filename) continue;
 
-      const filepath = path.join(process.cwd(), "public", "reviews", "videos", filename);
+      // Check persistent upload path first
+      const persistentPath = path.join(process.cwd(), "data", "uploads", "reviews", "videos", filename);
+      // Legacy public path:
+      const legacyPath = path.join(process.cwd(), "public", "reviews", "videos", filename);
 
-      if (existsSync(filepath)) {
-        await unlink(filepath);
+      if (existsSync(persistentPath)) {
+        await unlink(persistentPath);
+        deletedFiles.push(filename);
+      } else if (existsSync(legacyPath)) {
+        await unlink(legacyPath);
         deletedFiles.push(filename);
       }
 
       // Also delete thumbnail if exists
       const thumbnailFilename = filename.replace("review_video_", "thumb_").replace(".mp4", ".jpg");
-      const thumbnailPath = path.join(process.cwd(), "public", "reviews", "videos", thumbnailFilename);
+      const persistentThumbPath = path.join(process.cwd(), "data", "uploads", "reviews", "videos", thumbnailFilename);
+      const legacyThumbPath = path.join(process.cwd(), "public", "reviews", "videos", thumbnailFilename);
       
-      if (existsSync(thumbnailPath)) {
-        await unlink(thumbnailPath);
+      if (existsSync(persistentThumbPath)) {
+        await unlink(persistentThumbPath);
+        deletedFiles.push(thumbnailFilename);
+      } else if (existsSync(legacyThumbPath)) {
+        await unlink(legacyThumbPath);
         deletedFiles.push(thumbnailFilename);
       }
     } catch (error) {

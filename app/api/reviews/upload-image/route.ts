@@ -65,11 +65,16 @@ export async function POST(request: NextRequest) {
     const randomString = Math.random().toString(36).substring(2, 15);
     const filename = `review_${timestamp}_${randomString}.webp`;
 
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), "public", "reviews");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "reviews");
+    // if (!existsSync(uploadDir)) {
+    //   await mkdir(uploadDir, { recursive: true });
+    // }
+    // const publicUrl = `/reviews/${filename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("reviews");
 
     // Convert file to buffer, compress and convert to WebP via Sharp
     const bytes = await file.arrayBuffer();
@@ -87,7 +92,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, compressedBuffer);
 
     // Return public URL
-    const publicUrl = `/reviews/${filename}`;
+    const publicUrl = `/api/media/reviews/${filename}`;
 
     return NextResponse.json({
       success: true,

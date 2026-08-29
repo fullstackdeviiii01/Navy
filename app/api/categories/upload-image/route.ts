@@ -55,11 +55,16 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     let filename = `category-${timestamp}.webp`;
 
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), "public", "categories", "images");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "categories", "images");
+    // if (!existsSync(uploadDir)) {
+    //   await mkdir(uploadDir, { recursive: true });
+    // }
+    // const imageUrl = `/categories/images/${filename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("categories", "images");
 
     // Convert file to buffer, compress and convert to WebP
     const bytes = await file.arrayBuffer();
@@ -85,7 +90,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, finalBuffer);
 
     // Return the URL path
-    const imageUrl = `/categories/images/${filename}`;
+    const imageUrl = `/api/media/categories/images/${filename}`;
 
     return NextResponse.json({
       success: true,

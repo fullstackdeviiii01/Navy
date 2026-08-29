@@ -69,13 +69,16 @@ export async function POST(request: NextRequest) {
     const inputFilename = `temp_${timestamp}_${randomString}.mp4`;
     const outputFilename = `product_video_${timestamp}_${randomString}.mp4`;
 
-    // Ensure directories exist
-    const uploadDir = path.join(process.cwd(), "public", "products", "videos");
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "products", "videos");
+    // const videoUrl = `/products/videos/${outputFilename}`;
+    // thumbnailUrl = `/products/videos/${thumbnailFilename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("products", "videos");
     const tempDir = path.join(process.cwd(), "temp");
 
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
     if (!existsSync(tempDir)) {
       await mkdir(tempDir, { recursive: true });
     }
@@ -120,7 +123,7 @@ export async function POST(request: NextRequest) {
       const thumbnailPath = path.join(uploadDir, thumbnailFilename);
       try {
         await generateThumbnail(outputPath, thumbnailPath);
-        thumbnailUrl = `/products/videos/${thumbnailFilename}`;
+        thumbnailUrl = `/api/media/products/videos/${thumbnailFilename}`;
       } catch (thumbErr) {
         console.warn("Thumbnail generation failed, skipping thumbnail:", thumbErr);
         thumbnailUrl = "";
@@ -144,7 +147,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Return public URLs
-    const videoUrl = `/products/videos/${outputFilename}`;
+    const videoUrl = `/api/media/products/videos/${outputFilename}`;
 
     return NextResponse.json({
       success: true,

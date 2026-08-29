@@ -12,10 +12,16 @@ export async function deleteProductImages(imageUrls: string[]) {
       const filename = imageUrl.split("/").pop();
       if (!filename) continue;
 
-      const filepath = path.join(process.cwd(), "public", "products", "images", filename);
+      // Check persistent upload path first
+      const persistentPath = path.join(process.cwd(), "data", "uploads", "products", "images", filename);
+      // Legacy public path:
+      const legacyPath = path.join(process.cwd(), "public", "products", "images", filename);
 
-      if (existsSync(filepath)) {
-        await unlink(filepath);
+      if (existsSync(persistentPath)) {
+        await unlink(persistentPath);
+        deletedFiles.push(filename);
+      } else if (existsSync(legacyPath)) {
+        await unlink(legacyPath);
         deletedFiles.push(filename);
       }
     } catch (error) {
@@ -36,19 +42,29 @@ export async function deleteProductVideos(videoUrls: string[]) {
       const filename = videoUrl.split("/").pop();
       if (!filename) continue;
 
-      const filepath = path.join(process.cwd(), "public", "products", "videos", filename);
+      // Check persistent upload path first
+      const persistentPath = path.join(process.cwd(), "data", "uploads", "products", "videos", filename);
+      // Legacy public path:
+      const legacyPath = path.join(process.cwd(), "public", "products", "videos", filename);
 
-      if (existsSync(filepath)) {
-        await unlink(filepath);
+      if (existsSync(persistentPath)) {
+        await unlink(persistentPath);
+        deletedFiles.push(filename);
+      } else if (existsSync(legacyPath)) {
+        await unlink(legacyPath);
         deletedFiles.push(filename);
       }
 
       // Also delete thumbnail if exists
       const thumbnailFilename = filename.replace("product_video_", "thumb_").replace(".mp4", ".jpg");
-      const thumbnailPath = path.join(process.cwd(), "public", "products", "videos", thumbnailFilename);
+      const persistentThumbPath = path.join(process.cwd(), "data", "uploads", "products", "videos", thumbnailFilename);
+      const legacyThumbPath = path.join(process.cwd(), "public", "products", "videos", thumbnailFilename);
       
-      if (existsSync(thumbnailPath)) {
-        await unlink(thumbnailPath);
+      if (existsSync(persistentThumbPath)) {
+        await unlink(persistentThumbPath);
+        deletedFiles.push(thumbnailFilename);
+      } else if (existsSync(legacyThumbPath)) {
+        await unlink(legacyThumbPath);
         deletedFiles.push(thumbnailFilename);
       }
     } catch (error) {

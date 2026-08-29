@@ -44,10 +44,16 @@ export async function POST(request: NextRequest) {
     const sanitizedExt = ext.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
     const filename = `media_${timestamp}_${randomString}.${sanitizedExt}`;
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "returns");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
+    // Legacy public upload path:
+    // const uploadDir = path.join(process.cwd(), "public", "uploads", "returns");
+    // if (!existsSync(uploadDir)) {
+    //   await mkdir(uploadDir, { recursive: true });
+    // }
+    // const publicUrl = `/uploads/returns/${filename}`;
+
+    // Persistent storage (survives builds without rebuilds)
+    const { ensureUploadDir } = await import("../../../lib/storage/uploads");
+    const uploadDir = await ensureUploadDir("uploads", "returns");
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -68,7 +74,7 @@ export async function POST(request: NextRequest) {
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, finalBuffer);
 
-    const publicUrl = `/uploads/returns/${filename}`;
+    const publicUrl = `/api/media/uploads/returns/${filename}`;
 
     return NextResponse.json({
       success: true,
