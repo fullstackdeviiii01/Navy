@@ -200,7 +200,7 @@ export default function Footerr() {
               </li>
               <li>
                 <a
-                  href="https://wa.me/923130538686"
+                  href={companyInfo.social_media?.whatsapp || "https://wa.me/923009692765"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-theme-text-secondary-light dark:text-theme-text-secondary-dark hover:text-theme-hover-light dark:hover:text-theme-hover-dark transition-colors"

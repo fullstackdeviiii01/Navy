@@ -1,11 +1,12 @@
 // app/(public)/pages/OrderConfirmationPage.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ordersApi } from "../../../lib/api/orders";
+import { trackPurchase } from "../../../lib/meta/pixel";
 import {
   Check,
   Package,
@@ -41,12 +42,32 @@ export default function OrderConfirmationPage({ orderId }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const hasFiredPurchase = useRef(false);
 
   useEffect(() => {
     if (orderId) {
       fetchOrder(orderId);
     }
   }, [orderId]);
+
+  // Track Meta Pixel Purchase event
+  useEffect(() => {
+    if (order && !hasFiredPurchase.current) {
+      hasFiredPurchase.current = true;
+      const contentIds = order.items
+        ?.map((item: any) => (item.product_id?._id || item.product_id)?.toString())
+        .filter(Boolean) || [];
+
+      trackPurchase({
+        content_ids: contentIds,
+        content_type: "product",
+        num_items: order.items?.length || 1,
+        value: order.total_amount || 0,
+        currency: "PKR",
+        order_id: order.order_number || order._id,
+      });
+    }
+  }, [order]);
 
   const fetchOrder = async (id: string) => {
     try {
@@ -510,7 +531,7 @@ export default function OrderConfirmationPage({ orderId }: Props) {
                 Have a question about this order or need custom delivery instructions? Our support concierge is ready to assist.
               </p>
               <a
-                href={`https://wa.me/923130538686?text=${whatsappMessage}`}
+                href={`https://wa.me/923009692765?text=${whatsappMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-xs"

@@ -17,7 +17,7 @@ const SOCIAL_PLATFORMS = [
   { key: "instagram", label: "Instagram", icon: BsInstagram, placeholder: "https://instagram.com/yourhandle" },
   { key: "facebook", label: "Facebook", icon: BsFacebook, placeholder: "https://facebook.com/yourpage" },
   { key: "pinterest", label: "Pinterest", icon: BsPinterest, placeholder: "https://pinterest.com/yourhandle" },
-  { key: "whatsapp", label: "WhatsApp", icon: BsWhatsapp, placeholder: "https://wa.me/923130538686" },
+  { key: "whatsapp", label: "WhatsApp", icon: BsWhatsapp, placeholder: "https://wa.me/923009692765" },
 ];
 
 export default function CompanyInfoSettings() {
@@ -309,7 +309,7 @@ export default function CompanyInfoSettings() {
               type="tel"
               value={formData.company_phone}
               onChange={(e) => setFormData((prev) => ({ ...prev, company_phone: e.target.value }))}
-              placeholder="+92 313 0538686"
+              placeholder="+92 300 9692765"
               className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>

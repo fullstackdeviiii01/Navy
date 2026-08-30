@@ -13,6 +13,7 @@ import OrderSummaryCheckout from "../../components/checkout/OrderSummaryCheckout
 import PaymentSection from "../../components/checkout/PaymentSection";
 import EmailNotificationModal from "../../components/checkout/EmailNotificationModal";
 import Loader from "../../components/shared/Loader";
+import { trackInitiateCheckout } from "../../../lib/meta/pixel";
 
 export default function CheckoutPage() {
   const { cart: contextCart, authUser, dbUser, loading: userLoading, refreshCart, updateCart, updateUserProfile, refreshUser } = useUser();
@@ -23,6 +24,7 @@ export default function CheckoutPage() {
   const [showPayment, setShowPayment] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const isOrderPlaced = useRef(false);
+  const hasFiredInitiateCheckout = useRef(false);
 
   const [guestInfo, setGuestInfo] = useState({
     email: "",
@@ -68,6 +70,19 @@ export default function CheckoutPage() {
       }
     }
   }, [contextCart, userLoading, dbUser, router]);
+
+  // Track Meta Pixel InitiateCheckout
+  useEffect(() => {
+    if (cart && cart.items && cart.items.length > 0 && !hasFiredInitiateCheckout.current) {
+      hasFiredInitiateCheckout.current = true;
+      trackInitiateCheckout({
+        content_ids: cart.items.map((i: any) => (i.product_id?._id || i.product_id)?.toString()),
+        num_items: cart.items.length,
+        value: cart.total_price || cart.subtotal || 0,
+        currency: "PKR",
+      });
+    }
+  }, [cart]);
 
   const fetchCart = async () => {
     if (isOrderPlaced.current) return;

@@ -13,6 +13,7 @@ import Payment from "../../models/Payment";
 import CouponUsage from "../../models/CouponUsage";
 import { EmailService } from "../../../lib/services/emailService";
 import { InvoiceService } from "../../../lib/services/invoiceService";
+import { sendMetaCapiEvent } from "../../../lib/meta/conversionsApi";
 
 export async function POST(request: NextRequest) {
   try {
@@ -333,6 +334,49 @@ export async function POST(request: NextRequest) {
       await EmailService.sendOrderConfirmationEmail(populatedOrder);
     } catch (emailError) {
       console.error("Failed to send order confirmation email:", emailError);
+    }
+
+    // ── Meta Conversions API (CAPI) Server-Side Purchase Event ────────────────
+    try {
+      const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || undefined;
+      const clientUserAgent = request.headers.get("user-agent") || undefined;
+
+      const customerEmail = isGuestOrder ? guest_info?.email : user?.email;
+      const customerPhone = shipping_address?.phone || billing_address?.phone || (isGuestOrder ? guest_info?.phone : user?.phone);
+      const customerName = (isGuestOrder ? guest_info?.name : (user?.name || `${shipping_address?.first_name || ""} ${shipping_address?.last_name || ""}`)) || "";
+      const nameParts = customerName.trim().split(" ");
+      const firstName = nameParts[0] || undefined;
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : undefined;
+
+      const itemProductIds = (order.items || []).map((i: any) => i.product_id?.toString()).filter(Boolean);
+
+      sendMetaCapiEvent({
+        eventName: "Purchase",
+        eventId: `purchase_${order._id}`,
+        eventSourceUrl: "https://talalwoodenlamp.com/checkout",
+        userData: {
+          email: customerEmail,
+          phone: customerPhone,
+          firstName,
+          lastName,
+          city: shipping_address?.city,
+          state: shipping_address?.state,
+          zip: shipping_address?.postal_code,
+          country: shipping_address?.country || "Pakistan",
+          clientIpAddress: clientIp,
+          clientUserAgent,
+        },
+        customData: {
+          currency: order.pricing?.currency || "PKR",
+          value: order.pricing?.total || 0,
+          content_ids: itemProductIds,
+          content_type: "product",
+          num_items: order.items?.length || 1,
+          order_id: order.order_number || order._id.toString(),
+        },
+      }).catch((capiErr) => console.warn("[Meta CAPI] Purchase dispatch non-fatal error:", capiErr));
+    } catch (capiError) {
+      console.warn("[Meta CAPI] Error preparing purchase event:", capiError);
     }
 
     // ── Clear cart ────────────────────────────────────────────────────────────

@@ -19,7 +19,7 @@ const SOCIAL_PLATFORMS = [
   { key: "instagram", label: "Instagram", icon: BsInstagram, placeholder: "https://instagram.com/talalwoodenlamps" },
   { key: "facebook", label: "Facebook", icon: BsFacebook, placeholder: "https://facebook.com/talalwoodenlamps" },
   { key: "pinterest", label: "Pinterest", icon: BsPinterest, placeholder: "https://pinterest.com/talalwoodenlamps" },
-  { key: "whatsapp", label: "WhatsApp Support", icon: BsWhatsapp, placeholder: "https://wa.me/923130538686" },
+  { key: "whatsapp", label: "WhatsApp Support", icon: BsWhatsapp, placeholder: "https://wa.me/923009692765" },
 ];
 
 export default function BrandIdentityStudio() {
@@ -357,7 +357,7 @@ export default function BrandIdentityStudio() {
                   company_phone: e.target.value,
                 }))
               }
-              placeholder="+92 313 0538686"
+              placeholder="+92 300 9692765"
               className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
             />
           </div>

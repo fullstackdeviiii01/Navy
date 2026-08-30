@@ -6,8 +6,9 @@ import ClientProviders from "./ClientProviders";
 import Header from "./components/Header";
 import Footerr from "./components/Footerr";
 import WhatsAppButton from "./components/shared/WhatsAppButton";
+import MetaPixel from "./components/meta/MetaPixel";
 import { Analytics } from "@vercel/analytics/next";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -34,6 +35,9 @@ export default async function RootLayout({
         className={`${inter.variable} ${robotoMono.variable} ${playfair.variable} bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark antialiased min-h-screen`}
       >
         <ClientProviders>
+          <Suspense fallback={null}>
+            <MetaPixel />
+          </Suspense>
           {!isAdminPage && <Header />}
           {children}
           {!isAdminPage && <WhatsAppButton />}

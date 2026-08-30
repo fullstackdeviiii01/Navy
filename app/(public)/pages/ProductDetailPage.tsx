@@ -15,6 +15,7 @@ import ProductMediaCarousel from "../../components/product/ProductMediaCarousel"
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
 import ProductWishlistButton from "../../components/product-detail/ProductWishlistButton";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { trackViewContent } from "../../../lib/meta/pixel";
 
 interface Props {
   productId: string;
@@ -58,6 +59,13 @@ export default function ProductDetailPageContent({ productId }: Props) {
   useEffect(() => {
     if (product) {
       fetchRelatedProducts();
+      trackViewContent({
+        content_ids: [product._id],
+        content_name: product.name,
+        content_category: product.category_id?.name || "Wooden Lamps",
+        value: product.pricing?.price || product.variantPricing?.minPrice || 0,
+        currency: "PKR",
+      });
     }
   }, [product]);
 

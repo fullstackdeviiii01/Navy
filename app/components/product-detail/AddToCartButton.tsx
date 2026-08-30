@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Check, ShoppingBag, Loader2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
+import { trackAddToCart } from "../../../lib/meta/pixel";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -49,10 +50,22 @@ export default function AddToCartButton({
         productImage
       );
 
-
       if (data?.cart) {
         updateCart?.(data.cart);
       }
+
+      // Meta Pixel Event Tracking
+      const addedItem = data?.cart?.items?.find(
+        (i: any) => (i.product_id?._id || i.product_id)?.toString() === productId?.toString()
+      );
+      const itemPrice = addedItem?.price || 0;
+      trackAddToCart({
+        content_ids: [productId],
+        content_name: productName || "Handcrafted Wooden Lamp",
+        value: itemPrice * quantity,
+        currency: "PKR",
+        quantity,
+      });
 
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
