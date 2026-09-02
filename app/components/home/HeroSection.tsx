@@ -132,7 +132,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         {/* Full-width High-Res Hero Image with Lamp & Vases on Right */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/hero-reference-lamp-final.jpg"
+            src="/images/heroimageone.png"
             alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
             fill
             priority
