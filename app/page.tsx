@@ -10,8 +10,20 @@ import { getHomeDataSSR } from "../lib/api/home";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Home | Talal Wooden Lamps",
-    description: "Artisanal handcrafted lighting luminaires and architectural solid-wood lamps",
+    title: "Handcrafted Wooden Lamps & Artisanal Lighting in Pakistan | Talal Wooden Lamps",
+    description:
+      "Discover bespoke solid wood table lamps, lathe-turned floor lamps, rustic lanterns, and luxury ambient lighting. Handcrafted with seasoned timber. Free shipping nationwide.",
+    keywords: [
+      "wooden lamps pakistan",
+      "handcrafted table lamps",
+      "lathe turned floor lamps",
+      "solid wood luminaires",
+      "sheesham wood lamps",
+      "luxury wooden home decor",
+    ],
+    alternates: {
+      canonical: "/",
+    },
   };
 }
 

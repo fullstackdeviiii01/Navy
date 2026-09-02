@@ -4,8 +4,12 @@ import CartPage from "../(public)/pages/CartPage";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Shopping Cart",
-    description: "Review your cart items",
+    title: "Shopping Basket",
+    description: "Review the artisanal solid wood lighting pieces in your shopping cart before checkout.",
+    robots: {
+      index: false,
+      follow: true,
+    },
   };
 }
 

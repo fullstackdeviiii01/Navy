@@ -5,7 +5,9 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
+import { getProductUrl } from "../../../lib/utils/productUrl";
 
 interface ProductItem {
   _id: string;
@@ -374,7 +376,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                 >
                   {isCenter ? (
                     /* ===== ACTIVE CENTER LENS WITH RADIANT GOLD DOUBLE RING ===== */
-                    <Link href={`/product/${product._id}`} className="relative block group">
+                    <Link href={getProductUrl(product)} className="relative block group">
                       {/* Ambient Golden Glow Aura */}
                       <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/35 rounded-[50%] blur-md animate-pulse" />
                       

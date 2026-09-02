@@ -13,9 +13,18 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | Talal Wooden Lamps",
+  title: "Terms and Conditions of Service",
   description:
-    "Read our terms and conditions of purchase, artisanal timber characteristics, ordering, warranty, and intellectual property.",
+    "Review the terms of service, payment methods, artisanal hardwood characteristics, warranty, and purchase policies governing Talal Wooden Lamps online atelier.",
+  keywords: [
+    "terms and conditions",
+    "talal wooden lamps terms",
+    "wooden lamp warranty policy",
+    "online purchase terms pakistan",
+  ],
+  alternates: {
+    canonical: "/terms-and-conditions",
+  },
 };
 
 export default function TermsConditionsPage() {

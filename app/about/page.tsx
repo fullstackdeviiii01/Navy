@@ -15,9 +15,19 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us & Craftsmanship | Talal Wooden Lamps",
+  title: "Our Artisanal Heritage & Sustainable Timber Craftsmanship",
   description:
-    "Discover the story, sustainable timber craftsmanship, and lighting philosophy behind Talal Wooden Lamps.",
+    "Discover the story behind Talal Wooden Lamps. The art of turning seasoned solid hardwoods into timeless lighting heirlooms through master lathe work and natural botanical oil finishes.",
+  keywords: [
+    "about talal wooden lamps",
+    "wooden lamp craftsmanship",
+    "artisanal woodturning pakistan",
+    "sheesham wood lighting atelier",
+    "sustainable timber lighting",
+  ],
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function AboutPage() {

@@ -14,9 +14,18 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Talal Wooden Lamps",
+  title: "Privacy Policy & Data Security",
   description:
-    "Learn how we protect and respect your personal information, order data, and payment privacy.",
+    "How Talal Wooden Lamps safeguards your personal information, order records, and payment data with end-to-end encryption and strict data protection practices.",
+  keywords: [
+    "privacy policy",
+    "customer data security",
+    "secure online shopping",
+    "talal wooden lamps privacy",
+  ],
+  alternates: {
+    canonical: "/privacy-policy",
+  },
 };
 
 export default function PrivacyPolicyPage() {

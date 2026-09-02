@@ -4,8 +4,12 @@ import CheckoutPage from "../(public)/pages/CheckoutPage";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Checkout",
-    description: "Complete your purchase",
+    title: "Secure Checkout",
+    description: "Complete your order with secure payments, cash on delivery, and free nationwide delivery in Pakistan.",
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

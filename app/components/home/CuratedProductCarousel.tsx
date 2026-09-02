@@ -7,6 +7,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, Heart, Loader2, Check, ArrowRight, ShoppingCart } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
+import { getProductUrl } from "../../../lib/utils/productUrl";
 import { useUser } from "../../context/UserContext";
 import { useWishlist } from "../../context/WishlistContext";
 
@@ -66,7 +67,9 @@ export default function CuratedProductCarousel({
     e.stopPropagation();
 
     if (product.hasVariants && product.variants && product.variants.length > 0) {
-      window.location.href = `/product/${product._id}`;
+      if (window.innerWidth < 640) {
+        window.location.href = getProductUrl(product);
+      }
       return;
     }
 
@@ -168,7 +171,7 @@ export default function CuratedProductCarousel({
               >
                 {/* Full-Bleed Product Image */}
                 <Link
-                  href={`/product/${product._id}`}
+                  href={getProductUrl(product)}
                   className="relative aspect-square w-full bg-[#F7F3EC] dark:bg-[#1A120B] block overflow-hidden"
                 >
                   <Image
@@ -183,7 +186,7 @@ export default function CuratedProductCarousel({
                 {/* Content: Title, Price & Action Button */}
                 <div className="p-2.5 flex-1 flex flex-col justify-between">
                   <div>
-                    <Link href={`/product/${product._id}`}>
+                    <Link href={getProductUrl(product)}>
                       <h3 className="text-xs font-serif font-medium text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors line-clamp-1">
                         {product.name}
                       </h3>
@@ -269,7 +272,7 @@ export default function CuratedProductCarousel({
               >
                 {/* Full-Bleed Product Image */}
                 <Link
-                  href={`/product/${product._id}`}
+                  href={getProductUrl(product)}
                   className="relative aspect-square w-full bg-[#F7F3EC] dark:bg-[#1A120B] block overflow-hidden"
                 >
                   <Image
@@ -284,7 +287,7 @@ export default function CuratedProductCarousel({
                 {/* Content: Title, Price & Actions */}
                 <div className="p-3 flex-1 flex flex-col justify-between">
                   <div>
-                    <Link href={`/product/${product._id}`}>
+                    <Link href={getProductUrl(product)}>
                       <h3 className="text-xs sm:text-[13px] font-serif font-medium text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors line-clamp-1">
                         {product.name}
                       </h3>

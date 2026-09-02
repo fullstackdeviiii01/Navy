@@ -16,9 +16,18 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Return & Refund Policy | Talal Wooden Lamps",
+  title: "Return, Replacement & 7-Day Refund Policy",
   description:
-    "Explore our 7-day inspection guarantee, replacement procedures, transit damage coverage, and transparent refund process.",
+    "Our customer satisfaction guarantee. Easy returns, damaged shipment replacements, and transparent refund policies for all handcrafted luminaires across Pakistan.",
+  keywords: [
+    "wooden lamp return policy",
+    "refund policy pakistan",
+    "7-day replacement guarantee",
+    "damaged lamp replacement",
+  ],
+  alternates: {
+    canonical: "/refund-policy",
+  },
 };
 
 export default function RefundPolicyPage() {

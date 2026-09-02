@@ -12,11 +12,38 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
     await connectDB();
 
-    const product = await (Product as any).findById(id)
-      .populate("category_id")
-      .populate("subcategory_ids")
-      .populate("created_by", "name email")
-      .populate("updated_by", "name email");
+    let product = null;
+
+    // 1. Direct ObjectId or extracted -[24-hex-id] check
+    const isExactObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const endingIdMatch = id.match(/-([0-9a-fA-F]{24})$/);
+    const resolvedId = isExactObjectId ? id : endingIdMatch ? endingIdMatch[1] : null;
+
+    if (resolvedId) {
+      product = await (Product as any).findById(resolvedId)
+        .populate("category_id")
+        .populate("subcategory_ids")
+        .populate("created_by", "name email")
+        .populate("updated_by", "name email");
+    }
+
+    // 2. Slug check if not found by ID
+    if (!product) {
+      product = await (Product as any).findOne({ slug: id })
+        .populate("category_id")
+        .populate("subcategory_ids")
+        .populate("created_by", "name email")
+        .populate("updated_by", "name email");
+    }
+
+    // 3. Normalized slug check
+    if (!product) {
+      product = await (Product as any).findOne({ slug: id.toLowerCase().trim() })
+        .populate("category_id")
+        .populate("subcategory_ids")
+        .populate("created_by", "name email")
+        .populate("updated_by", "name email");
+    }
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });

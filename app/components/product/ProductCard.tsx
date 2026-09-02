@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
+import { getProductUrl } from "../../../lib/utils/productUrl";
 
 interface ProductCardProps {
   product: {
@@ -35,9 +36,15 @@ interface ProductCardProps {
     };
     [key: string]: any;
   };
+  viewMode?: "grid" | "list";
+  showStockStatus?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  viewMode = "grid",
+  showStockStatus = true,
+}: ProductCardProps) {
   const hasVariants =
     Boolean(product.hasVariants) &&
     ((product.variants && product.variants.length > 0) || Boolean(product.variantPricing));
@@ -82,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      href={`/product/${product._id}`}
+      href={getProductUrl(product)}
       className="group flex flex-col h-full overflow-hidden"
     >
       {/* Sharp, Square-Edged Image Container */}

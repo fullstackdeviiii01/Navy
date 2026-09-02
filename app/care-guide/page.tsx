@@ -13,9 +13,19 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Wood Care & Maintenance Guide | Talal Wooden Lamps",
+  title: "Solid Wood Lamp Care & Maintenance Guide",
   description:
-    "Essential care tips, cleaning instructions, bulb recommendations, and maintenance advice for handcrafted solid wood luminaires.",
+    "Expert care instructions to preserve the grain, lustre, and longevity of solid hardwood lamps. Natural botanical wax application, dusting, and electrical safety advice.",
+  keywords: [
+    "wooden lamp care guide",
+    "how to clean wooden lamps",
+    "hardwood maintenance",
+    "sheesham wood polish",
+    "lamp maintenance tips",
+  ],
+  alternates: {
+    canonical: "/care-guide",
+  },
 };
 
 export default function CareGuidePage() {

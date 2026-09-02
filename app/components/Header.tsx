@@ -24,6 +24,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
 import { categoriesApi } from "../../lib/api/categories";
 import { productsApi } from "../../lib/api/products";
+import { getProductUrl } from "../../lib/utils/productUrl";
 import TopAnnouncementBar from "./shared/TopAnnouncementBar";
 
 interface CompanyInfo {
@@ -225,10 +226,10 @@ export default function Header() {
     }
   };
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = (product: any) => {
     setIsSearchOpen(false);
     setSearchQuery("");
-    router.push(`/product/${productId}`);
+    router.push(getProductUrl(product));
   };
 
   const handleSignOut = async () => {
@@ -358,7 +359,7 @@ export default function Header() {
                           return (
                             <li key={prod._id} className="pt-1.5 first:pt-0">
                               <Link
-                                href={`/product/${prod._id}`}
+                                href={getProductUrl(prod)}
                                 onClick={() => setActiveDropdown(null)}
                                 className="flex items-center justify-between py-1 text-xs text-[#E5D7C2] hover:text-[#C59345] transition-colors group"
                               >

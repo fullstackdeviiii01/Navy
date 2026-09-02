@@ -15,9 +15,18 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy | Talal Wooden Lamps",
+  title: "Nationwide Shipping & Delivery Policy | Free Delivery Above Rs. 15,000",
   description:
-    "Learn about our insured domestic shipping across Pakistan, delivery timeframes by city, fragile packaging standards, and tracking.",
+    "Learn about our nationwide shipping process across Pakistan, secure multi-layer packaging, express delivery timeframes (3-5 business days), and free shipping terms.",
+  keywords: [
+    "wooden lamp shipping pakistan",
+    "free delivery wooden lamps",
+    "delivery timelines pakistan",
+    "lamp packaging standards",
+  ],
+  alternates: {
+    canonical: "/shipping-policy",
+  },
 };
 
 export default function ShippingPolicyPage() {
