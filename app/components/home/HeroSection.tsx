@@ -161,8 +161,8 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       {/* ========================================================================= */}
       <div className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
         
-        {/* Full-width Responsive Hero Image */}
-        <div className="absolute inset-0 z-0">
+        {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
+        <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0">
           <Image
             src="/images/heroimageone.png"
             alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
@@ -176,9 +176,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#0A0604] via-[#0A0604]/70 to-transparent" />
         </div>
 
-        {/* Hero Content Area */}
+        {/* Hero Content Area (Moved 30px up on laptop and higher) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full relative z-10 py-8 sm:py-12 md:py-14">
-          <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6">
+          <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6 lg:-translate-y-[30px]">
             
             {/* Elegant Script Tagline */}
             <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-sm">

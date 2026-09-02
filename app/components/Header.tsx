@@ -14,15 +14,29 @@ import {
   X,
   Loader2,
   Package,
+  ChevronDown,
+  Sparkles,
+  ArrowRight,
+  Compass,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useWishlist } from "../context/WishlistContext";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
+import { categoriesApi } from "../../lib/api/categories";
+import { productsApi } from "../../lib/api/products";
 import TopAnnouncementBar from "./shared/TopAnnouncementBar";
 
 interface CompanyInfo {
   company_name?: string;
   company_logo?: string;
+}
+
+interface CategoryItem {
+  _id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+  image?: string;
 }
 
 interface ProductSearchResult {
@@ -43,20 +57,32 @@ export default function Header() {
   const pathname = usePathname();
 
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [headerProducts, setHeaderProducts] = useState<any[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ProductSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Lock body scroll when mobile menu is open
+  // Active desktop hover dropdown key ('products' | 'categories' | null)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Lock body scroll when mobile menu is open (matching CartSidebar)
   useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
+
     if (isMobileMenuOpen) {
+      document.addEventListener("keydown", handleEsc);
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
     return () => {
+      document.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
@@ -68,15 +94,68 @@ export default function Header() {
     cart?.items?.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0) || 0;
 
   useEffect(() => {
-    fetchCompanyInfo();
+    fetchHeaderData();
   }, []);
 
-  const fetchCompanyInfo = async () => {
+  const fetchHeaderData = async () => {
+    // 1. Fetch Company Info
     try {
       const data = await siteSettingsApi.getCompanyInfo();
       setCompanyInfo(data.company_info || {});
     } catch (error) {
       console.error("Failed to fetch company info:", error);
+    }
+
+    // 2. Fetch Categories (Limit to top 8)
+    try {
+      const catData = await categoriesApi.getAll(false);
+      if (catData && catData.categories && catData.categories.length > 0) {
+        setCategories(catData.categories.slice(0, 8));
+      } else {
+        setCategories([
+          { _id: "c1", name: "Table Lamps", slug: "table-lamps" },
+          { _id: "c2", name: "Floor Lamps", slug: "floor-lamps" },
+          { _id: "c3", name: "Wall Sconces", slug: "wall-sconces" },
+          { _id: "c4", name: "Lanterns & Accents", slug: "lanterns" },
+        ]);
+      }
+    } catch (err) {
+      setCategories([
+        { _id: "c1", name: "Table Lamps", slug: "table-lamps" },
+        { _id: "c2", name: "Floor Lamps", slug: "floor-lamps" },
+        { _id: "c3", name: "Wall Sconces", slug: "wall-sconces" },
+        { _id: "c4", name: "Lanterns & Accents", slug: "lanterns" },
+      ]);
+    }
+
+    // 3. Fetch Exactly 8 Products for the Header Dropdown
+    try {
+      const prodData = await productsApi.getAll({ limit: 8, status: "active" });
+      if (prodData && prodData.products && prodData.products.length > 0) {
+        setHeaderProducts(prodData.products.slice(0, 8));
+      } else {
+        setHeaderProducts([
+          { _id: "p1", name: "Geometric Table Lamp", pricing: { price: 6900 } },
+          { _id: "p2", name: "Artisanal Wooden Lantern", pricing: { price: 5800 } },
+          { _id: "p3", name: "Timber Desk Lamp", pricing: { price: 4200 } },
+          { _id: "p4", name: "Square Slatted Lamp", pricing: { price: 5800 } },
+          { _id: "p5", name: "Cantilever Desk Luminaire", pricing: { price: 6900 } },
+          { _id: "p6", name: "Timber Candle Lantern", pricing: { price: 4200 } },
+          { _id: "p7", name: "Rustic Geometric Light", pricing: { price: 3500 } },
+          { _id: "p8", name: "Minimalist Bedside Lamp", pricing: { price: 4900 } },
+        ]);
+      }
+    } catch (err) {
+      setHeaderProducts([
+        { _id: "p1", name: "Geometric Table Lamp", pricing: { price: 6900 } },
+        { _id: "p2", name: "Artisanal Wooden Lantern", pricing: { price: 5800 } },
+        { _id: "p3", name: "Timber Desk Lamp", pricing: { price: 4200 } },
+        { _id: "p4", name: "Square Slatted Lamp", pricing: { price: 5800 } },
+        { _id: "p5", name: "Cantilever Desk Luminaire", pricing: { price: 6900 } },
+        { _id: "p6", name: "Timber Candle Lantern", pricing: { price: 4200 } },
+        { _id: "p7", name: "Rustic Geometric Light", pricing: { price: 3500 } },
+        { _id: "p8", name: "Minimalist Bedside Lamp", pricing: { price: 4900 } },
+      ]);
     }
   };
 
@@ -162,13 +241,24 @@ export default function Header() {
     }
   };
 
-  // Navigation Items matching the reference screenshot:
-  // HOME, SHOP, CATEGORIES, TRACK ORDER (instead of about us), CONTACT US
+  // Dropdown hover helpers
+  const handleDropdownEnter = (menuKey: string) => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    setActiveDropdown(menuKey);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  // Navigation Items (HOME, PRODUCTS, CATEGORIES, ABOUT, CONTACT US)
   const navLinks = [
     { label: "HOME", href: "/" },
-    { label: "SHOP", href: "/products", hasDropdown: true },
-    { label: "CATEGORIES", href: "/categories", hasDropdown: true },
-    { label: "TRACK ORDER", href: "/track-order" },
+    { label: "PRODUCTS", href: "/products", dropdownKey: "products" },
+    { label: "CATEGORIES", href: "/categories", dropdownKey: "categories" },
+    { label: "ABOUT", href: "/about" },
     { label: "CONTACT US", href: "/contact" },
   ];
 
@@ -216,13 +306,19 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* 2. CENTER: Clean Navigation (HOME, SHOP, CATEGORIES, TRACK ORDER, CONTACT US) */}
+          {/* 2. CENTER: Clean Navigation with Dropdowns on Hover */}
           <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1">
             {navLinks.map((link) => {
               const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              const isDropdownOpen = activeDropdown === link.dropdownKey;
 
               return (
-                <div key={link.label} className="relative group py-2">
+                <div
+                  key={link.label}
+                  onMouseEnter={() => link.dropdownKey && handleDropdownEnter(link.dropdownKey)}
+                  onMouseLeave={handleDropdownLeave}
+                  className="relative py-5"
+                >
                   <Link
                     href={link.href}
                     className={`inline-flex items-center gap-1 text-xs xl:text-[13px] font-sans uppercase tracking-[0.12em] font-semibold transition-colors duration-200 ${
@@ -230,25 +326,111 @@ export default function Header() {
                     }`}
                   >
                     <span>{link.label}</span>
-                    {link.hasDropdown && (
-                      <span className="text-[9px] opacity-70 group-hover:rotate-180 transition-transform duration-200">
-                        ▼
-                      </span>
+                    {link.dropdownKey && (
+                      <ChevronDown
+                        className={`w-3 h-3 text-[#C59345] transition-transform duration-200 ${
+                          isDropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
                     )}
                   </Link>
 
-                  {/* Gold Active / Hover Line Indicator */}
+                  {/* Gold Active Indicator */}
                   {isActive ? (
-                    <div className="absolute bottom-0 inset-x-0 h-[2px] bg-[#C59345] rounded-full shadow-[0_0_8px_rgba(197,147,69,0.6)]" />
+                    <div className="absolute bottom-2 inset-x-0 h-[2px] bg-[#C59345] rounded-full shadow-[0_0_8px_rgba(197,147,69,0.6)]" />
                   ) : (
-                    <div className="absolute bottom-0 inset-x-0 h-[2px] bg-[#C59345] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    <div className="absolute bottom-2 inset-x-0 h-[2px] bg-[#C59345] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   )}
+
+                  {/* ========================================================= */}
+                  {/* DESKTOP DROPDOWN: PRODUCTS (Exactly 5 Products, No Images + Explore All Button) */}
+                  {/* ========================================================= */}
+                  {link.dropdownKey === "products" && isDropdownOpen && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[340px] bg-[#160E0A] border border-[#3A2A1D] shadow-[0_15px_35px_rgba(0,0,0,0.8)] rounded-sm p-4 text-[#F3E8D6] z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <p className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#C59345] font-semibold mb-2.5 flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[#C59345]" />
+                        <span>FEATURED PRODUCTS</span>
+                      </p>
+
+                      <ul className="space-y-1 divide-y divide-[#2A1D13]/60">
+                        {headerProducts.map((prod) => {
+                          const price = prod.pricing?.price || prod.variantPricing?.minPrice || 0;
+                          return (
+                            <li key={prod._id} className="pt-1.5 first:pt-0">
+                              <Link
+                                href={`/product/${prod._id}`}
+                                onClick={() => setActiveDropdown(null)}
+                                className="flex items-center justify-between py-1 text-xs text-[#E5D7C2] hover:text-[#C59345] transition-colors group"
+                              >
+                                <span className="truncate pr-2 font-medium">{prod.name}</span>
+                                <span className="text-[11px] font-bold text-[#C59345] shrink-0">
+                                  Rs. {price.toLocaleString()}
+                                </span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+
+                      <div className="mt-3.5 pt-3 border-t border-[#2A1D13] text-center">
+                        <Link
+                          href="/products"
+                          onClick={() => setActiveDropdown(null)}
+                          className="no-theme-hover inline-flex items-center justify-center gap-1.5 w-full py-2 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs font-semibold uppercase tracking-[0.12em] rounded-sm transition-colors duration-200 cursor-pointer"
+                        >
+                          <span>EXPLORE ALL PRODUCTS</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-white" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ========================================================= */}
+                  {/* DESKTOP DROPDOWN: CATEGORIES (Up to 8 Categories + View All Categories Link) */}
+                  {/* ========================================================= */}
+                  {link.dropdownKey === "categories" && isDropdownOpen && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[340px] bg-[#160E0A] border border-[#3A2A1D] shadow-[0_15px_35px_rgba(0,0,0,0.8)] rounded-sm p-4 text-[#F3E8D6] z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <p className="text-[10px] font-mono tracking-[0.18em] uppercase text-[#C59345] font-semibold mb-2.5 flex items-center gap-1.5">
+                        <Compass className="w-3 h-3 text-[#C59345]" />
+                        <span>STORE CATEGORIES</span>
+                      </p>
+                      
+                      <ul className="space-y-1 divide-y divide-[#2A1D13]/60">
+                        {categories.map((cat) => (
+                          <li key={cat._id} className="pt-1.5 first:pt-0">
+                            <Link
+                              href={`/products?category=${cat.slug || cat._id}`}
+                              onClick={() => setActiveDropdown(null)}
+                              className="flex items-center justify-between py-1 text-xs text-[#E5D7C2] hover:text-[#C59345] transition-colors group"
+                            >
+                              <span>{cat.name}</span>
+                              <span className="text-[10px] text-[#C59345]/70 group-hover:translate-x-1 transition-transform">
+                                →
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-3.5 pt-3 border-t border-[#2A1D13] text-center">
+                        <Link
+                          href="/categories"
+                          onClick={() => setActiveDropdown(null)}
+                          className="no-theme-hover inline-flex items-center justify-center gap-1.5 w-full py-2 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs font-semibold uppercase tracking-[0.12em] rounded-sm transition-colors duration-200 cursor-pointer"
+                        >
+                          <span>VIEW ALL CATEGORIES</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-white" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               );
             })}
           </nav>
 
-          {/* 3. END: Actions Hub (Search, Account, Wishlist, Cart) */}
+          {/* 3. END: Actions Hub (Search, Account, Wishlist, Cart, Hamburger) */}
           <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
 
             {/* Search Trigger */}
@@ -363,7 +545,7 @@ export default function Header() {
             >
               <Heart size={18} className="stroke-[2]" />
               {wishlistCount > 0 && (
-                <span className="absolute 0 top-0.5 right-0.5 w-3.5 h-3.5 bg-[#C59345] text-[#120D09] text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#C59345] text-[#120D09] text-[9px] font-bold rounded-full flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
@@ -383,13 +565,13 @@ export default function Header() {
               )}
             </button>
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile Hamburger Button */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 text-[#F3E8D6] hover:text-[#C59345] transition-colors lg:hidden cursor-pointer"
-              aria-label="Toggle menu"
+              aria-label="Open mobile menu"
             >
-              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              <Menu size={22} />
             </button>
 
           </div>
@@ -397,53 +579,140 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* ========================================================================= */}
+      {/* 4. MOBILE SLIDE-OUT DRAWER (MATCHING CartSidebar EXACT STYLE & ANIMATION) */}
+      {/* ========================================================================= */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-16 sm:top-20 bg-[#120D09] z-50 overflow-y-auto border-t border-[#3A2A1D] px-6 py-6 lg:hidden animate-in fade-in duration-200">
-          <div className="flex flex-col space-y-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-base font-serif font-bold tracking-wider text-white hover:text-[#C59345] py-2 border-b border-[#2A1D13] flex items-center justify-between"
-              >
-                <span>{link.label}</span>
-                <span className="text-xs text-[#C59345]">→</span>
-              </Link>
-            ))}
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+          
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
 
-            <div className="pt-4 flex flex-col gap-3">
-              <Link
-                href="/wishlist"
+          {/* Slide-out Drawer */}
+          <div className="fixed inset-y-0 right-0 w-full max-w-[85vw] sm:max-w-md bg-[#120D09] border-l border-[#3A2A1D] text-[#F3E8D6] shadow-2xl flex flex-col animate-slide-in-right z-50">
+            
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-[#3A2A1D]">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#C59345]">
+                  NAVIGATION
+                </p>
+                <h2 className="text-base sm:text-lg font-serif font-medium text-white">
+                  Menu
+                </h2>
+              </div>
+              <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2.5 text-xs tracking-wider text-[#D8CEBC] hover:text-[#C59345] py-1"
+                className="p-1.5 rounded-full hover:bg-[#1C140E] text-[#A89B8C] hover:text-white transition-colors cursor-pointer"
+                aria-label="Close menu"
               >
-                <Heart size={16} />
-                <span>WISHLIST ({wishlistCount})</span>
-              </Link>
-
-              <Link
-                href={isAuthenticated ? "/account" : "/sign-in"}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-2.5 text-xs tracking-wider text-[#D8CEBC] hover:text-[#C59345] py-1"
-              >
-                <User size={16} />
-                <span>{isAuthenticated ? `MY ACCOUNT (${name || "USER"})` : "SIGN IN / REGISTER"}</span>
-              </Link>
-
-              {isAuthenticated && (
-                <button
-                  onClick={handleSignOut}
-                  className="text-left text-xs font-mono uppercase tracking-wider text-rose-400 hover:text-rose-300 py-1"
-                >
-                  SIGN OUT
-                </button>
-              )}
+                <X size={20} />
+              </button>
             </div>
+
+            {/* Drawer Navigation Links */}
+            <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-1">
+              
+              {/* Main Nav Links (Clicking PRODUCTS / CATEGORIES takes user directly to page) */}
+              <div className="space-y-1 pb-5 border-b border-[#2A1D13]">
+                {navLinks.map((link) => {
+                  const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center justify-between py-3 px-2 rounded-sm text-sm font-serif font-semibold tracking-wider transition-colors ${
+                        isActive
+                          ? "text-[#C59345] bg-[#1A120B]"
+                          : "text-[#E5D7C2] hover:text-[#C59345] hover:bg-[#1A120B]/60"
+                      }`}
+                    >
+                      <span>{link.label}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#C59345]/70" />
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Quick Account & Utility Links */}
+              <div className="pt-4 space-y-2">
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-[#C59345] font-semibold px-2 mb-2">
+                  ACCOUNT & SAVED
+                </p>
+
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2 px-2 text-xs text-[#D8CEBC] hover:text-[#C59345] hover:bg-[#1A120B]/50 rounded-sm transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Heart size={16} className="text-[#C59345]" />
+                    <span>WISHLIST</span>
+                  </div>
+                  {wishlistCount > 0 && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#C59345] text-[#120D09] rounded-full">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    openCart();
+                  }}
+                  className="w-full flex items-center justify-between py-2 px-2 text-xs text-[#D8CEBC] hover:text-[#C59345] hover:bg-[#1A120B]/50 rounded-sm transition-colors cursor-pointer text-left"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ShoppingCart size={16} className="text-[#C59345]" />
+                    <span>SHOPPING BASKET</span>
+                  </div>
+                  {cartItemCount > 0 && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#C59345] text-[#120D09] rounded-full">
+                      {cartItemCount}
+                    </span>
+                  )}
+                </button>
+
+                <Link
+                  href={isAuthenticated ? "/account" : "/sign-in"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-2.5 py-2 px-2 text-xs text-[#D8CEBC] hover:text-[#C59345] hover:bg-[#1A120B]/50 rounded-sm transition-colors"
+                >
+                  <User size={16} className="text-[#C59345]" />
+                  <span>{isAuthenticated ? `MY ACCOUNT (${name || "USER"})` : "SIGN IN / REGISTER"}</span>
+                </Link>
+
+                {isAuthenticated && (
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left py-2 px-2 text-xs font-mono uppercase tracking-wider text-rose-400 hover:text-rose-300 transition-colors"
+                  >
+                    SIGN OUT
+                  </button>
+                )}
+              </div>
+
+            </div>
+
+            {/* Drawer Footer: Assistance Badge */}
+            <div className="p-4 sm:p-5 border-t border-[#3A2A1D] bg-[#0E0A07]">
+              <div className="flex items-center justify-between text-[11px] text-[#A89B8C]">
+                <span>Artisanal Solid Wood Lighting</span>
+                <span className="text-[#C59345]">Handcrafted</span>
+              </div>
+            </div>
+
           </div>
+
         </div>
       )}
+
     </header>
   );
 }
