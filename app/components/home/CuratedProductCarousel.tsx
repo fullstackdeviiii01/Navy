@@ -308,10 +308,7 @@ export default function CuratedProductCarousel({
                       ) : isAdded ? (
                         <Check className="w-3.5 h-3.5" />
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                          <span>ADD TO CART</span>
-                          <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
-                        </span>
+                        <span>ADD TO CART</span>
                       )}
                     </button>
 

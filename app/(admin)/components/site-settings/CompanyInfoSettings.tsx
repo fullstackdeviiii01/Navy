@@ -37,7 +37,6 @@ export default function CompanyInfoSettings() {
     social_media: {
       instagram: "",
       facebook: "",
-      pinterest: "",
       whatsapp: "",
     },
     copyright_text: "",
@@ -64,7 +63,6 @@ export default function CompanyInfoSettings() {
           social_media: {
             instagram: data.company_info.social_media?.instagram || "",
             facebook: data.company_info.social_media?.facebook || "",
-            pinterest: data.company_info.social_media?.pinterest || "",
             whatsapp: data.company_info.social_media?.whatsapp || "",
           },
           copyright_text: data.company_info.copyright_text || "",
