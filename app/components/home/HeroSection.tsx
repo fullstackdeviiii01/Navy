@@ -5,7 +5,6 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
 
@@ -36,8 +35,8 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
   const [windowWidth, setWindowWidth] = useState<number>(1200);
+  const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Track window width for responsive calculation without CSS conflicts
@@ -69,7 +68,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   const navigateTo = useCallback((newIndex: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setActiveIndex((newIndex + total) % total);
+    setActiveIndex((newIndex + total * 100) % total);
     setTimeout(() => setIsAnimating(false), 450);
   }, [total, isAnimating]);
 
@@ -81,16 +80,16 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     navigateTo(activeIndex - 1);
   }, [activeIndex, navigateTo]);
 
-  // Smooth auto-slide every 5 seconds
+  // Smooth auto-slide every 5.5 seconds (paused when dragging)
   useEffect(() => {
     if (isDragging) return;
     const timer = setInterval(() => {
-      navigateTo(activeIndex + 1);
-    }, 5000);
+      handleNext();
+    }, 5500);
     return () => clearInterval(timer);
-  }, [activeIndex, isDragging, navigateTo]);
+  }, [activeIndex, isDragging, handleNext]);
 
-  // Touch / Drag Handlers for mobile & desktop swiping
+  // Touch / Drag Handlers for mobile & desktop swiping with live drag follow
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
     setStartX(e.touches[0].clientX);
@@ -111,6 +110,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     setStartX(e.clientX);
     setDragOffset(0);
@@ -164,7 +164,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       <div className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
         
         {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
-        <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0">
+        <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0 pointer-events-none">
           <Image
             src="/images/heroimageone.png"
             alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
@@ -243,7 +243,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className="relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center cursor-grab active:cursor-grabbing"
+          className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${
+            isDragging ? "cursor-grabbing" : "cursor-grab"
+          }`}
         >
           {/* Elongated Golden Ellipse Frame */}
           <div className="absolute inset-0 w-full h-full pointer-events-none flex items-center justify-center px-1 sm:px-2">
@@ -323,7 +325,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               - Tablet (640-1024px): 5 Items ([-2, -1, 0, 1, 2])
               - Desktop (1024px+): 7 Items ([-3, -2, -1, 0, 1, 2, 3])
           */}
-          <div className="relative w-full max-w-6xl h-full flex items-center justify-center">
+          <div className="relative w-full max-w-6xl h-full flex items-center justify-center pointer-events-none">
             {visibleSlots.map((offset) => {
               const itemIndex = (activeIndex + offset + total * 100) % total;
               const product = displayProducts[itemIndex];
@@ -342,7 +344,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
               const xOffsetVw = getSlotXOffsetVw(offset);
 
-              // Size classes per breakpoint
+              // Size classes per breakpoint (Exact original styling)
               let sizeClasses = "";
               if (isCenter) {
                 sizeClasses = "w-[125px] h-[135px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
@@ -362,23 +364,32 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                   key={`${product._id || itemIndex}-${offset}`}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (Math.abs(dragOffset) > 5) return;
                     if (!isCenter) navigateTo(itemIndex);
                   }}
-                  className={`absolute top-1/2 left-1/2 ${
+                  className={`absolute top-1/2 left-1/2 pointer-events-auto ${
                     isCenter ? "cursor-pointer" : "cursor-pointer hover:opacity-100 hover:scale-105"
                   }`}
                   style={{
                     opacity,
                     zIndex,
-                    transition: "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
-                    transform: `translate(calc(-50% + ${xOffsetVw}vw), -50%)`,
+                    transition: isDragging 
+                      ? "none" 
+                      : "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
+                    transform: `translate(calc(-50% + ${xOffsetVw}vw + ${dragOffset}px), -50%)`,
                   }}
                 >
                   {isCenter ? (
                     /* ===== ACTIVE CENTER LENS WITH RADIANT GOLD DOUBLE RING ===== */
-                    <Link href={getProductUrl(product)} className="relative block group">
+                    <Link 
+                      href={getProductUrl(product)} 
+                      onClick={(e) => {
+                        if (Math.abs(dragOffset) > 5) e.preventDefault();
+                      }}
+                      className="relative block group"
+                    >
                       {/* Ambient Golden Glow Aura */}
-                      <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/35 rounded-[50%] blur-md animate-pulse" />
+                      <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/35 rounded-[50%] blur-md animate-pulse pointer-events-none" />
                       
                       {/* Concentric Double Gold Frame */}
                       <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_0_35px_rgba(197,147,69,0.5)]`}>
@@ -387,8 +398,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                             src={imgUrl}
                             alt={product.name}
                             fill
+                            draggable={false}
                             sizes="(max-width: 640px) 130px, (max-width: 1024px) 190px, 210px"
-                            className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                            className="object-cover object-center transition-transform duration-500 group-hover:scale-110 pointer-events-none"
                           />
                         </div>
                       </div>
@@ -397,7 +409,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     /* ===== FLANKING LENSES (INSIDE THE ELLIPSE) ===== */
                     <div className="relative group">
                       {/* Ambient soft glow */}
-                      <div className="absolute -inset-1 bg-white/10 rounded-[50%] blur-[2px]" />
+                      <div className="absolute -inset-1 bg-white/10 rounded-[50%] blur-[2px] pointer-events-none" />
                       
                       {/* Gold ring border */}
                       <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-md transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.45)]`}>
@@ -406,8 +418,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                             src={imgUrl}
                             alt={product.name}
                             fill
+                            draggable={false}
                             sizes="140px"
-                            className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                            className="object-cover object-center transition-transform duration-300 group-hover:scale-105 pointer-events-none"
                           />
                         </div>
                       </div>
@@ -420,7 +433,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         </div>
 
         {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
-        <div className="flex items-center justify-center gap-2 mt-2 text-center">
+        <div className="flex items-center justify-center gap-2 mt-2 text-center select-none">
           <svg 
             className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce" 
             viewBox="0 0 24 24" 
@@ -428,7 +441,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
             stroke="currentColor" 
             strokeWidth="2" 
             strokeLinecap="round" 
-            strokeLinejoin="round"
+            strokeLinejoin="round" 
           >
             <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
             <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />

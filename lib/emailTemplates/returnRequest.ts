@@ -113,7 +113,7 @@ export const returnRequestTemplate = (returnRequest: any, order: any) => {
 
         <!-- Footer -->
         <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 20px; text-align: center; font-size: 11px; color: #94a3b8;">
-          Talal Wooden Lamps • Support: concierge@talalwoodenlamps.com
+          Talal Wooden Lamp • Support: contact@talalwoodenlamp.com
         </div>
 
       </div>

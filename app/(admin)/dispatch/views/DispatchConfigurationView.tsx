@@ -107,8 +107,8 @@ export default function DispatchConfigurationView() {
     },
     sender_info: {
       from_name: "Talal Wooden Lamps",
-      from_email: "noreply@talalwoodenlamps.com",
-      reply_to: "support@talalwoodenlamps.com",
+      from_email: "noreply@talalwoodenlamp.com",
+      reply_to: "contact@talalwoodenlamp.com",
     },
   });
 

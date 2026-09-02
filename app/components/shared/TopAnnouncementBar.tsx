@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Sparkles, Truck, ShieldCheck, Tag, ChevronLeft, ChevronRight, Check, Copy } from "lucide-react";
+import { Sparkles, Truck, ShieldCheck, Tag, ChevronLeft, ChevronRight, Check, Copy, Lamp } from "lucide-react";
 
 interface ActiveCoupon {
   _id?: string;
@@ -47,11 +47,11 @@ export default function TopAnnouncementBar() {
       link: "/about",
     },
     {
-      id: "warranty",
-      icon: ShieldCheck,
-      desktopText: "7-Day Transit Damage Replacement & 1-Year Structural Guarantee",
-      mobileText: "7-Day Damage Replacement Guarantee",
-      link: "/refund-policy",
+      id: "home-lighting",
+      icon: Lamp,
+      desktopText: "Handcrafted Wooden Lighting, Made for Your Home",
+      mobileText: "Handcrafted Wooden Lighting",
+      link: "/products",
     },
   ]);
 
@@ -156,11 +156,11 @@ export default function TopAnnouncementBar() {
           link: "/about",
         },
         {
-          id: "warranty",
-          icon: ShieldCheck,
-          desktopText: "7-Day Transit Damage Replacement & 1-Year Structural Guarantee",
-          mobileText: "7-Day Damage Replacement Guarantee",
-          link: "/refund-policy",
+          id: "home-lighting",
+          icon: Lamp,
+          desktopText: "Handcrafted Wooden Lighting, Made for Your Home",
+          mobileText: "Handcrafted Wooden Lighting",
+          link: "/products",
         }
       );
 

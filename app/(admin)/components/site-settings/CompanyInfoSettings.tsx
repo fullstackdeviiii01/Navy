@@ -292,7 +292,7 @@ export default function CompanyInfoSettings() {
               type="email"
               value={formData.company_email}
               onChange={(e) => setFormData((prev) => ({ ...prev, company_email: e.target.value }))}
-              placeholder="concierge@talalwoodenlamps.com"
+              placeholder="contact@talalwoodenlamp.com"
               className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>
@@ -320,7 +320,7 @@ export default function CompanyInfoSettings() {
               type="url"
               value={formData.company_website}
               onChange={(e) => setFormData((prev) => ({ ...prev, company_website: e.target.value }))}
-              placeholder="https://talalwoodenlamps.com"
+              placeholder="https://talalwoodenlamp.com"
               className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
           </div>

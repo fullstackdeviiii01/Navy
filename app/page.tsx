@@ -10,7 +10,7 @@ import { getHomeDataSSR } from "../lib/api/home";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Handcrafted Wooden Lamps & Artisanal Lighting in Pakistan | Talal Wooden Lamps",
+    title: "Handcrafted Wooden Lamps & Artisanal Lighting in Pakistan | Talal Wooden Lamp",
     description:
       "Discover bespoke solid wood table lamps, lathe-turned floor lamps, rustic lanterns, and luxury ambient lighting. Handcrafted with seasoned timber. Free shipping nationwide.",
     keywords: [

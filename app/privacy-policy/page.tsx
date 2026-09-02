@@ -101,7 +101,7 @@ export default function PrivacyPolicyPage() {
       title: "5. Your Privacy Rights & Data Deletion",
       content: (
         <p>
-          You have full authority over your personal data. If you wish to update your saved addresses, download a copy of your purchase history, or request full deletion of your account and personal records, please reach out to our privacy desk at <strong>support@talalwoodenlamps.com</strong>.
+          You have full authority over your personal data. If you wish to update your saved addresses, download a copy of your purchase history, or request full deletion of your account and personal records, please reach out to our privacy desk at <strong>contact@talalwoodenlamp.com</strong>.
         </p>
       ),
     },

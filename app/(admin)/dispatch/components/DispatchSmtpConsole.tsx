@@ -43,7 +43,7 @@ export default function DispatchSmtpConsole({
           </label>
           <input
             type="text"
-            placeholder="smtp.gmail.com or mail.talalwoodenlamps.com"
+            placeholder="smtp.gmail.com or mail.talalwoodenlamp.com"
             value={smtpSettings.host}
             onChange={(e) => onSMTPChange("host", e.target.value)}
             required
@@ -71,7 +71,7 @@ export default function DispatchSmtpConsole({
           </label>
           <input
             type="text"
-            placeholder="dispatch@talalwoodenlamps.com"
+            placeholder="dispatch@talalwoodenlamp.com"
             value={smtpSettings.auth_user}
             onChange={(e) => onSMTPChange("auth_user", e.target.value)}
             required

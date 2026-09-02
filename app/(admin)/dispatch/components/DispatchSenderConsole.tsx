@@ -55,7 +55,7 @@ export default function DispatchSenderConsole({
           </label>
           <input
             type="email"
-            placeholder="orders@talalwoodenlamps.com"
+            placeholder="orders@talalwoodenlamp.com"
             value={senderInfo.from_email}
             onChange={(e) => onSenderInfoChange("from_email", e.target.value)}
             required
@@ -69,7 +69,7 @@ export default function DispatchSenderConsole({
           </label>
           <input
             type="email"
-            placeholder="support@talalwoodenlamps.com"
+            placeholder="contact@talalwoodenlamp.com"
             value={senderInfo.reply_to}
             onChange={(e) => onSenderInfoChange("reply_to", e.target.value)}
             className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"

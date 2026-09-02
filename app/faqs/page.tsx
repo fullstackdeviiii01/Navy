@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default function FAQ() {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://talalwoodenlamps.com";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://talalwoodenlamp.com";
 
   // Google Rich Snippet FAQPage Schema.org JSON-LD
   const faqJsonLd = {

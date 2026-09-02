@@ -125,6 +125,17 @@ async function cleanDatabase() {
       console.log(`✓ User shopping stats & embedded carts/wishlists reset: ${usersRes.modifiedCount} users updated`);
     }
 
+    // 12. Delete Newsletter Subscribers & Campaigns
+    if (allCollections.some((c) => c.name === "newslettersubscribers")) {
+      const subRes = await db.collection("newslettersubscribers").deleteMany({});
+      console.log(`✓ Newsletter subscribers deleted: ${subRes.deletedCount}`);
+    }
+
+    if (allCollections.some((c) => c.name === "newslettercampaigns")) {
+      const campRes = await db.collection("newslettercampaigns").deleteMany({});
+      console.log(`✓ Newsletter campaigns deleted: ${campRes.deletedCount}`);
+    }
+
     console.log("\n--- POST-CLEANUP VERIFICATION ---\n");
     for (const col of allCollections) {
       const count = await db.collection(col.name).countDocuments();

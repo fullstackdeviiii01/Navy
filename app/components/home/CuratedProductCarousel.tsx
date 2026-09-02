@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Heart, Loader2, Check, ArrowRight, ShoppingC
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
+import { trackAddToCart } from "../../../lib/meta/pixel";
 import { useUser } from "../../context/UserContext";
 import { useWishlist } from "../../context/WishlistContext";
 
@@ -87,6 +88,14 @@ export default function CuratedProductCarousel({
       if (res.ok) {
         await refreshCart();
         setAddedId(product._id);
+        const itemPrice = product.pricing?.price || product.variantPricing?.minPrice || 0;
+        trackAddToCart({
+          content_ids: [product._id],
+          content_name: product.name,
+          value: itemPrice,
+          currency: "PKR",
+          quantity: 1,
+        });
         setTimeout(() => setAddedId(null), 1800);
         openCart();
       }

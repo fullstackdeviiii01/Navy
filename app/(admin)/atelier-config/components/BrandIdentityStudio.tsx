@@ -338,43 +338,35 @@ export default function BrandIdentityStudio() {
                   company_email: e.target.value,
                 }))
               }
-              placeholder="support@talalwoodenlamps.com"
-              className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+              placeholder="contact@talalwoodenlamp.com"
+              className="w-full px-3 py-2 border border-stone-200 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light mb-1.5">
-              Support Phone Number
+            <label htmlFor="company-phone" className="block text-xs sm:text-sm font-medium text-stone-600 dark:text-stone-300 mb-1.5">
+              Support Phone / WhatsApp
             </label>
             <input
+              id="company-phone"
               type="tel"
               value={formData.company_phone}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  company_phone: e.target.value,
-                }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, company_phone: e.target.value }))}
               placeholder="+92 300 9692765"
-              className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
+              className="w-full px-3 py-2 border border-stone-200 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light mb-1.5">
-              Website URL
+            <label htmlFor="company-website" className="block text-xs sm:text-sm font-medium text-stone-600 dark:text-stone-300 mb-1.5">
+              Official Website URL
             </label>
             <input
+              id="company-website"
               type="url"
               value={formData.company_website}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  company_website: e.target.value,
-                }))
-              }
-              placeholder="https://talalwoodenlamps.com"
+              onChange={(e) => setFormData((prev) => ({ ...prev, company_website: e.target.value }))}
+              placeholder="https://talalwoodenlamp.com"
               className="w-full px-3.5 py-2 text-xs sm:text-sm border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-neutral-500/40"
             />
           </div>

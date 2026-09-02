@@ -17,9 +17,9 @@ import {
 export const metadata: Metadata = {
   title: "Our Artisanal Heritage & Sustainable Timber Craftsmanship",
   description:
-    "Discover the story behind Talal Wooden Lamps. The art of turning seasoned solid hardwoods into timeless lighting heirlooms through master lathe work and natural botanical oil finishes.",
+    "Discover the story behind Talal Wooden Lamp. The art of turning seasoned solid hardwoods into timeless lighting heirlooms through master lathe work and natural botanical oil finishes.",
   keywords: [
-    "about talal wooden lamps",
+    "about talal wooden lamp",
     "wooden lamp craftsmanship",
     "artisanal woodturning pakistan",
     "sheesham wood lighting atelier",

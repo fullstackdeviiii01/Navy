@@ -69,7 +69,7 @@ export default function DispatchNotificationMatrix({
             </label>
             <input
               type="email"
-              placeholder="orders@talalwoodenlamps.com"
+              placeholder="orders@talalwoodenlamp.com"
               value={emailNotifications.order_confirmation?.admin_email || ""}
               onChange={(e) =>
                 onNotificationsChange(
@@ -242,7 +242,7 @@ export default function DispatchNotificationMatrix({
             </label>
             <input
               type="email"
-              placeholder="returns@talalwoodenlamps.com"
+              placeholder="returns@talalwoodenlamp.com"
               value={emailNotifications.return_notifications?.admin_email || ""}
               onChange={(e) =>
                 onNotificationsChange(
@@ -416,7 +416,7 @@ export default function DispatchNotificationMatrix({
             </label>
             <input
               type="email"
-              placeholder="support@talalwoodenlamps.com"
+              placeholder="contact@talalwoodenlamp.com"
               value={emailNotifications.contact_form?.recipient_email || ""}
               onChange={(e) =>
                 onNotificationsChange(

@@ -9,6 +9,7 @@ import { FaSearch, FaSpinner, FaTimes, FaTag, FaBox } from "react-icons/fa";
 import { searchApi } from "../../../lib/api/search";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
+import { getProductUrl } from "../../../lib/utils/productUrl";
 
 interface SearchResult {
   products: Array<{
@@ -40,6 +41,28 @@ interface SearchBarProps {
   className?: string;
 }
 
+function getValidSearchImageUrl(product: any): string | null {
+  if (!product) return null;
+  let candidate = "";
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    const valid = product.images.find((img: any) => {
+      const url = typeof img === "string" ? img : img?.url;
+      if (!url || typeof url !== "string") return false;
+      const isVid = /\.(mp4|webm|ogg|mov|mkv)$/i.test(url) || url.toLowerCase().includes("/video/");
+      return !isVid;
+    });
+    candidate = typeof valid === "string" ? valid : valid?.url || "";
+  } else if (typeof product.image === "string") {
+    candidate = product.image;
+  }
+
+  if (!candidate || typeof candidate !== "string") return null;
+  const isVideo = /\.(mp4|webm|ogg|mov|mkv)$/i.test(candidate) || candidate.toLowerCase().includes("/video/");
+  if (isVideo) return null;
+
+  return candidate.trim() || null;
+}
+
 export default function SearchBar({ className = "" }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult>({
@@ -51,7 +74,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  
+
   // Debounced search
   useEffect(() => {
     const delaySearch = setTimeout(async () => {
@@ -215,56 +238,33 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
               </div>
               <div className="py-1">
                 {results.products.map((product) => {
-                  const productImg = getProductMainImage(product);
+                  const imageUrl = getValidSearchImageUrl(product);
                   return (
                     <Link
                       key={product._id}
-                      href={`/product/${product._id}`}
+                      href={getProductUrl(product)}
                       onClick={handleResultClick}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-left transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0"
                     >
-                      {productImg ? (
-                        <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                          <Image
-                            src={productImg}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
+                      {imageUrl && (
+                        <div className="relative w-10 h-10 flex-shrink-0 rounded-[2px] overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                          <img
+                            src={imageUrl}
+                            alt={product.name || "Product"}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) parent.style.display = "none";
+                            }}
                           />
                         </div>
-                      ) : (
-                        <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                          <FaBox className="text-gray-400 dark:text-gray-500" />
-                        </div>
                       )}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 dark:text-white truncate">
-                        {product.name}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <p className="text-sm font-semibold text-theme-primary">
-                          {formatPrice(
-                            product.pricing?.price || (product as any).variantPricing?.minPrice || 0
-                          )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-gray-900 dark:text-white hover:text-theme-primary truncate">
+                          {product.name}
                         </p>
-                        {product.category_id && (
-                          <>
-                            <span className="text-gray-300 dark:text-gray-600">
-                              •
-                            </span>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                              {product.category_id.name}
-                            </p>
-                          </>
-                        )}
                       </div>
-                    </div>
-                    {product.inventory.stock_status === "out_of_stock" && (
-                      <span className="text-xs px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded">
-                        Out of Stock
-                      </span>
-                    )}
-                  </Link>
+                    </Link>
                   );
                 })}
               </div>

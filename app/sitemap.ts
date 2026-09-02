@@ -6,7 +6,7 @@ import Category from "./models/Category";
 import { getProductUrl } from "../lib/utils/productUrl";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://talalwoodenlamps.com";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://talalwoodenlamp.com";
   const now = new Date();
 
   // 1. Static Public Routes

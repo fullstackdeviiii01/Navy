@@ -14,18 +14,20 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://talalwoodenlamps.com";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://talalwoodenlamp.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Talal Wooden Lamps | Handcrafted Solid Wood Lighting & Luminaires",
-    template: "%s | Talal Wooden Lamps",
+    default: "Talal Wooden Lamp | Handcrafted Solid Wood Lighting & Luminaires",
+    template: "%s | Talal Wooden Lamp",
   },
   description:
     "Discover bespoke handcrafted solid wood table lamps, lathe-turned floor lamps, rustic lanterns, and luxury ambient lighting in Pakistan. Crafted with seasoned Sheesham and Teak wood. Free nationwide delivery.",
   keywords: [
+    "wooden lamp",
     "wooden lamps",
+    "talal wooden lamp",
     "handcrafted wooden lamps",
     "solid wood table lamp",
     "lathe turned lamps",
@@ -33,14 +35,13 @@ export const metadata: Metadata = {
     "ambient lighting",
     "sheesham wood lamps",
     "teak lamps",
-    "talal wooden lamps",
     "luxury lighting atelier",
     "rustic wooden lights",
     "natural timber decor",
   ],
-  authors: [{ name: "Talal Wooden Lamps", url: siteUrl }],
-  creator: "Talal Wooden Lamps",
-  publisher: "Talal Wooden Lamps",
+  authors: [{ name: "Talal Wooden Lamp", url: siteUrl }],
+  creator: "Talal Wooden Lamp",
+  publisher: "Talal Wooden Lamp",
   formatDetection: {
     email: false,
     address: false,
@@ -53,8 +54,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_PK",
     url: siteUrl,
-    siteName: "Talal Wooden Lamps",
-    title: "Talal Wooden Lamps | Handcrafted Solid Wood Lighting & Luminaires",
+    siteName: "Talal Wooden Lamp",
+    title: "Talal Wooden Lamp | Handcrafted Solid Wood Lighting & Luminaires",
     description:
       "Artisanal solid wood table lamps, floor lamps, and bespoke ambient luminaires handcrafted in Pakistan.",
     images: [
@@ -62,13 +63,13 @@ export const metadata: Metadata = {
         url: "/images/heroimageone.png",
         width: 1200,
         height: 630,
-        alt: "Talal Wooden Lamps - Handcrafted Solid Wood Table Lamp with Warm Ambient Glow",
+        alt: "Talal Wooden Lamp - Handcrafted Solid Wood Table Lamp with Warm Ambient Glow",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Talal Wooden Lamps | Handcrafted Solid Wood Lighting",
+    title: "Talal Wooden Lamp | Handcrafted Solid Wood Lighting",
     description:
       "Artisanal solid wood table lamps, floor lamps, and bespoke ambient luminaires handcrafted in Pakistan.",
     images: ["/images/heroimageone.png"],
@@ -112,7 +113,7 @@ export default async function RootLayout({
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Talal Wooden Lamps",
+    name: "Talal Wooden Lamp",
     url: siteUrl,
     logo: `${siteUrl}/images/logo.png`,
     description:
@@ -124,6 +125,7 @@ export default async function RootLayout({
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
+      email: "contact@talalwoodenlamp.com",
       availableLanguage: ["English", "Urdu"],
     },
   };
@@ -131,7 +133,7 @@ export default async function RootLayout({
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Talal Wooden Lamps",
+    name: "Talal Wooden Lamp",
     url: siteUrl,
     potentialAction: {
       "@type": "SearchAction",

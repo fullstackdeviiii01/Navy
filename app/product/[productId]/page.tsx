@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { productId } = await params;
   const meta = await getProductMetadata(productId);
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://talalwoodenlamps.com";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://talalwoodenlamp.com";
   const canonicalUrl = `${siteUrl}${getProductUrl(meta.product || { _id: productId })}`;
 
   return {
@@ -61,7 +61,7 @@ export default async function ProductDetail({
   const { productId } = await params;
   const meta = await getProductMetadata(productId);
   const product = meta.product;
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://talalwoodenlamps.com";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://talalwoodenlamp.com";
 
   // Product Schema.org JSON-LD Structured Data
   const productJsonLd = product
