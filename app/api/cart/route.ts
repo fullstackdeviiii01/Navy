@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     }
 
 
-    let price = product.pricing?.price || 0;
+    let price = Math.round(product.pricing?.price || 0);
     let stockQuantity = product.inventory?.stock_quantity || 99;
     let variantAttributes: Record<string, string> = clientAttributes || {};
 
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      price = variant.price;
+      price = Math.round(variant.price);
       stockQuantity = typeof variant.stockQuantity === "number" ? variant.stockQuantity : stockQuantity;
 
       if (variant.attributes && Array.isArray(variant.attributes)) {

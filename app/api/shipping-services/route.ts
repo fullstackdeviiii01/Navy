@@ -7,11 +7,17 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
 
-    const services = await ShippingService.find({ is_active: true })
-      .sort({ sort_order: 1, base_price: 1, created_at: -1 })
-      .select(
-        "name display_name description base_price currency estimated_days_min estimated_days_max"
-      )
+    // Clean up any accidental courier entries if any
+    await ShippingService.deleteMany({
+      $or: [{ name: "mp_express" }, { display_name: /M&P Express/i }],
+    });
+
+    const services = await ShippingService.find({
+      is_active: true,
+      name: { $ne: "mp_express" },
+      display_name: { $not: /M&P Express/i },
+    })
+      .sort({ sort_order: 1, created_at: 1 })
       .lean();
 
     return NextResponse.json({ services });

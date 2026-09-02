@@ -1,5 +1,11 @@
 // lib/emailTemplates/orderConfirmation.ts
 export const orderConfirmationTemplate = (order: any) => {
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXTAUTH_URL ||
+    "https://talalwoodenlamp.com"
+  ).replace(/\/$/, "");
+
   const customerName =
     order.order_type === "guest"
       ? order.guest_info?.name
@@ -14,6 +20,16 @@ export const orderConfirmationTemplate = (order: any) => {
       ? "JazzCash Mobile Wallet"
       : order.payment_method?.toUpperCase() || "Standard Payment";
 
+  const paymentStatusLabel =
+    order.payment_status === "paid"
+      ? "PAID"
+      : order.payment_status === "pending"
+      ? "PENDING VERIFICATION"
+      : (order.payment_status || "PENDING").toUpperCase();
+
+  const paymentStatusColor =
+    order.payment_status === "paid" ? "#16a34a" : "#b45309";
+
   const itemsHtml = (order.items || [])
     .map((item: any) => {
       const attributes = item.variant_attributes
@@ -24,14 +40,14 @@ export const orderConfirmationTemplate = (order: any) => {
 
       return `
         <tr>
-          <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #1f2937;">
-            <strong>${item.product_name || "Handcrafted Luminaire"}</strong>
-            ${attributes ? `<div style="font-size: 11px; color: #6b7280; margin-top: 2px;">${attributes}</div>` : ""}
+          <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #1e293b;">
+            <strong style="color: #0f172a;">${item.product_name || "Handcrafted Luminaire"}</strong>
+            ${attributes ? `<div style="font-size: 11px; color: #64748b; margin-top: 3px;">${attributes}</div>` : ""}
           </td>
-          <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #1f2937; text-align: center;">
+          <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; text-align: center; font-weight: 500;">
             ${item.quantity}
           </td>
-          <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #1f2937; text-align: right; font-weight: 600;">
+          <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #0f172a; text-align: right; font-weight: 600; font-family: monospace;">
             Rs. ${(item.price * item.quantity).toLocaleString()}
           </td>
         </tr>
@@ -48,59 +64,71 @@ export const orderConfirmationTemplate = (order: any) => {
       <title>Order Confirmation - ${order.order_number}</title>
     </head>
     <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; background-color: #f8fafc;">
-      <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);">
+      <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);">
         
         <!-- Header -->
-        <div style="background: #18181b; padding: 26px 20px; text-align: center; color: #ffffff;">
-          <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.25em; text-transform: uppercase; color: #c99648; display: block; margin-bottom: 4px;">
+        <div style="background: #18181b; padding: 30px 24px; text-align: center; color: #ffffff;">
+          <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.25em; text-transform: uppercase; color: #c99648; display: block; margin-bottom: 6px;">
             TALAL WOODEN LAMPS • HEIRLOOM LIGHTING
           </span>
-          <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">
             Thank You For Your Order
           </h1>
-          <div style="margin-top: 8px; display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #fef08a;">
+          <div style="margin-top: 10px; display: inline-block; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); padding: 5px 14px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #fef08a;">
             Order #${order.order_number}
           </div>
         </div>
 
         <!-- Body -->
-        <div style="padding: 22px;">
-          <p style="margin: 0 0 16px; font-size: 14px; color: #374151;">
+        <div style="padding: 26px 24px;">
+          <p style="margin: 0 0 14px; font-size: 14px; color: #1e293b;">
             Dear <strong>${customerName}</strong>,
           </p>
-          <p style="margin: 0 0 18px; font-size: 13px; color: #4b5563; line-height: 1.5;">
+          <p style="margin: 0 0 20px; font-size: 13px; color: #475569; line-height: 1.55;">
             We have received your order. Our artisans are preparing your handcrafted luminaire with the utmost care and precision.
           </p>
 
-          <!-- Order Summary Meta Card -->
-          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; margin-bottom: 20px; font-size: 12px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #64748b;">Payment Method:</span>
-              <span style="font-weight: 600; color: #0f172a;">${paymentMethodLabel}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #64748b;">Payment Status:</span>
-              <span style="font-weight: 600; text-transform: uppercase; color: ${order.payment_status === "paid" ? "#16a34a" : "#ca8a04"};">${order.payment_status || "Pending"}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #64748b;">Delivery Destination:</span>
-              <span style="font-weight: 600; color: #0f172a; text-align: right; max-width: 60%;">
-                ${order.shipping_address?.address_line1 || ""}, ${order.shipping_address?.city || ""}
-              </span>
-            </div>
-          </div>
+          <!-- Order Summary Meta Table (Email-Client Safe Table Layout) -->
+          <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 22px; font-size: 13px;">
+            <tbody>
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; width: 40%; border-bottom: 1px solid #f1f5f9;">
+                  Payment Method:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                  ${paymentMethodLabel}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">
+                  Payment Status:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 700; color: ${paymentStatusColor}; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                  ${paymentStatusLabel}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; vertical-align: top;">
+                  Delivery Destination:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 600; color: #0f172a; text-align: right;">
+                  ${[order.shipping_address?.address_line1, order.shipping_address?.city].filter(Boolean).join(", ") || "Pakistan"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <!-- Items Table -->
-          <div style="margin-bottom: 18px;">
-            <span style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #475569; letter-spacing: 0.12em; display: block; margin-bottom: 6px;">
+          <div style="margin-bottom: 20px;">
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #475569; letter-spacing: 0.12em; display: block; margin-bottom: 8px;">
               ACQUISITION SUMMARY
             </span>
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
               <thead>
                 <tr style="background-color: #f1f5f9;">
-                  <th style="padding: 7px 8px; font-size: 11px; text-transform: uppercase; text-align: left; color: #64748b; border-bottom: 1px solid #e2e8f0;">Piece</th>
-                  <th style="padding: 7px 8px; font-size: 11px; text-transform: uppercase; text-align: center; color: #64748b; border-bottom: 1px solid #e2e8f0;">Qty</th>
-                  <th style="padding: 7px 8px; font-size: 11px; text-transform: uppercase; text-align: right; color: #64748b; border-bottom: 1px solid #e2e8f0;">Amount</th>
+                  <th style="padding: 9px 10px; font-size: 11px; text-transform: uppercase; text-align: left; color: #475569; border-bottom: 1px solid #e2e8f0;">Piece</th>
+                  <th style="padding: 9px 10px; font-size: 11px; text-transform: uppercase; text-align: center; color: #475569; border-bottom: 1px solid #e2e8f0;">Qty</th>
+                  <th style="padding: 9px 10px; font-size: 11px; text-transform: uppercase; text-align: right; color: #475569; border-bottom: 1px solid #e2e8f0;">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,32 +137,40 @@ export const orderConfirmationTemplate = (order: any) => {
             </table>
           </div>
 
-          <!-- Totals Card -->
-          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 22px; font-size: 12px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="color: #64748b;">Subtotal:</span>
-              <span>Rs. ${(order.pricing?.subtotal || 0).toLocaleString()}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #64748b;">Courier Shipping:</span>
-              <span>${order.pricing?.shipping_cost === 0 ? "Complimentary" : `Rs. ${(order.pricing?.shipping_cost || 0).toLocaleString()}`}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px solid #e2e8f0; padding-top: 6px; color: #0f172a;">
-              <span>Grand Total:</span>
-              <span style="color: #c99648;">Rs. ${(order.pricing?.total || 0).toLocaleString()}</span>
-            </div>
-          </div>
+          <!-- Totals Table -->
+          <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; font-size: 13px;">
+            <tbody>
+              <tr>
+                <td style="padding: 8px 14px; color: #64748b;">Subtotal:</td>
+                <td style="padding: 8px 14px; text-align: right; font-weight: 500; color: #0f172a; font-family: monospace;">
+                  Rs. ${(order.pricing?.subtotal || 0).toLocaleString()}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 14px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Shipping:</td>
+                <td style="padding: 8px 14px; text-align: right; font-weight: 500; color: #0f172a; border-bottom: 1px solid #e2e8f0;">
+                  ${order.pricing?.shipping_cost === 0 ? "Complimentary" : `Rs. ${(order.pricing?.shipping_cost || 0).toLocaleString()}`}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 14px; font-size: 14px; font-weight: 700; color: #0f172a;">Grand Total:</td>
+                <td style="padding: 12px 14px; font-size: 15px; font-weight: 700; color: #c99648; text-align: right; font-family: monospace;">
+                  Rs. ${(order.pricing?.total || 0).toLocaleString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-          <!-- Track Order CTA -->
-          <div style="text-align: center; margin-top: 20px; margin-bottom: 8px;">
-            <a href="http://localhost:3000/order-confirmation/${order._id}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 11px 26px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; border-radius: 4px;">
+          <!-- Track Order CTA Button -->
+          <div style="text-align: center; margin-top: 24px; margin-bottom: 10px;">
+            <a href="${baseUrl}/order-confirmation/${order._id}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 12px 30px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               Track Order Status &rarr;
             </a>
           </div>
         </div>
 
         <!-- Footer -->
-        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px; text-align: center; font-size: 11px; color: #94a3b8;">
+        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 20px; text-align: center; font-size: 11px; color: #94a3b8;">
           Talal Wooden Lamps • Support: concierge@talalwoodenlamps.com
         </div>
 

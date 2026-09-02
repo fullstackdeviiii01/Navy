@@ -7,20 +7,22 @@ process.chdir(__dirname);
 process.env.PWD = __dirname;
 process.env.NODE_ENV = "production";
 
-// 2. Add local node_modules to module search paths
+// 2. Load environment variables (.env.local, .env)
+try {
+  const dotenv = require("dotenv");
+  dotenv.config({ path: path.join(__dirname, ".env.local") });
+  dotenv.config({ path: path.join(__dirname, ".env") });
+} catch (_) {}
+
+process.env.NEXT_PUBLIC_META_PIXEL_ID =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || "3244071132470552";
+
+// 3. Add local node_modules to module search paths
 const appNodeModules = path.join(__dirname, "node_modules");
-const venvNodeModules = "/home/xpepnwin/nodevenv/talalwoodenlamp/20/lib/node_modules";
-
 module.paths.unshift(appNodeModules);
-module.paths.unshift(venvNodeModules);
-
-process.env.NODE_PATH = [
-  appNodeModules,
-  venvNodeModules,
-  process.env.NODE_PATH || ""
-].filter(Boolean).join(":");
-
+process.env.NODE_PATH = [appNodeModules, process.env.NODE_PATH || ""].filter(Boolean).join(":");
 require("module").Module._initPaths();
+
 
 // 3. Auto-heal all directory and file permissions recursively
 function fixPermissions(targetDir) {

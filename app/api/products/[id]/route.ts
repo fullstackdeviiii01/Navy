@@ -59,24 +59,64 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const body = await request.json();
     const newCategoryId = body.category_id?.toString();
 
+    // Sanitize & enforce non-negative stock and pricing
+    if (body.inventory) {
+      if (body.inventory.stock_quantity !== undefined) {
+        body.inventory.stock_quantity = Math.max(0, parseInt(body.inventory.stock_quantity) || 0);
+      }
+      if (body.inventory.low_stock_threshold !== undefined) {
+        body.inventory.low_stock_threshold = Math.max(0, parseInt(body.inventory.low_stock_threshold) || 0);
+      }
+    }
+
+    if (body.pricing) {
+      if (body.pricing.price !== undefined) {
+        body.pricing.price = Math.max(0, parseFloat(body.pricing.price) || 0);
+      }
+      if (body.pricing.compare_at_price !== undefined && body.pricing.compare_at_price !== null) {
+        body.pricing.compare_at_price = Math.max(0, parseFloat(body.pricing.compare_at_price) || 0);
+      }
+    }
+
+    if (Array.isArray(body.variants)) {
+      body.variants = body.variants.map((v: any) => ({
+        ...v,
+        stockQuantity: Math.max(0, parseInt(v.stockQuantity) || 0),
+        price: Math.max(0, parseFloat(v.price) || 0),
+        lowStockThreshold: Math.max(0, parseInt(v.lowStockThreshold) || 10),
+      }));
+    }
+
     body.updated_by = adminUser._id;
     product.set(body);
+
+    // Also sanitize any existing variants on document
+    if (Array.isArray(product.variants)) {
+      product.variants.forEach((v: any) => {
+        if (v.stockQuantity !== undefined && v.stockQuantity < 0) v.stockQuantity = 0;
+        if (v.price !== undefined && v.price < 0) v.price = 0;
+      });
+    }
+
     product.markModified("variantOptions");
     product.markModified("variants");
     product.markModified("images");
     product.markModified("videos");
     product.markModified("attributes");
+    
+    if (product.hasVariants) {
+      await product.syncVariantData();
+    }
+
     await product.save();
 
     // Update product counts if category changed
     if (newCategoryId && oldCategoryId !== newCategoryId) {
-      // Update old category
       const oldCategory = await Category.findById(oldCategoryId);
       if (oldCategory) {
         await (oldCategory as any).updateProductCount();
       }
       
-      // Update new category
       const newCategory = await Category.findById(newCategoryId);
       if (newCategory) {
         await (newCategory as any).updateProductCount();
@@ -96,10 +136,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         { status: 400 }
       );
     }
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    if (error.name === "ValidationError") {
+      return NextResponse.json(
+        { error: "Validation failed: " + Object.values(error.errors).map((e: any) => e.message).join(", ") },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json(
+      { error: error.message || "Failed to update product" },
+      { status: 500 }
+    );
   }
 }
-
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -141,7 +189,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     // Delete associated media files
     const mediaResults = await deleteProductMedia(imageUrls, videoUrls);
-    
 
     // Update category product count
     if (categoryId) {

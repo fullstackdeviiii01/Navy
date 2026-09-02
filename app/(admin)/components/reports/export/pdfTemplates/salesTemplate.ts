@@ -6,13 +6,14 @@ export function generateSalesHTML(
   dateRange: string,
   logoUrl?: string
 ): string {
-  const summary = data?.summary || {
+  const report = data?.data || data || {};
+  const summary = report.summary || {
     totalRevenue: 0,
     totalOrders: 0,
     averageOrderValue: 0,
   };
 
-  const topProducts = data?.topProducts || [];
+  const topProducts = report.topProducts || [];
   const rangeLabel = getRangeLabel(dateRange);
 
   return `
@@ -74,7 +75,7 @@ export function generateSalesHTML(
                 <td>
                   <div style="font-weight: 600; color: #241910;">${product.name || "Wooden Lamp"}</div>
                 </td>
-                <td class="text-right" style="font-weight: 600;">${product.quantity || 0}</td>
+                <td class="text-right" style="font-weight: 600;">${product.quantity || product.unitsSold || 0}</td>
                 <td class="text-right" style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #241910;">Rs. ${Math.round(product.revenue || 0).toLocaleString()}</td>
               </tr>
             `

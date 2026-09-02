@@ -74,7 +74,8 @@ export default function ReviewForm({
       }
 
       const data = await response.json();
-      setImages([...images, { url: data.url, caption: "" }]);
+      const uploadedUrl = data.url || data.imageUrl || data.fileUrl;
+      setImages([...images, { url: uploadedUrl, caption: "" }]);
     } catch (error: any) {
       setError(error.message || "Failed to upload photo");
     } finally {

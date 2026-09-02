@@ -66,7 +66,7 @@ export default function PatronAnalyticsStudio({
             Customer Analytics & Spending
           </h2>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-            Overview of new customer signups, average order values, and top spending customers.
+            Overview of customer acquisition, average order frequency, and top patron spending.
           </p>
         </div>
 
@@ -87,7 +87,7 @@ export default function PatronAnalyticsStudio({
             Total Customers
           </span>
           <p className="text-xl sm:text-2xl font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-            {report.totalCustomers || 0}
+            {report.totalCustomers || report.activeCustomers || 0}
           </p>
         </div>
 
@@ -105,13 +105,13 @@ export default function PatronAnalyticsStudio({
             Average Customer Spending
           </span>
           <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-            Rs. {Math.round(report.averageSpent || 0).toLocaleString()}
+            Rs. {Math.round(report.averageSpent || report.averageRevenuePerCustomer || 0).toLocaleString()}
           </p>
         </div>
       </div>
 
       {/* Top Spenders */}
-      {report.topCustomers && report.topCustomers.length > 0 && (
+      {report.topCustomers && report.topCustomers.length > 0 ? (
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
           <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -128,24 +128,28 @@ export default function PatronAnalyticsStudio({
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
-              {report.topCustomers.slice(0, 10).map((cust: any, i: number) => (
+              {report.topCustomers.slice(0, 15).map((cust: any, i: number) => (
                 <tr key={i} className="hover:bg-theme-card-light/30">
                   <td className="py-3 px-4 font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
                     {cust.name}
                   </td>
-                  <td className="py-3 px-4 text-theme-text-muted-light">
-                    {cust.email}
+                  <td className="py-3 px-4 text-theme-text-muted-light font-mono text-[11px]">
+                    {cust.email || "Guest"}
                   </td>
-                  <td className="py-3 px-4 text-theme-text-secondary-light">
-                    {cust.orders} orders
+                  <td className="py-3 px-4 text-theme-text-secondary-light font-medium">
+                    {cust.orders} {cust.orders === 1 ? "order" : "orders"}
                   </td>
                   <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                    Rs. {cust.totalSpent?.toLocaleString()}
+                    Rs. {Math.round(cust.totalSpent || cust.revenue || 0).toLocaleString()}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      ) : (
+        <div className="p-8 text-center bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark text-xs text-theme-text-muted-light">
+          No customer order telemetry recorded for this reporting period.
         </div>
       )}
     </div>

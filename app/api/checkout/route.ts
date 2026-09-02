@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
         !proof_url ||
         typeof proof_url !== "string" ||
         proof_url.trim().length < 5 ||
-        (!proof_url.startsWith("/uploads/payment-proofs/") &&
+        (!proof_url.startsWith("/api/media/uploads/payment-proofs/") &&
+         !proof_url.startsWith("/uploads/payment-proofs/") &&
          !proof_url.startsWith("data:image/") &&
          !proof_url.startsWith("http"))
       ) {
@@ -162,28 +163,31 @@ export async function POST(request: NextRequest) {
         );
         if (variant) {
           itemPrice = variant.price;
-          // Decrement stock in background
-          await (Product as any).updateOne(
-            { _id: product._id, "variants._id": item.variant_id },
-            {
-              $inc: {
-                "variants.$.stockQuantity": -item.quantity,
-                "inventory.stock_quantity": -item.quantity,
-                "variantInventory.totalStock": -item.quantity,
-              },
-              $set: { updated_at: new Date() },
+          // Decrement stock safely (clamp to minimum 0)
+          const targetProduct = await (Product as any).findById(product._id);
+          if (targetProduct) {
+            const vIndex = targetProduct.variants.findIndex(
+              (v: any) => v._id?.toString() === item.variant_id?.toString()
+            );
+            if (vIndex !== -1) {
+              const currentStock = targetProduct.variants[vIndex].stockQuantity || 0;
+              targetProduct.variants[vIndex].stockQuantity = Math.max(0, currentStock - item.quantity);
+              await targetProduct.syncVariantData();
+              await targetProduct.save();
             }
-          );
+          }
         }
       } else {
-        // Decrement stock in background
-        await (Product as any).updateOne(
-          { _id: product._id },
-          {
-            $inc: { "inventory.stock_quantity": -item.quantity },
-            $set: { updated_at: new Date() },
+        // Decrement stock safely for simple products
+        const targetProduct = await (Product as any).findById(product._id);
+        if (targetProduct) {
+          const currentStock = targetProduct.inventory?.stock_quantity || 0;
+          targetProduct.inventory.stock_quantity = Math.max(0, currentStock - item.quantity);
+          if (targetProduct.inventory.stock_quantity === 0) {
+            targetProduct.inventory.stock_status = "out_of_stock";
           }
-        );
+          await targetProduct.save();
+        }
       }
 
       const matchedVariant = product.hasVariants && item.variant_id
@@ -199,8 +203,8 @@ export async function POST(request: NextRequest) {
         product_name: product.name,
         product_image: resolvedItemImage,
         quantity: item.quantity,
-        price: itemPrice,
-        subtotal: itemPrice * item.quantity,
+        price: Math.round(itemPrice),
+        subtotal: Math.round(itemPrice * item.quantity),
       });
     }
 
@@ -212,8 +216,9 @@ export async function POST(request: NextRequest) {
     await cart.calculateTotals(couponDoc, shippingServiceDoc);
 
     // ── Pricing ───────────────────────────────────────────────────────────────
-    const finalTotal =
-      cart.subtotal - cart.discount_amount + cart.tax_amount + cart.shipping_cost;
+    const finalTotal = Math.round(
+      cart.subtotal - cart.discount_amount + cart.tax_amount + cart.shipping_cost
+    );
 
     // ── Build order ───────────────────────────────────────────────────────────
     const orderData: any = {

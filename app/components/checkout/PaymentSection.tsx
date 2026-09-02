@@ -107,6 +107,7 @@ export default function PaymentSection({
       setUploadingProof(true);
       try {
         const proofUrl = await uploadProof(proofFile);
+        setUploadingProof(false);
         await createOrder(selectedMethod, {
           proof_url: proofUrl,
           bank_reference: referenceNumber || undefined,

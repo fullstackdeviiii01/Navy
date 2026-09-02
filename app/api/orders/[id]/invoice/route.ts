@@ -69,6 +69,9 @@ export async function GET(
       order = await Order.findById(id).lean();
     } else if (user) {
       order = await Order.findOne({ _id: id, user_id: user._id }).lean();
+      if (!order) {
+        order = await Order.findById(id).lean();
+      }
     } else {
       const sessionId = getSessionIdFromRequest(request);
       if (sessionId) {
@@ -78,7 +81,6 @@ export async function GET(
           order_type: "guest",
         }).lean();
       }
-      // If guest session expired or lookup from direct confirmation page, allow direct lookup by id if order was placed
       if (!order) {
         order = await Order.findById(id).lean();
       }

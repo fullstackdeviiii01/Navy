@@ -8,7 +8,8 @@ declare global {
   }
 }
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
+export const META_PIXEL_ID =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || "3244071132470552";
 
 /**
  * Safely call fbq if available in window and pixel ID is configured

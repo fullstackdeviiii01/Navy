@@ -2,10 +2,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download } from "lucide-react";
+import { Download, Package } from "lucide-react";
 import { reportsApi } from "../../../../lib/api/reports";
 import { exportToPDF } from "../../components/reports/export/exportUtils";
 import Loader from "../../../components/shared/Loader";
+
+function ProductThumbnailItem({ src, alt }: { src?: string; alt: string }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (!src || imgError) {
+    return (
+      <div className="w-8 h-8 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 shrink-0">
+        <Package className="w-3.5 h-3.5 text-neutral-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-8 h-8 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 shrink-0">
+      <img
+        src={src}
+        alt={alt}
+        onError={() => setImgError(true)}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
+}
 
 interface ProductPerformanceStudioProps {
   dateRange: string;
@@ -66,7 +89,7 @@ export default function ProductPerformanceStudio({
             Product Sales & Performance
           </h2>
           <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-            Unit sales, category breakdown, and top-selling products.
+            Unit sales, category performance, and itemized revenue tracking.
           </p>
         </div>
 
@@ -111,7 +134,7 @@ export default function ProductPerformanceStudio({
       </div>
 
       {/* Top Models Table */}
-      {report.products && report.products.length > 0 && (
+      {report.products && report.products.length > 0 ? (
         <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
           <div className="p-4 border-b border-theme-border-light dark:border-theme-border-dark">
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -128,24 +151,29 @@ export default function ProductPerformanceStudio({
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
-              {report.products.slice(0, 12).map((prod: any, i: number) => (
+              {report.products.slice(0, 20).map((prod: any, i: number) => (
                 <tr key={i} className="hover:bg-theme-card-light/30">
-                  <td className="py-3 px-4 font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                    {prod.name}
+                  <td className="py-3 px-4 font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2.5">
+                    <ProductThumbnailItem src={prod.image} alt={prod.name} />
+                    <span className="truncate">{prod.name}</span>
                   </td>
                   <td className="py-3 px-4 text-theme-text-secondary-light">
-                    {prod.category || "General"}
+                    {prod.category || "Handcrafted Lighting"}
                   </td>
-                  <td className="py-3 px-4 text-theme-text-secondary-light">
-                    {prod.quantity} units
+                  <td className="py-3 px-4 text-theme-text-secondary-light font-medium">
+                    {prod.unitsSold || prod.quantity || 0} units
                   </td>
                   <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                    Rs. {prod.revenue?.toLocaleString()}
+                    Rs. {Math.round(prod.revenue || 0).toLocaleString()}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      ) : (
+        <div className="p-8 text-center bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark text-xs text-theme-text-muted-light">
+          No product sales recorded for this reporting period.
         </div>
       )}
     </div>

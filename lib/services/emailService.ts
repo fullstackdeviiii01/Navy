@@ -413,4 +413,40 @@ export class EmailService {
       console.error("❌ [REFUND DEBUG] Failed to send refund confirmation email:", error);
     }
   }
+
+  static async sendNewsletterEmail(to: string, subject: string, content: string): Promise<void> {
+    try {
+      await this.sendEmail({
+        to,
+        subject,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/><title>${subject}</title></head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #241910; background-color: #F3EBDC; margin: 0; padding: 20px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E0D4C3; border-radius: 6px; overflow: hidden;">
+    <tr>
+      <td style="background-color: #120D09; padding: 20px; text-align: center; border-bottom: 2px solid #C59345;">
+        <h1 style="color: #C59345; margin: 0; font-family: Georgia, serif; font-size: 22px; letter-spacing: 2px;">TALAL WOODEN LAMPS</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 24px; color: #333333; font-size: 14px;">
+        ${content}
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #F7F3EC; padding: 16px; text-align: center; font-size: 11px; color: #7D6A5A; border-top: 1px solid #E0D4C3;">
+        <p style="margin: 0;">© ${new Date().getFullYear()} Talal Wooden Lamps. All rights reserved.</p>
+        <p style="margin: 4px 0 0 0;">You received this email because you subscribed to our newsletter.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
+      });
+    } catch (error) {
+      console.error("Failed to send newsletter email:", error);
+      throw error;
+    }
+  }
 }

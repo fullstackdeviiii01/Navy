@@ -43,6 +43,7 @@ export default function ReturnStatusCard({
   const [submittingPayout, setSubmittingPayout] = useState(false);
   const [payoutError, setPayoutError] = useState("");
   const [payoutSuccess, setPayoutSuccess] = useState("");
+  const [previewProofModal, setPreviewProofModal] = useState<string | null>(null);
 
   // Calculate strict 7-day return eligibility from time of delivery
   const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -393,42 +394,136 @@ export default function ReturnStatusCard({
 
   // Case 5: Return is REFUNDED
   if (returnDoc.status === "refunded") {
+    const proofUrl = returnDoc.settlement?.proof_url;
+    const adminNotes = returnDoc.settlement?.admin_notes;
+
     return (
-      <div className="p-5 sm:p-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200 space-y-4">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-bold text-xs uppercase tracking-wider">
-              Refund Dispatched & Settled ({formatPrice(returnDoc.refund_amount)})
-            </span>
-          </div>
-          <span className="font-mono text-[11px] font-semibold bg-emerald-500/20 px-2 py-0.5 rounded">
-            {returnDoc.rma_number}
-          </span>
-        </div>
-
-        <div className="p-3.5 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg border border-emerald-500/30 text-theme-text-primary-light dark:text-theme-text-primary-dark space-y-2 text-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light">
-              Transaction Reference / TID
-            </span>
-            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-              {returnDoc.settlement?.transaction_reference || "TRX-SETTLED"}
+      <>
+        <div className="p-5 sm:p-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200 space-y-4">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-bold text-xs uppercase tracking-wider">
+                Refund Dispatched & Settled ({formatPrice(returnDoc.refund_amount)})
+              </span>
+            </div>
+            <span className="font-mono text-[11px] font-semibold bg-emerald-500/20 px-2 py-0.5 rounded">
+              {returnDoc.rma_number}
             </span>
           </div>
 
-          {returnDoc.refunded_at && (
-            <p className="text-[11px] text-theme-text-muted-light">
-              Dispatched on {new Date(returnDoc.refunded_at).toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          )}
+          <div className="p-4 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg border border-emerald-500/30 text-theme-text-primary-light dark:text-theme-text-primary-dark space-y-3 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light">
+                Transaction Reference / TID
+              </span>
+              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                {returnDoc.settlement?.transaction_reference || "TRX-SETTLED"}
+              </span>
+            </div>
+
+            {returnDoc.refunded_at && (
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light">
+                  Settled Date
+                </span>
+                <span className="text-[11px] text-theme-text-muted-light">
+                  {new Date(returnDoc.refunded_at).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+            )}
+
+            {adminNotes && (
+              <div className="pt-2 border-t border-theme-border-light dark:border-theme-border-dark">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light block mb-1">
+                  Concierge Settlement Notes
+                </span>
+                <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark italic">
+                  "{adminNotes}"
+                </p>
+              </div>
+            )}
+
+            {/* Official Refund Proof / Receipt Image */}
+            {proofUrl && (
+              <div className="pt-3 border-t border-theme-border-light dark:border-theme-border-dark space-y-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-theme-text-muted-light block">
+                  Official Refund Transfer Receipt
+                </span>
+                <div className="flex items-center gap-3">
+                  <div
+                    onClick={() => setPreviewProofModal(proofUrl)}
+                    className="relative w-20 h-20 sm:w-24 sm:h-24 rounded border border-theme-border-light dark:border-theme-border-dark overflow-hidden cursor-pointer group bg-black/5 hover:opacity-90 transition-opacity shrink-0"
+                  >
+                    <img
+                      src={proofUrl}
+                      alt="Refund Payment Proof"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-semibold uppercase tracking-wider">
+                      Zoom
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewProofModal(proofUrl)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-theme-primary text-theme-btn-text hover:bg-theme-hover-light text-[11px] uppercase tracking-wider font-semibold transition-colors cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>View Receipt Screenshot</span>
+                    </button>
+                    <p className="text-[10px] text-theme-text-muted-light">
+                      Official bank transfer receipt uploaded by merchant
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Lightbox Modal for Customer */}
+        {previewProofModal && (
+          <div
+            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+            onClick={() => setPreviewProofModal(null)}
+          >
+            <div
+              className="relative max-w-2xl max-h-[90vh] bg-theme-surface-light dark:bg-theme-surface-dark p-2 rounded shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setPreviewProofModal(null)}
+                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition-colors"
+              >
+                ✕
+              </button>
+              <img
+                src={previewProofModal}
+                alt="Refund Transfer Proof"
+                className="max-h-[80vh] w-auto mx-auto object-contain"
+              />
+              <div className="p-3 text-center">
+                <a
+                  href={previewProofModal}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs uppercase tracking-wider text-theme-hover-light hover:underline font-semibold"
+                >
+                  Open Original Image in New Tab ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 

@@ -17,6 +17,15 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif"
 export const metadata = {
   title: "Talal Wooden Lamps | Handcrafted Architectural Lighting",
   description: "Artisanal solid-wood lighting and bespoke architectural luminaires.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default async function RootLayout({ 

@@ -55,10 +55,25 @@ export async function PUT(
       );
     }
 
+    // Sanitize updates to enforce non-negative values
+    const sanitizedUpdates = { ...body.updates };
+    if (sanitizedUpdates.stockQuantity !== undefined) {
+      sanitizedUpdates.stockQuantity = Math.max(0, parseInt(String(sanitizedUpdates.stockQuantity)) || 0);
+    }
+    if (sanitizedUpdates.price !== undefined) {
+      sanitizedUpdates.price = Math.max(0, parseFloat(String(sanitizedUpdates.price)) || 0);
+    }
+    if (sanitizedUpdates.compareAtPrice !== undefined && sanitizedUpdates.compareAtPrice !== null) {
+      sanitizedUpdates.compareAtPrice = Math.max(0, parseFloat(String(sanitizedUpdates.compareAtPrice)) || 0);
+    }
+    if (sanitizedUpdates.lowStockThreshold !== undefined) {
+      sanitizedUpdates.lowStockThreshold = Math.max(0, parseInt(String(sanitizedUpdates.lowStockThreshold)) || 0);
+    }
+
     // Merge updates into the target variant
     product.variants[variantIndex] = {
       ...product.variants[variantIndex].toObject(),
-      ...body.updates,
+      ...sanitizedUpdates,
     };
 
     // Explicitly re-sync aggregated stock and pricing after the variant mutation

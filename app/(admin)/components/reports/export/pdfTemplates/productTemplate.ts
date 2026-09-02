@@ -12,19 +12,19 @@ export function generateProductHTML(data: any, dateRange: string, logoUrl?: stri
   return `
     <div class="report-brand-bar">
       <div style="display: flex; align-items: center; gap: 14px;">
-        ${logoUrl ? `<img src="${logoUrl}" alt="Talal Wooden Lamps Logo" style="height: 48px; width: 48px; object-fit: contain; border-radius: 4px;" />` : ""}
+        ${logoUrl ? `<img src="${logoUrl}" alt="Talal Wooden Lamps Logo" style="height: 48px; max-width: 140px; object-fit: contain;" />` : ""}
         <div>
-          <h1 class="brand-title">Talal Wooden Lamps</h1>
-          <p class="brand-subtitle">Product Sales & Performance Report</p>
+          <h1 class="brand-title">TALAL WOODEN LAMPS</h1>
+          <p class="brand-subtitle">Product Performance & Revenue Telemetry</p>
         </div>
       </div>
       <div class="report-meta-box">
-        <span class="report-type-badge">${getRangeLabel(dateRange)}</span>
-        <p class="report-date">${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
+        <div class="report-type-badge">PRODUCT PERFORMANCE</div>
+        <div class="report-date">Period: ${getRangeLabel(dateRange)}</div>
       </div>
     </div>
 
-    <div class="stats-grid">
+    <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div class="stat-card">
         <div class="stat-label">Products Sold</div>
         <div class="stat-value">${totalProducts.toLocaleString()}</div>
@@ -34,7 +34,7 @@ export function generateProductHTML(data: any, dateRange: string, logoUrl?: stri
         <div class="stat-value">${totalUnitsSold.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Total Product Revenue</div>
+        <div class="stat-label">Total Revenue</div>
         <div class="stat-value">Rs. ${Math.round(totalRevenue).toLocaleString()}</div>
       </div>
       <div class="stat-card">
@@ -53,8 +53,8 @@ export function generateProductHTML(data: any, dateRange: string, logoUrl?: stri
         <tr>
           <th style="width: 45px;">Rank</th>
           <th>Product Name</th>
+          <th>Category</th>
           <th class="text-right" style="width: 90px;">Units Sold</th>
-          <th class="text-right" style="width: 90px;">Orders</th>
           <th class="text-right" style="width: 130px;">Total Revenue</th>
         </tr>
       </thead>
@@ -67,12 +67,11 @@ export function generateProductHTML(data: any, dateRange: string, logoUrl?: stri
               <tr>
                 <td style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #8E7051;">#0${index + 1}</td>
                 <td>
-                  <div style="font-weight: 600; color: #241910;">${product.name || product.product_name || "Product"}</div>
-                  ${product.sku ? `<div style="font-size: 10px; color: #6B7280; font-family: monospace;">SKU: ${product.sku}</div>` : ""}
+                  <div style="font-weight: 600; color: #241910;">${product.name || "Product"}</div>
                 </td>
+                <td style="color: #6B7280;">${product.category || "Handcrafted Lighting"}</td>
                 <td class="text-right" style="font-weight: 600;">${product.unitsSold || product.quantity || 0}</td>
-                <td class="text-right" style="color: #6B7280;">${product.orderCount || product.orders || 0}</td>
-                <td class="text-right" style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #241910;">Rs. ${Math.round(product.totalRevenue || product.revenue || 0).toLocaleString()}</td>
+                <td class="text-right" style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #241910;">Rs. ${Math.round(product.revenue || 0).toLocaleString()}</td>
               </tr>
             `
                 )

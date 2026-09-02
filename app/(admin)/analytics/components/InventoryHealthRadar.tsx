@@ -1,6 +1,7 @@
 // app/(admin)/analytics/components/InventoryHealthRadar.tsx
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, ArrowRight, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -9,13 +10,42 @@ interface StockProduct {
   name: string;
   stock: number;
   threshold: number;
-  image: string;
+  image?: string;
   isVariant?: boolean;
   lowVariantLabel?: string | null;
 }
 
 interface InventoryHealthRadarProps {
   products: StockProduct[];
+}
+
+function StockProductThumbnail({
+  src,
+  alt,
+}: {
+  src?: string;
+  alt: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+
+  if (!src || imgError) {
+    return (
+      <div className="w-11 h-11 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 shrink-0">
+        <Package className="w-4 h-4 text-neutral-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-11 h-11 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 shrink-0">
+      <img
+        src={src}
+        alt={alt}
+        onError={() => setImgError(true)}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  );
 }
 
 export default function InventoryHealthRadar({ products = [] }: InventoryHealthRadarProps) {
@@ -54,20 +84,8 @@ export default function InventoryHealthRadar({ products = [] }: InventoryHealthR
               onClick={() => router.push(`/admin/products/${product._id}`)}
               className="flex items-center gap-3.5 p-3 rounded-xl border border-theme-border-light/70 dark:border-theme-border-dark/70 bg-theme-bg-light/40 dark:bg-theme-bg-dark/40 hover:border-neutral-900 dark:hover:border-neutral-100 transition-all cursor-pointer group"
             >
-              {/* Product Thumbnail */}
-              {product.image ? (
-                <div className="w-11 h-11 rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark bg-black/5 shrink-0">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ) : (
-                <div className="w-11 h-11 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 shrink-0">
-                  <Package className="w-5 h-5" />
-                </div>
-              )}
+              {/* Product Thumbnail with Error Fallback */}
+              <StockProductThumbnail src={product.image} alt={product.name} />
 
               {/* Information */}
               <div className="flex-1 min-w-0">

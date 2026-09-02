@@ -1,9 +1,7 @@
 // app/api/upload/payment-proof/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile } from "fs/promises";
 import path from "path";
-import { existsSync } from "fs";
-import sharp from "sharp";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +12,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate file type
     const isImage =
       file.type.startsWith("image/") ||
       /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
@@ -33,34 +30,19 @@ export async function POST(request: NextRequest) {
     }
 
     const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const filename = `proof_${timestamp}_${randomString}.webp`;
+    const randomString = Math.random().toString(36).substring(2, 10);
+    const rawExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const ext = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+    const filename = `proof_${timestamp}_${randomString}.${ext}`;
 
-    // Legacy public upload path:
-    // const uploadDir = path.join(process.cwd(), "public", "uploads", "payment-proofs");
-    // if (!existsSync(uploadDir)) {
-    //   await mkdir(uploadDir, { recursive: true });
-    // }
-    // const publicUrl = `/uploads/payment-proofs/${filename}`;
-
-    // Persistent storage (survives builds without rebuilds)
     const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
     const uploadDir = await ensureUploadDir("uploads", "payment-proofs");
 
-    // Process image buffer through Sharp: convert to WebP & compress
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const compressedBuffer = await sharp(buffer)
-      .webp({ quality: 80 })
-      .resize(1400, 1400, {
-        fit: "inside",
-        withoutEnlargement: true,
-      })
-      .toBuffer();
-
     const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, compressedBuffer);
+    await writeFile(filepath, buffer);
 
     const publicUrl = `/api/media/uploads/payment-proofs/${filename}`;
 
@@ -72,7 +54,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Payment proof upload failed:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to upload payment proof" },
+      { error: error?.message || "Failed to upload payment proof" },
       { status: 500 }
     );
   }

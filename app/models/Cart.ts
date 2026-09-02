@@ -214,13 +214,14 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
 
     if (applicableSubtotal > 0) {
       if (coupon.discount_type === "percentage") {
-        this.discount_amount =
-          (applicableSubtotal * coupon.discount_value) / 100;
+        this.discount_amount = Math.round(
+          (applicableSubtotal * coupon.discount_value) / 100
+        );
         if (
           coupon.max_discount &&
           this.discount_amount > coupon.max_discount
         ) {
-          this.discount_amount = coupon.max_discount;
+          this.discount_amount = Math.round(coupon.max_discount);
         }
       } else if (coupon.discount_type === "fixed") {
         this.discount_amount = Math.min(
@@ -255,7 +256,7 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
     this.shipping_cost = isOver15k ? 0 : 390;
   }
 
-  this.total = this.subtotal - this.discount_amount + this.tax_amount + this.shipping_cost;
+  this.total = Math.round(this.subtotal - this.discount_amount + this.tax_amount + this.shipping_cost);
 
   return this;
 };

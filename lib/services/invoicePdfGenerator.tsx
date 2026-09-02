@@ -1,8 +1,7 @@
 // lib/services/invoicePdfGenerator.tsx
-import PDFDocument from "pdfkit";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fs from "fs";
 import path from "path";
-import sharp from "sharp";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -63,62 +62,6 @@ export interface InvoiceData {
   };
 }
 
-// ─── Logo Buffer Loader ───────────────────────────────────────────────────────
-
-export async function getLogoBuffer(logoPathOrUrl?: string): Promise<Buffer | null> {
-  try {
-    let rawBuffer: Buffer | null = null;
-
-    if (logoPathOrUrl) {
-      if (logoPathOrUrl.startsWith("http://") || logoPathOrUrl.startsWith("https://")) {
-        const res = await fetch(logoPathOrUrl);
-        if (res.ok) {
-          const arrayBuffer = await res.arrayBuffer();
-          rawBuffer = Buffer.from(arrayBuffer);
-        }
-      } else {
-        const cleanPath = logoPathOrUrl.replace(/^\/api\/media\//, "").replace(/^\//, "");
-        const persistentPath = path.join(process.cwd(), "data", "uploads", cleanPath);
-        const localPath = path.join(process.cwd(), "public", cleanPath);
-        if (fs.existsSync(persistentPath)) {
-          rawBuffer = await fs.promises.readFile(persistentPath);
-        } else if (fs.existsSync(localPath)) {
-          rawBuffer = await fs.promises.readFile(localPath);
-        }
-      }
-    }
-
-    if (!rawBuffer) {
-      const persistentCompanyDir = path.join(process.cwd(), "data", "uploads", "company");
-      const companyDir = path.join(process.cwd(), "public", "company");
-
-      if (fs.existsSync(persistentCompanyDir)) {
-        const files = await fs.promises.readdir(persistentCompanyDir);
-        const logoFiles = files.filter((f) => f.startsWith("company_logo_")).sort().reverse();
-        if (logoFiles.length > 0) {
-          rawBuffer = await fs.promises.readFile(path.join(persistentCompanyDir, logoFiles[0]));
-        }
-      }
-
-      if (!rawBuffer && fs.existsSync(companyDir)) {
-        const files = await fs.promises.readdir(companyDir);
-        const logoFiles = files.filter((f) => f.startsWith("company_logo_")).sort().reverse();
-        if (logoFiles.length > 0) {
-          rawBuffer = await fs.promises.readFile(path.join(companyDir, logoFiles[0]));
-        }
-      }
-    }
-
-    if (rawBuffer) {
-      // PDFKit requires PNG or JPEG. Convert buffer to high-res PNG
-      return await sharp(rawBuffer).png().toBuffer();
-    }
-  } catch (err) {
-    console.error("Failed to load or convert company logo for PDF:", err);
-  }
-  return null;
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function money(amount: number, currency: string): string {
@@ -126,10 +69,7 @@ function money(amount: number, currency: string): string {
   if (currency === "PKR" || !currency) {
     return `Rs. ${formatted}`;
   }
-  const symbols: Record<string, string> = {
-    USD: "$", EUR: "€", GBP: "£", CAD: "CA$", AUD: "A$",
-  };
-  return `${symbols[currency] ?? currency + " "}${formatted}`;
+  return `${currency} ${formatted}`;
 }
 
 function paymentLabel(method: string): string {
@@ -137,394 +77,507 @@ function paymentLabel(method: string): string {
     cod: "Cash on Delivery",
     bank_transfer: "Bank Transfer",
     jazzcash: "JazzCash",
+    easypaisa: "EasyPaisa",
   };
   return map[method?.toLowerCase()] ?? method ?? "Standard Payment";
 }
 
-// ─── Fonts — pdfkit built-ins ─────────────────────────────────────────────────
-const F = {
-  regular:  "Helvetica",
-  bold:     "Helvetica-Bold",
-  italic:   "Helvetica-Oblique",
-  mono:     "Courier",
-  monoBold: "Courier-Bold",
-} as const;
-
-// ─── Luxury Atelier Layout Metrics & Palette ──────────────────────────────────
-const MARGIN      = 44;
-const PAGE_W      = 595.28;
-const CONTENT_W   = PAGE_W - MARGIN * 2;
-const COL_QTY_W   = 36;
-const COL_PRICE_W = 85;
-const COL_TOTAL_W = 95;
-const COL_ITEM_W  = CONTENT_W - COL_QTY_W - COL_PRICE_W - COL_TOTAL_W;
-const TOT_LBL_W   = 140;
-const TOT_VAL_W   = 100;
-const TOT_X       = PAGE_W - MARGIN - TOT_LBL_W - TOT_VAL_W;
-
-// Colors
-const COLOR_PRIMARY = "#241910"; // Deep Espresso
-const COLOR_GOLD    = "#8E7051"; // Antique Brass
-const COLOR_TEXT    = "#2B2825"; // Charcoal Body
-const COLOR_MUTED   = "#7A736C"; // Soft Slate
-const COLOR_BORDER  = "#E5DFD7"; // Warm Border
-const COLOR_BG_STRIP= "#FBF9F5"; // Antique Card Canvas
-
-// ─── PDF Generator ────────────────────────────────────────────────────────────
+// ─── Pure in-memory PDF Generation using pdf-lib ──────────────────────────────
 
 export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
-  // If logoBuffer is not already provided, resolve it automatically
-  if (!data.company.logoBuffer) {
-    data.company.logoBuffer = await getLogoBuffer(data.company.logo);
+  const pdfDoc = await PDFDocument.create();
+
+  // Standard fonts are 100% in-memory — zero disk AFM dependencies
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const fontOblique = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+
+  // A4 dimensions: 595.28 x 841.89
+  const page = pdfDoc.addPage([595.28, 841.89]);
+  const { width, height } = page.getSize();
+
+  const MARGIN = 40;
+  const CONTENT_W = width - MARGIN * 2;
+
+  // Colors
+  const cPrimary = rgb(0.14, 0.1, 0.06); // Deep Espresso (#241910)
+  const cGold = rgb(0.56, 0.44, 0.32); // Antique Brass (#8E7051)
+  const cText = rgb(0.17, 0.16, 0.15); // Charcoal (#2B2825)
+  const cMuted = rgb(0.48, 0.45, 0.42); // Soft Slate (#7A736C)
+  const cBorder = rgb(0.9, 0.87, 0.84); // Warm Border (#E5DFD7)
+  const cBgLight = rgb(0.98, 0.97, 0.96); // Antique Canvas (#FAF8F5)
+  const cWhite = rgb(1, 1, 1);
+
+  // Status Colors aligned with database payment and order state
+  const isPaid = data.paymentStatus === "paid";
+  const isCOD = data.paymentMethod?.toLowerCase() === "cod";
+  const orderSt = (data.orderStatus || "pending").toLowerCase();
+  const paySt = (data.paymentStatus || "pending").toLowerCase();
+
+  let stamp = "PENDING PAYMENT";
+  let stampColor = rgb(0.71, 0.33, 0.04); // Amber
+
+  if (orderSt === "cancelled") {
+    stamp = "ORDER CANCELLED";
+    stampColor = rgb(0.86, 0.15, 0.15); // Red
+  } else if (orderSt === "refunded" || paySt === "refunded") {
+    stamp = "ORDER REFUNDED";
+    stampColor = rgb(0.29, 0.33, 0.39); // Slate
+  } else if (isPaid) {
+    stamp = "PAID";
+    stampColor = rgb(0.08, 0.5, 0.24); // Green
+  } else if (isCOD) {
+    // COD must be checked BEFORE generic "pending" check
+    if (orderSt === "delivered") {
+      stamp = "PAID ON DELIVERY";
+      stampColor = rgb(0.08, 0.5, 0.24);
+    } else {
+      stamp = "CASH ON DELIVERY";
+      stampColor = rgb(0.14, 0.1, 0.06);
+    }
+  } else if (
+    paySt === "pending_verification" ||
+    paySt === "pending" ||
+    ["bank_transfer", "jazzcash", "easypaisa"].includes(data.paymentMethod?.toLowerCase())
+  ) {
+    stamp = "PENDING VERIFICATION";
+    stampColor = rgb(0.71, 0.33, 0.04); // Amber
+  } else if (paySt === "failed") {
+    stamp = "PAYMENT FAILED";
+    stampColor = rgb(0.86, 0.15, 0.15);
   }
 
-  return new Promise((resolve, reject) => {
-    try {
-      const isReceipt = data.documentType === "receipt";
-      const docHeading = isReceipt ? "ORDER RECEIPT" : "INVOICE";
+  const isReceipt = data.documentType === "receipt";
+  const docHeading = isReceipt ? "ORDER RECEIPT" : "TAX INVOICE";
 
-      const doc = new PDFDocument({
-        size: "A4",
-        margins: { top: MARGIN, bottom: 64, left: MARGIN, right: MARGIN },
-        bufferPages: true,
-        info: {
-          Title:   isReceipt ? `Order Receipt #${data.orderNumber} - Talal Wooden Lamps` : `Invoice ${data.invoiceNumber} - Talal Wooden Lamps`,
-          Author:  data.company.name || "Talal Wooden Lamps",
-          Subject: isReceipt ? `Order Receipt for #${data.orderNumber}` : `Official Tax Invoice for Order #${data.orderNumber}`,
-        },
-      });
+  let curY = height - MARGIN;
 
-      const chunks: Buffer[] = [];
-      doc.on("data",  (c: Buffer) => chunks.push(c));
-      doc.on("end",   () => resolve(Buffer.concat(chunks)));
-      doc.on("error", reject);
-
-      const isPaid = data.paymentStatus === "paid";
-      const isCOD  = data.paymentMethod?.toLowerCase() === "cod";
-      const isBankOrJazz = ["bank_transfer", "jazzcash"].includes(data.paymentMethod?.toLowerCase());
-      const orderSt = (data.orderStatus || "pending").toLowerCase();
-
-      // Dynamic, accurate status stamp aligned with real order state
-      let stamp = "PENDING";
-      let stampColor = "#B45309"; // Amber
-
-      if (orderSt === "cancelled") {
-        stamp = "ORDER CANCELLED";
-        stampColor = "#DC2626";
-      } else if (orderSt === "refunded" || data.paymentStatus === "refunded") {
-        stamp = "ORDER REFUNDED";
-        stampColor = "#4B5563";
-      } else if (isPaid) {
-        stamp = "PAID";
-        stampColor = "#15803D";
-      } else if (isCOD) {
-        if (orderSt === "delivered") {
-          stamp = "PAID ON DELIVERY";
-          stampColor = "#15803D";
-        } else if (orderSt === "confirmed" || orderSt === "processing") {
-          stamp = isReceipt ? "ORDER CONFIRMED" : "COD - CONFIRMED";
-          stampColor = "#15803D";
-        } else if (orderSt === "shipped") {
-          stamp = "DISPATCHED";
-          stampColor = "#0284C7";
-        } else {
-          stamp = isReceipt ? "CASH ON DELIVERY" : "PAY ON DELIVERY";
-          stampColor = "#241910";
-        }
-      } else if (isBankOrJazz) {
-        if (orderSt === "confirmed" || orderSt === "processing") {
-          stamp = "PAYMENT VERIFIED";
-          stampColor = "#15803D";
-        } else if (orderSt === "shipped") {
-          stamp = "DISPATCHED";
-          stampColor = "#0284C7";
-        } else if (orderSt === "delivered") {
-          stamp = "DELIVERED";
-          stampColor = "#15803D";
-        } else {
-          // Status is still pending verification
-          stamp = "PENDING VERIFICATION";
-          stampColor = "#B45309";
-        }
-      } else {
-        if (orderSt === "confirmed") {
-          stamp = "CONFIRMED";
-          stampColor = "#15803D";
-        } else if (orderSt === "shipped") {
-          stamp = "DISPATCHED";
-          stampColor = "#0284C7";
-        } else {
-          stamp = "PENDING";
-          stampColor = "#B45309";
-        }
-      }
-
-      // ── 1. BRAND HEADER WITH LOGO ─────────────────────────────────────────────
-      const hY = MARGIN;
-      let leftContentX = MARGIN;
-
-      if (data.company.logoBuffer) {
-        try {
-          doc.image(data.company.logoBuffer, MARGIN, hY, { fit: [48, 48] });
-          leftContentX = MARGIN + 56;
-        } catch (imgErr) {
-          console.error("PDFKit logo render fallback:", imgErr);
-        }
-      }
-
-      // Brand Title
-      doc.font(F.bold).fontSize(15).fillColor(COLOR_PRIMARY)
-         .text(data.company.name?.toUpperCase() || "TALAL WOODEN LAMPS", leftContentX, hY + 4);
-      
-      doc.font(F.regular).fontSize(7.5).fillColor(COLOR_GOLD)
-         .text("HANDMADE NATURAL LUMINAIRES", leftContentX, hY + 22, { characterSpacing: 0.8 });
-
-      // Company Details Left Column
-      const companyLines = [
-        data.company.address,
-        data.company.city,
-        data.company.email,
-        data.company.phone ? `Tel: ${data.company.phone}` : "",
-        data.company.website || "",
-      ].filter(Boolean) as string[];
-
-      companyLines.forEach((line, i) => {
-        doc.font(F.regular).fontSize(8).fillColor(COLOR_MUTED)
-           .text(line, MARGIN, hY + 54 + i * 11.5, { width: CONTENT_W / 2 - 20, lineBreak: false });
-      });
-
-      // Heading Right Column (ORDER RECEIPT vs INVOICE)
-      doc.font(F.bold).fontSize(isReceipt ? 18 : 20).fillColor(COLOR_PRIMARY)
-         .text(docHeading, MARGIN, hY, { width: CONTENT_W, align: "right", characterSpacing: 1.2 });
-
-      // Meta Data Right Column
-      const metaRows: [string, string][] = isReceipt
-        ? [
-            ["Receipt Ref",  `#${data.orderNumber}`],
-            ["Order Date",   data.orderDate],
-            ["Payment Type", paymentLabel(data.paymentMethod)],
-            ["Currency",     data.currency || "PKR"],
-          ]
-        : [
-            ["Invoice No.",  data.invoiceNumber],
-            ["Invoice Date", data.invoiceDate],
-            ["Order Ref",    `#${data.orderNumber}`],
-            ["Currency",     data.currency || "PKR"],
-          ];
-
-      let mY = hY + 28;
-      const lblW = 90;
-      const valW = 140;
-      const valX = PAGE_W - MARGIN - valW;
-      const lblX = valX - lblW - 8;
-
-      metaRows.forEach(([lbl, val]) => {
-        doc.font(F.regular).fontSize(8).fillColor(COLOR_MUTED);
-        doc.text(lbl, lblX, mY, { width: lblW, align: "right" });
-
-        doc.font(F.monoBold).fontSize(8).fillColor(COLOR_PRIMARY);
-        const valH = doc.heightOfString(val, { width: valW, align: "right" });
-        doc.text(val, valX, mY, { width: valW, align: "right" });
-
-        mY += Math.max(13, valH + 3);
-      });
-
-      // Status Stamp Pill
-      doc.font(F.bold).fontSize(7.5);
-      const measuredStampW = doc.widthOfString(stamp, { characterSpacing: 0.8 });
-      const sW = Math.max(105, measuredStampW + 20);
-      const sX = PAGE_W - MARGIN - sW;
-      mY += 6;
-      doc.rect(sX, mY, sW, 16).strokeColor(stampColor).lineWidth(1).stroke();
-      doc.font(F.bold).fontSize(7.5).fillColor(stampColor)
-         .text(stamp, sX, mY + 4, { width: sW, align: "center", characterSpacing: 0.8 });
-
-      // Divider Line - Safe offset below whichever header column is taller
-      const leftColBottom = hY + 54 + companyLines.length * 11.5 + 10;
-      const rightColBottom = mY + 22;
-      const rY = Math.max(leftColBottom, rightColBottom);
-
-      doc.moveTo(MARGIN, rY).lineTo(PAGE_W - MARGIN, rY)
-         .lineWidth(1.5).strokeColor(COLOR_PRIMARY).stroke();
-
-      // ── 2. ADDRESSES ──────────────────────────────────────────────────────────
-      const aY = rY + 16;
-      const cW = CONTENT_W / 2 - 14;
-
-      function drawAddr(x: number, y: number, lbl: string, addr: any, email?: string) {
-        doc.font(F.bold).fontSize(7).fillColor(COLOR_GOLD)
-           .text(lbl.toUpperCase(), x, y, { characterSpacing: 1.5 });
-        doc.font(F.bold).fontSize(9).fillColor(COLOR_PRIMARY)
-           .text(addr.name || "Valued Patron", x, y + 12);
-        doc.font(F.regular).fontSize(8).fillColor(COLOR_TEXT);
-        const lines = [
-          addr.line1,
-          addr.line2,
-          `${addr.city || ""}${addr.state ? `, ${addr.state}` : ""} ${addr.postalCode || ""}`.trim(),
-          addr.country || "Pakistan",
-        ].filter(Boolean) as string[];
-        let lY = y + 26;
-        lines.forEach((l) => {
-          const lH = doc.heightOfString(l, { width: cW });
-          doc.text(l, x, lY, { width: cW });
-          lY += Math.max(11.5, lH);
-        });
-        if (addr.phone) {
-          doc.text(`Phone: ${addr.phone}`, x, lY + 2, { width: cW });
-          lY += 12;
-        }
-        if (email) {
-          doc.text(`Email: ${email}`, x, lY + 2, { width: cW });
-        }
-      }
-
-      drawAddr(MARGIN, aY, "BILLING RECIPIENT", data.billTo, data.billTo.email);
-      drawAddr(MARGIN + cW + 28, aY, "SHIPPING DESTINATION", data.shipTo);
-
-      // ── 3. META HIGHLIGHT STRIP ───────────────────────────────────────────────
-      const stY = aY + 86;
-      doc.rect(MARGIN, stY, CONTENT_W, 26).fill(COLOR_BG_STRIP);
-      doc.rect(MARGIN, stY, CONTENT_W, 26).strokeColor(COLOR_BORDER).lineWidth(0.5).stroke();
-
-      const stItems: [string, string][] = [
-        ["ORDER NUMBER", `#${data.orderNumber}`],
-        ["ORDER STATUS", (data.orderStatus || "pending").toUpperCase()],
-        [
-          "PAYMENT STATUS",
-          isPaid
-            ? "PAID"
-            : isBankOrJazz
-            ? (orderSt === "confirmed" || orderSt === "processing" ? "VERIFIED" : "PENDING VERIFICATION")
-            : isCOD
-            ? "CASH ON DELIVERY"
-            : (data.paymentStatus || "unpaid").toUpperCase(),
-        ],
-      ];
-
-      stItems.forEach(([lbl, val], i) => {
-        const sx = MARGIN + i * (CONTENT_W / 3) + 10;
-        doc.font(F.bold).fontSize(6.5).fillColor(COLOR_GOLD)
-           .text(lbl, sx, stY + 5, { characterSpacing: 0.8 });
-        doc.font(F.bold).fontSize(8).fillColor(COLOR_PRIMARY)
-           .text(val, sx, stY + 14, { width: CONTENT_W / 3 - 16, lineBreak: false });
-      });
-
-      // ── 4. TABLE HEADER ───────────────────────────────────────────────────────
-      const tY = stY + 36;
-      const th = (txt: string, x: number, w: number, align: "left"|"right"|"center" = "left") =>
-        doc.font(F.bold).fontSize(7).fillColor(COLOR_MUTED)
-           .text(txt, x, tY, { width: w, align, characterSpacing: 0.8 });
-
-      th("PIECE / DESCRIPTION", MARGIN,                                           COL_ITEM_W);
-      th("QTY",                 MARGIN + COL_ITEM_W,                              COL_QTY_W,   "center");
-      th("UNIT PRICE",          MARGIN + COL_ITEM_W + COL_QTY_W,                 COL_PRICE_W, "right");
-      th("AMOUNT",              MARGIN + COL_ITEM_W + COL_QTY_W + COL_PRICE_W,  COL_TOTAL_W, "right");
-
-      const thL = tY + 12;
-      doc.moveTo(MARGIN, thL).lineTo(PAGE_W - MARGIN, thL)
-         .lineWidth(1).strokeColor(COLOR_PRIMARY).stroke();
-
-      // ── 5. ITEMS ROWS ─────────────────────────────────────────────────────────
-      let rowY = thL + 6;
-
-      data.items.forEach((item, idx) => {
-        const isLast  = idx === data.items.length - 1;
-        const variant = item.variantAttributes && Object.keys(item.variantAttributes).length > 0
-          ? Object.entries(item.variantAttributes)
-              .map(([k, v]) => `${k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`)
-              .join("  |  ")
-          : null;
-
-        doc.font(F.bold).fontSize(8);
-        const nameH = doc.heightOfString(item.name, { width: COL_ITEM_W - 8 });
-        
-        doc.font(F.regular).fontSize(7);
-        const varH = variant ? doc.heightOfString(variant, { width: COL_ITEM_W - 8 }) : 0;
-        
-        const rowH = Math.max(22, nameH + (variant ? varH + 3 : 0) + 6);
-        const numY = rowY + (rowH - 8) / 2;
-
-        // Item Name
-        doc.font(F.bold).fontSize(8).fillColor(COLOR_PRIMARY)
-           .text(item.name, MARGIN, rowY + 3, { width: COL_ITEM_W - 8 });
-        
-        // Variant attributes
-        if (variant) {
-          doc.font(F.regular).fontSize(7).fillColor(COLOR_MUTED)
-             .text(variant, MARGIN, rowY + 3 + nameH + 1, { width: COL_ITEM_W - 8 });
-        }
-
-        // Numerical columns
-        doc.font(F.mono).fontSize(8).fillColor(COLOR_TEXT)
-           .text(String(item.quantity),
-                 MARGIN + COL_ITEM_W, numY,
-                 { width: COL_QTY_W, align: "center" })
-           .text(money(item.price, data.currency),
-                 MARGIN + COL_ITEM_W + COL_QTY_W, numY,
-                 { width: COL_PRICE_W, align: "right" })
-           .text(money(item.subtotal, data.currency),
-                 MARGIN + COL_ITEM_W + COL_QTY_W + COL_PRICE_W, numY,
-                 { width: COL_TOTAL_W, align: "right" });
-
-        rowY += rowH;
-        if (!isLast) {
-          doc.moveTo(MARGIN, rowY).lineTo(PAGE_W - MARGIN, rowY)
-             .lineWidth(0.5).strokeColor(COLOR_BORDER).stroke();
-        }
-        rowY += 3;
-      });
-
-      // ── 6. TOTALS BREAKDOWN ───────────────────────────────────────────────────
-      rowY += 8;
-
-      const totRows: [string, string][] = [
-        ["Subtotal", money(data.pricing.subtotal, data.currency)],
-        ...(data.pricing.discountAmount > 0
-          ? [["Promotion Discount", `-${money(data.pricing.discountAmount, data.currency)}`] as [string, string]]
-          : []),
-        ["Estimated Delivery", data.pricing.shippingCost === 0 ? "FREE" : money(data.pricing.shippingCost || 0, data.currency)],
-      ];
-
-      totRows.forEach(([lbl, val]) => {
-        doc.moveTo(TOT_X, rowY).lineTo(PAGE_W - MARGIN, rowY)
-           .lineWidth(0.5).strokeColor(COLOR_BORDER).stroke();
-        rowY += 4;
-        doc.font(F.regular).fontSize(8).fillColor(COLOR_MUTED)
-           .text(lbl, TOT_X, rowY, { width: TOT_LBL_W });
-        doc.font(F.mono).fontSize(8).fillColor(COLOR_TEXT)
-           .text(val, TOT_X + TOT_LBL_W, rowY, { width: TOT_VAL_W, align: "right" });
-        rowY += 14;
-      });
-
-      // Grand Total Box
-      doc.moveTo(TOT_X, rowY).lineTo(PAGE_W - MARGIN, rowY)
-         .lineWidth(1.5).strokeColor(COLOR_PRIMARY).stroke();
-      rowY += 6;
-      doc.font(F.bold).fontSize(9.5).fillColor(COLOR_PRIMARY)
-         .text(`Grand Total (${data.currency || "PKR"})`, TOT_X, rowY, { width: TOT_LBL_W });
-      doc.font(F.monoBold).fontSize(9.5).fillColor(COLOR_PRIMARY)
-         .text(money(data.pricing.total, data.currency),
-               TOT_X + TOT_LBL_W, rowY,
-               { width: TOT_VAL_W, align: "right" });
-
-      // ── 7. FOOTER & ATELIER SIGNATURE ─────────────────────────────────────────
-      const fY = 795.28 - 46;
-      doc.moveTo(MARGIN, fY).lineTo(PAGE_W - MARGIN, fY)
-         .lineWidth(0.5).strokeColor(COLOR_BORDER).stroke();
-      
-      doc.font(F.regular).fontSize(7).fillColor(COLOR_MUTED)
-         .text(
-           `Talal Wooden Lamps · Handcrafted with natural materials · Concierge: ${data.company.email}`,
-           MARGIN, fY + 8,
-           { width: CONTENT_W - 140 }
-         );
-      doc.font(F.bold).fontSize(7).fillColor(COLOR_GOLD)
-         .text(isReceipt ? `ORDER RECEIPT #${data.orderNumber}` : `DOCUMENT ${data.invoiceNumber}`, MARGIN, fY + 8,
-               { width: CONTENT_W, align: "right", characterSpacing: 0.5 });
-
-      doc.end();
-    } catch (err) {
-      reject(err);
-    }
+  // ── 1. HEADER ─────────────────────────────────────────────────────────────
+  // Left: Brand Info
+  page.drawText(data.company.name?.toUpperCase() || "TALAL WOODEN LAMPS", {
+    x: MARGIN,
+    y: curY - 14,
+    size: 15,
+    font: fontBold,
+    color: cPrimary,
   });
+
+  page.drawText("HANDMADE NATURAL LUMINAIRES · PAKISTAN", {
+    x: MARGIN,
+    y: curY - 26,
+    size: 7.5,
+    font: fontRegular,
+    color: cGold,
+  });
+
+  const companyLines = [
+    data.company.address || "Atelier Workshop, Lahore, Pakistan",
+    data.company.city || "Lahore, Pakistan",
+    data.company.email || "concierge@talalwoodenlamp.com",
+    data.company.phone ? `Tel: ${data.company.phone}` : "+92 300 1234567",
+  ];
+
+  companyLines.forEach((line, i) => {
+    page.drawText(line, {
+      x: MARGIN,
+      y: curY - 42 - i * 11,
+      size: 8,
+      font: fontRegular,
+      color: cMuted,
+    });
+  });
+
+  // Right: Document Heading & Metadata
+  const headingWidth = fontBold.widthOfTextAtSize(docHeading, 18);
+  page.drawText(docHeading, {
+    x: width - MARGIN - headingWidth,
+    y: curY - 14,
+    size: 18,
+    font: fontBold,
+    color: cPrimary,
+  });
+
+  const metaRows: [string, string][] = isReceipt
+    ? [
+        ["Receipt Ref:", `#${data.orderNumber}`],
+        ["Order Date:", data.orderDate],
+        ["Payment Method:", paymentLabel(data.paymentMethod)],
+        ["Order Status:", (data.orderStatus || "Confirmed").toUpperCase()],
+      ]
+    : [
+        ["Invoice No:", data.invoiceNumber],
+        ["Invoice Date:", data.invoiceDate],
+        ["Order Ref:", `#${data.orderNumber}`],
+        ["Payment Method:", paymentLabel(data.paymentMethod)],
+      ];
+
+  metaRows.forEach(([lbl, val], i) => {
+    const rowY = curY - 34 - i * 13;
+    page.drawText(lbl, {
+      x: width - MARGIN - 210,
+      y: rowY,
+      size: 8,
+      font: fontRegular,
+      color: cMuted,
+    });
+    const valWidth = fontBold.widthOfTextAtSize(val, 8);
+    page.drawText(val, {
+      x: width - MARGIN - valWidth,
+      y: rowY,
+      size: 8,
+      font: fontBold,
+      color: cText,
+    });
+  });
+
+  // Status Badge Pill (Right) - cleanly positioned below all metadata rows
+  const badgeY = curY - 102;
+  const badgeW = 120;
+  const badgeH = 18;
+  const badgeX = width - MARGIN - badgeW;
+
+  page.drawRectangle({
+    x: badgeX,
+    y: badgeY,
+    width: badgeW,
+    height: badgeH,
+    borderColor: stampColor,
+    borderWidth: 1,
+    color: cBgLight,
+  });
+
+  const stampTextW = fontBold.widthOfTextAtSize(stamp, 8);
+  page.drawText(stamp, {
+    x: badgeX + (badgeW - stampTextW) / 2,
+    y: badgeY + 5,
+    size: 8,
+    font: fontBold,
+    color: stampColor,
+  });
+
+  curY -= 124;
+
+  // Header Divider
+  page.drawLine({
+    start: { x: MARGIN, y: curY },
+    end: { x: width - MARGIN, y: curY },
+    thickness: 1.5,
+    color: cPrimary,
+  });
+
+  curY -= 15;
+
+  // ── 2. BILL TO / SHIP TO ADDRESSES ────────────────────────────────────────
+  const colW = (CONTENT_W - 20) / 2;
+
+  // Bill To Box
+  page.drawText("BILLED TO", {
+    x: MARGIN,
+    y: curY,
+    size: 8,
+    font: fontBold,
+    color: cGold,
+  });
+  page.drawText(data.billTo.name || "Valued Patron", {
+    x: MARGIN,
+    y: curY - 12,
+    size: 9,
+    font: fontBold,
+    color: cPrimary,
+  });
+
+  const billLines = [
+    data.billTo.line1,
+    data.billTo.line2,
+    [data.billTo.city, data.billTo.state, data.billTo.postalCode]
+      .filter(Boolean)
+      .join(", "),
+    data.billTo.country || "Pakistan",
+    data.billTo.phone ? `Phone: ${data.billTo.phone}` : null,
+    data.billTo.email ? `Email: ${data.billTo.email}` : null,
+  ].filter(Boolean) as string[];
+
+  billLines.forEach((line, i) => {
+    page.drawText(line, {
+      x: MARGIN,
+      y: curY - 24 - i * 10.5,
+      size: 8,
+      font: fontRegular,
+      color: cMuted,
+    });
+  });
+
+  // Ship To Box
+  const shipX = MARGIN + colW + 20;
+  page.drawText("SHIPPED TO", {
+    x: shipX,
+    y: curY,
+    size: 8,
+    font: fontBold,
+    color: cGold,
+  });
+  page.drawText(data.shipTo.name || data.billTo.name || "Valued Patron", {
+    x: shipX,
+    y: curY - 12,
+    size: 9,
+    font: fontBold,
+    color: cPrimary,
+  });
+
+  const shipLines = [
+    data.shipTo.line1 || data.billTo.line1,
+    data.shipTo.line2 || data.billTo.line2,
+    [
+      data.shipTo.city || data.billTo.city,
+      data.shipTo.state || data.billTo.state,
+      data.shipTo.postalCode || data.billTo.postalCode,
+    ]
+      .filter(Boolean)
+      .join(", "),
+    data.shipTo.country || "Pakistan",
+    data.shipTo.phone ? `Phone: ${data.shipTo.phone}` : null,
+  ].filter(Boolean) as string[];
+
+  shipLines.forEach((line, i) => {
+    page.drawText(line, {
+      x: shipX,
+      y: curY - 24 - i * 10.5,
+      size: 8,
+      font: fontRegular,
+      color: cMuted,
+    });
+  });
+
+  const maxAddrLines = Math.max(billLines.length, shipLines.length);
+  curY -= 35 + maxAddrLines * 10.5 + 15;
+
+  // ── 3. ITEMS TABLE ────────────────────────────────────────────────────────
+  // Table Header Bar
+  const thHeight = 18;
+  page.drawRectangle({
+    x: MARGIN,
+    y: curY,
+    width: CONTENT_W,
+    height: thHeight,
+    color: cPrimary,
+  });
+
+  page.drawText("ITEM DESCRIPTION", {
+    x: MARGIN + 8,
+    y: curY + 5,
+    size: 7.5,
+    font: fontBold,
+    color: cWhite,
+  });
+  page.drawText("QTY", {
+    x: MARGIN + 310,
+    y: curY + 5,
+    size: 7.5,
+    font: fontBold,
+    color: cWhite,
+  });
+  page.drawText("UNIT PRICE", {
+    x: MARGIN + 360,
+    y: curY + 5,
+    size: 7.5,
+    font: fontBold,
+    color: cWhite,
+  });
+  page.drawText("AMOUNT", {
+    x: width - MARGIN - 60,
+    y: curY + 5,
+    size: 7.5,
+    font: fontBold,
+    color: cWhite,
+  });
+
+  curY -= 4;
+
+  // Table Rows
+  data.items.forEach((item, idx) => {
+    const rowBg = idx % 2 === 1 ? cBgLight : cWhite;
+    const hasVariants =
+      item.variantAttributes &&
+      Object.keys(item.variantAttributes).length > 0;
+    const rowHeight = hasVariants ? 26 : 18;
+
+    curY -= rowHeight;
+
+    page.drawRectangle({
+      x: MARGIN,
+      y: curY,
+      width: CONTENT_W,
+      height: rowHeight,
+      color: rowBg,
+    });
+
+    // Bottom row border
+    page.drawLine({
+      start: { x: MARGIN, y: curY },
+      end: { x: width - MARGIN, y: curY },
+      thickness: 0.5,
+      color: cBorder,
+    });
+
+    // Product Title
+    const truncatedName =
+      item.name.length > 45 ? item.name.substring(0, 42) + "..." : item.name;
+    page.drawText(truncatedName, {
+      x: MARGIN + 8,
+      y: curY + (hasVariants ? 14 : 5),
+      size: 8,
+      font: fontBold,
+      color: cPrimary,
+    });
+
+    // Variants subtitle
+    if (hasVariants) {
+      const varStr = Object.entries(item.variantAttributes || {})
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" | ");
+      page.drawText(varStr, {
+        x: MARGIN + 8,
+        y: curY + 4,
+        size: 6.5,
+        font: fontOblique,
+        color: cMuted,
+      });
+    }
+
+    // Quantity
+    page.drawText(String(item.quantity || 1), {
+      x: MARGIN + 316,
+      y: curY + (hasVariants ? 10 : 5),
+      size: 8,
+      font: fontRegular,
+      color: cText,
+    });
+
+    // Unit Price
+    const priceStr = money(item.price, data.currency);
+    page.drawText(priceStr, {
+      x: MARGIN + 360,
+      y: curY + (hasVariants ? 10 : 5),
+      size: 8,
+      font: fontRegular,
+      color: cText,
+    });
+
+    // Amount
+    const amountStr = money(item.subtotal || item.price * (item.quantity || 1), data.currency);
+    const amountW = fontBold.widthOfTextAtSize(amountStr, 8);
+    page.drawText(amountStr, {
+      x: width - MARGIN - 8 - amountW,
+      y: curY + (hasVariants ? 10 : 5),
+      size: 8,
+      font: fontBold,
+      color: cPrimary,
+    });
+  });
+
+  curY -= 15;
+
+  // ── 4. TOTALS BREAKDOWN ───────────────────────────────────────────────────
+  const totBoxW = 200;
+  const totBoxX = width - MARGIN - totBoxW;
+
+  const totalLines: [string, string][] = [
+    ["Items Subtotal:", money(data.pricing.subtotal, data.currency)],
+    ...(data.pricing.discountAmount > 0
+      ? [
+          [
+            "Discount:",
+            `-${money(data.pricing.discountAmount, data.currency)}`,
+          ] as [string, string],
+        ]
+      : []),
+    [
+      "Delivery Charges:",
+      data.pricing.shippingCost === 0
+        ? "FREE"
+        : money(data.pricing.shippingCost, data.currency),
+    ],
+  ];
+
+  totalLines.forEach(([lbl, val]) => {
+    curY -= 12;
+    page.drawText(lbl, {
+      x: totBoxX,
+      y: curY,
+      size: 8,
+      font: fontRegular,
+      color: cMuted,
+    });
+    const vW = fontRegular.widthOfTextAtSize(val, 8);
+    page.drawText(val, {
+      x: width - MARGIN - vW,
+      y: curY,
+      size: 8,
+      font: fontRegular,
+      color: cText,
+    });
+  });
+
+  // Grand Total Line
+  curY -= 6;
+  page.drawLine({
+    start: { x: totBoxX, y: curY },
+    end: { x: width - MARGIN, y: curY },
+    thickness: 1.5,
+    color: cPrimary,
+  });
+
+  curY -= 14;
+  page.drawText(`Total (${data.currency || "PKR"}):`, {
+    x: totBoxX,
+    y: curY,
+    size: 9.5,
+    font: fontBold,
+    color: cPrimary,
+  });
+
+  const grandTotalStr = money(data.pricing.total, data.currency);
+  const gtW = fontBold.widthOfTextAtSize(grandTotalStr, 10);
+  page.drawText(grandTotalStr, {
+    x: width - MARGIN - gtW,
+    y: curY,
+    size: 10,
+    font: fontBold,
+    color: cPrimary,
+  });
+
+  // ── 5. FOOTER & ATELIER SIGNATURE ─────────────────────────────────────────
+  const footY = 40;
+  page.drawLine({
+    start: { x: MARGIN, y: footY + 12 },
+    end: { x: width - MARGIN, y: footY + 12 },
+    thickness: 0.5,
+    color: cBorder,
+  });
+
+  page.drawText(
+    `Talal Wooden Lamps · Handcrafted Natural Luminaires · Concierge: ${data.company.email || "concierge@talalwoodenlamp.com"}`,
+    {
+      x: MARGIN,
+      y: footY,
+      size: 7,
+      font: fontRegular,
+      color: cMuted,
+    }
+  );
+
+  const docCode = isReceipt
+    ? `RECEIPT #${data.orderNumber}`
+    : `INVOICE ${data.invoiceNumber}`;
+  const docCodeW = fontBold.widthOfTextAtSize(docCode, 7);
+  page.drawText(docCode, {
+    x: width - MARGIN - docCodeW,
+    y: footY,
+    size: 7,
+    font: fontBold,
+    color: cGold,
+  });
+
+  const pdfBytes = await pdfDoc.save();
+  return Buffer.from(pdfBytes);
 }

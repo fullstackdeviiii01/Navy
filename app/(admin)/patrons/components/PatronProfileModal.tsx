@@ -229,44 +229,102 @@ export default function PatronProfileModal({
           )}
 
           {activeTab === "curation" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Active Cart */}
-                <div className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-2">
-                  <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-1.5">
-                    <ShoppingBag className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Shopping Cart ({customer.cart?.length || 0})</span>
+                <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-3">
+                  <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <ShoppingBag className="w-3.5 h-3.5 text-blue-500" />
+                      <span>Shopping Cart</span>
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold">
+                      {customer.cart?.length || 0} Items
+                    </span>
                   </h4>
                   {customer.cart && customer.cart.length > 0 ? (
-                    <div className="space-y-1.5">
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                       {customer.cart.map((item: any, i: number) => (
-                        <div key={i} className="text-[11px] p-2 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg flex justify-between">
-                          <span className="truncate">{item.name || `Item #${i+1}`}</span>
-                          <span className="font-semibold">Qty: {item.quantity || 1}</span>
+                        <div
+                          key={i}
+                          className="p-2.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg flex items-center gap-2.5"
+                        >
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-9 h-9 object-cover rounded bg-black/5 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-theme-primary/10 flex items-center justify-center text-theme-primary text-[10px] shrink-0 font-bold">
+                              #{(i + 1)}
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate text-xs">
+                              {item.name}
+                            </p>
+                            <div className="flex items-center justify-between text-[11px] text-theme-text-muted-light mt-0.5">
+                              <span>Rs. {Number(item.price || 0).toLocaleString()}</span>
+                              <span className="font-semibold px-1.5 py-0.2 rounded bg-theme-primary/10 text-theme-text-primary-light">
+                                × {item.quantity || 1}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-theme-text-muted-light text-[11px]">Cart is empty.</p>
+                    <div className="py-6 text-center text-theme-text-muted-light text-[11px]">
+                      Customer's shopping cart is currently empty.
+                    </div>
                   )}
                 </div>
 
                 {/* Wishlist */}
-                <div className="p-3.5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-2">
-                  <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-1.5">
-                    <Heart className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Saved Wishlist ({customer.wishlist?.length || 0})</span>
+                <div className="p-4 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 space-y-3">
+                  <h4 className="font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Heart className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Saved Wishlist</span>
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold">
+                      {customer.wishlist?.length || 0} Products
+                    </span>
                   </h4>
                   {customer.wishlist && customer.wishlist.length > 0 ? (
-                    <div className="space-y-1.5">
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                       {customer.wishlist.map((item: any, i: number) => (
-                        <div key={i} className="text-[11px] p-2 bg-theme-surface-light dark:bg-theme-surface-dark rounded-lg flex justify-between">
-                          <span className="truncate">{item.name || `Product #${i+1}`}</span>
+                        <div
+                          key={i}
+                          className="p-2.5 bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark rounded-lg flex items-center gap-2.5"
+                        >
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-9 h-9 object-cover rounded bg-black/5 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-rose-500/10 flex items-center justify-center text-rose-500 text-[10px] shrink-0 font-bold">
+                              #{(i + 1)}
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark truncate text-xs">
+                              {item.name}
+                            </p>
+                            <p className="text-[11px] text-theme-text-muted-light mt-0.5">
+                              Rs. {Number(item.price || 0).toLocaleString()}
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-theme-text-muted-light text-[11px]">No wishlist items saved.</p>
+                    <div className="py-6 text-center text-theme-text-muted-light text-[11px]">
+                      No products saved in wishlist.
+                    </div>
                   )}
                 </div>
               </div>

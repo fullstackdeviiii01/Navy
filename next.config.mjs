@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -11,8 +10,6 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production" ? true : false,
   },
   serverExternalPackages: [
-    'pdfkit',
-    'mongoose',
     '@ffmpeg-installer/ffmpeg',
     '@ffprobe-installer/ffprobe',
   ],

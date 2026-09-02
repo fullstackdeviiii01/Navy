@@ -855,7 +855,7 @@ export default function FinishMatrixStudio({
                           type="number"
                           min="0"
                           value={variant.stockQuantity}
-                          onChange={(e) => updateVariant(index, "stockQuantity", parseInt(e.target.value) || 0)}
+                          onChange={(e) => updateVariant(index, "stockQuantity", Math.max(0, parseInt(e.target.value) || 0))}
                           className="w-16 px-2 py-1 border border-theme-border-light dark:border-theme-border-dark rounded bg-theme-surface-light dark:bg-theme-surface-dark text-xs"
                         />
                       </td>

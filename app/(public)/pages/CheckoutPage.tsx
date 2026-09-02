@@ -57,7 +57,7 @@ export default function CheckoutPage() {
         if (contextCart.selected_shipping_service_id) {
           setSelectedShippingService(
             contextCart.selected_shipping_service_id._id ||
-              contextCart.selected_shipping_service_id
+            contextCart.selected_shipping_service_id
           );
         }
         setLoading(false);
@@ -84,6 +84,13 @@ export default function CheckoutPage() {
     }
   }, [cart]);
 
+  // Always scroll to top on initial page mount and when toggling between Address and Payment steps
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  }, [showPayment]);
+
   const fetchCart = async () => {
     if (isOrderPlaced.current) return;
     try {
@@ -100,7 +107,7 @@ export default function CheckoutPage() {
       if (data.cart.selected_shipping_service_id) {
         setSelectedShippingService(
           data.cart.selected_shipping_service_id._id ||
-            data.cart.selected_shipping_service_id
+          data.cart.selected_shipping_service_id
         );
       }
     } catch (error) {

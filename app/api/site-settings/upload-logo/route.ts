@@ -1,12 +1,10 @@
-// app/api/company/upload-logo/route.ts
+// app/api/site-settings/upload-logo/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
-import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile } from "fs/promises";
 import path from "path";
-import { existsSync } from "fs";
-import sharp from "sharp";
+import connectDB from "../../../../lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,14 +26,16 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const file = formData.get("image") as File;
+    const file = formData.get("logo") as File;
+    const type = (formData.get("type") as string) || "header";
 
     if (!file) {
-      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+      return NextResponse.json({ error: "No logo provided" }, { status: 400 });
     }
 
-    // Validate file type
-    const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|heic|heif)$/i.test(file.name);
+    const isImage =
+      file.type.startsWith("image/") ||
+      /\.(jpg|jpeg|png|webp|avif|gif|svg|bmp|ico)$/i.test(file.name);
     if (!isImage) {
       return NextResponse.json(
         { error: "Invalid file type. Please upload a valid image" },
@@ -43,58 +43,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (max 25MB)
-    if (file.size > 25 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File size too large. Maximum 25MB allowed" },
+        { error: "File size too large. Maximum 5MB allowed" },
         { status: 400 }
       );
     }
 
-    // Create unique filename
     const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const filename = `company_logo_${timestamp}_${randomString}.webp`;
+    const rawExt = file.name.split(".").pop()?.toLowerCase() || "png";
+    const ext = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+    const filename = `logo-${type}-${timestamp}.${ext}`;
 
-    // Legacy public upload path:
-    // const uploadDir = path.join(process.cwd(), "public", "company");
-    // if (!existsSync(uploadDir)) {
-    //   await mkdir(uploadDir, { recursive: true });
-    // }
-    // const publicUrl = `/company/${filename}`;
-
-    // Persistent storage (survives builds without rebuilds)
     const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
     const uploadDir = await ensureUploadDir("company");
 
-    // Convert file to buffer, compress and convert to WebP
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    
-    const compressedBuffer = await sharp(buffer)
-      .webp({ quality: 80 })
-      .resize(400, 400, {
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .toBuffer();
 
     const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, compressedBuffer);
+    await writeFile(filepath, buffer);
 
-    // Return public URL
-    const publicUrl = `/api/media/company/${filename}`;
+    const logoUrl = `/api/media/company/${filename}`;
 
     return NextResponse.json({
       success: true,
+      logoUrl,
       message: "Logo uploaded successfully",
-      url: publicUrl,
-      filename,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Logo upload failed:", error);
     return NextResponse.json(
-      { error: "Failed to upload logo" },
+      { error: error?.message || "Failed to upload logo" },
       { status: 500 }
     );
   }

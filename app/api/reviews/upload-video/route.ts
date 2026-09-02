@@ -93,32 +93,57 @@ export async function POST(request: NextRequest) {
     tempInputPath = path.join(tempDir, inputFilename);
     await writeFile(tempInputPath, buffer);
 
-    // Get video metadata to validate duration
-    const metadata = await getVideoMetadata(tempInputPath);
-    if (metadata.duration > MAX_DURATION) {
-      // Clean up temp file
-      if (tempInputPath && existsSync(tempInputPath)) {
-        await unlink(tempInputPath);
+    let finalSize = file.size;
+    let videoDuration = 0;
+    let thumbnailFilename = "";
+    let thumbnailUrl = "";
+
+    try {
+      // Get video metadata to validate duration
+      const metadata = await getVideoMetadata(tempInputPath);
+      videoDuration = Math.round(metadata.duration || 0);
+
+      if (videoDuration > MAX_DURATION) {
+        if (tempInputPath && existsSync(tempInputPath)) {
+          await unlink(tempInputPath);
+        }
+        return NextResponse.json(
+          {
+            error: `Video too long. Maximum duration is ${MAX_DURATION} seconds. Your video is ${videoDuration}s`,
+          },
+          { status: 400 }
+        );
       }
-      return NextResponse.json(
-        {
-          error: `Video too long. Maximum duration is ${MAX_DURATION} seconds. Your video is ${Math.round(metadata.duration)}s`,
-        },
-        { status: 400 }
-      );
+
+      // Output path
+      const outputPath = path.join(uploadDir, outputFilename);
+      tempOutputPath = outputPath;
+
+      // Compress and convert video
+      await compressVideo(tempInputPath, outputPath);
+
+      // Generate thumbnail
+      thumbnailFilename = `thumb_${timestamp}_${randomString}.jpg`;
+      const thumbnailPath = path.join(uploadDir, thumbnailFilename);
+      try {
+        await generateThumbnail(outputPath, thumbnailPath);
+        thumbnailUrl = `/api/media/reviews/videos/${thumbnailFilename}`;
+      } catch (_) {
+        thumbnailUrl = "";
+      }
+
+      const fs = require("fs");
+      if (existsSync(outputPath)) {
+        const finalStats = fs.statSync(outputPath);
+        finalSize = finalStats.size;
+      }
+    } catch (ffmpegErr) {
+      console.warn("FFMPEG review video processing failed, saving raw video directly:", ffmpegErr);
+      const outputPath = path.join(uploadDir, outputFilename);
+      tempOutputPath = outputPath;
+      await writeFile(outputPath, buffer);
+      finalSize = file.size;
     }
-
-    // Output path
-    const outputPath = path.join(uploadDir, outputFilename);
-    tempOutputPath = outputPath;
-
-    // Compress and convert video
-    await compressVideo(tempInputPath, outputPath);
-
-    // Generate thumbnail
-    const thumbnailFilename = `thumb_${timestamp}_${randomString}.jpg`;
-    const thumbnailPath = path.join(uploadDir, thumbnailFilename);
-    await generateThumbnail(outputPath, thumbnailPath);
 
     // Clean up temp input file
     if (tempInputPath && existsSync(tempInputPath)) {
@@ -126,25 +151,18 @@ export async function POST(request: NextRequest) {
       tempInputPath = null;
     }
 
-    // Get final file size
-    const fs = require("fs");
-    const finalStats = fs.statSync(outputPath);
-    const finalSize = finalStats.size;
-
     // Return public URLs
     const videoUrl = `/api/media/reviews/videos/${outputFilename}`;
-    const thumbnailUrl = `/api/media/reviews/videos/${thumbnailFilename}`;
 
     return NextResponse.json({
       success: true,
-      message: "Video uploaded and compressed successfully",
+      message: "Video uploaded successfully",
       url: videoUrl,
       thumbnail: thumbnailUrl,
       filename: outputFilename,
       originalSize: file.size,
       compressedSize: finalSize,
-      compressionRatio: ((1 - finalSize / file.size) * 100).toFixed(1),
-      duration: Math.round(metadata.duration),
+      duration: videoDuration,
     });
   } catch (error: any) {
     console.error("Video upload failed:", error);

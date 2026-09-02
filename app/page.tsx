@@ -2,68 +2,57 @@
 import { Metadata } from "next";
 import React from "react";
 import HeroSection from "./components/home/HeroSection";
-import CategoryCarousel from "./components/home/CategoryCarousel";
-import CollectionShowcase from "./components/home/CollectionShowcase";
-import ProductSection from "./components/home/ProductSection";
-import CraftsmanshipSpotlight from "./components/home/CraftsmanshipSpotlight";
-import BespokeInquiryBanner from "./components/home/BespokeInquiryBanner";
+import CategoryCircleGrid from "./components/home/CategoryCircleGrid";
+import CuratedProductCarousel from "./components/home/CuratedProductCarousel";
+import BrandTrustBar from "./components/home/BrandTrustBar";
+import NewsletterSection from "./components/home/NewsletterSection";
 import { getHomeDataSSR } from "../lib/api/home";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Home | Talal Wooden Lamps",
-    description: "Artisanal handcrafted lighting luminaires and architectural lamps",
+    description: "Artisanal handcrafted lighting luminaires and architectural solid-wood lamps",
   };
 }
 
 export default async function HomePage() {
   const {
     categories = [],
-    newArrivals = [],
-    bestSellers = [],
+    mostLovedProducts = [],
+    premiumProducts = [],
+    showcaseProducts = [],
   } = await getHomeDataSSR();
 
   return (
-    <main className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark transition-colors">
-      {/* 1. Hero Banner */}
-      <HeroSection />
+    <main className="min-h-screen bg-[#F3EBDC] dark:bg-[#0A0705] transition-colors">
+      {/* 1. Seamless Hero & 3D Elliptical Circular Showcase */}
+      <HeroSection products={showcaseProducts} />
 
-      {/* 2. Curated Categories Showcase */}
-      {categories.length > 0 && <CategoryCarousel categories={categories} />}
+      {/* 3. Shop By Category (Circular Concentric Gold Badges) */}
+      <CategoryCircleGrid categories={categories} />
 
+      {/* 4. Most Loved by Our Customers (Interactive Carousel) */}
+      <CuratedProductCarousel
+        title="MOST LOVED BY OUR CUSTOMERS"
+        products={mostLovedProducts}
+        viewAllLink="/products?sort=popular"
+        bgClass="bg-[#F3EBDC] dark:bg-[#1E1610]"
+      />
 
-      {/* 4. New Arrivals Section (2-Row Responsive Grid) */}
-      {newArrivals.length > 0 && (
-        <ProductSection
-        label="FRESH FROM THE WORKSHOP"
-        title="New Arrivals"
-        subtitle="Explore the latest handcrafted luminaires added to our studio catalog."
-        products={newArrivals}
-        viewAllLink="/products?sort=newest"
-        bgClass="bg-theme-bg-light dark:bg-theme-bg-dark"
-        />
-      )}
+      {/* 5. Premium Collection (Interactive Carousel) */}
+      <CuratedProductCarousel
+        title="PREMIUM COLLECTION"
+        products={premiumProducts}
+        viewAllLink="/products?sort=price-desc"
+        bgClass="bg-[#EAE1D1] dark:bg-[#18110B]"
+      />
 
-      {/* 3. The Atelier Collection Showcase (Large Image + Overlaid Button + Narrative) */}
-      <CollectionShowcase />
+      {/* 6. Brand Value & Trust Highlights Bar */}
+      <BrandTrustBar />
 
-      {/* 6. Best Sellers Section (2-Row Responsive Grid) */}
-      {bestSellers.length > 0 && (
-        <ProductSection
-          label="CURATED FAVORITES"
-          title="Best Sellers"
-          subtitle="Our most celebrated luminaires, chosen by discerning collectors and architects."
-          products={bestSellers}
-          viewAllLink="/products?sort=popular"
-          bgClass="bg-theme-bg-light dark:bg-theme-bg-dark"
-        />
-      )}
-
-      {/* 5. Artisanal Quality & Top 2 Most Sold Masterpieces Spotlight */}
-      <CraftsmanshipSpotlight products={bestSellers} />
-
-      {/* 7. Bespoke Commissions & Contact Concierge Banner */}
-      <BespokeInquiryBanner />
+      {/* 7. Stay Updated Newsletter Section */}
+      <NewsletterSection />
     </main>
   );
 }
+
