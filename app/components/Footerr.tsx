@@ -125,7 +125,7 @@ export default function Footerr() {
               We create more than lamps, we craft warmth, elegance and timeless beauty for your home.
             </p>
 
-            {/* Circular Social Media Icons */}
+            {/* Circular Social Media Icons (Instagram, Facebook, WhatsApp) */}
             <div className="flex items-center gap-2.5 pt-1 text-white/90">
               <a
                 href={companyInfo.social_media?.instagram || "https://instagram.com"}
@@ -145,16 +145,6 @@ export default function Footerr() {
                 aria-label="Facebook"
               >
                 <BsFacebook className="w-3.5 h-3.5" />
-              </a>
-
-              <a
-                href={companyInfo.social_media?.pinterest || "https://pinterest.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-white/20 hover:border-[#C59345] bg-[#1C140E] flex items-center justify-center hover:text-[#C59345] transition-all duration-200 cursor-pointer"
-                aria-label="Pinterest"
-              >
-                <BsPinterest className="w-3.5 h-3.5" />
               </a>
 
               <a

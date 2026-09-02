@@ -16,9 +16,8 @@ import Image from "next/image";
 import Loader from "../../../components/shared/Loader";
 
 const SOCIAL_PLATFORMS = [
-  { key: "instagram", label: "Instagram", icon: BsInstagram, placeholder: "https://instagram.com/talalwoodenlamps" },
-  { key: "facebook", label: "Facebook", icon: BsFacebook, placeholder: "https://facebook.com/talalwoodenlamps" },
-  { key: "pinterest", label: "Pinterest", icon: BsPinterest, placeholder: "https://pinterest.com/talalwoodenlamps" },
+  { key: "instagram", label: "Instagram Page", icon: BsInstagram, placeholder: "https://instagram.com/yourhandle" },
+  { key: "facebook", label: "Facebook Page", icon: BsFacebook, placeholder: "https://facebook.com/yourpage" },
   { key: "whatsapp", label: "WhatsApp Support", icon: BsWhatsapp, placeholder: "https://wa.me/923009692765" },
 ];
 

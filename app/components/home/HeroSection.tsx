@@ -35,7 +35,16 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   const [startX, setStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number>(1200);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track window width for responsive calculation without CSS conflicts
+  useEffect(() => {
+    const updateWidth = () => setWindowWidth(window.innerWidth);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   // Curated showcase lamps matching reference photography (with DB fallback)
   const defaultShowcaseLamps = [
@@ -79,7 +88,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     return () => clearInterval(timer);
   }, [activeIndex, isDragging, navigateTo]);
 
-  // Touch / Drag Handlers
+  // Touch / Drag Handlers for mobile & desktop swiping
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
     setStartX(e.touches[0].clientX);
@@ -118,83 +127,95 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     setDragOffset(0);
   };
 
-  // 7 slots: 3 on left (-3, -2, -1), 1 center (0), 3 on right (+1, +2, +3)
+  // 7 slots total
   const visibleSlots = [-3, -2, -1, 0, 1, 2, 3];
 
-  // Calibrated viewport spread ensuring equal, non-overlapping gaps across all 7 items
-  const slotXPositionsVw: Record<number, number> = {
-    0: 0,
-    1: 14.2,
-    2: 25.4,
-    3: 35.2,
-    [-1]: -14.2,
-    [-2]: -25.4,
-    [-3]: -35.2,
+  // Calculate clean, non-overlapping horizontal offset per screen size
+  const getSlotXOffsetVw = (offset: number): number => {
+    const abs = Math.abs(offset);
+    const sign = Math.sign(offset);
+    if (abs === 0) return 0;
+
+    if (windowWidth < 640) {
+      // Mobile (<640px): 3 items with wide clearance
+      return sign * 26.0;
+    } else if (windowWidth < 1024) {
+      // Tablet (640px - 1024px): 5 items
+      if (abs === 1) return sign * 18.5;
+      if (abs === 2) return sign * 33.5;
+      return sign * 44.0;
+    } else {
+      // Laptop/Desktop (1024px+): 7 items
+      if (abs === 1) return sign * 14.2;
+      if (abs === 2) return sign * 25.4;
+      if (abs === 3) return sign * 35.2;
+      return 0;
+    }
   };
 
   return (
     <section className="relative w-full bg-[#0A0604] text-[#F3E8D6] overflow-hidden select-none transition-colors">
       
       {/* ========================================================================= */}
-      {/* 1. FULL-WIDTH HERO BANNER (ATMOSPHERIC BACKGROUND & TYPOGRAPHY) */}
+      {/* 1. RESPONSIVE HERO BANNER (MOBILE, TABLET, LAPTOP & DESKTOP) */}
       {/* ========================================================================= */}
-      <div className="relative w-full min-h-[380px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] flex items-center">
+      <div className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
         
-        {/* Full-width High-Res Hero Image with Lamp & Vases on Right */}
+        {/* Full-width Responsive Hero Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/heroimageone.png"
             alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
             fill
             priority
-            className="object-cover object-right-bottom sm:object-right lg:object-center"
+            className="object-cover object-[82%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
             sizes="100vw"
           />
-          {/* Subtle gradient overlay on left for crisp text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0604]/90 via-[#0A0604]/50 to-transparent w-full md:w-[65%]" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A0604] to-transparent" />
+          {/* Responsive dark gradient overlay ensuring high text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0604]/95 via-[#0A0604]/70 to-transparent w-full sm:w-[85%] md:w-[70%] lg:w-[60%]" />
+          <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#0A0604] via-[#0A0604]/70 to-transparent" />
         </div>
 
-        {/* Hero Content (Positioned with comfortable side breathing room) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 py-10 sm:py-12 md:py-14">
-          <div className="max-w-xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-8 xl:pl-10">
+        {/* Hero Content Area */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full relative z-10 py-8 sm:py-12 md:py-14">
+          <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6">
             
             {/* Elegant Script Tagline */}
-            <p className="font-serif italic text-[#C59345] text-xl sm:text-2xl md:text-[26px] font-normal tracking-wide drop-shadow-sm">
+            <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-sm">
               Handmade Natural
             </p>
 
-            {/* Main Bold Headline (Strict Single Line) */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[58px] font-serif font-bold text-white tracking-tight uppercase leading-none whitespace-nowrap drop-shadow-md">
+            {/* Main Bold Headline */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-white tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-md">
               WOODEN <span className="text-[#C59345]">LAMP</span>
             </h1>
 
-            {/* Sub-headline with delicate underline */}
-            <div className="pt-0.5">
-              <h2 className="text-xs sm:text-sm md:text-base font-serif font-normal text-[#E5D7C2] tracking-wide inline-block">
+            {/* Sub-headline */}
+            <div className="pt-0.5 sm:pt-1">
+              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-normal text-[#E5D7C2] tracking-wide inline-block">
                 Crafted by Nature, Designed to Inspire
               </h2>
-              <div className="h-[1.5px] w-12 sm:w-16 bg-[#C59345]/70 mt-1" />
+              <div className="h-[2px] w-12 sm:w-20 bg-[#C59345] mt-1 sm:mt-1.5 rounded-full" />
             </div>
 
             {/* Body Description */}
-            <p className="text-xs sm:text-[13px] md:text-sm text-[#A89B8C] leading-relaxed max-w-md pt-1 font-sans">
+            <p className="text-xs sm:text-sm md:text-[15px] text-[#A89B8C] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
               Premium quality wooden lamps, carefully handcrafted to bring warmth, elegance and a natural touch to your space.
             </p>
 
-            {/* Dual CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-3 sm:pt-4">
+            {/* Dual CTA Buttons (Clean, with no-theme-hover) */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-5">
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center gap-1.5 px-6 sm:px-7 py-2.5 sm:py-3 bg-[#C59345] hover:bg-[#D9A352] text-[#0A0604] text-xs sm:text-[13px] font-bold uppercase tracking-[0.12em] rounded-[2px] transition-all duration-200 shadow-lg shadow-[#C59345]/25 active:scale-95 group"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
               >
-                <span>SHOP NOW</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                <span className="text-white">SHOP NOW</span>
+                <ArrowRight className="w-4 h-4 text-white" />
               </Link>
 
               <Link
                 href="/products?sort=popular"
-                className="inline-flex items-center justify-center px-6 sm:px-7 py-2.5 sm:py-3 border border-white/60 hover:border-[#C59345] bg-[#0A0604]/40 hover:bg-white/10 text-white hover:text-[#C59345] text-xs sm:text-[13px] font-medium uppercase tracking-[0.12em] rounded-[2px] backdrop-blur-sm transition-all duration-200"
+                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-white/70 hover:border-white text-white hover:text-white hover:bg-white/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
               >
                 EXPORE COLLECTION
               </Link>
@@ -206,9 +227,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. 3D GOLDEN HORIZONTAL ELLIPSE (ALL 7 ITEMS SPREAD UNIFORMLY) */}
+      {/* 2. RESPONSIVE ORBIT SHOWCASE (NATURAL FLOW WITHOUT BUTTON OVERLAP) */}
       {/* ========================================================================= */}
-      <div className="relative w-full max-w-7xl mx-auto px-1 sm:px-3 lg:px-6 pt-0 pb-6 sm:pb-8 md:pb-10 -mt-6 sm:-mt-8 md:-mt-10 z-20">
+      <div className="relative w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:-mt-6 z-20">
         
         {/* Main Orbit Stage */}
         <div 
@@ -220,9 +241,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className="relative w-full h-[160px] sm:h-[195px] md:h-[225px] lg:h-[250px] flex items-center justify-center cursor-grab active:cursor-grabbing"
+          className="relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center cursor-grab active:cursor-grabbing"
         >
-          {/* Elongated Clean Gold Ellipse Frame (Lower Profile Top & Bottom) */}
+          {/* Elongated Golden Ellipse Frame */}
           <div className="absolute inset-0 w-full h-full pointer-events-none flex items-center justify-center px-1 sm:px-2">
             <svg 
               className="w-full h-full max-w-7xl" 
@@ -232,11 +253,11 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
             >
               <defs>
                 <linearGradient id="heroGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#C59345" stopOpacity="0.3" />
+                  <stop offset="0%" stopColor="#C59345" stopOpacity="0.25" />
                   <stop offset="15%" stopColor="#E6BA6F" stopOpacity="0.85" />
                   <stop offset="50%" stopColor="#FFE1A0" stopOpacity="1" />
                   <stop offset="85%" stopColor="#E6BA6F" stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="#C59345" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#C59345" stopOpacity="0.25" />
                 </linearGradient>
                 <filter id="heroGoldGlow" x="-10%" y="-20%" width="120%" height="140%">
                   <feGaussianBlur stdDeviation="6" result="blur" />
@@ -249,19 +270,19 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                 cx="500" 
                 cy="110" 
                 rx="485" 
-                ry="100" 
+                ry="98" 
                 stroke="url(#heroGoldGrad)" 
                 strokeWidth="2.5" 
                 filter="url(#heroGoldGlow)" 
                 fill="none" 
                 opacity="0.45" 
               />
-              {/* Crisp Primary Gold Ellipse (Single Border) */}
+              {/* Crisp Primary Gold Ellipse */}
               <ellipse 
                 cx="500" 
                 cy="110" 
                 rx="485" 
-                ry="98" 
+                ry="96" 
                 stroke="url(#heroGoldGrad)" 
                 strokeWidth="1.75" 
                 fill="none" 
@@ -269,7 +290,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
             </svg>
           </div>
 
-          {/* Left Arrow Navigation (White Circle Button) */}
+          {/* Left Navigation Arrow */}
           <button
             type="button"
             onClick={(e) => {
@@ -277,12 +298,12 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handlePrev();
             }}
             aria-label="Previous product"
-            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute left-0.5 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Right Arrow Navigation (White Circle Button) */}
+          {/* Right Navigation Arrow */}
           <button
             type="button"
             onClick={(e) => {
@@ -290,12 +311,16 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handleNext();
             }}
             aria-label="Next product"
-            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute right-0.5 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* 7 Product Lenses Spread Uniformly with Consistent Gaps */}
+          {/* Responsive Orbit Items: 
+              - Mobile (<640px): 3 Items ([-1, 0, 1])
+              - Tablet (640-1024px): 5 Items ([-2, -1, 0, 1, 2])
+              - Desktop (1024px+): 7 Items ([-3, -2, -1, 0, 1, 2, 3])
+          */}
           <div className="relative w-full max-w-6xl h-full flex items-center justify-center">
             {visibleSlots.map((offset) => {
               const itemIndex = (activeIndex + offset + total * 100) % total;
@@ -306,26 +331,29 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               const imgUrl = getProductMainImage(product) || product.images?.[0]?.url || "/images/showcase/lamp_center.jpg";
               const absOffset = Math.abs(offset);
 
-              // Spread positioning in viewport width (vw) ensuring all 7 items are distinctly visible
-              const xPosVw = slotXPositionsVw[offset] || 0;
-              const zIndex = isCenter ? 25 : 20 - absOffset;
-              const opacity = isCenter ? 1 : Math.max(0.65, 1 - absOffset * 0.11);
+              // Visibility: Hide outer items cleanly per screen width
+              let isVisible = true;
+              if (windowWidth < 640 && absOffset > 1) isVisible = false;
+              if (windowWidth >= 640 && windowWidth < 1024 && absOffset > 2) isVisible = false;
 
-              // Proportional Lens Dimensions (Width x Height)
+              if (!isVisible) return null;
+
+              const xOffsetVw = getSlotXOffsetVw(offset);
+
+              // Size classes per breakpoint
               let sizeClasses = "";
               if (isCenter) {
-                // Center Product: Main Illuminated Lens
-                sizeClasses = "w-[136px] h-[146px] sm:w-[166px] sm:h-[178px] md:w-[194px] md:h-[208px] lg:w-[214px] lg:h-[228px]";
+                sizeClasses = "w-[125px] h-[135px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
               } else if (absOffset === 1) {
-                // Level 1 (±1): Flanking Lenses (gentle breathing room from center)
-                sizeClasses = "w-[88px] h-[95px] sm:w-[108px] sm:h-[116px] md:w-[126px] md:h-[136px] lg:w-[138px] lg:h-[148px]";
+                sizeClasses = "w-[80px] h-[86px] sm:w-[100px] sm:h-[108px] md:w-[120px] md:h-[129px] lg:w-[132px] lg:h-[142px]";
               } else if (absOffset === 2) {
-                // Level 2 (±2): Smaller Lenses
-                sizeClasses = "w-[62px] h-[67px] sm:w-[76px] sm:h-[82px] md:w-[88px] md:h-[95px] lg:w-[98px] lg:h-[105px]";
+                sizeClasses = "w-[60px] h-[65px] sm:w-[74px] sm:h-[80px] md:w-[86px] md:h-[93px] lg:w-[94px] lg:h-[101px]";
               } else {
-                // Level 3 (±3): Smallest Lenses at ends
-                sizeClasses = "w-[42px] h-[45px] sm:w-[50px] sm:h-[54px] md:w-[58px] md:h-[62px] lg:w-[64px] lg:h-[69px]";
+                sizeClasses = "w-[40px] h-[43px] sm:w-[48px] sm:h-[52px] md:w-[56px] md:h-[60px] lg:w-[62px] lg:h-[67px]";
               }
+
+              const zIndex = isCenter ? 25 : 20 - absOffset;
+              const opacity = isCenter ? 1 : Math.max(0.65, 1 - absOffset * 0.11);
 
               return (
                 <div
@@ -334,15 +362,15 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     e.stopPropagation();
                     if (!isCenter) navigateTo(itemIndex);
                   }}
-                  style={{
-                    transform: `translate(calc(-50% + ${xPosVw}vw), -50%)`,
-                    opacity,
-                    zIndex,
-                    transition: "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
-                  }}
                   className={`absolute top-1/2 left-1/2 ${
                     isCenter ? "cursor-pointer" : "cursor-pointer hover:opacity-100 hover:scale-105"
                   }`}
+                  style={{
+                    opacity,
+                    zIndex,
+                    transition: "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
+                    transform: `translate(calc(-50% + ${xOffsetVw}vw), -50%)`,
+                  }}
                 >
                   {isCenter ? (
                     /* ===== ACTIVE CENTER LENS WITH RADIANT GOLD DOUBLE RING ===== */
@@ -357,7 +385,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                             src={imgUrl}
                             alt={product.name}
                             fill
-                            sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 220px"
+                            sizes="(max-width: 640px) 130px, (max-width: 1024px) 190px, 210px"
                             className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
@@ -366,7 +394,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                   ) : (
                     /* ===== FLANKING LENSES (INSIDE THE ELLIPSE) ===== */
                     <div className="relative group">
-                      {/* Soft ambient white-gold glow behind each side lens */}
+                      {/* Ambient soft glow */}
                       <div className="absolute -inset-1 bg-white/10 rounded-[50%] blur-[2px]" />
                       
                       {/* Gold ring border */}
@@ -390,7 +418,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         </div>
 
         {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
-        <div className="flex items-center justify-center gap-2 mt-1 text-center">
+        <div className="flex items-center justify-center gap-2 mt-2 text-center">
           <svg 
             className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce" 
             viewBox="0 0 24 24" 

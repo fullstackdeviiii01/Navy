@@ -16,7 +16,6 @@ import Loader from "../../../components/shared/Loader";
 const SOCIAL_PLATFORMS = [
   { key: "instagram", label: "Instagram", icon: BsInstagram, placeholder: "https://instagram.com/yourhandle" },
   { key: "facebook", label: "Facebook", icon: BsFacebook, placeholder: "https://facebook.com/yourpage" },
-  { key: "pinterest", label: "Pinterest", icon: BsPinterest, placeholder: "https://pinterest.com/yourhandle" },
   { key: "whatsapp", label: "WhatsApp", icon: BsWhatsapp, placeholder: "https://wa.me/923009692765" },
 ];
 
