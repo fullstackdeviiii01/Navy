@@ -248,11 +248,11 @@ export default function CuratedProductCarousel({
         )}
 
         {/* ========================================================================= */}
-        {/* 2. TABLET & DESKTOP VIEW (>= 640px): SMOOTH HORIZONTAL SINGLE ROW CAROUSEL */}
+        {/* 2. TABLET & DESKTOP VIEW (>= 640px): SMOOTH HORIZONTAL 6-PRODUCT ROW */}
         {/* ========================================================================= */}
         <div
           ref={scrollContainerRef}
-          className="hidden sm:flex items-stretch gap-4 sm:gap-5 overflow-x-auto scrollbar-none pb-2 snap-x snap-mandatory"
+          className="hidden sm:flex items-stretch gap-3 lg:gap-3 xl:gap-3.5 overflow-x-auto scrollbar-none pb-2 snap-x snap-mandatory"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {products.map((product) => {
@@ -265,7 +265,7 @@ export default function CuratedProductCarousel({
             return (
               <div
                 key={`desktop-${product._id}`}
-                className="w-[205px] md:w-[225px] shrink-0 snap-start flex flex-col justify-between bg-white dark:bg-[#241A12] border border-[#E5DAC8] dark:border-[#3E2B1E] rounded-[2px] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group"
+                className="w-[180px] sm:w-[190px] md:w-[200px] lg:w-[calc((100%-5*12px)/6)] xl:w-[calc((100%-5*14px)/6)] shrink-0 snap-start flex flex-col justify-between bg-white dark:bg-[#241A12] border border-[#E5DAC8] dark:border-[#3E2B1E] rounded-[2px] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group"
               >
                 {/* Full-Bleed Product Image */}
                 <Link
