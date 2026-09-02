@@ -99,10 +99,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Stock filter
+    // Stock filter - Handcrafted made-to-order lamps are always in-stock when active
     if (inStock) {
-      query["inventory.stock_quantity"] = { $gt: 0 };
-      query["inventory.stock_status"] = { $ne: "out_of_stock" };
+      query.status = "active";
     }
 
     const titleOnly = url.searchParams.get("titleOnly") === "true";

@@ -114,35 +114,32 @@ export default function StickyProductBar({
               </div>
             )}
 
-            {/* Action */}
-            {isVariableProduct && !selectedVariant ? (
-              <button
-                onClick={onScrollToOptions}
-                className="px-4 sm:px-6 py-3 sm:py-3.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-[11px] sm:text-xs uppercase tracking-[0.15em] transition-colors whitespace-nowrap"
-              >
-                SELECT OPTIONS
-              </button>
-            ) : (
-              <div className="flex items-center gap-2">
-                <div className="min-w-[120px] sm:min-w-[170px]">
-                  <AddToCartButton
-                    productId={product._id}
-                    quantity={quantity}
-                    variantId={selectedVariant?._id}
-                    variantAttributes={
-                      selectedVariant?.attributes?.reduce((acc: any, a: any) => {
-                        acc[a.name] = a.value;
-                        return acc;
-                      }, {})
-                    }
-                    productName={product.name}
-                    productImage={selectedVariant?.imageUrl || primaryImage}
-                    disabled={isDisabled}
-                  />
-                </div>
-                <ProductWishlistButton productId={product._id} className="py-3 sm:py-3.5 px-3" />
+            {/* Action - Always Add to Cart */}
+            <div className="flex items-center gap-2">
+              <div className="min-w-[120px] sm:min-w-[170px]">
+                <AddToCartButton
+                  productId={product._id}
+                  quantity={quantity}
+                  variantId={selectedVariant?._id || (isVariableProduct ? product.variants?.[0]?._id : undefined)}
+                  variantAttributes={
+                    selectedVariant?.attributes?.reduce((acc: any, a: any) => {
+                      acc[a.name] = a.value;
+                      return acc;
+                    }, {}) ||
+                    (isVariableProduct && product.variants?.[0]?.attributes
+                      ? product.variants[0].attributes.reduce((acc: any, a: any) => {
+                          acc[a.name] = a.value;
+                          return acc;
+                        }, {})
+                      : undefined)
+                  }
+                  productName={product.name}
+                  productImage={selectedVariant?.imageUrl || primaryImage}
+                  disabled={isDisabled}
+                />
               </div>
-            )}
+              <ProductWishlistButton productId={product._id} className="py-3 sm:py-3.5 px-3" />
+            </div>
           </div>
         </div>
       </div>

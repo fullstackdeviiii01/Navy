@@ -73,7 +73,24 @@ export default function ProductDetailPageContent({ productId }: Props) {
     setLoading(true);
     try {
       const data = await productsApi.getById(productId);
-      setProduct(data.product);
+      const prod = data.product;
+      setProduct(prod);
+
+      // Auto-select first variant on load
+      if (prod?.hasVariants && prod?.variants && prod.variants.length > 0) {
+        const firstVar = prod.variants.find((v: any) => v.isAvailable !== false) || prod.variants[0];
+        if (firstVar) {
+          setSelectedVariant(firstVar);
+          const initialAttrs: Record<string, string> = {};
+          (firstVar.attributes || []).forEach((a: any) => {
+            initialAttrs[a.name] = a.value;
+          });
+          setSelectedAttributes(initialAttrs);
+          if (firstVar.imageUrl) {
+            setPreviewImageUrl(firstVar.imageUrl);
+          }
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch product:", error);
     } finally {
@@ -354,69 +371,62 @@ export default function ProductDetailPageContent({ productId }: Props) {
                 </div>
               )}
 
-              {/* Main action block: Quantity + Total Price + Add to Cart */}
+              {/* Main action block: Quantity + Total Price + Add to Cart (Always Active) */}
               <div className="space-y-2 pt-0.5">
                 {/* Quantity + total price */}
-                {(!isVariableProduct || selectedVariant) && (
-                  <div
-                    className="space-y-1.5"
-                    role="region"
-                    aria-label="Quantity and pricing"
-                  >
-                    <ProductQuantity
-                      quantity={quantity}
-                      onQuantityChange={setQuantity}
-                    />
-                    <div className="flex items-baseline justify-between pt-1.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
-                      <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                        Total Price:
-                      </span>
-                      <span
-                        className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium"
-                        aria-label={`Total price: ${formatPrice(totalPrice)}`}
-                      >
-                        {formatPrice(totalPrice)}
-                      </span>
-                    </div>
+                <div
+                  className="space-y-1.5"
+                  role="region"
+                  aria-label="Quantity and pricing"
+                >
+                  <ProductQuantity
+                    quantity={quantity}
+                    onQuantityChange={setQuantity}
+                  />
+                  <div className="flex items-baseline justify-between pt-1.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
+                    <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
+                      Total Price:
+                    </span>
+                    <span
+                      className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium"
+                      aria-label={`Total price: ${formatPrice(totalPrice)}`}
+                    >
+                      {formatPrice(totalPrice)}
+                    </span>
                   </div>
-                )}
+                </div>
 
-                {/* Add to Cart button + Wishlist Heart button */}
+                {/* Add to Cart button + Wishlist Heart button (Always Visible & Enabled) */}
                 <div
                   className="pt-0.5"
                   role="region"
                   aria-label="Product actions"
                 >
-                  {isVariableProduct && !selectedVariant ? (
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex-1 h-[50px] flex items-center justify-center px-4 border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark text-center">
-                        <p className="text-[11px] uppercase tracking-[0.15em] font-medium text-theme-hover-light dark:text-theme-hover-dark">
-                          Please select your options above
-                        </p>
-                      </div>
-                      <ProductWishlistButton productId={product._id} />
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex-1 min-w-0">
+                      <AddToCartButton
+                        productId={product._id}
+                        quantity={quantity}
+                        variantId={selectedVariant?._id || (isVariableProduct ? product.variants?.[0]?._id : undefined)}
+                        variantAttributes={
+                          Object.keys(selectedAttributes).length > 0
+                            ? selectedAttributes
+                            : (isVariableProduct && product.variants?.[0]?.attributes
+                              ? Object.fromEntries(product.variants[0].attributes.map((a: any) => [a.name, a.value]))
+                              : {})
+                        }
+                        productName={product.name}
+                        productImage={
+                          selectedVariant?.imageUrl ||
+                          previewImageUrl ||
+                          product.images?.find((img: any) => img.is_primary)?.url ||
+                          product.images?.[0]?.url
+                        }
+                        disabled={false}
+                      />
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex-1 min-w-0">
-                        <AddToCartButton
-                          productId={product._id}
-                          quantity={quantity}
-                          variantId={selectedVariant?._id}
-                          variantAttributes={selectedAttributes}
-                          productName={product.name}
-                          productImage={
-                            selectedVariant?.imageUrl ||
-                            previewImageUrl ||
-                            product.images?.find((img: any) => img.is_primary)?.url ||
-                            product.images?.[0]?.url
-                          }
-                          disabled={false}
-                        />
-                      </div>
-                      <ProductWishlistButton productId={product._id} />
-                    </div>
-                  )}
+                    <ProductWishlistButton productId={product._id} />
+                  </div>
                 </div>
               </div>
 

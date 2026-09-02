@@ -147,37 +147,27 @@ export async function POST(request: NextRequest) {
     let stockQuantity = product.inventory?.stock_quantity || 99;
     let variantAttributes: Record<string, string> = clientAttributes || {};
 
-    if (product.hasVariants) {
-      if (!variant_id) {
-        console.warn("⚠️ [API POST /api/cart] Missing variant_id for variable product");
-        return NextResponse.json(
-          { error: "Variant selection required" },
-          { status: 400 }
-        );
-      }
-
-      const targetVarId = variant_id.toString();
-      const variant = product.variants?.find(
-        (v: any) => (v._id?.toString() || String(v._id)) === targetVarId
-      );
+    if (product.hasVariants && product.variants && product.variants.length > 0) {
+      const targetVarId = variant_id ? variant_id.toString() : null;
+      let variant = targetVarId
+        ? product.variants.find((v: any) => (v._id?.toString() || String(v._id)) === targetVarId)
+        : product.variants[0];
 
       if (!variant) {
-        console.error("❌ [API POST /api/cart] Variant not found for ID:", variant_id);
-        return NextResponse.json(
-          { error: "Variant not found" },
-          { status: 404 }
-        );
+        variant = product.variants[0];
       }
 
-      price = Math.round(variant.price);
-      stockQuantity = typeof variant.stockQuantity === "number" ? variant.stockQuantity : stockQuantity;
+      if (variant) {
+        price = Math.round(variant.price || price);
+        stockQuantity = typeof variant.stockQuantity === "number" ? variant.stockQuantity : stockQuantity;
 
-      if (variant.attributes && Array.isArray(variant.attributes)) {
-        variant.attributes.forEach((attr: any) => {
-          if (attr.name && attr.value) {
-            variantAttributes[attr.name] = attr.value;
-          }
-        });
+        if (variant.attributes && Array.isArray(variant.attributes)) {
+          variant.attributes.forEach((attr: any) => {
+            if (attr.name && attr.value) {
+              variantAttributes[attr.name] = attr.value;
+            }
+          });
+        }
       }
     }
 

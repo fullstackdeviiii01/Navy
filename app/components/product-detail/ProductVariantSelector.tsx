@@ -1,7 +1,7 @@
 // app/components/product-detail/ProductVariantSelector.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 
 interface VariantAttribute {
@@ -50,7 +50,25 @@ export default function ProductVariantSelector({
   variantAttributes,
   onSelectionChange,
 }: ProductVariantSelectorProps) {
-  const [currentSelection, setCurrentSelection] = useState<VariantSelection>({});
+  // Auto-select initial options from the first available variant by default
+  const initialSelection = useMemo(() => {
+    if (!variants?.length && !variantAttributes?.length) return {};
+    const firstVar = variants.find((v) => v.isAvailable !== false) || variants[0];
+    const sel: VariantSelection = {};
+    if (firstVar?.attributes) {
+      firstVar.attributes.forEach((attr) => {
+        sel[attr.name] = attr.value;
+      });
+    }
+    variantAttributes?.forEach((attr) => {
+      if (!sel[attr.name] && attr.values?.[0]) {
+        sel[attr.name] = attr.values[0];
+      }
+    });
+    return sel;
+  }, [variants, variantAttributes]);
+
+  const [currentSelection, setCurrentSelection] = useState<VariantSelection>(initialSelection);
 
   const isFullySelected = useMemo(() => {
     return variantAttributes.every((attr) => currentSelection[attr.name]);
@@ -126,6 +144,26 @@ export default function ProductVariantSelector({
       }) || null
     );
   };
+
+  // Auto-emit default variant on mount or when options load
+  useEffect(() => {
+    if (Object.keys(initialSelection).length > 0) {
+      setCurrentSelection(initialSelection);
+      const matched = findMatchingVariant(initialSelection) || (variants.find((v) => v.isAvailable !== false) || variants[0]) || null;
+      let previewImg = matched?.imageUrl;
+      if (!previewImg) {
+        for (const [k, v] of Object.entries(initialSelection)) {
+          const opt = variantAttributes.find((o) => o.name.toLowerCase() === k.toLowerCase());
+          if (opt?.colorImages?.[v]) {
+            const img = opt.colorImages[v];
+            previewImg = Array.isArray(img) ? img[0] : img;
+            if (previewImg) break;
+          }
+        }
+      }
+      onSelectionChange(initialSelection, matched, previewImg);
+    }
+  }, [initialSelection]);
 
   const handleSelect = (attributeName: string, value: string) => {
     const newSelection: VariantSelection = {

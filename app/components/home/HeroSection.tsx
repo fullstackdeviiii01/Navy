@@ -1,12 +1,13 @@
 // app/components/home/HeroSection.tsx
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface ProductItem {
   _id: string;
@@ -18,6 +19,7 @@ interface ProductItem {
   variantPricing?: {
     minPrice: number;
   };
+  variants?: any[];
   images?: Array<{ url: string; alt_text?: string }>;
   category_id?: {
     name?: string;
@@ -30,8 +32,36 @@ interface HeroSectionProps {
   products?: ProductItem[];
 }
 
+const getProductImages = (prod?: ProductItem): string[] => {
+  if (!prod) return ["/images/showcase/lamp_center.jpg"];
+  const urls: string[] = [];
+
+  const mainImg = getProductMainImage(prod);
+  if (mainImg) urls.push(mainImg);
+
+  if (Array.isArray(prod.images)) {
+    prod.images.forEach((img: any) => {
+      const u = typeof img === "string" ? img : img?.url;
+      if (u && typeof u === "string" && !urls.includes(u)) {
+        urls.push(u);
+      }
+    });
+  }
+
+  if (Array.isArray(prod.variants)) {
+    prod.variants.forEach((v: any) => {
+      if (v?.imageUrl && typeof v.imageUrl === "string" && !urls.includes(v.imageUrl)) {
+        urls.push(v.imageUrl);
+      }
+    });
+  }
+
+  return urls.length > 0 ? urls : [mainImg || "/images/showcase/lamp_center.jpg"];
+};
+
 export default function HeroSection({ products = [] }: HeroSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
@@ -64,10 +94,17 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     : [...products, ...defaultShowcaseLamps.slice(products.length)];
 
   const total = displayProducts.length;
+  const activeProduct = displayProducts[activeIndex] || displayProducts[0];
+
+  // All images for the currently active/focused product
+  const activeImages = useMemo(() => {
+    return getProductImages(activeProduct);
+  }, [activeProduct]);
 
   const navigateTo = useCallback((newIndex: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
+    setCurrentImageIndex(0);
     setActiveIndex((newIndex + total * 100) % total);
     setTimeout(() => setIsAnimating(false), 450);
   }, [total, isAnimating]);
@@ -80,14 +117,30 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     navigateTo(activeIndex - 1);
   }, [activeIndex, navigateTo]);
 
-  // Smooth auto-slide every 5.5 seconds (paused when dragging)
+  // Reset image index whenever active product index changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [activeIndex]);
+
+  // Auto-cycle through every picture of the active product, then advance to next product
   useEffect(() => {
     if (isDragging) return;
-    const timer = setInterval(() => {
-      handleNext();
-    }, 5500);
-    return () => clearInterval(timer);
-  }, [activeIndex, isDragging, handleNext]);
+
+    const totalImages = activeImages.length;
+    // 1.8 seconds per picture; 3.5 seconds if product has only 1 picture
+    const intervalMs = totalImages > 1 ? 1800 : 3500;
+
+    const timer = setTimeout(() => {
+      if (currentImageIndex < totalImages - 1) {
+        setCurrentImageIndex((prev) => prev + 1);
+      } else {
+        setCurrentImageIndex(0);
+        handleNext();
+      }
+    }, intervalMs);
+
+    return () => clearTimeout(timer);
+  }, [activeIndex, currentImageIndex, isDragging, activeImages, handleNext]);
 
   // Touch / Drag Handlers for mobile & desktop swiping with live drag follow
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -394,14 +447,24 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                       {/* Concentric Double Gold Frame */}
                       <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_0_35px_rgba(197,147,69,0.5)]`}>
                         <div className="w-full h-full rounded-[50%] overflow-hidden bg-[#18110B] relative">
-                          <Image
-                            src={imgUrl}
-                            alt={product.name}
-                            fill
-                            draggable={false}
-                            sizes="(max-width: 640px) 130px, (max-width: 1024px) 190px, 210px"
-                            className="object-cover object-center transition-transform duration-500 group-hover:scale-110 pointer-events-none"
-                          />
+                          {activeImages.map((img, idx) => (
+                            <div
+                              key={`${product._id}-img-${idx}`}
+                              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                                idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                              }`}
+                            >
+                              <Image
+                                src={img}
+                                alt={`${product.name} - view ${idx + 1}`}
+                                fill
+                                draggable={false}
+                                priority={idx === 0}
+                                sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 220px"
+                                className="object-cover object-center transition-transform duration-500 group-hover:scale-110 pointer-events-none"
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </Link>
@@ -431,6 +494,47 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
             })}
           </div>
         </div>
+
+        {/* Active Product Name & Price Bar (Always Visible on Smaller & Larger Screens) */}
+        {activeProduct && (
+          <div className="text-center mt-2.5 sm:mt-3 px-3 select-none flex flex-col items-center">
+            <Link 
+              href={getProductUrl(activeProduct)} 
+              className="inline-block group/info hover:opacity-90 transition-opacity max-w-full"
+            >
+              <h3 className="text-xs sm:text-sm md:text-base font-serif font-medium text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
+                {activeProduct.name}
+              </h3>
+              {(activeProduct.pricing?.price || activeProduct.variantPricing?.minPrice) ? (
+                <p className="text-[11px] sm:text-xs font-sans font-bold text-[#C59345] mt-0.5">
+                  {formatPrice(activeProduct.pricing?.price || activeProduct.variantPricing?.minPrice)}
+                </p>
+              ) : null}
+            </Link>
+
+            {/* Subtle Image Progress Dots (when active product has multiple images) */}
+            {activeImages.length > 1 && (
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                {activeImages.map((_, i) => (
+                  <button
+                    key={`dot-${i}`}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(i);
+                    }}
+                    aria-label={`Show picture ${i + 1}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === currentImageIndex
+                        ? "w-4 sm:w-5 bg-[#C59345]"
+                        : "w-1.5 bg-white/30 hover:bg-white/60"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
         <div className="flex items-center justify-center gap-2 mt-2 text-center select-none">

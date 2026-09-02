@@ -9,6 +9,7 @@ import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
 import { trackAddToCart } from "../../../lib/meta/pixel";
+import { cartApi } from "../../../lib/api/cart";
 import { useUser } from "../../context/UserContext";
 import { useWishlist } from "../../context/WishlistContext";
 
@@ -46,7 +47,7 @@ export default function CuratedProductCarousel({
   bgClass = "bg-[#F3EBDC] dark:bg-[#1E1610]",
 }: CuratedProductCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { refreshCart, openCart } = useUser();
+  const { refreshCart, updateCart, openCart } = useUser();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   
   const [addingId, setAddingId] = useState<string | null>(null);
@@ -67,38 +68,40 @@ export default function CuratedProductCarousel({
     e.preventDefault();
     e.stopPropagation();
 
-    if (product.hasVariants && product.variants && product.variants.length > 0) {
-      if (window.innerWidth < 640) {
-        window.location.href = getProductUrl(product);
-      }
-      return;
-    }
+    const defaultVariant = product.hasVariants && product.variants?.length ? product.variants[0] : null;
+    const variantId = defaultVariant?._id || undefined;
+    const variantAttributes = defaultVariant?.attributes
+      ? Object.fromEntries(defaultVariant.attributes.map((a: any) => [a.name, a.value]))
+      : undefined;
 
     setAddingId(product._id);
     try {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          product_id: product._id,
-          quantity: 1,
-        }),
+      const data = await cartApi.addItem(
+        product._id,
+        1,
+        variantId,
+        variantAttributes,
+        product.name,
+        getProductMainImage(product) || product.images?.[0]?.url
+      );
+
+      if (data?.cart) {
+        updateCart?.(data.cart);
+      }
+      await refreshCart();
+      setAddedId(product._id);
+
+      const itemPrice = defaultVariant?.price || product.pricing?.price || product.variantPricing?.minPrice || 0;
+      trackAddToCart({
+        content_ids: [product._id],
+        content_name: product.name,
+        value: itemPrice,
+        currency: "PKR",
+        quantity: 1,
       });
 
-      if (res.ok) {
-        await refreshCart();
-        setAddedId(product._id);
-        const itemPrice = product.pricing?.price || product.variantPricing?.minPrice || 0;
-        trackAddToCart({
-          content_ids: [product._id],
-          content_name: product.name,
-          value: itemPrice,
-          currency: "PKR",
-          quantity: 1,
-        });
-        setTimeout(() => setAddedId(null), 1800);
-        openCart();
-      }
+      setTimeout(() => setAddedId(null), 1800);
+      openCart();
     } catch (err) {
       console.error("Failed to add to cart:", err);
     } finally {
