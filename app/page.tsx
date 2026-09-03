@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = "https://talalwoodenlamp.com";
   const logoUrl = "https://talalwoodenlamp.com/images/talal-wooden-lamp-logo.png";
   const seoDescription =
-    "Talal Wooden Lamp — handcrafted wooden lamps and artisan lighting, beautifully crafted from natural solid wood.";
+    "Handcrafted wooden lamps and artisanal lighting in Pakistan. Beautiful table lamps, floor lamps, wall lights and more, crafted with natural wood";
 
   return {
     title: {

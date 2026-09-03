@@ -42,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | Talal Wooden Lamp",
     },
     description:
-      "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting atelier in Pakistan. Crafted with seasoned timber. Free nationwide delivery.",
+      "Handcrafted wooden lamps and artisanal lighting in Pakistan. Beautiful table lamps, floor lamps, wall lights and more, crafted with natural wood",
     keywords: [
       "talal wooden lamp",
       "wooden lamp",
@@ -76,7 +76,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Talal Wooden Lamp",
       title: "Talal Wooden Lamp",
       description:
-        "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting atelier in Pakistan. Crafted with seasoned timber.",
+        "Handcrafted wooden lamps and artisanal lighting in Pakistan. Beautiful table lamps, floor lamps, wall lights and more, crafted with natural wood",
       images: [
         {
           url: absoluteLogoUrl,
@@ -96,7 +96,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary",
       title: "Talal Wooden Lamp",
       description:
-        "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting in Pakistan.",
+        "Handcrafted wooden lamps and artisanal lighting in Pakistan. Beautiful table lamps, floor lamps, wall lights and more, crafted with natural wood",
       images: [absoluteLogoUrl],
     },
     robots: {

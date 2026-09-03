@@ -290,10 +290,21 @@ export default function Header() {
       <TopAnnouncementBar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 gap-4">
+        <div className="relative flex items-center justify-between h-16 sm:h-18 md:h-20 gap-2 sm:gap-4">
 
-          {/* 1. START: Dynamic Brand Logo */}
-          <div className="flex items-center shrink-0">
+          {/* Mobile Hamburger Button (On mobile screens, positioned on the LEFT where logo was) */}
+          <div className="flex items-center lg:hidden shrink-0 z-10">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 -ml-1.5 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
+              aria-label="Open mobile menu"
+            >
+              <Menu size={22} />
+            </button>
+          </div>
+
+          {/* 1. START: Dynamic Brand Logo (Centered on mobile, left-aligned on desktop) */}
+          <div className="flex items-center shrink-0 max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:z-10">
             <Link
               href="/"
               className="flex items-center py-0 group"
@@ -566,7 +577,7 @@ export default function Header() {
             {/* Wishlist Icon */}
             <Link
               href="/wishlist"
-              className="relative p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
+              className="relative p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full hidden sm:block"
               aria-label="Wishlist"
             >
               <Heart size={18} className="stroke-[2]" />
@@ -591,15 +602,6 @@ export default function Header() {
               )}
             </button>
 
-            {/* Mobile Hamburger Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors lg:hidden cursor-pointer"
-              aria-label="Open mobile menu"
-            >
-              <Menu size={22} />
-            </button>
-
           </div>
 
         </div>
@@ -617,8 +619,8 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          {/* Slide-out Drawer */}
-          <div className="fixed inset-y-0 right-0 w-full max-w-[85vw] sm:max-w-md bg-[#E5E5E5] dark:bg-[#120D09] border-l border-[#E8E2D6] dark:border-[#3A2A1D] text-[#241910] dark:text-[#F3E8D6] shadow-2xl flex flex-col animate-slide-in-right z-50">
+          {/* Slide-out Drawer (Opens from left to match left hamburger) */}
+          <div className="fixed inset-y-0 left-0 w-full max-w-[85vw] sm:max-w-md bg-[#E5E5E5] dark:bg-[#120D09] border-r border-[#E8E2D6] dark:border-[#3A2A1D] text-[#241910] dark:text-[#F3E8D6] shadow-2xl flex flex-col animate-in slide-in-from-left duration-300 z-50">
 
             {/* Drawer Header */}
             <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-[#E8E2D6] dark:border-[#3A2A1D]">
