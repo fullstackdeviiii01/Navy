@@ -9,20 +9,41 @@ import NewsletterSection from "./components/home/NewsletterSection";
 import { getHomeDataSSR } from "../lib/api/home";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = "https://talalwoodenlamp.com";
+
   return {
-    title: "Handcrafted Wooden Lamps & Artisanal Lighting in Pakistan | Talal Wooden Lamp",
+    title: {
+      absolute: "Talal Wooden Lamp",
+    },
     description:
-      "Discover bespoke solid wood table lamps, lathe-turned floor lamps, rustic lanterns, and luxury ambient lighting. Handcrafted with seasoned timber. Free shipping nationwide.",
+      "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting atelier in Pakistan. Crafted with seasoned timber. Free shipping nationwide.",
     keywords: [
-      "wooden lamps pakistan",
-      "handcrafted table lamps",
-      "lathe turned floor lamps",
-      "solid wood luminaires",
+      "talal wooden lamp",
+      "wooden lamp",
+      "wooden lamps",
+      "handcrafted wooden lamps",
+      "solid wood table lamp",
+      "floor lamps pakistan",
       "sheesham wood lamps",
-      "luxury wooden home decor",
+      "luxury wooden lighting",
+      "artisanal lighting pakistan",
     ],
     alternates: {
-      canonical: "/",
+      canonical: siteUrl,
+    },
+    openGraph: {
+      title: "Talal Wooden Lamp",
+      description:
+        "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting atelier in Pakistan. Crafted with seasoned timber. Free shipping nationwide.",
+      url: siteUrl,
+      siteName: "Talal Wooden Lamp",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Talal Wooden Lamp",
+      description:
+        "Handcrafted solid wood table lamps, artisanal floor lamps, and luxury ambient lighting atelier in Pakistan.",
     },
   };
 }

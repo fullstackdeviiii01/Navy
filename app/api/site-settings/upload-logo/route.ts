@@ -64,6 +64,22 @@ export async function POST(request: NextRequest) {
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
+    // Automatically synchronize static favicons & touch icons with the newly uploaded logo
+    try {
+      const sharp = (await import("sharp")).default;
+      const publicDir = path.join(process.cwd(), "public");
+      const appDir = path.join(process.cwd(), "app");
+
+      await sharp(buffer).resize(48, 48).toFile(path.join(publicDir, "favicon.ico"));
+      await sharp(buffer).resize(512, 512).png().toFile(path.join(publicDir, "icon.png"));
+      await sharp(buffer).resize(512, 512).png().toFile(path.join(appDir, "icon.png"));
+      await sharp(buffer).resize(180, 180).png().toFile(path.join(publicDir, "apple-touch-icon.png"));
+      await sharp(buffer).resize(48, 48).png().toFile(path.join(publicDir, "favicon-48x48.png"));
+      await sharp(buffer).resize(192, 192).png().toFile(path.join(publicDir, "icon-192x192.png"));
+    } catch (iconSyncErr) {
+      console.warn("Could not sync static icon files from newly uploaded logo:", iconSyncErr);
+    }
+
     const logoUrl = `/api/media/company/${filename}`;
 
     return NextResponse.json({

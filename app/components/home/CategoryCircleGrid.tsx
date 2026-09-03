@@ -63,21 +63,21 @@ export default function CategoryCircleGrid({ categories = [] }: CategoryCircleGr
 
   return (
     <section className="relative w-full bg-[#F3EBDC] dark:bg-[#1E1610] py-8 sm:py-10 md:py-12 border-b border-[#E5DAC8] dark:border-[#38281B] transition-colors select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         
         {/* Section Header: • --- SHOP BY CATEGORY --- • */}
-        <div className="flex items-center justify-center gap-2.5 sm:gap-3 mb-6 sm:mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C59345]" />
-          <span className="h-[1px] w-8 sm:w-14 bg-[#C59345]/60" />
-          <h2 className="text-xs sm:text-sm md:text-base font-serif font-bold tracking-[0.16em] text-[#241910] dark:text-[#F3EBDC] uppercase text-center">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6 md:mb-8">
+          <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#C59345]" />
+          <span className="h-[1px] w-6 sm:w-14 bg-[#C59345]/60" />
+          <h2 className="text-[11px] sm:text-sm md:text-base font-serif font-bold tracking-[0.14em] sm:tracking-[0.16em] text-[#241910] dark:text-[#F3EBDC] uppercase text-center">
             SHOP BY CATEGORY
           </h2>
-          <span className="h-[1px] w-8 sm:w-14 bg-[#C59345]/60" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C59345]" />
+          <span className="h-[1px] w-6 sm:w-14 bg-[#C59345]/60" />
+          <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#C59345]" />
         </div>
 
-        {/* 5 Concentric Circular Categories Row */}
-        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-5 md:gap-6 lg:gap-8 max-w-5xl mx-auto">
+        {/* 5 Concentric Circular Categories in a Single Row on ALL Screen Sizes */}
+        <div className="grid grid-cols-5 gap-1 xs:gap-1.5 sm:gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto w-full items-start">
           {displayCategories.map((cat, idx) => {
             const linkHref = `/products?category=${cat.slug || encodeURIComponent(cat.name)}`;
             const imgSource = getCategoryImage(cat, idx);
@@ -86,33 +86,33 @@ export default function CategoryCircleGrid({ categories = [] }: CategoryCircleGr
               <Link
                 key={cat._id || cat.slug || idx}
                 href={linkHref}
-                className="group flex flex-col items-center text-center focus:outline-none transition-transform duration-300 hover:-translate-y-1 w-[105px] sm:w-[125px] md:w-[145px] lg:w-[160px]"
+                className="group flex flex-col items-center text-center focus:outline-none transition-transform duration-300 hover:-translate-y-1 w-full"
               >
-                {/* Double Concentric Gold Ring Frame with explicit pixel dimensions */}
-                <div className="relative w-[88px] h-[88px] sm:w-[110px] sm:h-[110px] md:w-[130px] md:h-[130px] lg:w-[145px] lg:h-[145px] rounded-full p-[3px] border border-[#C59345]/60 group-hover:border-[#C59345] bg-transparent shadow-sm group-hover:shadow-md transition-all duration-300">
+                {/* Double Concentric Gold Ring Frame scaled for 5 items in 1 row on mobile & desktop */}
+                <div className="relative w-[52px] h-[52px] xs:w-[60px] xs:h-[60px] sm:w-[95px] sm:h-[95px] md:w-[125px] md:h-[125px] lg:w-[145px] lg:h-[145px] rounded-full p-[2px] sm:p-[3px] border border-[#C59345]/60 group-hover:border-[#C59345] bg-transparent shadow-sm group-hover:shadow-md transition-all duration-300">
                   <div className="w-full h-full rounded-full overflow-hidden border border-[#C59345]/40 group-hover:border-[#C59345]/80 relative bg-[#1C130C]">
                     <Image
                       src={imgSource}
                       alt={cat.name}
                       fill
-                      sizes="(max-width: 640px) 88px, (max-width: 768px) 110px, (max-width: 1024px) 130px, 145px"
+                      sizes="(max-width: 640px) 60px, (max-width: 768px) 95px, (max-width: 1024px) 125px, 145px"
                       className="object-cover object-center transition-transform duration-500 group-hover:scale-108"
                     />
                   </div>
                 </div>
 
                 {/* Category Title */}
-                <h3 className="mt-2.5 sm:mt-3 text-[10.5px] sm:text-[11.5px] md:text-xs font-serif font-bold uppercase tracking-[0.08em] text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors truncate max-w-full">
+                <h3 className="mt-1.5 sm:mt-2.5 text-[8px] xs:text-[9px] sm:text-[11px] md:text-xs font-serif font-bold uppercase tracking-tight sm:tracking-[0.08em] text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors truncate max-w-full text-center px-0.5">
                   {cat.name}
                 </h3>
 
-                {/* Subtitle */}
-                <span className="text-[9px] sm:text-[10px] font-sans text-[#7D6A5A] dark:text-[#A69E96] group-hover:text-[#241910] dark:group-hover:text-white transition-colors mt-0.5">
+                {/* Subtitle (Hidden on smallest screens to keep 5-in-a-row perfectly clean) */}
+                <span className="hidden sm:block text-[9px] sm:text-[10px] font-sans text-[#7D6A5A] dark:text-[#A69E96] group-hover:text-[#241910] dark:group-hover:text-white transition-colors mt-0.5">
                   Explore Collection
                 </span>
 
                 {/* Small Center Horizontal Accent Line Underneath */}
-                <div className="h-[1.5px] w-7 sm:w-9 bg-[#C59345] mx-auto mt-1.5 transition-all group-hover:w-11" />
+                <div className="h-[1px] sm:h-[1.5px] w-3 xs:w-4 sm:w-8 bg-[#C59345] mx-auto mt-1 sm:mt-1.5 transition-all group-hover:w-11" />
               </Link>
             );
           })}

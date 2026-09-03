@@ -89,8 +89,8 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   ];
 
   // Combine DB products with reference showcase fallback
-  const displayProducts = products.length >= 7 
-    ? products 
+  const displayProducts = products.length >= 7
+    ? products
     : [...products, ...defaultShowcaseLamps.slice(products.length)];
 
   const total = displayProducts.length;
@@ -192,8 +192,10 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
     if (abs === 0) return 0;
 
     if (windowWidth < 640) {
-      // Mobile (<640px): 3 items with wide clearance
-      return sign * 26.0;
+      // Mobile (<640px): 5 items (2 on left, 1 center, 2 on right)
+      if (abs === 1) return sign * 17.5;
+      if (abs === 2) return sign * 32.5;
+      return sign * 44.0;
     } else if (windowWidth < 1024) {
       // Tablet (640px - 1024px): 5 items
       if (abs === 1) return sign * 18.5;
@@ -210,12 +212,12 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
   return (
     <section className="relative w-full bg-[#0A0604] text-[#F3E8D6] overflow-hidden select-none transition-colors">
-      
+
       {/* ========================================================================= */}
       {/* 1. RESPONSIVE HERO BANNER (MOBILE, TABLET, LAPTOP & DESKTOP) */}
       {/* ========================================================================= */}
       <div className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
-        
+
         {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
         <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0 pointer-events-none">
           <Image
@@ -234,7 +236,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         {/* Hero Content Area (Moved 30px up on laptop and higher) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full relative z-10 py-8 sm:py-12 md:py-14">
           <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6 lg:-translate-y-[30px]">
-            
+
             {/* Elegant Script Tagline */}
             <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-sm">
               Handmade Natural
@@ -285,9 +287,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       {/* 2. RESPONSIVE ORBIT SHOWCASE (NATURAL FLOW WITHOUT BUTTON OVERLAP) */}
       {/* ========================================================================= */}
       <div className="relative w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:-mt-6 z-20">
-        
+
         {/* Main Orbit Stage */}
-        <div 
+        <div
           ref={containerRef}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -296,16 +298,15 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${
-            isDragging ? "cursor-grabbing" : "cursor-grab"
-          }`}
+          className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
         >
           {/* Elongated Golden Ellipse Frame */}
           <div className="absolute inset-0 w-full h-full pointer-events-none flex items-center justify-center px-1 sm:px-2">
-            <svg 
-              className="w-full h-full max-w-7xl" 
-              viewBox="0 0 1000 220" 
-              fill="none" 
+            <svg
+              className="w-full h-full max-w-7xl"
+              viewBox="0 0 1000 220"
+              fill="none"
               preserveAspectRatio="none"
             >
               <defs>
@@ -321,28 +322,28 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
               </defs>
-              
+
               {/* Outer Radiant Ambient Glow */}
-              <ellipse 
-                cx="500" 
-                cy="110" 
-                rx="485" 
-                ry="98" 
-                stroke="url(#heroGoldGrad)" 
-                strokeWidth="2.5" 
-                filter="url(#heroGoldGlow)" 
-                fill="none" 
-                opacity="0.45" 
+              <ellipse
+                cx="500"
+                cy="110"
+                rx="485"
+                ry="98"
+                stroke="url(#heroGoldGrad)"
+                strokeWidth="2.5"
+                filter="url(#heroGoldGlow)"
+                fill="none"
+                opacity="0.45"
               />
               {/* Crisp Primary Gold Ellipse */}
-              <ellipse 
-                cx="500" 
-                cy="110" 
-                rx="485" 
-                ry="96" 
-                stroke="url(#heroGoldGrad)" 
-                strokeWidth="1.75" 
-                fill="none" 
+              <ellipse
+                cx="500"
+                cy="110"
+                rx="485"
+                ry="96"
+                stroke="url(#heroGoldGrad)"
+                strokeWidth="1.75"
+                fill="none"
               />
             </svg>
           </div>
@@ -355,9 +356,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handlePrev();
             }}
             aria-label="Previous product"
-            className="absolute left-0.5 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ChevronLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
           </button>
 
           {/* Right Navigation Arrow */}
@@ -368,14 +369,13 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handleNext();
             }}
             aria-label="Next product"
-            className="absolute right-0.5 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
           </button>
 
           {/* Responsive Orbit Items: 
-              - Mobile (<640px): 3 Items ([-1, 0, 1])
-              - Tablet (640-1024px): 5 Items ([-2, -1, 0, 1, 2])
+              - Mobile (<640px) & Tablet (<1024px): 5 Items ([-2, -1, 0, 1, 2] -> 2 left, 1 center, 2 right)
               - Desktop (1024px+): 7 Items ([-3, -2, -1, 0, 1, 2, 3])
           */}
           <div className="relative w-full max-w-6xl h-full flex items-center justify-center pointer-events-none">
@@ -388,25 +388,28 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               const imgUrl = getProductMainImage(product) || product.images?.[0]?.url || "/images/showcase/lamp_center.jpg";
               const absOffset = Math.abs(offset);
 
-              // Visibility: Hide outer items cleanly per screen width
+              // Visibility: 5 items on mobile & tablet (2 on left, 1 center, 2 on right), 7 items on desktop
               let isVisible = true;
-              if (windowWidth < 640 && absOffset > 1) isVisible = false;
-              if (windowWidth >= 640 && windowWidth < 1024 && absOffset > 2) isVisible = false;
+              if (windowWidth < 1024 && absOffset > 2) isVisible = false;
 
               if (!isVisible) return null;
 
               const xOffsetVw = getSlotXOffsetVw(offset);
 
-              // Size classes per breakpoint (Exact original styling)
+              // Proportional Lens Dimensions (Width x Height) - 5 items accommodated on mobile
               let sizeClasses = "";
               if (isCenter) {
-                sizeClasses = "w-[125px] h-[135px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
+                // Center Product: Main Illuminated Lens
+                sizeClasses = "w-[94px] h-[100px] xs:w-[108px] xs:h-[116px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
               } else if (absOffset === 1) {
-                sizeClasses = "w-[80px] h-[86px] sm:w-[100px] sm:h-[108px] md:w-[120px] md:h-[129px] lg:w-[132px] lg:h-[142px]";
+                // Level 1 (±1): Flanking Lenses
+                sizeClasses = "w-[56px] h-[60px] xs:w-[66px] xs:h-[71px] sm:w-[100px] sm:h-[108px] md:w-[120px] md:h-[129px] lg:w-[132px] lg:h-[142px]";
               } else if (absOffset === 2) {
-                sizeClasses = "w-[60px] h-[65px] sm:w-[74px] sm:h-[80px] md:w-[86px] md:h-[93px] lg:w-[94px] lg:h-[101px]";
+                // Level 2 (±2): Outer Lenses (2 on one side, 2 on other side on mobile!)
+                sizeClasses = "w-[38px] h-[41px] xs:w-[46px] xs:h-[49px] sm:w-[74px] sm:h-[80px] md:w-[86px] md:h-[93px] lg:w-[94px] lg:h-[101px]";
               } else {
-                sizeClasses = "w-[40px] h-[43px] sm:w-[48px] sm:h-[52px] md:w-[56px] md:h-[60px] lg:w-[62px] lg:h-[67px]";
+                // Level 3 (±3): Desktop ends
+                sizeClasses = "w-[36px] h-[39px] sm:w-[48px] sm:h-[52px] md:w-[56px] md:h-[60px] lg:w-[62px] lg:h-[67px]";
               }
 
               const zIndex = isCenter ? 25 : 20 - absOffset;
@@ -420,22 +423,21 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     if (Math.abs(dragOffset) > 5) return;
                     if (!isCenter) navigateTo(itemIndex);
                   }}
-                  className={`absolute top-1/2 left-1/2 pointer-events-auto ${
-                    isCenter ? "cursor-pointer" : "cursor-pointer hover:opacity-100 hover:scale-105"
-                  }`}
+                  className={`absolute top-1/2 left-1/2 pointer-events-auto ${isCenter ? "cursor-pointer" : "cursor-pointer hover:opacity-100 hover:scale-105"
+                    }`}
                   style={{
                     opacity,
                     zIndex,
-                    transition: isDragging 
-                      ? "none" 
+                    transition: isDragging
+                      ? "none"
                       : "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
                     transform: `translate(calc(-50% + ${xOffsetVw}vw + ${dragOffset}px), -50%)`,
                   }}
                 >
                   {isCenter ? (
                     /* ===== ACTIVE CENTER LENS WITH RADIANT GOLD DOUBLE RING ===== */
-                    <Link 
-                      href={getProductUrl(product)} 
+                    <Link
+                      href={getProductUrl(product)}
                       onClick={(e) => {
                         if (Math.abs(dragOffset) > 5) e.preventDefault();
                       }}
@@ -443,16 +445,15 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     >
                       {/* Ambient Golden Glow Aura */}
                       <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/35 rounded-[50%] blur-md animate-pulse pointer-events-none" />
-                      
+
                       {/* Concentric Double Gold Frame */}
                       <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_0_35px_rgba(197,147,69,0.5)]`}>
                         <div className="w-full h-full rounded-[50%] overflow-hidden bg-[#18110B] relative">
                           {activeImages.map((img, idx) => (
                             <div
                               key={`${product._id}-img-${idx}`}
-                              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                                idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                              }`}
+                              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                                }`}
                             >
                               <Image
                                 src={img}
@@ -473,7 +474,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     <div className="relative group">
                       {/* Ambient soft glow */}
                       <div className="absolute -inset-1 bg-white/10 rounded-[50%] blur-[2px] pointer-events-none" />
-                      
+
                       {/* Gold ring border */}
                       <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-md transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.45)]`}>
                         <div className="w-full h-full rounded-[50%] overflow-hidden bg-[#18110B] relative">
@@ -498,8 +499,8 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         {/* Active Product Name & Price Bar (Always Visible on Smaller & Larger Screens) */}
         {activeProduct && (
           <div className="text-center mt-2.5 sm:mt-3 px-3 select-none flex flex-col items-center">
-            <Link 
-              href={getProductUrl(activeProduct)} 
+            <Link
+              href={getProductUrl(activeProduct)}
               className="inline-block group/info hover:opacity-90 transition-opacity max-w-full"
             >
               <h3 className="text-xs sm:text-sm md:text-base font-serif font-medium text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
@@ -524,11 +525,10 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                       setCurrentImageIndex(i);
                     }}
                     aria-label={`Show picture ${i + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      i === currentImageIndex
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImageIndex
                         ? "w-4 sm:w-5 bg-[#C59345]"
                         : "w-1.5 bg-white/30 hover:bg-white/60"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -538,14 +538,14 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
         {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
         <div className="flex items-center justify-center gap-2 mt-2 text-center select-none">
-          <svg 
-            className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
+          <svg
+            className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
             <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
