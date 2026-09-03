@@ -74,34 +74,21 @@ export default async function HomePage() {
       {/* 3. Shop By Category (Circular Concentric Gold Badges) */}
       <CategoryCircleGrid categories={categories} />
 
-      {/* 4 & 5. Curated Products (Side-by-Side on Laptop/Desktop, Stacked on Mobile) */}
-      <section className="relative w-full py-8 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] bg-[#E5E5E5] dark:bg-[#1A120B] transition-colors select-none">
-        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-10 lg:gap-y-0">
-            
-            {/* Left Column: MOST LOVED BY OUR CUSTOMERS */}
-            <div className="min-w-0 lg:pr-6 xl:pr-8 lg:border-r border-[#B8A894]">
-              <CuratedProductCarousel
-                title="MOST LOVED BY OUR CUSTOMERS"
-                products={mostLovedProducts}
-                viewAllLink="/products?sort=popular"
-                isNested
-              />
-            </div>
+      {/* 4. Most Loved by Our Customers (Full-width, Stacked, Exactly 5 Products) */}
+      <CuratedProductCarousel
+        title="MOST LOVED BY OUR CUSTOMERS"
+        products={mostLovedProducts}
+        viewAllLink="/products?sort=popular"
+        topButtonText="Show all products"
+      />
 
-            {/* Right Column: PREMIUM COLLECTION */}
-            <div className="min-w-0 pt-8 lg:pt-0 lg:pl-6 xl:pl-8 border-t lg:border-t-0 border-[#B8A894]">
-              <CuratedProductCarousel
-                title="PREMIUM COLLECTION"
-                products={premiumProducts}
-                viewAllLink="/products?sort=price-desc"
-                isNested
-              />
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* 5. Premium Collection (Full-width, Stacked, Exactly 5 Products) */}
+      <CuratedProductCarousel
+        title="PREMIUM COLLECTION"
+        products={premiumProducts}
+        viewAllLink="/products?sort=price-desc"
+        topButtonText="Show all products"
+      />
 
       {/* 6. Brand Value & Trust Highlights Bar */}
       <BrandTrustBar />

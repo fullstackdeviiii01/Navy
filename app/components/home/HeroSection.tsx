@@ -299,8 +299,10 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. RESPONSIVE ORBIT SHOWCASE (NATURAL FLOW WITHOUT BUTTON OVERLAP) */}
+      {/* 2. RESPONSIVE ORBIT SHOWCASE (COMMENTED OUT AS REQUESTED BY CLIENT) */}
+      {/* (To re-enable, simply remove the `{false && (` and closing `)}`) */}
       {/* ========================================================================= */}
+      {false && (
       <div className="relative w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:-mt-6 z-20">
 
         {/* Main Orbit Stage */}
@@ -528,6 +530,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
         </div>
 
       </div>
+      )}
 
     </section>
   );

@@ -1,10 +1,10 @@
 // app/components/home/CuratedProductCarousel.tsx
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Heart, Loader2, Check, ArrowRight, ShoppingCart } from "lucide-react";
+import { Heart, Loader2, Check, ArrowRight, ShoppingCart } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
@@ -37,34 +37,192 @@ interface CuratedProductCarouselProps {
   title: string;
   products: ProductItem[];
   viewAllLink?: string;
+  topButtonText?: string;
   bgClass?: string;
-  isNested?: boolean;
+}
+
+// Extract all valid images for product card hover cycling
+const getCardImages = (prod?: ProductItem): string[] => {
+  if (!prod) return ["/images/hero-atelier-lamp.jpg"];
+  const urls: string[] = [];
+  const main = getProductMainImage(prod);
+  if (main) urls.push(main);
+
+  if (Array.isArray(prod.images)) {
+    prod.images.forEach((img: any) => {
+      const u = typeof img === "string" ? img : img?.url;
+      if (u && typeof u === "string" && !urls.includes(u)) {
+        urls.push(u);
+      }
+    });
+  }
+
+  if (Array.isArray(prod.variants)) {
+    prod.variants.forEach((v: any) => {
+      if (v?.imageUrl && typeof v.imageUrl === "string" && !urls.includes(v.imageUrl)) {
+        urls.push(v.imageUrl);
+      }
+    });
+  }
+
+  return urls.length > 0 ? urls : [main || "/images/hero-atelier-lamp.jpg"];
+};
+
+// Safe price resolver
+const getProductPrice = (prod?: ProductItem): number => {
+  if (!prod) return 0;
+  const raw =
+    prod.pricing?.price ??
+    prod.price ??
+    prod.variantPricing?.minPrice ??
+    prod.variants?.[0]?.pricing?.price ??
+    prod.variants?.[0]?.price ??
+    0;
+  const num = typeof raw === "number" ? raw : parseFloat(String(raw).replace(/[^0-9.-]+/g, ""));
+  return !isNaN(num) && num > 0 ? num : 0;
+};
+
+// Individual Product Grid Card with Multi-Image Hover Cycling
+function ProductGridCard({
+  product,
+  isAdding,
+  isAdded,
+  onAddToCart,
+  onWishlistToggle,
+  inWishlist,
+  className = "flex",
+}: {
+  product: ProductItem;
+  isAdding: boolean;
+  isAdded: boolean;
+  onAddToCart: (p: ProductItem, e: React.MouseEvent) => void;
+  onWishlistToggle: (id: string, e: React.MouseEvent) => void;
+  inWishlist: boolean;
+  className?: string;
+}) {
+  const images = useMemo(() => getCardImages(product), [product]);
+  const [imgIndex, setImgIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Auto-cycle through product images when hovered
+  useEffect(() => {
+    if (!isHovered || images.length <= 1) {
+      setImgIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setImgIndex((prev) => (prev + 1) % images.length);
+    }, 1300);
+    return () => clearInterval(interval);
+  }, [isHovered, images.length]);
+
+  const price = getProductPrice(product);
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setImgIndex(0);
+      }}
+      className={`${className} flex-col justify-between bg-[#E5E5E5] dark:bg-[#241A12] border border-[#C2B29F] dark:border-[#3E2B1E] rounded-[2px] shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden group min-w-0`}
+    >
+      {/* Full-Bleed Product Image with Multi-Image Changing */}
+      <Link
+        href={getProductUrl(product)}
+        className="relative aspect-square w-full bg-[#E5E5E5] dark:bg-[#1A120B] block overflow-hidden"
+      >
+        <Image
+          src={images[imgIndex] || images[0]}
+          alt={product.name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        />
+
+        {/* Subtle Image Progress Dots (if product has multiple images) */}
+        {images.length > 1 && (
+          <div className="absolute bottom-2 inset-x-0 flex items-center justify-center gap-1 z-10 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+            {images.slice(0, 5).map((_, i) => (
+              <span
+                key={i}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  i === imgIndex ? "w-3 bg-[#C59345]" : "w-1 bg-white/70 shadow-xs"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </Link>
+
+      {/* Content: Title, Price & Actions */}
+      <div className="p-1.5 xs:p-2 sm:p-2.5 md:p-3 flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <Link href={getProductUrl(product)}>
+            <h3 className="text-[9.5px] xs:text-[10.5px] sm:text-xs md:text-[13px] font-serif font-medium text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors line-clamp-1 truncate">
+              {product.name}
+            </h3>
+          </Link>
+
+          <p
+            suppressHydrationWarning
+            className="text-[9px] xs:text-[10px] sm:text-xs md:text-sm font-sans font-bold text-[#A8752B] dark:text-[#C59345] mt-0.5 sm:mt-1 truncate"
+          >
+            {formatPrice(price)}
+          </p>
+        </div>
+
+        {/* Bottom Action Row */}
+        <div className="pt-1.5 sm:pt-2 flex items-center gap-1 sm:gap-1.5">
+          <button
+            type="button"
+            disabled={isAdding}
+            onClick={(e) => onAddToCart(product, e)}
+            className="no-theme-hover flex-1 h-6 xs:h-7 sm:h-7 md:h-8 px-1 sm:px-2 bg-[#B88636] hover:bg-[#A8752B] text-white !text-white text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-tight rounded-[2px] shadow-2xs transition-all duration-200 active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-75 whitespace-nowrap overflow-hidden"
+            title="Add to cart"
+          >
+            {isAdding ? (
+              <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" />
+            ) : isAdded ? (
+              <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            ) : (
+              <>
+                <ShoppingCart className="w-2.5 h-2.5 xs:w-3 xs:h-3 shrink-0" />
+                <span className="hidden xs:inline text-[7.5px] xs:text-[8.5px] sm:text-[10px]">ADD</span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => onWishlistToggle(product._id, e)}
+            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            className={`w-6 h-6 xs:w-7 xs:h-7 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-[2px] border transition-colors flex items-center justify-center shrink-0 cursor-pointer ${
+              inWishlist
+                ? "bg-red-500/10 border-red-500 text-red-500"
+                : "border-[#D6CEC2] dark:border-[#3E2B1E] hover:border-red-400 text-[#7D6A5A] dark:text-[#A69E96] hover:text-red-500 bg-white dark:bg-[#1A120B]"
+            }`}
+          >
+            <Heart className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${inWishlist ? "fill-current" : ""}`} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function CuratedProductCarousel({
   title,
   products = [],
   viewAllLink = "/products",
-  bgClass = "bg-[#F3EBDC] dark:bg-[#1E1610]",
-  isNested = false,
+  topButtonText = "Show all products",
+  bgClass = "bg-[#E5E5E5] dark:bg-[#1A120B]",
 }: CuratedProductCarouselProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { refreshCart, updateCart, openCart } = useUser();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const [addingId, setAddingId] = useState<string | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, clientWidth } = scrollContainerRef.current;
-      const scrollAmount = clientWidth * 0.75;
-      scrollContainerRef.current.scrollTo({
-        left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
 
   const handleAddToCart = async (product: ProductItem, e: React.MouseEvent) => {
     e.preventDefault();
@@ -124,139 +282,58 @@ export default function CuratedProductCarousel({
 
   if (!products || products.length === 0) return null;
 
-  const cardWidthClass = isNested
-    ? "w-[106px] xs:w-[114px] sm:w-[165px] md:w-[185px] lg:w-[140px] xl:w-[155px]"
-    : "w-[106px] xs:w-[114px] sm:w-[165px] md:w-[185px] lg:w-[calc((100%-5*12px)/6)] xl:w-[calc((100%-5*14px)/6)]";
-
-  const content = (
-    <div className={isNested ? "w-full min-w-0" : "max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8"}>
-
-      {/* Section Header: --- TITLE ---------------------------- < > */}
-      <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6 md:mb-8">
-
-        {/* Title with decorative framing lines matching mockup */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-          <span className="h-[1px] w-4 sm:w-8 bg-[#B8A894] shrink-0" />
-          <h2 className="text-[10px] xs:text-[11px] sm:text-sm md:text-base font-serif font-bold tracking-[0.06em] xs:tracking-[0.1em] sm:tracking-[0.16em] text-[#241910] dark:text-[#F3EBDC] uppercase whitespace-nowrap shrink-0">
-            {title}
-          </h2>
-          <span className="h-[1px] flex-1 bg-[#B8A894]" />
-        </div>
-
-        {/* Carousel Navigation Arrows (Always visible, firmly positioned on the right) */}
-        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto pl-1">
-          <button
-            type="button"
-            onClick={() => scroll("left")}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#2A1D13] border border-[#C59345]/40 hover:border-[#C59345] text-[#241910] dark:text-[#F3EBDC] hover:text-[#C59345] flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
-            aria-label="Previous items"
-          >
-            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll("right")}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#2A1D13] border border-[#C59345]/40 hover:border-[#C59345] text-[#241910] dark:text-[#F3EBDC] hover:text-[#C59345] flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
-            aria-label="Next items"
-          >
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-          </button>
-        </div>
-
-      </div>
-
-      {/* Single Row Horizontal Scroll Carousel on ALL screen sizes */}
-      <div
-        ref={scrollContainerRef}
-        className="flex items-stretch gap-2 sm:gap-3 lg:gap-3.5 overflow-x-auto scrollbar-none pb-2 snap-x snap-mandatory"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {products.map((product) => {
-          const imgUrl = getProductMainImage(product) || product.images?.[0]?.url || "/images/hero-atelier-lamp.jpg";
-          const price = product.pricing?.price || product.variantPricing?.minPrice || 0;
-          const inWishlist = isInWishlist(product._id);
-          const isAdding = addingId === product._id;
-          const isAdded = addedId === product._id;
-
-          return (
-            <div
-              key={`carousel-${product._id}`}
-              className={`${cardWidthClass} shrink-0 snap-start flex flex-col justify-between bg-[#E5E5E5] dark:bg-[#241A12] border border-[#C2B29F] dark:border-[#3E2B1E] rounded-[2px] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group`}
-            >
-              {/* Full-Bleed Product Image */}
-              <Link
-                href={getProductUrl(product)}
-                className="relative aspect-square w-full bg-[#E5E5E5] dark:bg-[#1A120B] block overflow-hidden"
-              >
-                <Image
-                  src={imgUrl}
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 640px) 115px, (max-width: 1024px) 185px, 225px"
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
-              </Link>
-
-              {/* Content: Title, Price & Actions */}
-              <div className="p-1.5 xs:p-2 sm:p-3 flex-1 flex flex-col justify-between">
-                <div>
-                  <Link href={getProductUrl(product)}>
-                    <h3 className="text-[9.5px] xs:text-[10.5px] sm:text-xs md:text-[13px] font-serif font-medium text-[#241910] dark:text-[#F3EBDC] group-hover:text-[#C59345] transition-colors line-clamp-1">
-                      {product.name}
-                    </h3>
-                  </Link>
-
-                  <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-sans font-bold text-[#241910] dark:text-[#F3EBDC] mt-0.5 sm:mt-1">
-                    {formatPrice(price)}
-                  </p>
-                </div>
-
-                {/* Bottom Action Row: Single-line button */}
-                <div className="pt-1.5 sm:pt-2 flex items-center gap-1 sm:gap-1.5">
-                  <button
-                    type="button"
-                    disabled={isAdding}
-                    onClick={(e) => handleAddToCart(product, e)}
-                    className="no-theme-hover flex-1 h-[26px] xs:h-[28px] sm:h-[32px] px-1 sm:px-2.5 bg-[#B88636] hover:bg-[#A8752B] text-white text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-tight sm:tracking-[0.08em] rounded-[2px] shadow-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-75 whitespace-nowrap overflow-hidden"
-                  >
-                    {isAdding ? (
-                      <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" />
-                    ) : isAdded ? (
-                      <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    ) : (
-                      <span>ADD TO CART</span>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => handleWishlistToggle(product._id, e)}
-                    aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                    className={`w-[26px] h-[26px] xs:w-[28px] xs:h-[28px] sm:w-[32px] sm:h-[32px] rounded-[2px] border transition-colors flex items-center justify-center shrink-0 cursor-pointer ${inWishlist
-                        ? "bg-red-500/10 border-red-500 text-red-500"
-                        : "border-[#E5DAC8] dark:border-[#3E2B1E] hover:border-red-400 text-[#7D6A5A] dark:text-[#A69E96] hover:text-red-500 bg-white dark:bg-[#1A120B]"
-                      }`}
-                  >
-                    <Heart className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${inWishlist ? "fill-current" : ""}`} />
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          );
-        })}
-      </div>
-
-    </div>
-  );
-
-  if (isNested) {
-    return <div className="w-full min-w-0">{content}</div>;
-  }
+  // Exactly 5 products as requested by client
+  const displayProducts = products.slice(0, 5);
 
   return (
-    <section className={`relative w-full py-8 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] transition-colors ${bgClass}`}>
-      {content}
+    <section className={`relative w-full py-6 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] transition-colors select-none ${bgClass}`}>
+      <div className="max-w-7xl mx-auto px-1.5 xs:px-2.5 sm:px-6 lg:px-8">
+
+        {/* Section Header: --- TITLE ---------------------------- [Show all products ->] */}
+        <div className="flex items-center justify-between gap-1.5 sm:gap-3 mb-3 sm:mb-6 md:mb-8">
+          
+          {/* Decorative Framing Title */}
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0">
+            <span className="h-[1px] w-2 sm:w-8 bg-[#B8A894] shrink-0" />
+            <h2 className="text-[9px] xs:text-[10.5px] sm:text-sm md:text-base font-serif font-bold tracking-[0.05em] sm:tracking-[0.16em] text-[#241910] dark:text-[#F3EBDC] uppercase whitespace-nowrap shrink-0">
+              {title}
+            </h2>
+            <span className="h-[1px] flex-1 bg-[#B8A894]" />
+          </div>
+
+          {/* Top Button: "Show all products" */}
+          <Link
+            href={viewAllLink}
+            className="no-theme-hover inline-flex items-center gap-1 px-2 xs:px-2.5 sm:px-4 py-1 sm:py-2 rounded-[2px] border border-[#C59345]/70 hover:border-[#C59345] bg-white dark:bg-[#2A1D13] hover:bg-[#C59345] dark:hover:bg-[#C59345] text-[#A8752B] hover:text-white dark:text-[#E5B568] dark:hover:text-white text-[8px] xs:text-[9.5px] sm:text-xs font-bold uppercase tracking-[0.05em] sm:tracking-[0.1em] transition-all duration-200 shadow-2xs active:scale-95 shrink-0"
+          >
+            <span>{topButtonText}</span>
+            <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
+          </Link>
+        </div>
+
+        {/* 3 in a Row on Mobile / 4 on Tablet / 5 on Laptop */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
+          {displayProducts.map((product, idx) => (
+            <ProductGridCard
+              key={product._id}
+              product={product}
+              isAdding={addingId === product._id}
+              isAdded={addedId === product._id}
+              onAddToCart={handleAddToCart}
+              onWishlistToggle={handleWishlistToggle}
+              inWishlist={isInWishlist(product._id)}
+              className={
+                idx === 3
+                  ? "hidden sm:flex"
+                  : idx === 4
+                  ? "hidden lg:flex"
+                  : "flex"
+              }
+            />
+          ))}
+        </div>
+
+      </div>
     </section>
   );
 }
