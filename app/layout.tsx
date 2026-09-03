@@ -117,16 +117,18 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: [
+        { url: "/images/talal-wooden-lamp-logo.png", type: "image/png" },
         { url: dbLogo, type: "image/webp" },
         { url: "/icon.png", sizes: "512x512", type: "image/png" },
         { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
         { url: "/favicon.ico" },
       ],
       apple: [
+        { url: "/images/talal-wooden-lamp-logo.png", sizes: "180x180", type: "image/png" },
         { url: dbLogo, type: "image/webp" },
         { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
       ],
-      shortcut: [dbLogo],
+      shortcut: ["/images/talal-wooden-lamp-logo.png", dbLogo],
     },
   };
 }
@@ -173,8 +175,8 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Talal Wooden Lamp",
-    alternateName: ["Talal Wooden Lamps", "talalwoodenlamp.com"],
-    url: siteUrl,
+    alternateName: "Talal Wooden Lamps",
+    url: "https://talalwoodenlamp.com/",
     potentialAction: {
       "@type": "SearchAction",
       target: `${siteUrl}/products?search={search_term_string}`,
@@ -189,8 +191,9 @@ export default async function RootLayout({
           name="google-site-verification"
           content="IQKFfdQVHEtBSWkv_KMDl-PKUDv6TkDtEKWS4u0ydiI"
         />
+        <link rel="icon" type="image/png" href="/images/talal-wooden-lamp-logo.png" />
+        <link rel="apple-touch-icon" href="/images/talal-wooden-lamp-logo.png" />
         <link rel="icon" href={dbLogo} type="image/webp" />
-        <link rel="apple-touch-icon" href={dbLogo} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

@@ -229,7 +229,7 @@ export default function TopAnnouncementBar() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="relative z-50 bg-[#1E1610] dark:bg-[#140E0A] text-[#F3E8D6] border-b border-[#8A5E22]/25 h-7 sm:h-8 select-none overflow-hidden transition-colors"
+      className="relative z-50 bg-[#E5E5E5] dark:bg-[#140E0A] text-[#241910] dark:text-[#F3E8D6] border-b border-[#9E8C75] dark:border-[#5A4638] h-7 sm:h-8 select-none overflow-hidden transition-colors"
       role="region"
       aria-label="Promotions and Announcements"
     >
@@ -238,7 +238,7 @@ export default function TopAnnouncementBar() {
         <button
           type="button"
           onClick={handlePrev}
-          className="p-1 text-[#C5A265]/60 hover:text-[#F3BE6C] transition-colors focus:outline-none hidden sm:inline-flex items-center justify-center shrink-0"
+          className="p-1 text-[#C59345]/70 hover:text-[#A8752B] transition-colors focus:outline-none hidden sm:inline-flex items-center justify-center shrink-0"
           aria-label="Previous announcement"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
@@ -257,15 +257,15 @@ export default function TopAnnouncementBar() {
               return (
                 <div
                   key={item.id || index}
-                  className="w-full shrink-0 h-full flex items-center justify-center text-center px-1 sm:px-2 gap-1.5 sm:gap-2"
+                  className="w-full shrink-0 h-full flex items-center justify-center text-center px-1 sm:px-2 gap-1.5 sm:gap-2 font-medium"
                   aria-hidden={!isCurrent}
                 >
-                  <Icon className="w-3 h-3 text-[#F3BE6C] shrink-0" />
+                  <Icon className="w-3 h-3 text-[#C59345] shrink-0" />
 
                   {item.link ? (
                     <Link
                       href={item.link}
-                      className="hover:text-[#F3BE6C] transition-colors truncate max-w-[85vw] sm:max-w-none text-left sm:text-center"
+                      className="hover:text-[#A8752B] transition-colors truncate max-w-[85vw] sm:max-w-none text-left sm:text-center"
                     >
                       <span className="sm:hidden">{item.mobileText}</span>
                       <span className="hidden sm:inline">{item.desktopText}</span>
@@ -284,7 +284,7 @@ export default function TopAnnouncementBar() {
                       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] text-[8.5px] sm:text-[9.5px] font-mono tracking-wider font-semibold border transition-all active:scale-95 shrink-0 ${
                         copiedCode === item.code
                           ? "bg-emerald-600 border-emerald-500 text-white"
-                          : "bg-[#8A5E22]/30 hover:bg-[#8A5E22]/60 border-[#F3BE6C]/40 text-[#F3BE6C]"
+                          : "bg-[#C59345]/15 hover:bg-[#C59345]/25 border-[#C59345]/40 text-[#A8752B]"
                       }`}
                       title="Tap to copy promo code"
                     >

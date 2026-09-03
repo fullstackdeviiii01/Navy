@@ -96,7 +96,7 @@ export default function ProductFilters({
                 name="category"
                 checked={selectedCategory === ""}
                 onChange={() => onCategoryChange("")}
-                className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
+                className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#C59345]"
               />
               <span>All Categories</span>
             </label>
@@ -110,7 +110,7 @@ export default function ProductFilters({
                   name="category"
                   onChange={() => onCategoryChange(cat.slug)}
                   checked={selectedCategory === cat.slug}
-                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
+                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#C59345]"
                 />
                 <span className="truncate">
                   {cat.name} ({cat.product_count})
@@ -227,7 +227,7 @@ export default function ProductFilters({
                   aria-label="product rating"
                   checked={selectedRating === rating}
                   onChange={() => onRatingChange(rating)}
-                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
+                  className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#C59345]"
                 />
                 <div className="flex items-center gap-1">
                   <Rating
@@ -262,7 +262,7 @@ export default function ProductFilters({
             aria-label="Products in the stock"
             checked={inStock}
             onChange={(e) => onStockChange(e.target.checked)}
-            className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#241910] dark:accent-[#D7D3CF]"
+            className="w-3.5 h-3.5 text-theme-primary focus:ring-0 cursor-pointer accent-[#C59345]"
           />
           <span>In Stock Only</span>
         </label>

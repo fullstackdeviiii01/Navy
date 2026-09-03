@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #F3EBDC;
+  --background: #E5E5E5;
   --foreground: #241910;
   --hover-color: #A8752B;
-  --btn-bg: #241910;
+  --btn-bg: #C59345;
   --btn-text: #FFFFFF;
 }
 
@@ -32,15 +32,15 @@ button.link:hover {
 
 /* Theme background mappings */
 .bg-white:not(.keep-white) {
-  background-color: #F3EBDC;
+  background-color: #E5E5E5;
 }
 
 .bg-gray-50:not(.keep-original-bg) {
-  background-color: #F3EBDC;
+  background-color: #E5E5E5;
 }
 
 .bg-gray-100:not(.keep-original-bg) {
-  background-color: #EAE1D1;
+  background-color: #E5E5E5;
 }
 
 /* Dark mode background mappings */

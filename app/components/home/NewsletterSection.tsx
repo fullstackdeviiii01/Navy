@@ -17,14 +17,23 @@ export default function NewsletterSection() {
     instagram?: string;
     facebook?: string;
     whatsapp?: string;
-  }>({});
+  }>({
+    facebook: "https://www.facebook.com/share/14m5wWfkaPa/",
+    instagram: "https://www.instagram.com/talalwoodenlamp?igsi=MWpoNG5rbGNyY2ZpcQ==",
+    whatsapp: "https://wa.me/923009692765",
+  });
 
   useEffect(() => {
     siteSettingsApi
       .getCompanyInfo()
-      .then((info) => {
-        if (info?.social_media) {
-          setSocialMedia(info.social_media);
+      .then((data) => {
+        const sm = data?.company_info?.social_media || data?.social_media;
+        if (sm) {
+          setSocialMedia({
+            facebook: sm.facebook || "https://www.facebook.com/share/14m5wWfkaPa/",
+            instagram: sm.instagram || "https://www.instagram.com/talalwoodenlamp?igsi=MWpoNG5rbGNyY2ZpcQ==",
+            whatsapp: sm.whatsapp || "https://wa.me/923009692765",
+          });
         }
       })
       .catch(() => {});
@@ -53,12 +62,15 @@ export default function NewsletterSection() {
     }
   };
 
-  const whatsappHref = socialMedia.whatsapp
-    ? `https://wa.me/${socialMedia.whatsapp.replace(/\D/g, "")}`
+  const rawWa = socialMedia.whatsapp || "";
+  const whatsappHref = rawWa.startsWith("http")
+    ? rawWa
+    : rawWa.trim()
+    ? `https://wa.me/${rawWa.replace(/\D/g, "")}`
     : "https://wa.me/923009692765";
 
   return (
-    <section className="relative w-full bg-[#120D09] text-[#F3E8D6] border-y border-[#3A2A1D] overflow-hidden select-none transition-colors">
+    <section className="relative w-full bg-[#E5E5E5] dark:bg-[#120D09] text-[#1C140E] dark:text-[#F3E8D6] border-b border-[#B8A894] dark:border-[#3A2A1D] overflow-hidden select-none transition-colors">
       <div className="flex flex-col lg:flex-row items-center min-h-[160px] sm:min-h-[180px] md:min-h-[190px]">
         
         {/* 1. LEFT (LAPTOP): Handcrafted Lantern Image touching borders */}
@@ -70,8 +82,8 @@ export default function NewsletterSection() {
             sizes="(max-width: 1280px) 180px, 250px"
             className="object-cover object-left"
           />
-          {/* Subtle dark gradient overlay blending into right content */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#120D09]" />
+          {/* Subtle light gradient overlay blending into right content */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#E5E5E5] dark:to-[#120D09]" />
         </div>
 
         {/* 2. RESPONSIVE CONTENT AREA */}
@@ -79,11 +91,11 @@ export default function NewsletterSection() {
           
           {/* Headline & Description: Paragraph visible only on laptop/desktop */}
           <div className="flex flex-col justify-center space-y-1 text-left w-full lg:w-auto max-w-sm lg:max-w-[240px] xl:max-w-xs shrink-0">
-            <h2 className="text-[18px] xs:text-[20px] sm:text-2xl md:text-[26px] font-serif font-bold text-white tracking-tight leading-snug">
+            <h2 className="text-[18px] xs:text-[20px] sm:text-2xl md:text-[26px] font-serif font-bold text-[#1C140E] dark:text-white tracking-tight leading-snug">
               Stay Updated!
             </h2>
-            <p className="hidden lg:block text-xs sm:text-[13px] text-[#A89B8C] leading-relaxed font-sans">
-              Subscribe to receive updates, new collections and exclusive offers.
+            <p className="hidden lg:block text-xs sm:text-[13px] text-[#5A4638] dark:text-[#A89B8C] leading-relaxed font-sans">
+              Subscribe to get special offers, new collections and updates directly in your inbox.
             </p>
           </div>
 
@@ -95,8 +107,8 @@ export default function NewsletterSection() {
               <div
                 className={`text-xs px-3 py-1.5 rounded-[2px] border w-full text-center transition-all ${
                   subscribed
-                    ? "bg-emerald-950/80 border-emerald-500/50 text-emerald-200"
-                    : "bg-rose-950/80 border-rose-500/50 text-rose-200"
+                    ? "bg-emerald-100 border-emerald-500 text-emerald-800"
+                    : "bg-rose-100 border-rose-500 text-rose-800"
                 }`}
               >
                 {feedbackMsg}
@@ -104,7 +116,7 @@ export default function NewsletterSection() {
             )}
 
             {/* Input + SUBSCRIBE Button Bar */}
-            <form onSubmit={handleSubmit} className="w-full flex items-stretch h-10 xs:h-11 sm:h-[46px] lg:h-[48px] shadow-md">
+            <form onSubmit={handleSubmit} className="w-full flex items-stretch h-10 xs:h-11 sm:h-[46px] lg:h-[48px] shadow-sm">
               <input
                 type="email"
                 required
@@ -112,12 +124,12 @@ export default function NewsletterSection() {
                 disabled={submitting}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="flex-1 min-w-0 bg-[#F5EFE6] text-[#241910] placeholder-[#8C7E72] text-xs xs:text-[12.5px] sm:text-sm px-3.5 sm:px-4 rounded-l-[4px] focus:outline-none font-sans disabled:opacity-60"
+                className="flex-1 min-w-0 bg-white dark:bg-[#1C140E] text-[#241910] dark:text-white placeholder-[#8C7E72] text-xs xs:text-[12.5px] sm:text-sm px-3.5 sm:px-4 rounded-l-[4px] border-y border-l border-[#D5D0C6] dark:border-transparent focus:outline-none font-sans disabled:opacity-60"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="no-theme-hover px-4 xs:px-5 sm:px-6 lg:px-6 xl:px-8 bg-[#C58A2B] hover:bg-[#D99B35] text-white hover:text-white text-[11px] xs:text-xs sm:text-[13px] font-bold uppercase tracking-[0.08em] sm:tracking-[0.1em] rounded-r-[4px] transition-all duration-200 active:scale-98 shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-75 whitespace-nowrap"
+                className="no-theme-hover px-4 xs:px-5 sm:px-6 lg:px-6 xl:px-8 bg-[#C58A2B] hover:bg-[#B37F33] text-white hover:text-white text-[11px] xs:text-xs sm:text-[13px] font-bold uppercase tracking-[0.08em] sm:tracking-[0.1em] rounded-r-[4px] transition-all duration-200 active:scale-98 shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-75 whitespace-nowrap"
               >
                 {submitting ? (
                   <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-white" />
@@ -138,7 +150,7 @@ export default function NewsletterSection() {
                 href={socialMedia.facebook || "https://facebook.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/20 hover:border-[#C58A2B] bg-[#1C140E] flex items-center justify-center text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer"
+                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C58A2B] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer shadow-2xs"
                 aria-label="Facebook"
               >
                 <BsFacebook className="w-3.5 h-3.5" />
@@ -148,7 +160,7 @@ export default function NewsletterSection() {
                 href={socialMedia.instagram || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/20 hover:border-[#C58A2B] bg-[#1C140E] flex items-center justify-center text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer"
+                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C58A2B] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer shadow-2xs"
                 aria-label="Instagram"
               >
                 <BsInstagram className="w-3.5 h-3.5" />
@@ -158,7 +170,7 @@ export default function NewsletterSection() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/20 hover:border-[#25D366] bg-[#1C140E] flex items-center justify-center text-white/80 hover:text-[#25D366] hover:!text-[#25D366] transition-all duration-200 cursor-pointer"
+                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#25D366] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#25D366] hover:!text-[#25D366] transition-all duration-200 cursor-pointer shadow-2xs"
                 aria-label="WhatsApp"
               >
                 <BsWhatsapp className="w-3.5 h-3.5" />

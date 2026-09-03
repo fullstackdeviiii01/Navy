@@ -55,9 +55,9 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-[#E9DFCE] dark:bg-[#48381A] rounded-2xl shadow-xl p-8 border border-theme-border-light dark:border-theme-border-dark">
+      <div className="max-w-md w-full bg-white dark:bg-[#48381A] rounded-2xl shadow-xl p-8 border border-[#E0D4C3] dark:border-theme-border-dark">
         <div className="text-center mb-8">
-          <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[#A8752B] mb-2">
+          <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[#C59345] mb-2">
             WELCOME BACK
           </p>
           <h1 className="text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
@@ -95,7 +95,7 @@ export default function SignInPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-[#D5C6B0] dark:border-[#5E4A28] bg-[#F8F3EA] dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-[#A8752B] transition-all text-sm"
+              className="w-full px-4 py-3 rounded-xl border border-[#D5C6B0] dark:border-[#5E4A28] bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-[#C59345] transition-all text-sm"
               required
               aria-required="true"
               autoComplete="email"
@@ -115,7 +115,7 @@ export default function SignInPage() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-[#D5C6B0] dark:border-[#5E4A28] bg-[#F8F3EA] dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-[#A8752B] transition-all text-sm"
+              className="w-full px-4 py-3 rounded-xl border border-[#D5C6B0] dark:border-[#5E4A28] bg-white dark:bg-[#342611] text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-[#C59345] transition-all text-sm"
               required
               aria-required="true"
               autoComplete="current-password"
@@ -126,7 +126,7 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-6 rounded-xl bg-[#241910] hover:bg-[#A8752B] text-white text-xs font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 active:scale-[0.99]"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#C59345] hover:bg-[#A8752B] text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 active:scale-[0.99] cursor-pointer"
             aria-label={
               loading ? "Signing in, please wait" : "Sign in to your account"
             }

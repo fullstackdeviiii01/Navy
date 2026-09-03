@@ -59,6 +59,19 @@ const getProductImages = (prod?: ProductItem): string[] => {
   return urls.length > 0 ? urls : [mainImg || "/images/showcase/lamp_center.jpg"];
 };
 
+const getProductDisplayPrice = (prod?: any): number => {
+  if (!prod) return 0;
+  const val =
+    prod.pricing?.price ??
+    prod.price ??
+    prod.variantPricing?.minPrice ??
+    prod.variants?.[0]?.pricing?.price ??
+    prod.variants?.[0]?.price ??
+    0;
+  const num = typeof val === "number" ? val : parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
+  return !isNaN(num) && num > 0 ? num : 0;
+};
+
 export default function HeroSection({ products = [] }: HeroSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -193,25 +206,25 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
     if (windowWidth < 640) {
       // Mobile (<640px): 5 items (2 on left, 1 center, 2 on right)
-      if (abs === 1) return sign * 17.5;
-      if (abs === 2) return sign * 32.5;
+      if (abs === 1) return sign * 18.0;
+      if (abs === 2) return sign * 34.0;
       return sign * 44.0;
     } else if (windowWidth < 1024) {
       // Tablet (640px - 1024px): 5 items
       if (abs === 1) return sign * 18.5;
-      if (abs === 2) return sign * 33.5;
+      if (abs === 2) return sign * 34.5;
       return sign * 44.0;
     } else {
-      // Laptop/Desktop (1024px+): 7 items
-      if (abs === 1) return sign * 14.2;
-      if (abs === 2) return sign * 25.4;
-      if (abs === 3) return sign * 35.2;
+      // Laptop/Desktop (1024px+): 7 items with perfectly equal gaps
+      if (abs === 1) return sign * 14.0;
+      if (abs === 2) return sign * 25.2;
+      if (abs === 3) return sign * 36.4;
       return 0;
     }
   };
 
   return (
-    <section className="relative w-full bg-[#0A0604] text-[#F3E8D6] overflow-hidden select-none transition-colors">
+    <section className="relative w-full bg-[#E5E5E5] dark:bg-[#0A0604] text-[#241910] dark:text-[#F3E8D6] overflow-hidden select-none transition-colors">
 
       {/* ========================================================================= */}
       {/* 1. RESPONSIVE HERO BANNER (MOBILE, TABLET, LAPTOP & DESKTOP) */}
@@ -220,17 +233,19 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
         {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
         <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0 pointer-events-none">
-          <Image
-            src="/images/heroimageone.png"
-            alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
-            fill
-            priority
-            className="object-cover object-[82%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
-            sizes="100vw"
-          />
-          {/* Responsive dark gradient overlay ensuring high text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0604]/95 via-[#0A0604]/70 to-transparent w-full sm:w-[85%] md:w-[70%] lg:w-[60%]" />
-          <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#0A0604] via-[#0A0604]/70 to-transparent" />
+          <div className="absolute inset-0 translate-x-[60px] xs:translate-x-[75px] sm:translate-x-[80px] md:translate-x-[95px] lg:translate-x-[150px] lg:-translate-y-[20px]">
+            <Image
+              src="/images/talal_wooden_lamp_hero_image.png"
+              alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
+              fill
+              priority
+              className="object-cover object-[82%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
+              sizes="100vw"
+            />
+          </div>
+          {/* Responsive light gradient overlay ensuring high text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#E5E5E5]/95 via-[#E5E5E5]/75 to-transparent dark:from-[#0A0604]/95 dark:via-[#0A0604]/70 dark:to-transparent w-full sm:w-[85%] md:w-[70%] lg:w-[60%]" />
+          <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#E5E5E5] via-[#E5E5E5]/70 to-transparent dark:from-[#0A0604] dark:via-[#0A0604]/70 dark:to-transparent" />
         </div>
 
         {/* Hero Content Area (Moved 30px up on laptop and higher) */}
@@ -238,25 +253,25 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6 lg:-translate-y-[30px]">
 
             {/* Elegant Script Tagline */}
-            <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-sm">
+            <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-xs">
               Handmade Natural
             </p>
 
             {/* Main Bold Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-white tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-md">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-[#1C140E] dark:text-white tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-xs">
               WOODEN <span className="text-[#C59345]">LAMP</span>
             </h1>
 
             {/* Sub-headline */}
             <div className="pt-0.5 sm:pt-1">
-              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-normal text-[#E5D7C2] tracking-wide inline-block">
+              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-semibold text-[#241910] dark:text-[#E5D7C2] tracking-wide inline-block">
                 Crafted by Nature, Designed to Inspire
               </h2>
               <div className="h-[2px] w-12 sm:w-20 bg-[#C59345] mt-1 sm:mt-1.5 rounded-full" />
             </div>
 
             {/* Body Description */}
-            <p className="text-xs sm:text-sm md:text-[15px] text-[#A89B8C] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
+            <p className="text-xs sm:text-sm md:text-[15px] text-[#5A4638] dark:text-[#A89B8C] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
               Premium quality wooden lamps, carefully handcrafted to bring warmth, elegance and a natural touch to your space.
             </p>
 
@@ -264,7 +279,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-5">
               <Link
                 href="/products"
-                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer shadow-sm"
               >
                 <span className="text-white">SHOP NOW</span>
                 <ArrowRight className="w-4 h-4 text-white" />
@@ -272,9 +287,9 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
               <Link
                 href="/products?sort=popular"
-                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-white/70 hover:border-white text-white hover:text-white hover:bg-white/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
+                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-[#C59345] hover:border-[#A8752B] text-[#A8752B] hover:text-[#8A5E22] hover:bg-[#C59345]/10 dark:border-white/70 dark:text-white dark:hover:bg-white/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
               >
-                EXPORE COLLECTION
+                EXPLORE COLLECTION
               </Link>
             </div>
 
@@ -301,52 +316,8 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
           className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${isDragging ? "cursor-grabbing" : "cursor-grab"
             }`}
         >
-          {/* Elongated Golden Ellipse Frame */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none flex items-center justify-center px-1 sm:px-2">
-            <svg
-              className="w-full h-full max-w-7xl"
-              viewBox="0 0 1000 220"
-              fill="none"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="heroGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#C59345" stopOpacity="0.25" />
-                  <stop offset="15%" stopColor="#E6BA6F" stopOpacity="0.85" />
-                  <stop offset="50%" stopColor="#FFE1A0" stopOpacity="1" />
-                  <stop offset="85%" stopColor="#E6BA6F" stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="#C59345" stopOpacity="0.25" />
-                </linearGradient>
-                <filter id="heroGoldGlow" x="-10%" y="-20%" width="120%" height="140%">
-                  <feGaussianBlur stdDeviation="6" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-
-              {/* Outer Radiant Ambient Glow */}
-              <ellipse
-                cx="500"
-                cy="110"
-                rx="485"
-                ry="98"
-                stroke="url(#heroGoldGrad)"
-                strokeWidth="2.5"
-                filter="url(#heroGoldGlow)"
-                fill="none"
-                opacity="0.45"
-              />
-              {/* Crisp Primary Gold Ellipse */}
-              <ellipse
-                cx="500"
-                cy="110"
-                rx="485"
-                ry="96"
-                stroke="url(#heroGoldGrad)"
-                strokeWidth="1.75"
-                fill="none"
-              />
-            </svg>
-          </div>
+          {/* Elongated Golden Ellipse Frame (Hidden to comply with client requirement: no large outer oval circle) */}
+          <div className="hidden" />
 
           {/* Left Navigation Arrow */}
           <button
@@ -356,7 +327,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handlePrev();
             }}
             aria-label="Previous product"
-            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
             <ChevronLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
           </button>
@@ -369,15 +340,12 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               handleNext();
             }}
             aria-label="Next product"
-            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#0A0604] hover:bg-[#C59345] hover:text-white shadow-xl flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
           >
             <ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Responsive Orbit Items: 
-              - Mobile (<640px) & Tablet (<1024px): 5 Items ([-2, -1, 0, 1, 2] -> 2 left, 1 center, 2 right)
-              - Desktop (1024px+): 7 Items ([-3, -2, -1, 0, 1, 2, 3])
-          */}
+          {/* Responsive Orbit Items */}
           <div className="relative w-full max-w-6xl h-full flex items-center justify-center pointer-events-none">
             {visibleSlots.map((offset) => {
               const itemIndex = (activeIndex + offset + total * 100) % total;
@@ -396,46 +364,42 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
               const xOffsetVw = getSlotXOffsetVw(offset);
 
-              // Proportional Lens Dimensions (Width x Height) - 5 items accommodated on mobile
+              // Lens Dimensions (Width x Height): Central ellipse is large, all side ellipses are one uniform size
               let sizeClasses = "";
               if (isCenter) {
-                // Center Product: Main Illuminated Lens
+                // Center Product: Main Illuminated Large Ellipse
                 sizeClasses = "w-[94px] h-[100px] xs:w-[108px] xs:h-[116px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
-              } else if (absOffset === 1) {
-                // Level 1 (±1): Flanking Lenses
-                sizeClasses = "w-[56px] h-[60px] xs:w-[66px] xs:h-[71px] sm:w-[100px] sm:h-[108px] md:w-[120px] md:h-[129px] lg:w-[132px] lg:h-[142px]";
-              } else if (absOffset === 2) {
-                // Level 2 (±2): Outer Lenses (2 on one side, 2 on other side on mobile!)
-                sizeClasses = "w-[38px] h-[41px] xs:w-[46px] xs:h-[49px] sm:w-[74px] sm:h-[80px] md:w-[86px] md:h-[93px] lg:w-[94px] lg:h-[101px]";
               } else {
-                // Level 3 (±3): Desktop ends
-                sizeClasses = "w-[36px] h-[39px] sm:w-[48px] sm:h-[52px] md:w-[56px] md:h-[60px] lg:w-[62px] lg:h-[67px]";
+                // All Side Ellipses (±1, ±2, ±3): 100% Identical Uniform Size
+                sizeClasses = "w-[50px] h-[55px] xs:w-[58px] xs:h-[64px] sm:w-[92px] sm:h-[100px] md:w-[110px] md:h-[120px] lg:w-[124px] lg:h-[135px]";
               }
 
-              const zIndex = isCenter ? 25 : 20 - absOffset;
-              const opacity = isCenter ? 1 : Math.max(0.65, 1 - absOffset * 0.11);
+              // Z-Index: Center highest
+              const zIndex = isCenter ? 30 : 20 - absOffset;
+
+              // Scale & Opacity: Central boosted, all side lenses have identical uniform scale
+              let scale = 1;
+              let opacity = 1;
+              if (isCenter) {
+                scale = 1.05;
+                opacity = 1;
+              } else {
+                scale = 1;
+                opacity = 0.95;
+              }
 
               return (
                 <div
-                  key={`${product._id || itemIndex}-${offset}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (Math.abs(dragOffset) > 5) return;
-                    if (!isCenter) navigateTo(itemIndex);
-                  }}
-                  className={`absolute top-1/2 left-1/2 pointer-events-auto ${isCenter ? "cursor-pointer" : "cursor-pointer hover:opacity-100 hover:scale-105"
-                    }`}
+                  key={`orbit-slot-${offset}`}
+                  className="absolute pointer-events-auto transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
                   style={{
-                    opacity,
+                    transform: `translate3d(calc(${xOffsetVw}vw + ${isCenter ? dragOffset : dragOffset * 0.4}px), 0, 0) scale(${scale})`,
                     zIndex,
-                    transition: isDragging
-                      ? "none"
-                      : "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease",
-                    transform: `translate(calc(-50% + ${xOffsetVw}vw + ${dragOffset}px), -50%)`,
+                    opacity,
                   }}
                 >
                   {isCenter ? (
-                    /* ===== ACTIVE CENTER LENS WITH RADIANT GOLD DOUBLE RING ===== */
+                    /* ===== CENTER ZOOMED LENS ===== */
                     <Link
                       href={getProductUrl(product)}
                       onClick={(e) => {
@@ -444,11 +408,11 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                       className="relative block group"
                     >
                       {/* Ambient Golden Glow Aura */}
-                      <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/35 rounded-[50%] blur-md animate-pulse pointer-events-none" />
+                      <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/25 rounded-[50%] blur-md animate-pulse pointer-events-none" />
 
                       {/* Concentric Double Gold Frame */}
-                      <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_0_35px_rgba(197,147,69,0.5)]`}>
-                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-[#18110B] relative">
+                      <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_5px_25px_rgba(197,147,69,0.35)]`}>
+                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
                           {activeImages.map((img, idx) => (
                             <div
                               key={`${product._id}-img-${idx}`}
@@ -470,14 +434,14 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                       </div>
                     </Link>
                   ) : (
-                    /* ===== FLANKING LENSES (INSIDE THE ELLIPSE) ===== */
+                    /* ===== FLANKING LENSES ===== */
                     <div className="relative group">
                       {/* Ambient soft glow */}
-                      <div className="absolute -inset-1 bg-white/10 rounded-[50%] blur-[2px] pointer-events-none" />
+                      <div className="absolute -inset-1 bg-[#C59345]/10 rounded-[50%] blur-[2px] pointer-events-none" />
 
                       {/* Gold ring border */}
-                      <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-md transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.45)]`}>
-                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-[#18110B] relative">
+                      <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-sm transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.35)]`}>
+                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
                           <Image
                             src={imgUrl}
                             alt={product.name}
@@ -503,14 +467,20 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               href={getProductUrl(activeProduct)}
               className="inline-block group/info hover:opacity-90 transition-opacity max-w-full"
             >
-              <h3 className="text-xs sm:text-sm md:text-base font-serif font-medium text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
+              <h3 className="text-xs sm:text-sm md:text-base font-serif font-semibold text-[#1C140E] dark:text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
                 {activeProduct.name}
               </h3>
-              {(activeProduct.pricing?.price || activeProduct.variantPricing?.minPrice) ? (
-                <p className="text-[11px] sm:text-xs font-sans font-bold text-[#C59345] mt-0.5">
-                  {formatPrice(activeProduct.pricing?.price || activeProduct.variantPricing?.minPrice)}
-                </p>
-              ) : null}
+              {(() => {
+                const displayPrice = getProductDisplayPrice(activeProduct);
+                return displayPrice > 0 ? (
+                  <p
+                    suppressHydrationWarning
+                    className="text-[11px] sm:text-xs font-sans font-bold text-[#A8752B] dark:text-[#C59345] mt-0.5"
+                  >
+                    {formatPrice(displayPrice)}
+                  </p>
+                ) : null;
+              })()}
             </Link>
 
             {/* Subtle Image Progress Dots (when active product has multiple images) */}
@@ -527,7 +497,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
                     aria-label={`Show picture ${i + 1}`}
                     className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImageIndex
                         ? "w-4 sm:w-5 bg-[#C59345]"
-                        : "w-1.5 bg-white/30 hover:bg-white/60"
+                        : "w-1.5 bg-[#C59345]/30 hover:bg-[#C59345]/60"
                       }`}
                   />
                 ))}

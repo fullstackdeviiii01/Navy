@@ -128,7 +128,7 @@ export default function CartSidebar() {
               </p>
               <button
                 onClick={() => { closeCart(); router.push("/products"); }}
-                className="px-6 py-3 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm"
+                className="px-6 py-3 bg-[#C59345] hover:bg-[#A8752B] text-white text-xs uppercase tracking-[0.2em] font-bold transition-colors shadow-sm cursor-pointer"
               >
                 START SHOPPING
               </button>

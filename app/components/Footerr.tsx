@@ -81,8 +81,15 @@ export default function Footerr() {
 
   const currentYear = 2025;
 
+  const rawWa = companyInfo.social_media?.whatsapp || "";
+  const waLink = rawWa.startsWith("http")
+    ? rawWa
+    : rawWa.trim()
+    ? `https://wa.me/${rawWa.replace(/\D/g, "")}`
+    : "https://wa.me/923009692765";
+
   return (
-    <footer className="relative w-full bg-[#120D09] text-[#F3E8D6] border-t border-[#8A5E22]/40 select-none transition-colors mt-0">
+    <footer className="relative w-full bg-[#E5E5E5] dark:bg-[#120D09] text-[#241910] dark:text-[#F3E8D6] border-t border-[#B8A894] dark:border-[#3A2A1D] select-none transition-colors mt-0">
       
       {/* Top 5-Column Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 md:py-14">
@@ -109,7 +116,7 @@ export default function Footerr() {
                     T
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-serif font-bold tracking-[0.14em] text-white text-xs uppercase">
+                    <span className="font-serif font-bold tracking-[0.14em] text-[#1C140E] dark:text-white text-xs uppercase">
                       TALAL
                     </span>
                     <span className="text-[8.5px] font-sans tracking-[0.18em] text-[#C59345] uppercase">
@@ -121,37 +128,37 @@ export default function Footerr() {
             </Link>
 
             {/* Mission Statement */}
-            <p className="text-xs sm:text-[12.5px] text-[#A89B8C] leading-relaxed max-w-xs font-sans">
+            <p className="text-xs sm:text-[12.5px] text-[#5A4638] dark:text-[#A89B8C] leading-relaxed max-w-xs font-sans">
               We create more than lamps, we craft warmth, elegance and timeless beauty for your home.
             </p>
 
             {/* Circular Social Media Icons (Instagram, Facebook, WhatsApp) */}
             <div className="flex items-center gap-2.5 pt-1 text-white/90">
               <a
-                href={companyInfo.social_media?.instagram || "https://instagram.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-white/20 hover:border-[#C59345] bg-[#1C140E] flex items-center justify-center hover:text-[#C59345] transition-all duration-200 cursor-pointer"
-                aria-label="Instagram"
-              >
-                <BsInstagram className="w-3.5 h-3.5" />
-              </a>
-
-              <a
                 href={companyInfo.social_media?.facebook || "https://facebook.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-white/20 hover:border-[#C59345] bg-[#1C140E] flex items-center justify-center hover:text-[#C59345] transition-all duration-200 cursor-pointer"
+                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C59345] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C59345] transition-all duration-200 cursor-pointer shadow-2xs"
                 aria-label="Facebook"
               >
                 <BsFacebook className="w-3.5 h-3.5" />
               </a>
 
               <a
-                href={companyInfo.social_media?.whatsapp ? `https://wa.me/${companyInfo.social_media.whatsapp.replace(/\D/g, "")}` : "https://wa.me/923130538686"}
+                href={companyInfo.social_media?.instagram || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-white/20 hover:border-[#C59345] bg-[#1C140E] flex items-center justify-center hover:text-[#C59345] transition-all duration-200 cursor-pointer"
+                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C59345] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C59345] transition-all duration-200 cursor-pointer shadow-2xs"
+                aria-label="Instagram"
+              >
+                <BsInstagram className="w-3.5 h-3.5" />
+              </a>
+
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#25D366] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#25D366] transition-all duration-200 cursor-pointer shadow-2xs"
                 aria-label="WhatsApp"
               >
                 <BsWhatsapp className="w-3.5 h-3.5" />
@@ -162,10 +169,10 @@ export default function Footerr() {
 
           {/* COLUMN 2: QUICK LINKS */}
           <div className="flex flex-col space-y-2.5">
-            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-white">
+            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-[#1C140E] dark:text-white">
               QUICK LINKS
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#A89B8C]">
+            <ul className="space-y-1.5 text-xs text-[#5A4638] dark:text-[#A89B8C]">
               <li>
                 <Link href="/" className="hover:text-[#C59345] transition-colors">
                   Home
@@ -196,10 +203,10 @@ export default function Footerr() {
 
           {/* COLUMN 3: CUSTOMER SERVICE */}
           <div className="flex flex-col space-y-2.5">
-            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-white">
+            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-[#1C140E] dark:text-white">
               CUSTOMER SERVICE
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#A89B8C]">
+            <ul className="space-y-1.5 text-xs text-[#5A4638] dark:text-[#A89B8C]">
               <li>
                 <Link href="/account" className="hover:text-[#C59345] transition-colors">
                   My Account
@@ -230,10 +237,10 @@ export default function Footerr() {
 
           {/* COLUMN 4: CATEGORIES */}
           <div className="flex flex-col space-y-2.5">
-            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-white">
+            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-[#1C140E] dark:text-white">
               CATEGORIES
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#A89B8C]">
+            <ul className="space-y-1.5 text-xs text-[#5A4638] dark:text-[#A89B8C]">
               {categories.map((cat) => (
                 <li key={cat._id || cat.slug}>
                   <Link
@@ -249,10 +256,10 @@ export default function Footerr() {
 
           {/* COLUMN 5: CONTACT US */}
           <div className="flex flex-col space-y-2.5">
-            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-white">
+            <h4 className="text-xs sm:text-[13px] font-serif font-bold uppercase tracking-[0.14em] text-[#1C140E] dark:text-white">
               CONTACT US
             </h4>
-            <ul className="space-y-2 text-xs text-[#A89B8C]">
+            <ul className="space-y-2 text-xs text-[#5A4638] dark:text-[#A89B8C]">
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#C59345] shrink-0" />
                 <a
@@ -282,9 +289,9 @@ export default function Footerr() {
       </div>
 
       {/* Bottom Copyright Strip */}
-      <div className="border-t border-[#2A1D13] py-4">
+      <div className="border-t border-[#B8A894]/60 dark:border-[#2A1D13] py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-[11px] sm:text-xs text-[#8A7A6C] font-sans">
+          <p className="text-[11px] sm:text-xs text-[#7D6A5A] dark:text-[#8A7A6C] font-sans">
             {companyInfo.copyright_text || `© ${currentYear} Talal Wooden Lamp. All Rights Reserved.`}
           </p>
         </div>

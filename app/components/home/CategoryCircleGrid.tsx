@@ -62,17 +62,17 @@ export default function CategoryCircleGrid({ categories = [] }: CategoryCircleGr
   const displayCategories = categories.length > 0 ? categories.slice(0, 5) : fallbackCategories;
 
   return (
-    <section className="relative w-full bg-[#F3EBDC] dark:bg-[#1E1610] py-8 sm:py-10 md:py-12 border-b border-[#E5DAC8] dark:border-[#38281B] transition-colors select-none">
+    <section className="relative w-full bg-[#E5E5E5] dark:bg-[#1E1610] py-8 sm:py-10 md:py-12 border-t border-b border-[#B8A894] dark:border-[#38281B] transition-colors select-none">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         
         {/* Section Header: • --- SHOP BY CATEGORY --- • */}
         <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6 md:mb-8">
           <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#C59345]" />
-          <span className="h-[1px] w-6 sm:w-14 bg-[#C59345]/60" />
+          <span className="h-[1px] w-8 sm:w-20 md:w-28 bg-[#B8A894]" />
           <h2 className="text-[11px] sm:text-sm md:text-base font-serif font-bold tracking-[0.14em] sm:tracking-[0.16em] text-[#241910] dark:text-[#F3EBDC] uppercase text-center">
             SHOP BY CATEGORY
           </h2>
-          <span className="h-[1px] w-6 sm:w-14 bg-[#C59345]/60" />
+          <span className="h-[1px] w-8 sm:w-20 md:w-28 bg-[#B8A894]" />
           <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#C59345]" />
         </div>
 

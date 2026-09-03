@@ -17,11 +17,11 @@ module.exports = {
         // Main theme colors for entire application
         theme: {
           // Backgrounds
-          'bg-light': '#F3EBDC',        // User requested Light Mode Background
-          'bg-dark': '#3A2C13',         // User requested Dark Mode Background
-          'surface-light': '#F3EBDC',   // Light surface
+          'bg-light': '#E5E5E5',        // Theme Light Background
+          'bg-dark': '#3A2C13',         // Dark Mode Background
+          'surface-light': '#E5E5E5',   // Theme Light Surface
           'surface-dark': '#3A2C13',    // Dark surface
-          'card-light': '#E9DFCE',      // Light card surface
+          'card-light': '#E5E5E5',      // Theme Light Card Surface
           'card-dark': '#48381A',       // Dark card surface
           
           // Text colors
@@ -33,10 +33,10 @@ module.exports = {
           'text-muted-dark': '#A69E96',      // Muted text in dark mode
           
           // Buttons & Interactive Elements
-          'primary': '#241910',         // User requested Button background color (#241910)
-          'primary-hover': '#A8752B',   // User requested Clickable hover color (#A8752B)
-          'primary-dark': '#18110B',    // Dark primary
-          'btn-text': '#FFFFFF',        // User requested Button text color (#FFFFFF)
+          'primary': '#C59345',         // Signature Gold button
+          'primary-hover': '#A8752B',   // Rich gold hover
+          'primary-dark': '#C59345',    // Gold primary
+          'btn-text': '#FFFFFF',        // Button text color (#FFFFFF)
           'secondary': '#5A4638',       // Secondary button
           'secondary-hover': '#7D6A5A', // Secondary button hover
           

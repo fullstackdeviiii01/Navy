@@ -104,11 +104,11 @@ export default function WishlistPage() {
               <div className="pt-4">
                 <button
                   onClick={() => router.push("/products")}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm group"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-[#C59345] hover:bg-[#A8752B] text-white text-xs uppercase tracking-[0.2em] font-bold transition-colors shadow-sm group cursor-pointer"
                   aria-label="Browse all products"
                 >
                   <span>EXPLORE THE COLLECTION</span>
-                  <ChevronsRight className="w-4 h-4 text-white dark:text-neutral-900 transition-transform group-hover:translate-x-1" />
+                  <ChevronsRight className="w-4 h-4 text-white transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
             </div>
