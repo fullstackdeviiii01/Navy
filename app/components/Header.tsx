@@ -462,14 +462,14 @@ export default function Header() {
             })}
           </nav>
 
-          {/* 3. END: Actions Hub (Search, Account, Wishlist, Cart, Hamburger) */}
-          <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+          {/* 3. END: Actions Hub (Search, Account, Wishlist, Cart) */}
+          <div className="flex items-center justify-end gap-1 xs:gap-1.5 sm:gap-3 shrink-0 ml-auto -mr-1 sm:mr-0 z-20">
 
             {/* Search Trigger */}
             <div className="relative" ref={searchContainerRef}>
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 transition-colors cursor-pointer rounded-full ${isSearchOpen ? "text-[#C59345] bg-[#EFE9DF] dark:bg-[#1E150E]" : "text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345]"
+                className={`p-1.5 sm:p-2 transition-colors cursor-pointer rounded-full ${isSearchOpen ? "text-[#C59345] bg-[#EFE9DF] dark:bg-[#1E150E]" : "text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345]"
                   }`}
                 aria-label="Search luminaires"
               >
@@ -546,7 +546,7 @@ export default function Header() {
                                     alt={product.name || "Product"}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
-                                      (e.target as HTMLElement).style.display = "none";
+                                       (e.target as HTMLElement).style.display = "none";
                                     }}
                                   />
                                 </div>
@@ -568,16 +568,16 @@ export default function Header() {
             {/* Account Icon */}
             <Link
               href={isAuthenticated ? "/account" : "/sign-in"}
-              className="p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
+              className="p-1.5 sm:p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
               aria-label="Account"
             >
               <User size={18} className="stroke-[2]" />
             </Link>
 
-            {/* Wishlist Icon */}
+            {/* Wishlist Icon (visible on md+) */}
             <Link
               href="/wishlist"
-              className="relative p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full hidden sm:block"
+              className="relative p-1.5 sm:p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full hidden md:block"
               aria-label="Wishlist"
             >
               <Heart size={18} className="stroke-[2]" />
@@ -591,7 +591,7 @@ export default function Header() {
             {/* Cart Icon with Golden Count Badge */}
             <button
               onClick={openCart}
-              className="relative p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
+              className="relative p-1.5 sm:p-2 text-[#241910] dark:text-[#F3E8D6] hover:text-[#C59345] transition-colors cursor-pointer rounded-full"
               aria-label="Shopping Cart"
             >
               <ShoppingCart size={19} className="stroke-[2]" />

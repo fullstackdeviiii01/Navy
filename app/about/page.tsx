@@ -290,14 +290,14 @@ export default function AboutPage() {
           <div className="flex items-center gap-3 flex-wrap justify-center">
             <Link
               href="/products"
-              className="px-6 py-3 rounded-lg bg-[#C59345] hover:bg-[#A8752B] text-white text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 shadow-sm"
+              className="no-theme-hover px-6 py-3 rounded-lg bg-[#C59345] hover:bg-[#1C140E] dark:hover:bg-white !text-white hover:!text-white dark:hover:!text-[#1C140E] text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 shadow-sm active:scale-95"
             >
               <span>Explore Collection</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <Link
               href="/contact"
-              className="px-6 py-3 rounded-lg border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold uppercase tracking-wider transition-colors"
+              className="no-theme-hover px-6 py-3 rounded-lg border border-[#B8A894] dark:border-[#554220] hover:border-[#C59345] bg-[#DCD4C8] hover:bg-[#C59345] dark:bg-[#2A1D13] dark:hover:bg-[#C59345] !text-[#241910] hover:!text-white dark:!text-[#E8E2D6] dark:hover:!text-white text-xs font-semibold uppercase tracking-wider transition-all shadow-xs active:scale-95"
             >
               <span>Custom Commissions</span>
             </Link>
