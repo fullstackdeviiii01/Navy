@@ -12,6 +12,7 @@ export interface VariantAttribute {
 
 export interface ProductVariant {
   _id?: mongoose.Types.ObjectId;
+  sku?: string;
   attributes: VariantAttribute[];
   price: number;
   compareAtPrice?: number;
@@ -58,6 +59,7 @@ export interface IProductDocument extends Document {
   shipping_info?: string;
   return_info?: string;
   brand?: string;
+  sku?: string;
   category_id: mongoose.Types.ObjectId;
   subcategory_ids: mongoose.Types.ObjectId[];
 
@@ -71,6 +73,7 @@ export interface IProductDocument extends Document {
   };
 
   inventory: {
+    sku?: string;
     stock_quantity: number;
     low_stock_threshold: number;
     track_inventory: boolean;
@@ -122,6 +125,8 @@ export interface IProductDocument extends Document {
   status: "draft" | "active" | "archived" | "out_of_stock";
   is_visible: boolean;
   visibility: "public" | "hidden" | "members_only";
+  is_most_loved?: boolean;
+  is_premium?: boolean;
 
   published_at?: Date;
   available_from?: Date;

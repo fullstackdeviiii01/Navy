@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
       .lean();
 
     const productFields =
-      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo";
+      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium";
 
-    // New Arrivals (most recently created active products - 3 rows / 12 items)
+    // New Arrivals (most recently created active products)
     const newArrivals = await (Product as any)
       .find({
         status: "active",
@@ -29,7 +29,59 @@ export async function GET(request: NextRequest) {
       .limit(12)
       .lean();
 
-    // Best Sellers (highest sales volume active products - 3 rows / 12 items)
+    // Most Loved by Customers
+    let mostLovedProducts = await (Product as any)
+      .find({
+        status: "active",
+        is_visible: true,
+        is_most_loved: true,
+      })
+      .select(productFields)
+      .populate("category_id", "name slug")
+      .sort({ purchase_count: -1, created_at: -1 })
+      .limit(30)
+      .lean();
+
+    if (!mostLovedProducts || mostLovedProducts.length === 0) {
+      mostLovedProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ purchase_count: -1, rating_average: -1, created_at: -1 })
+        .limit(20)
+        .lean();
+    }
+
+    // Premium Collection
+    let premiumProducts = await (Product as any)
+      .find({
+        status: "active",
+        is_visible: true,
+        is_premium: true,
+      })
+      .select(productFields)
+      .populate("category_id", "name slug")
+      .sort({ "pricing.price": -1, created_at: -1 })
+      .limit(30)
+      .lean();
+
+    if (!premiumProducts || premiumProducts.length === 0) {
+      premiumProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ "pricing.price": -1, created_at: -1 })
+        .limit(20)
+        .lean();
+    }
+
+    // Best Sellers (highest sales volume active products)
     const bestSellers = await (Product as any)
       .find({
         status: "active",
@@ -45,6 +97,8 @@ export async function GET(request: NextRequest) {
       categories,
       newArrivals,
       bestSellers,
+      mostLovedProducts,
+      premiumProducts,
     });
   } catch (error) {
     console.error("Home data fetch failed:", error);

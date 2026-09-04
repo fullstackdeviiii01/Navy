@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Loader2, Check, ArrowRight, ShoppingCart } from "lucide-react";
+import { Heart, Loader2, Check, ArrowRight, ShoppingCart, Plus } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
@@ -41,33 +41,6 @@ interface CuratedProductCarouselProps {
   bgClass?: string;
 }
 
-// Extract all valid images for product card hover cycling
-const getCardImages = (prod?: ProductItem): string[] => {
-  if (!prod) return ["/images/hero-atelier-lamp.jpg"];
-  const urls: string[] = [];
-  const main = getProductMainImage(prod);
-  if (main) urls.push(main);
-
-  if (Array.isArray(prod.images)) {
-    prod.images.forEach((img: any) => {
-      const u = typeof img === "string" ? img : img?.url;
-      if (u && typeof u === "string" && !urls.includes(u)) {
-        urls.push(u);
-      }
-    });
-  }
-
-  if (Array.isArray(prod.variants)) {
-    prod.variants.forEach((v: any) => {
-      if (v?.imageUrl && typeof v.imageUrl === "string" && !urls.includes(v.imageUrl)) {
-        urls.push(v.imageUrl);
-      }
-    });
-  }
-
-  return urls.length > 0 ? urls : [main || "/images/hero-atelier-lamp.jpg"];
-};
-
 // Safe price resolver
 const getProductPrice = (prod?: ProductItem): number => {
   if (!prod) return 0;
@@ -82,7 +55,7 @@ const getProductPrice = (prod?: ProductItem): number => {
   return !isNaN(num) && num > 0 ? num : 0;
 };
 
-// Individual Product Grid Card with Multi-Image Hover Cycling
+// Individual Product Grid Card (Clean static image, no dots, screen-responsive buttons)
 function ProductGridCard({
   product,
   isAdding,
@@ -100,59 +73,25 @@ function ProductGridCard({
   inWishlist: boolean;
   className?: string;
 }) {
-  const images = useMemo(() => getCardImages(product), [product]);
-  const [imgIndex, setImgIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Auto-cycle through product images when hovered
-  useEffect(() => {
-    if (!isHovered || images.length <= 1) {
-      setImgIndex(0);
-      return;
-    }
-    const interval = setInterval(() => {
-      setImgIndex((prev) => (prev + 1) % images.length);
-    }, 1300);
-    return () => clearInterval(interval);
-  }, [isHovered, images.length]);
-
+  const mainImage = getProductMainImage(product) || product.images?.[0]?.url || "/images/hero-atelier-lamp.jpg";
   const price = getProductPrice(product);
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setImgIndex(0);
-      }}
-      className={`${className} flex-col justify-between bg-[#E5E5E5] dark:bg-[#241A12] border border-[#C2B29F] dark:border-[#3E2B1E] rounded-[2px] shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden group min-w-0`}
+      className={`${className} flex flex-col justify-between bg-[#E5E5E5] dark:bg-[#241A12] border border-[#C2B29F] dark:border-[#3E2B1E] rounded-[2px] shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden group min-w-0`}
     >
-      {/* Full-Bleed Product Image with Multi-Image Changing */}
+      {/* Full-Bleed Product Image with Clean Link (Dots removed) */}
       <Link
         href={getProductUrl(product)}
         className="relative aspect-square w-full bg-[#E5E5E5] dark:bg-[#1A120B] block overflow-hidden"
       >
         <Image
-          src={images[imgIndex] || images[0]}
+          src={mainImage}
           alt={product.name}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+          sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
         />
-
-        {/* Subtle Image Progress Dots (if product has multiple images) */}
-        {images.length > 1 && (
-          <div className="absolute bottom-2 inset-x-0 flex items-center justify-center gap-1 z-10 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
-            {images.slice(0, 5).map((_, i) => (
-              <span
-                key={i}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  i === imgIndex ? "w-3 bg-[#C59345]" : "w-1 bg-white/70 shadow-xs"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </Link>
 
       {/* Content: Title, Price & Actions */}
@@ -172,23 +111,40 @@ function ProductGridCard({
           </p>
         </div>
 
-        {/* Bottom Action Row */}
+        {/* Bottom Action Row: Responsive Add to Cart & Heart */}
         <div className="pt-1.5 sm:pt-2 flex items-center gap-1 sm:gap-1.5">
           <button
             type="button"
             disabled={isAdding}
             onClick={(e) => onAddToCart(product, e)}
-            className="no-theme-hover flex-1 h-6 xs:h-7 sm:h-7 md:h-8 px-1 sm:px-2 bg-[#B88636] hover:bg-[#A8752B] text-white !text-white text-[8px] xs:text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-tight rounded-[2px] shadow-2xs transition-all duration-200 active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-75 whitespace-nowrap overflow-hidden"
+            className="no-theme-hover flex-1 h-6 sm:h-7 lg:h-8 px-1 sm:px-2 bg-[#B88636] hover:bg-[#A8752B] text-white !text-white text-[9px] sm:text-[10px] lg:text-[11px] font-bold uppercase tracking-tight rounded-[2px] shadow-2xs transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer disabled:opacity-75 whitespace-nowrap overflow-hidden"
             title="Add to cart"
           >
             {isAdding ? (
               <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" />
             ) : isAdded ? (
-              <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span className="flex items-center justify-center gap-1">
+                <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span className="hidden sm:inline text-[9px] sm:text-[10px]">Added</span>
+              </span>
             ) : (
               <>
-                <ShoppingCart className="w-2.5 h-2.5 xs:w-3 xs:h-3 shrink-0" />
-                <span className="hidden xs:inline text-[7.5px] xs:text-[8.5px] sm:text-[10px]">ADD</span>
+                {/* 1. Mobile (< sm): Cart Plus Icon */}
+                <span className="sm:hidden relative inline-flex items-center justify-center">
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <Plus className="w-2 h-2 absolute -top-1 -right-1 stroke-[3]" />
+                </span>
+
+                {/* 2. Tablet (sm to lg): Cart Icon + "Cart" text */}
+                <span className="hidden sm:inline-flex lg:hidden items-center justify-center gap-1 text-[10px] font-bold">
+                  <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                  <span>Cart</span>
+                </span>
+
+                {/* 3. Laptop / Desktop (lg+): "Add to cart" with NO icon */}
+                <span className="hidden lg:inline text-[11px] font-semibold tracking-wider whitespace-nowrap">
+                  Add to cart
+                </span>
               </>
             )}
           </button>
@@ -197,7 +153,7 @@ function ProductGridCard({
             type="button"
             onClick={(e) => onWishlistToggle(product._id, e)}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-            className={`w-6 h-6 xs:w-7 xs:h-7 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-[2px] border transition-colors flex items-center justify-center shrink-0 cursor-pointer ${
+            className={`h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 rounded-[2px] border transition-colors flex items-center justify-center shrink-0 cursor-pointer ${
               inWishlist
                 ? "bg-red-500/10 border-red-500 text-red-500"
                 : "border-[#D6CEC2] dark:border-[#3E2B1E] hover:border-red-400 text-[#7D6A5A] dark:text-[#A69E96] hover:text-red-500 bg-white dark:bg-[#1A120B]"
@@ -280,13 +236,50 @@ export default function CuratedProductCarousel({
     }
   };
 
-  if (!products || products.length === 0) return null;
+  // 1. Strict Deduplication Safeguard: Filter out any duplicate IDs so every product in pool is 100% distinct
+  const uniqueProducts = useMemo(() => {
+    const seen = new Set<string>();
+    return (products || []).filter((p) => {
+      const id = p?._id ? String(p._id) : null;
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }, [products]);
 
-  // Exactly 5 products as requested by client
-  const displayProducts = products.slice(0, 5);
+  const [startIndex, setStartIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // 2. 5-second automatic rotation: cycle through the tagged product pool
+  useEffect(() => {
+    if (!uniqueProducts || uniqueProducts.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setStartIndex((prev) => (prev + 1) % uniqueProducts.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [uniqueProducts, isPaused]);
+
+  if (!uniqueProducts || uniqueProducts.length === 0) return null;
+
+  // 3. Sliding Window: exactly up to 5 products starting from startIndex (wraps around unique pool)
+  // Guaranteed: windowCount <= uniqueProducts.length, so all visible slots are 100% distinct
+  const windowCount = Math.min(uniqueProducts.length, 5);
+  const displayProducts = Array.from({ length: windowCount }, (_, i) => {
+    const idx = (startIndex + i) % uniqueProducts.length;
+    return {
+      product: uniqueProducts[idx],
+      slotIndex: i,
+    };
+  });
 
   return (
-    <section className={`relative w-full py-6 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] transition-colors select-none ${bgClass}`}>
+    <section
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className={`relative w-full py-6 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] transition-colors select-none ${bgClass}`}
+    >
       <div className="max-w-7xl mx-auto px-1.5 xs:px-2.5 sm:px-6 lg:px-8">
 
         {/* Section Header: --- TITLE ---------------------------- [Show all products ->] */}
@@ -311,25 +304,29 @@ export default function CuratedProductCarousel({
           </Link>
         </div>
 
-        {/* 3 in a Row on Mobile / 4 on Tablet / 5 on Laptop */}
+        {/* 3 in a Row on Mobile / 4 on Tablet / 5 on Laptop with 5-second Rotation */}
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
-          {displayProducts.map((product, idx) => (
-            <ProductGridCard
-              key={product._id}
-              product={product}
-              isAdding={addingId === product._id}
-              isAdded={addedId === product._id}
-              onAddToCart={handleAddToCart}
-              onWishlistToggle={handleWishlistToggle}
-              inWishlist={isInWishlist(product._id)}
-              className={
-                idx === 3
+          {displayProducts.map(({ product, slotIndex }) => (
+            <div
+              key={`slot-${slotIndex}-${product._id}`}
+              className={`transition-all duration-500 min-w-0 ${
+                slotIndex === 3
                   ? "hidden sm:flex"
-                  : idx === 4
+                  : slotIndex === 4
                   ? "hidden lg:flex"
                   : "flex"
-              }
-            />
+              }`}
+            >
+              <ProductGridCard
+                product={product}
+                isAdding={addingId === product._id}
+                isAdded={addedId === product._id}
+                onAddToCart={handleAddToCart}
+                onWishlistToggle={handleWishlistToggle}
+                inWishlist={isInWishlist(product._id)}
+                className="w-full animate-product-swap"
+              />
+            </div>
           ))}
         </div>
 

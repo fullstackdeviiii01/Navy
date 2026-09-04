@@ -23,13 +23,13 @@ export async function GET(request: Request) {
     await connectDB();
 
     // Check if user is admin
-    const adminUser = await User.findOne({ email: decodedToken.email });
+    const adminUser = await (User as any).findOne({ email: decodedToken.email });
     if (!adminUser || adminUser.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     // Get all users
-    const users = await User.find(
+    const users = await (User as any).find(
       {},
       {
         uid: 1,

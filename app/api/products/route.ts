@@ -116,6 +116,9 @@ export async function GET(request: NextRequest) {
           { name: { $regex: cleanSearch, $options: "i" } },
           { brand: { $regex: cleanSearch, $options: "i" } },
           { description: { $regex: cleanSearch, $options: "i" } },
+          { sku: { $regex: cleanSearch, $options: "i" } },
+          { "inventory.sku": { $regex: cleanSearch, $options: "i" } },
+          { "variants.sku": { $regex: cleanSearch, $options: "i" } },
         ];
       }
     }
@@ -226,6 +229,87 @@ export async function POST(request: NextRequest) {
         stock_status: totalStock > 0 ? "in_stock" : "out_of_stock",
         track_inventory: true,
       };
+    }
+
+    // ========== SKU Validation & Deduplication ==========
+    const rootSku = (body.sku || body.inventory?.sku || "").trim();
+    if (rootSku) {
+      const existingProductWithSku = await (Product as any).findOne({
+        $or: [
+          { sku: rootSku },
+          { "inventory.sku": rootSku },
+          { "variants.sku": rootSku },
+        ],
+      }).select("name sku inventory.sku variants.sku");
+
+      if (existingProductWithSku) {
+        return NextResponse.json(
+          { error: `Product SKU "${rootSku}" is already in use by product "${existingProductWithSku.name}". Each SKU must be globally unique.` },
+          { status: 400 }
+        );
+      }
+
+      body.sku = rootSku;
+      if (body.inventory) {
+        body.inventory.sku = rootSku;
+      }
+    } else {
+      delete body.sku;
+      if (body.inventory) {
+        delete body.inventory.sku;
+      }
+    }
+
+    // If product has variants, validate variant SKUs
+    if (body.hasVariants && Array.isArray(body.variants) && body.variants.length > 0) {
+      body.variants = body.variants.map((v: any) => ({
+        ...v,
+        sku: typeof v.sku === "string" ? v.sku.trim() : "",
+      }));
+
+      const variantSkus = body.variants
+        .map((v: any) => v.sku)
+        .filter(Boolean);
+
+      // Check for duplicate SKUs within the same product payload
+      const payloadDups = variantSkus.filter((sku: string, idx: number) => variantSkus.indexOf(sku) !== idx);
+      if (payloadDups.length > 0) {
+        return NextResponse.json(
+          { error: `Duplicate variant SKU "${payloadDups[0]}" found within this product. Every variant must have a unique SKU.` },
+          { status: 400 }
+        );
+      }
+
+      // Check for conflict with the root product SKU if both are set
+      if (rootSku && variantSkus.includes(rootSku)) {
+        return NextResponse.json(
+          { error: `Variant SKU cannot be identical to product base SKU "${rootSku}". Please use distinct SKUs.` },
+          { status: 400 }
+        );
+      }
+
+      // Check for conflict with existing database products & variants
+      if (variantSkus.length > 0) {
+        const dbConflict = await (Product as any).findOne({
+          $or: [
+            { sku: { $in: variantSkus } },
+            { "inventory.sku": { $in: variantSkus } },
+            { "variants.sku": { $in: variantSkus } },
+          ],
+        }).select("name sku inventory.sku variants.sku");
+
+        if (dbConflict) {
+          const conflictingSku = variantSkus.find((s: string) =>
+            s === dbConflict.sku ||
+            s === dbConflict.inventory?.sku ||
+            dbConflict.variants?.some((v: any) => v.sku === s)
+          );
+          return NextResponse.json(
+            { error: `Variant SKU "${conflictingSku}" is already in use by product "${dbConflict.name}". Each SKU must be globally unique.` },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     // Set created_by

@@ -477,6 +477,21 @@ export default function FinishMatrixStudio({
     onVariantsChange(updated);
   };
 
+  const handleAutoFillSkus = () => {
+    const updated = variants.map((v, i) => {
+      if (v.sku && v.sku.trim()) return v;
+      const attrSuffix = v.attributes
+        .map((a) => {
+          const val = a.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+          return val.length > 4 ? val.substring(0, 4) : val;
+        })
+        .join("-");
+      const generated = `SKU-${String(i + 1).padStart(2, "0")}${attrSuffix ? `-${attrSuffix}` : ""}`;
+      return { ...v, sku: generated };
+    });
+    onVariantsChange(updated);
+  };
+
   return (
     <div className="space-y-6">
       {/* 1. DEDICATED COLOR SECTION */}
@@ -778,9 +793,19 @@ export default function FinishMatrixStudio({
             <h4 className="text-sm sm:text-base font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
               Generated Variant Permutations ({variants.length} combinations)
             </h4>
-            <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Photos & Finishes linked automatically
-            </span>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleAutoFillSkus}
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer"
+                title="Automatically generate distinct SKUs for all variants"
+              >
+                Auto-fill Variant SKUs
+              </button>
+              <span className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark hidden sm:inline">
+                Photos & Finishes linked automatically
+              </span>
+            </div>
           </div>
 
           <div className="rounded-xl border border-theme-border-light dark:border-theme-border-light dark:border-theme-border-dark overflow-hidden shadow-xs">
@@ -790,6 +815,7 @@ export default function FinishMatrixStudio({
                   <tr>
                     <th className="px-3 py-2.5">Variant</th>
                     <th className="px-3 py-2.5">Photo</th>
+                    <th className="px-3 py-2.5">Variant SKU</th>
                     <th className="px-3 py-2.5">Price ({productCurrency})</th>
                     <th className="px-3 py-2.5">Compare Price</th>
                     <th className="px-3 py-2.5">Stock</th>
@@ -825,6 +851,16 @@ export default function FinishMatrixStudio({
                         ) : (
                           <span className="text-[10px] text-theme-text-muted-light">—</span>
                         )}
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          placeholder="e.g. TL-001"
+                          value={variant.sku || ""}
+                          onChange={(e) => updateVariant(index, "sku", e.target.value.toUpperCase())}
+                          className="w-24 sm:w-28 px-2 py-1 border border-theme-border-light dark:border-theme-border-dark rounded bg-theme-surface-light dark:bg-theme-surface-dark text-xs font-mono uppercase focus:ring-1 focus:ring-blue-500"
+                        />
                       </td>
 
                       <td className="px-3 py-2">

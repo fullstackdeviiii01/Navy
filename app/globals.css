@@ -183,3 +183,19 @@ button.link:hover {
 .dark .post-content tr:hover {
   background-color: #374151;
 }
+
+/* Smooth product swap transition for curated homepage carousels */
+@keyframes productSmoothSwap {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-product-swap {
+  animation: productSmoothSwap 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

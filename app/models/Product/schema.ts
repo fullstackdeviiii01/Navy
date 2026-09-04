@@ -69,6 +69,10 @@ const ProductVariantSchema = new Schema<ProductVariant>(
     barcode: {
       type: String,
     },
+    sku: {
+      type: String,
+      trim: true,
+    },
     imageUrl: {
       type: String,
     },
@@ -164,6 +168,10 @@ const PricingSchema = new Schema(
 // Inventory Schema
 const InventorySchema = new Schema(
   {
+    sku: {
+      type: String,
+      trim: true,
+    },
     stock_quantity: {
       type: Number,
       required: true,
@@ -263,6 +271,11 @@ export const ProductSchema = new Schema<IProductDocument>(
     return_info: { type: String },
     brand: {
       type: String,
+      index: true,
+    },
+    sku: {
+      type: String,
+      trim: true,
       index: true,
     },
 
@@ -368,6 +381,16 @@ export const ProductSchema = new Schema<IProductDocument>(
       type: String,
       enum: ["public", "hidden", "members_only"],
       default: "public",
+    },
+    is_most_loved: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    is_premium: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
 
     // ========== Dates ==========

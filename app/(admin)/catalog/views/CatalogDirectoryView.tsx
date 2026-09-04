@@ -12,6 +12,7 @@ import { FaBoxes, FaCheckCircle, FaExclamationTriangle, FaLayerGroup } from "rea
 
 interface CatalogItem {
   _id: string;
+  sku?: string;
   name: string;
   description: string;
   pricing: {

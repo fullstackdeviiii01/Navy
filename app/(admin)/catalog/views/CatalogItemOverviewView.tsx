@@ -190,6 +190,17 @@ export default function CatalogItemOverviewView({
                 <span className={`w-1.5 h-1.5 rounded-full ${product.status === "active" ? "bg-emerald-500" : "bg-amber-500"}`} />
                 <span>{product.status}</span>
               </span>
+
+              {product.is_most_loved && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9.5px] font-mono font-bold uppercase tracking-wider bg-[#C59345]/15 border border-[#C59345]/40 text-[#A8752B] dark:text-[#E5B568] rounded-xs">
+                  ★ Most Loved
+                </span>
+              )}
+              {product.is_premium && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9.5px] font-mono font-bold uppercase tracking-wider bg-[#8E6533]/15 border border-[#8E6533]/40 text-[#8E6533] dark:text-[#E5C189] rounded-xs">
+                  ◆ Premium
+                </span>
+              )}
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-sans font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight leading-snug">
@@ -198,6 +209,8 @@ export default function CatalogItemOverviewView({
 
             <div className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-mono flex flex-wrap items-center gap-x-3 gap-y-1">
               <span>Brand: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{product.brand || "Talal Wooden Lamps"}</strong></span>
+              <span className="text-theme-text-muted-light">•</span>
+              <span>SKU: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{product.sku || product.inventory?.sku || (isVariableProduct ? "Variant Managed" : "—")}</strong></span>
               <span className="text-theme-text-muted-light">•</span>
               <span>Structure: <strong className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-semibold">{isVariableProduct ? `${product.variants?.length || 0} Product Variants` : "Single Model Piece"}</strong></span>
             </div>
@@ -620,6 +633,7 @@ export default function CatalogItemOverviewView({
               <thead>
                 <tr className="bg-theme-card-light/60 dark:bg-theme-card-dark/40 text-[10px] uppercase font-mono tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-semibold border-b border-theme-border-light dark:border-theme-border-dark">
                   <th className="py-2.5 px-3 w-16">Photo</th>
+                  <th className="py-2.5 px-3">Variant SKU</th>
                   <th className="py-2.5 px-3">Attributes & Finish</th>
                   <th className="py-2.5 px-3">Price</th>
                   <th className="py-2.5 px-3">Stock</th>
@@ -652,6 +666,11 @@ export default function CatalogItemOverviewView({
                             </div>
                           )}
                         </div>
+                      </td>
+                      <td className="py-2 px-3">
+                        <span className="font-mono text-xs font-semibold text-[#A8752B] dark:text-[#E5B568]">
+                          {v.sku || "—"}
+                        </span>
                       </td>
                       <td className="py-2 px-3">
                         <div className="flex flex-wrap items-center gap-1.5">

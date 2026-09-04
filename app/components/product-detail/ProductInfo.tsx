@@ -20,7 +20,9 @@ interface ProductInfoProps {
     };
     rating_average: number;
     rating_count: number;
+    sku?: string;
     inventory: {
+      sku?: string;
       stock_status: string;
       stock_quantity: number;
     };
@@ -31,6 +33,7 @@ interface ProductInfoProps {
     };
   };
   selectedVariant?: {
+    sku?: string;
     price: number;
     compareAtPrice?: number;
     stockQuantity: number;
@@ -70,45 +73,47 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
     ? selectedVariant.stockQuantity > 0 && selectedVariant.stockQuantity <= (selectedVariant.lowStockThreshold || 5)
     : product.inventory.stock_status === "low_stock";
 
-  const categoryName = product.category_id?.name;
+  const categoryName = product.category_id?.name || "Solid Wood Lamp";
+  const currentSku = selectedVariant?.sku || product.sku || product.inventory?.sku;
+  const discountPercent = comparePrice && comparePrice > basePrice
+    ? Math.round(((comparePrice - basePrice) / comparePrice) * 100)
+    : null;
 
   return (
-    <div className="space-y-2.5 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
-      {/* Category / Handmade Craftsmanship Badges */}
-      <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium tracking-[0.22em] uppercase">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#8A5E22]/15 border border-[#8A5E22]/35 text-theme-hover-light dark:text-theme-hover-dark font-semibold">
-          ✦ 100% SOLID WOOD HANDMADE
-        </span>
-        {categoryName && (
-          <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark">
-            {categoryName}
-          </span>
-        )}
-      </div>
-
-      {/* Product Title */}
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-        {product.name}
-      </h1>
-
-      {/* Brand & Rating Inline */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5 text-xs">
-        <span className="uppercase tracking-[0.18em] text-theme-text-muted-light dark:text-theme-text-muted-dark font-medium">
-          BY TALAL WOODEN LAMP
-        </span>
-        <span className="text-theme-text-muted-light/40 dark:text-theme-text-muted-dark/40">•</span>
-        <div className="flex items-center gap-1.5">
-          <Rating rating={product.rating_average} count={product.rating_count} size="sm" showCount={false} />
-          <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-            {product.rating_count > 0 ? `(${product.rating_count} reviews)` : "Be the first to review"}
+    <div className="space-y-3 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
+      {/* Reviews & Handmade Craftsmanship Badge */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-xs">
+          <Rating rating={product.rating_average || 0} count={product.rating_count || 0} size="sm" showCount={false} />
+          <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-medium">
+            {product.rating_count > 0
+              ? `${product.rating_count} ${product.rating_count === 1 ? "review" : "reviews"}`
+              : "No reviews yet"}
           </span>
         </div>
+
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#8A5E22]/10 border border-[#8A5E22]/25 text-theme-hover-light dark:text-theme-hover-dark text-[10px] font-semibold tracking-wider uppercase">
+          ✦ 100% Solid Wood
+        </span>
       </div>
 
-      {/* Price & Stock */}
-      <div className="pt-2 flex flex-wrap items-baseline gap-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark" aria-label={`Price: ${displayPrice}`}>
+      {/* Title & Price Group */}
+      <div className="space-y-1">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
+          {product.name}
+        </h1>
+
+        {/* Price Block with Discount Tag */}
+        <div className="flex flex-wrap items-baseline gap-2.5 pt-0.5">
+          {comparePrice && comparePrice > basePrice && (
+            <span className="text-sm sm:text-base text-theme-text-muted-light dark:text-theme-text-muted-dark line-through font-serif">
+              {formatPrice(comparePrice)}
+            </span>
+          )}
+          <span
+            className="text-2xl sm:text-3xl font-serif font-bold text-red-600 dark:text-red-400"
+            aria-label={`Price: ${displayPrice}`}
+          >
             {displayPrice}
           </span>
           {maxPrice && (
@@ -116,22 +121,47 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
               <span className="text-base font-serif text-theme-text-muted-light dark:text-theme-text-muted-dark">
                 —
               </span>
-              <span className="text-2xl sm:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark" aria-label={`Maximum price: ${maxPrice}`}>
+              <span className="text-2xl sm:text-3xl font-serif font-bold text-red-600 dark:text-red-400" aria-label={`Maximum price: ${maxPrice}`}>
                 {maxPrice}
               </span>
             </>
           )}
-          {comparePrice && comparePrice > basePrice && (
-            <span className="text-xs sm:text-sm text-theme-text-muted-light dark:text-theme-text-muted-dark line-through ml-1.5">
-              {formatPrice(comparePrice)}
+          {discountPercent && discountPercent > 0 && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60 ml-1">
+              Save {discountPercent}%
             </span>
           )}
         </div>
+      </div>
 
-        {/* Stock Badge */}
-        <div>
-          <span className="inline-block px-2.5 py-0.5 bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-300 text-[10px] uppercase tracking-wider font-medium">
+      {/* Clean Meta Details (SKU, Availability, Product Type) */}
+      <div className="pt-3 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2 text-xs font-mono">
+        {currentSku && (
+          <div className="flex items-center gap-3">
+            <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+              SKU:
+            </span>
+            <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
+              {currentSku}
+            </span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-3">
+          <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+            AVAILABILITY:
+          </span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold tracking-wide">
             In Stock
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+            PRODUCT TYPE:
+          </span>
+          <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium capitalize font-sans">
+            {categoryName}
           </span>
         </div>
       </div>

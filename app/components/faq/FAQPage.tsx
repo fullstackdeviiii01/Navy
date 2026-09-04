@@ -38,7 +38,7 @@ const STATIC_FAQS: StaticFAQItem[] = [
     id: "delivery-timelines",
     category: "Shipping & Delivery",
     question: "What are your delivery timelines across Pakistan?",
-    answer: "Standard orders are securely dispatched within 24 to 48 business hours. Deliveries within Karachi typically arrive within 2–3 business days, while nationwide shipments to Lahore, Islamabad, Rawalpindi, and other cities arrive within 3–5 business days via tracked courier services (TCS, Leopards, Trax).",
+    answer: "Standard orders are securely dispatched within 24 to 48 business hours. Deliveries nationwide shipments to cities arrive within 3–5 business days via tracked courier services (M&P).",
   },
   {
     id: "fragile-packaging",

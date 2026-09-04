@@ -221,7 +221,7 @@ export default function AddressesTab({
                   setShipping({ ...shipping, city: e.target.value })
                 }
                 required
-                placeholder="e.g. Lahore, Karachi, Islamabad"
+                placeholder="e.g. Sahiwal"
                 className="w-full bg-theme-bg-light dark:bg-theme-bg-dark border border-theme-border-light dark:border-theme-border-dark px-4 py-3 text-xs sm:text-sm text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:border-theme-hover-light dark:focus:border-theme-hover-dark"
               />
             </div>

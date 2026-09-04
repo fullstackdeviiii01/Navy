@@ -233,7 +233,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
 
         {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
         <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0 pointer-events-none">
-          <div className="absolute inset-0 translate-x-[60px] xs:translate-x-[75px] sm:translate-x-[80px] md:translate-x-[95px] lg:translate-x-[150px] lg:-translate-y-[20px]">
+          {/* <div className="absolute inset-0 translate-x-[60px] xs:translate-x-[75px] sm:translate-x-[80px] md:translate-x-[95px] lg:translate-x-[150px] lg:-translate-y-[20px]"> */}
             <Image
               src="/images/talal_wooden_lamp_hero_image.png"
               alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
@@ -242,7 +242,7 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               className="object-cover object-[82%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
               sizes="100vw"
             />
-          </div>
+          {/* </div> */}
           {/* Responsive light gradient overlay ensuring high text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#E5E5E5]/95 via-[#E5E5E5]/75 to-transparent dark:from-[#0A0604]/95 dark:via-[#0A0604]/70 dark:to-transparent w-full sm:w-[85%] md:w-[70%] lg:w-[60%]" />
           <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#E5E5E5] via-[#E5E5E5]/70 to-transparent dark:from-[#0A0604] dark:via-[#0A0604]/70 dark:to-transparent" />
@@ -257,37 +257,37 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
               Handmade Natural
             </p>
 
-            {/* Main Bold Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-[#1C140E] dark:text-white tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-xs">
+            {/* Main Bold Headline: text-[#1C140E] in light mode, brown #C59345 in dark mode */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-[#1C140E] dark:text-[#C59345] tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-xs">
               WOODEN <span className="text-[#C59345]">LAMP</span>
             </h1>
 
-            {/* Sub-headline */}
+            {/* Sub-headline: text-[#241910] in light mode, warm #A8752B in dark mode */}
             <div className="pt-0.5 sm:pt-1">
-              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-semibold text-[#241910] dark:text-[#E5D7C2] tracking-wide inline-block">
+              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-semibold text-[#241910] dark:text-[#A8752B] tracking-wide inline-block">
                 Crafted by Nature, Designed to Inspire
               </h2>
               <div className="h-[2px] w-12 sm:w-20 bg-[#C59345] mt-1 sm:mt-1.5 rounded-full" />
             </div>
 
-            {/* Body Description */}
-            <p className="text-xs sm:text-sm md:text-[15px] text-[#5A4638] dark:text-[#A89B8C] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
+            {/* Body Description: original text-[#5A4638] in light mode, deep dark premium brown in dark mode */}
+            <p className="text-xs sm:text-sm md:text-[15px] text-[#5A4638] dark:text-[#8C6239] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
               Premium quality wooden lamps, carefully handcrafted to bring warmth, elegance and a natural touch to your space.
             </p>
 
-            {/* Dual CTA Buttons (Clean, with no-theme-hover) */}
+            {/* Dual CTA Buttons */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-5">
               <Link
                 href="/products"
-                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer shadow-sm"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white !text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer shadow-sm"
               >
-                <span className="text-white">SHOP NOW</span>
+                <span className="text-white !text-white">SHOP NOW</span>
                 <ArrowRight className="w-4 h-4 text-white" />
               </Link>
 
               <Link
                 href="/products?sort=popular"
-                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-[#C59345] hover:border-[#A8752B] text-[#A8752B] hover:text-[#8A5E22] hover:bg-[#C59345]/10 dark:border-white/70 dark:text-white dark:hover:bg-white/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
+                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-[#C59345] hover:border-[#A8752B] text-[#A8752B] hover:text-[#8A5E22] hover:bg-[#C59345]/10 dark:border-[#C59345] dark:text-[#C59345] dark:hover:bg-[#C59345]/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
               >
                 EXPLORE COLLECTION
               </Link>
@@ -303,233 +303,233 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
       {/* (To re-enable, simply remove the `{false && (` and closing `)}`) */}
       {/* ========================================================================= */}
       {false && (
-      <div className="relative w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:-mt-6 z-20">
+        <div className="relative w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:-mt-6 z-20">
 
-        {/* Main Orbit Stage */}
-        <div
-          ref={containerRef}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${isDragging ? "cursor-grabbing" : "cursor-grab"
-            }`}
-        >
-          {/* Elongated Golden Ellipse Frame (Hidden to comply with client requirement: no large outer oval circle) */}
-          <div className="hidden" />
-
-          {/* Left Navigation Arrow */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePrev();
-            }}
-            aria-label="Previous product"
-            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+          {/* Main Orbit Stage */}
+          <div
+            ref={containerRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            className={`relative w-full h-[155px] sm:h-[190px] md:h-[225px] lg:h-[255px] flex items-center justify-center ${isDragging ? "cursor-grabbing" : "cursor-grab"
+              }`}
           >
-            <ChevronLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-          </button>
+            {/* Elongated Golden Ellipse Frame (Hidden to comply with client requirement: no large outer oval circle) */}
+            <div className="hidden" />
 
-          {/* Right Navigation Arrow */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNext();
-            }}
-            aria-label="Next product"
-            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
-          >
-            <ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-          </button>
-
-          {/* Responsive Orbit Items */}
-          <div className="relative w-full max-w-6xl h-full flex items-center justify-center pointer-events-none">
-            {visibleSlots.map((offset) => {
-              const itemIndex = (activeIndex + offset + total * 100) % total;
-              const product = displayProducts[itemIndex];
-              if (!product) return null;
-
-              const isCenter = offset === 0;
-              const imgUrl = getProductMainImage(product) || product.images?.[0]?.url || "/images/showcase/lamp_center.jpg";
-              const absOffset = Math.abs(offset);
-
-              // Visibility: 5 items on mobile & tablet (2 on left, 1 center, 2 on right), 7 items on desktop
-              let isVisible = true;
-              if (windowWidth < 1024 && absOffset > 2) isVisible = false;
-
-              if (!isVisible) return null;
-
-              const xOffsetVw = getSlotXOffsetVw(offset);
-
-              // Lens Dimensions (Width x Height): Central ellipse is large, all side ellipses are one uniform size
-              let sizeClasses = "";
-              if (isCenter) {
-                // Center Product: Main Illuminated Large Ellipse
-                sizeClasses = "w-[94px] h-[100px] xs:w-[108px] xs:h-[116px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
-              } else {
-                // All Side Ellipses (±1, ±2, ±3): 100% Identical Uniform Size
-                sizeClasses = "w-[50px] h-[55px] xs:w-[58px] xs:h-[64px] sm:w-[92px] sm:h-[100px] md:w-[110px] md:h-[120px] lg:w-[124px] lg:h-[135px]";
-              }
-
-              // Z-Index: Center highest
-              const zIndex = isCenter ? 30 : 20 - absOffset;
-
-              // Scale & Opacity: Central boosted, all side lenses have identical uniform scale
-              let scale = 1;
-              let opacity = 1;
-              if (isCenter) {
-                scale = 1.05;
-                opacity = 1;
-              } else {
-                scale = 1;
-                opacity = 0.95;
-              }
-
-              return (
-                <div
-                  key={`orbit-slot-${offset}`}
-                  className="absolute pointer-events-auto transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                  style={{
-                    transform: `translate3d(calc(${xOffsetVw}vw + ${isCenter ? dragOffset : dragOffset * 0.4}px), 0, 0) scale(${scale})`,
-                    zIndex,
-                    opacity,
-                  }}
-                >
-                  {isCenter ? (
-                    /* ===== CENTER ZOOMED LENS ===== */
-                    <Link
-                      href={getProductUrl(product)}
-                      onClick={(e) => {
-                        if (Math.abs(dragOffset) > 5) e.preventDefault();
-                      }}
-                      className="relative block group"
-                    >
-                      {/* Ambient Golden Glow Aura */}
-                      <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/25 rounded-[50%] blur-md animate-pulse pointer-events-none" />
-
-                      {/* Concentric Double Gold Frame */}
-                      <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_5px_25px_rgba(197,147,69,0.35)]`}>
-                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
-                          {activeImages.map((img, idx) => (
-                            <div
-                              key={`${product._id}-img-${idx}`}
-                              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                                }`}
-                            >
-                              <Image
-                                src={img}
-                                alt={`${product.name} - view ${idx + 1}`}
-                                fill
-                                draggable={false}
-                                priority={idx === 0}
-                                sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 220px"
-                                className="object-cover object-center transition-transform duration-500 group-hover:scale-110 pointer-events-none"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </Link>
-                  ) : (
-                    /* ===== FLANKING LENSES ===== */
-                    <div className="relative group">
-                      {/* Ambient soft glow */}
-                      <div className="absolute -inset-1 bg-[#C59345]/10 rounded-[50%] blur-[2px] pointer-events-none" />
-
-                      {/* Gold ring border */}
-                      <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-sm transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.35)]`}>
-                        <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
-                          <Image
-                            src={imgUrl}
-                            alt={product.name}
-                            fill
-                            draggable={false}
-                            sizes="140px"
-                            className="object-cover object-center transition-transform duration-300 group-hover:scale-105 pointer-events-none"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Active Product Name & Price Bar (Always Visible on Smaller & Larger Screens) */}
-        {activeProduct && (
-          <div className="text-center mt-2.5 sm:mt-3 px-3 select-none flex flex-col items-center">
-            <Link
-              href={getProductUrl(activeProduct)}
-              className="inline-block group/info hover:opacity-90 transition-opacity max-w-full"
+            {/* Left Navigation Arrow */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
+              aria-label="Previous product"
+              className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
             >
-              <h3 className="text-xs sm:text-sm md:text-base font-serif font-semibold text-[#1C140E] dark:text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
-                {activeProduct.name}
-              </h3>
-              {(() => {
-                const displayPrice = getProductDisplayPrice(activeProduct);
-                return displayPrice > 0 ? (
-                  <p
-                    suppressHydrationWarning
-                    className="text-[11px] sm:text-xs font-sans font-bold text-[#A8752B] dark:text-[#C59345] mt-0.5"
-                  >
-                    {formatPrice(displayPrice)}
-                  </p>
-                ) : null;
-              })()}
-            </Link>
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </button>
 
-            {/* Subtle Image Progress Dots (when active product has multiple images) */}
-            {activeImages.length > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-2">
-                {activeImages.map((_, i) => (
-                  <button
-                    key={`dot-${i}`}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentImageIndex(i);
+            {/* Right Navigation Arrow */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              aria-label="Next product"
+              className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white text-[#241910] hover:bg-[#C59345] hover:text-white border border-[#C59345]/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+            </button>
+
+            {/* Responsive Orbit Items */}
+            <div className="relative w-full max-w-6xl h-full flex items-center justify-center pointer-events-none">
+              {visibleSlots.map((offset) => {
+                const itemIndex = (activeIndex + offset + total * 100) % total;
+                const product = displayProducts[itemIndex];
+                if (!product) return null;
+
+                const isCenter = offset === 0;
+                const imgUrl = getProductMainImage(product) || product.images?.[0]?.url || "/images/showcase/lamp_center.jpg";
+                const absOffset = Math.abs(offset);
+
+                // Visibility: 5 items on mobile & tablet (2 on left, 1 center, 2 on right), 7 items on desktop
+                let isVisible = true;
+                if (windowWidth < 1024 && absOffset > 2) isVisible = false;
+
+                if (!isVisible) return null;
+
+                const xOffsetVw = getSlotXOffsetVw(offset);
+
+                // Lens Dimensions (Width x Height): Central ellipse is large, all side ellipses are one uniform size
+                let sizeClasses = "";
+                if (isCenter) {
+                  // Center Product: Main Illuminated Large Ellipse
+                  sizeClasses = "w-[94px] h-[100px] xs:w-[108px] xs:h-[116px] sm:w-[155px] sm:h-[166px] md:w-[185px] md:h-[198px] lg:w-[205px] lg:h-[218px]";
+                } else {
+                  // All Side Ellipses (±1, ±2, ±3): 100% Identical Uniform Size
+                  sizeClasses = "w-[50px] h-[55px] xs:w-[58px] xs:h-[64px] sm:w-[92px] sm:h-[100px] md:w-[110px] md:h-[120px] lg:w-[124px] lg:h-[135px]";
+                }
+
+                // Z-Index: Center highest
+                const zIndex = isCenter ? 30 : 20 - absOffset;
+
+                // Scale & Opacity: Central boosted, all side lenses have identical uniform scale
+                let scale = 1;
+                let opacity = 1;
+                if (isCenter) {
+                  scale = 1.05;
+                  opacity = 1;
+                } else {
+                  scale = 1;
+                  opacity = 0.95;
+                }
+
+                return (
+                  <div
+                    key={`orbit-slot-${offset}`}
+                    className="absolute pointer-events-auto transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                    style={{
+                      transform: `translate3d(calc(${xOffsetVw}vw + ${isCenter ? dragOffset : dragOffset * 0.4}px), 0, 0) scale(${scale})`,
+                      zIndex,
+                      opacity,
                     }}
-                    aria-label={`Show picture ${i + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImageIndex
+                  >
+                    {isCenter ? (
+                      /* ===== CENTER ZOOMED LENS ===== */
+                      <Link
+                        href={getProductUrl(product)}
+                        onClick={(e) => {
+                          if (Math.abs(dragOffset) > 5) e.preventDefault();
+                        }}
+                        className="relative block group"
+                      >
+                        {/* Ambient Golden Glow Aura */}
+                        <div className="absolute -inset-3 sm:-inset-4 bg-[#C59345]/25 rounded-[50%] blur-md animate-pulse pointer-events-none" />
+
+                        {/* Concentric Double Gold Frame */}
+                        <div className={`relative ${sizeClasses} rounded-[50%] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#F7DB99] via-[#C59345] to-[#734A14] shadow-[0_5px_25px_rgba(197,147,69,0.35)]`}>
+                          <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
+                            {activeImages.map((img, idx) => (
+                              <div
+                                key={`${product._id}-img-${idx}`}
+                                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                                  }`}
+                              >
+                                <Image
+                                  src={img}
+                                  alt={`${product.name} - view ${idx + 1}`}
+                                  fill
+                                  draggable={false}
+                                  priority={idx === 0}
+                                  sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 220px"
+                                  className="object-cover object-center transition-transform duration-500 group-hover:scale-110 pointer-events-none"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </Link>
+                    ) : (
+                      /* ===== FLANKING LENSES ===== */
+                      <div className="relative group">
+                        {/* Ambient soft glow */}
+                        <div className="absolute -inset-1 bg-[#C59345]/10 rounded-[50%] blur-[2px] pointer-events-none" />
+
+                        {/* Gold ring border */}
+                        <div className={`relative ${sizeClasses} rounded-[50%] p-[2px] bg-gradient-to-b from-[#C59345]/75 to-[#8A5E22]/45 shadow-sm transition-all group-hover:shadow-[0_0_15px_rgba(197,147,69,0.35)]`}>
+                          <div className="w-full h-full rounded-[50%] overflow-hidden bg-white dark:bg-[#18110B] relative">
+                            <Image
+                              src={imgUrl}
+                              alt={product.name}
+                              fill
+                              draggable={false}
+                              sizes="140px"
+                              className="object-cover object-center transition-transform duration-300 group-hover:scale-105 pointer-events-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Product Name & Price Bar (Always Visible on Smaller & Larger Screens) */}
+          {activeProduct && (
+            <div className="text-center mt-2.5 sm:mt-3 px-3 select-none flex flex-col items-center">
+              <Link
+                href={getProductUrl(activeProduct)}
+                className="inline-block group/info hover:opacity-90 transition-opacity max-w-full"
+              >
+                <h3 className="text-xs sm:text-sm md:text-base font-serif font-semibold text-[#1C140E] dark:text-white tracking-wide group-hover/info:text-[#C59345] transition-colors line-clamp-1 max-w-[280px] sm:max-w-md mx-auto">
+                  {activeProduct.name}
+                </h3>
+                {(() => {
+                  const displayPrice = getProductDisplayPrice(activeProduct);
+                  return displayPrice > 0 ? (
+                    <p
+                      suppressHydrationWarning
+                      className="text-[11px] sm:text-xs font-sans font-bold text-[#A8752B] dark:text-[#C59345] mt-0.5"
+                    >
+                      {formatPrice(displayPrice)}
+                    </p>
+                  ) : null;
+                })()}
+              </Link>
+
+              {/* Subtle Image Progress Dots (when active product has multiple images) */}
+              {activeImages.length > 1 && (
+                <div className="flex items-center justify-center gap-1.5 mt-2">
+                  {activeImages.map((_, i) => (
+                    <button
+                      key={`dot-${i}`}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(i);
+                      }}
+                      aria-label={`Show picture ${i + 1}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImageIndex
                         ? "w-4 sm:w-5 bg-[#C59345]"
                         : "w-1.5 bg-[#C59345]/30 hover:bg-[#C59345]/60"
-                      }`}
-                  />
-                ))}
-              </div>
-            )}
+                        }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
+          <div className="flex items-center justify-center gap-2 mt-2 text-center select-none">
+            <svg
+              className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
+              <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
+              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+            </svg>
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.16em] uppercase text-[#C59345] font-medium">
+              Drag or Swipe to Explore
+            </span>
           </div>
-        )}
 
-        {/* Bottom Exploration Cue (Hand icon + Drag or Swipe to Explore) */}
-        <div className="flex items-center justify-center gap-2 mt-2 text-center select-none">
-          <svg
-            className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C59345] animate-bounce"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-            <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
-            <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-            <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-          </svg>
-          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.16em] uppercase text-[#C59345] font-medium">
-            Drag or Swipe to Explore
-          </span>
         </div>
-
-      </div>
       )}
 
     </section>

@@ -7,22 +7,21 @@ import {
   Box,
   ShieldCheck,
   Clock,
-  MapPin,
-  CheckCircle2,
   ArrowRight,
+  CheckCircle2,
   PhoneCall,
-  Sparkles,
+  Mail,
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Nationwide Shipping & Delivery Policy | Free Delivery Above Rs. 15,000",
+  title: "Nationwide Shipping & Delivery Policy | Talal Wooden Lamps",
   description:
-    "Learn about our nationwide shipping process across Pakistan, secure multi-layer packaging, express delivery timeframes (3-5 business days), and free shipping terms.",
+    "Information on nationwide delivery across Pakistan via M&P Express Logistics, order tracking, transit timelines, and secure packaging for our handcrafted wooden lamps.",
   keywords: [
     "wooden lamp shipping pakistan",
-    "free delivery wooden lamps",
-    "delivery timelines pakistan",
-    "lamp packaging standards",
+    "M&P express delivery",
+    "lamp delivery nationwide",
+    "wooden lamp order tracking",
   ],
   alternates: {
     canonical: "/shipping-policy",
@@ -33,76 +32,63 @@ export default function ShippingPolicyPage() {
   const highlights = [
     {
       icon: Truck,
-      title: "Nationwide Tracked Delivery",
-      description: "We ship to all major cities and towns across Pakistan via trusted express couriers (TCS, Leopards, Trax).",
+      title: "Nationwide Delivery",
+      description: "Delivering across all cities, towns, and regions throughout Pakistan via M&P Express Logistics.",
     },
     {
       icon: Box,
-      title: "Custom Protective Packaging",
-      description: "High-density molded foam inserts and heavy-duty corrugated crates safeguard delicate wood and glass components.",
+      title: "Secure Packaging",
+      description: "Carefully wrapped with multi-layer protective padding to keep handcrafted wood and electrical parts safe.",
     },
     {
       icon: Clock,
-      title: "24–48h Dispatch",
-      description: "Standard catalogue orders are packed and dispatched from our workshop within 1–2 business days.",
+      title: "Estimated Timelines",
+      description: "Most shipments typically arrive within 3 to 5 business days following dispatch (remote areas may vary).",
     },
     {
       icon: ShieldCheck,
-      title: "100% Insured In Transit",
-      description: "Every shipment is fully covered against courier handling damage, loss, or transit mishaps.",
+      title: "Tracked Consignment",
+      description: "Every parcel is dispatched with an official M&P tracking number for end-to-end status visibility.",
     },
   ];
 
-  const deliverySchedules = [
+  const policyPoints = [
     {
-      region: "Karachi (Local Hub)",
-      timeframe: "1 – 2 Business Days",
-      rate: "Standard Courier Rate / Free on Qualifying Orders",
-      courier: "Direct Express Courier",
+      title: "1. Courier Partner & Coverage",
+      content:
+        "All our domestic orders are shipped exclusively via M&P Express Logistics (Muller & Phipps). M&P provides reliable, tracked doorstep delivery across all major cities, towns, and accessible districts across Pakistan.",
     },
     {
-      region: "Lahore, Islamabad & Rawalpindi",
-      timeframe: "2 – 3 Business Days",
-      rate: "Standard Courier Rate / Free on Qualifying Orders",
-      courier: "TCS / Leopards Express",
+      title: "2. Order Processing & Dispatch",
+      content:
+        "Because our wooden lamps and fixtures are handcrafted with artisanal care, orders undergo a thorough inspection and secure packaging before handover. Orders are typically processed and dispatched within 1 to 3 business days. During promotional campaigns or high-demand periods, dispatch times may vary slightly.",
     },
     {
-      region: "Faisalabad, Multan, Peshawar, Quetta",
-      timeframe: "3 – 4 Business Days",
-      rate: "Standard Courier Rate / Free on Qualifying Orders",
-      courier: "TCS / Leopards / Trax",
+      title: "3. Estimated Delivery Timeframes",
+      content:
+        "Once handed over to M&P, delivery typically takes 3 to 5 business days for major urban centers, and 5 to 7 business days for regional or distant areas. Please note that transit timelines are estimates provided by the courier and may be subject to external factors such as weather conditions, transit delays, or public holidays.",
     },
     {
-      region: "Other Cities & Remote Districts",
-      timeframe: "4 – 6 Business Days",
-      rate: "Standard Courier Rate / Free on Qualifying Orders",
-      courier: "Tracked Postal / Courier Network",
-    },
-  ];
-
-  const packingStandards = [
-    {
-      title: "Custom Molded High-Density Foam",
-      description: "Each lamp body is cradled in contoured foam shock barriers that absorb road vibrations during transit.",
+      title: "4. Order Tracking",
+      content:
+        "As soon as your parcel is booked with M&P Express, an automated consignment tracking number is generated. You can check your live parcel progress directly through our Track Order page or on the official M&P tracking portal.",
     },
     {
-      title: "Isolated Electrical & Shade Housing",
-      description: "Ceramic sockets, braided fabric cords, and artisanal shades are isolated to eliminate scuff marks.",
+      title: "5. Shipping Charges",
+      content:
+        "Applicable delivery fees are calculated transparently and displayed at checkout before you confirm your order. Shipping rates are based on standard courier weight and destination criteria.",
     },
     {
-      title: "Reinforced Multi-Ply Corrugated Boxing",
-      description: "Heavy-duty 5-ply cartons with moisture-barrier seals protect against humid storage and stacking pressure.",
-    },
-    {
-      title: "Fragile Glass & Precision Labels",
-      description: "Prominent 'Handle with Care / Fragile Glass' markings alert courier handlers at every sorting hub.",
+      title: "6. Parcel Receiving & Inspection",
+      content:
+        "We strongly advise inspecting the external packaging at the time of delivery. If a parcel appears visibly damaged or tampered with in transit, please contact our support team immediately so we can promptly assist you.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-10 sm:py-16 transition-colors">
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Breadcrumb Navigation */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
+        {/* Breadcrumb */}
         <nav
           className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em]"
           aria-label="Breadcrumb"
@@ -119,148 +105,95 @@ export default function ShippingPolicyPage() {
           </span>
         </nav>
 
-        {/* Hero Header */}
+        {/* Header */}
         <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-8">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-theme-hover-light/10 text-theme-hover-light dark:text-theme-hover-dark mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#C59345]/15 text-[#A8752B] dark:text-[#E5B568] mb-3">
             <Truck className="w-3.5 h-3.5" />
-            <span>Careful Packaging & Fast Dispatch</span>
+            <span>Nationwide Logistics</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight mb-3">
-            Shipping & Delivery
+            Shipping & Delivery Policy
           </h1>
           <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark max-w-2xl leading-relaxed">
-            We take tremendous care in delivering our handcrafted solid wood lamps to your doorstep anywhere in Pakistan. Learn about our delivery schedules, rates, and packaging standards below.
+            We deliver our handcrafted solid wood lamps to doorsteps nationwide across Pakistan through our trusted courier partner, M&amp;P Express Logistics.
           </p>
         </div>
 
-        {/* 4 Highlights Grid */}
+        {/* 4 Feature Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {highlights.map((h, idx) => {
-            const Icon = h.icon;
+          {highlights.map((item, idx) => {
+            const Icon = item.icon;
             return (
               <div
                 key={idx}
-                className="p-5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-2.5 shadow-2xs hover:border-theme-hover-light/60 transition-all"
+                className="p-5 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-2.5 shadow-2xs hover:border-[#C59345]/50 transition-all"
               >
-                <div className="w-9 h-9 rounded-lg bg-theme-hover-light/10 dark:bg-theme-hover-dark/10 flex items-center justify-center text-theme-hover-light dark:text-theme-hover-dark">
+                <div className="w-9 h-9 rounded-md bg-[#C59345]/10 dark:bg-[#C59345]/20 flex items-center justify-center text-[#A8752B] dark:text-[#E5B568]">
                   <Icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-sm font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  {h.title}
+                  {item.title}
                 </h3>
                 <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
-                  {h.description}
+                  {item.description}
                 </p>
               </div>
             );
           })}
         </div>
 
-        {/* Delivery Timelines Table */}
-        <div className="space-y-4">
-          <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
-            <h2 className="text-xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Estimated Delivery Timeframes
-            </h2>
-            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-              Calculated from the date of workshop dispatch
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-theme-border-light dark:border-theme-border-dark overflow-hidden bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/60 dark:bg-theme-bg-dark/40 text-[10px] uppercase tracking-wider font-semibold text-theme-text-muted-light">
-                    <th className="py-3 px-4 sm:px-6">Destination Region</th>
-                    <th className="py-3 px-4 sm:px-6">Estimated Transit</th>
-                    <th className="py-3 px-4 sm:px-6">Carrier Partner</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-theme-border-light/60 dark:divide-theme-border-dark/60">
-                  {deliverySchedules.map((row, i) => (
-                    <tr key={i} className="hover:bg-theme-bg-light/40 dark:hover:bg-theme-bg-dark/20 transition-colors">
-                      <td className="py-3.5 px-4 sm:px-6 font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-theme-hover-light shrink-0" />
-                        <span>{row.region}</span>
-                      </td>
-                      <td className="py-3.5 px-4 sm:px-6 text-theme-text-secondary-light dark:text-theme-text-secondary-dark font-medium">
-                        {row.timeframe}
-                      </td>
-                      <td className="py-3.5 px-4 sm:px-6 text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                        {row.courier}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Packaging Quality Standards */}
+        {/* Policy Sections */}
         <div className="space-y-6">
-          <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-3">
+          <div className="border-b border-theme-border-light dark:border-theme-border-dark pb-3">
             <h2 className="text-xl font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Fragile Packaging Standards
+              Delivery Guidelines &amp; Terms
             </h2>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
-              Engineered to ensure your handcrafted piece arrives in pristine condition
+              Clear, transparent information about how your order is dispatched and delivered.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {packingStandards.map((std, idx) => (
+          <div className="space-y-4">
+            {policyPoints.map((point, i) => (
               <div
-                key={idx}
-                className="p-5 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-2 shadow-2xs"
+                key={i}
+                className="p-5 sm:p-6 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-2 shadow-2xs"
               >
-                <div className="flex items-center gap-2 text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>{std.title}</span>
-                </div>
-                <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed pl-6">
-                  {std.description}
+                <h3 className="text-sm sm:text-base font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#A8752B] dark:text-[#C59345] shrink-0" />
+                  <span>{point.title}</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed pl-6">
+                  {point.content}
                 </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Live Tracking Information */}
-        <div className="p-6 sm:p-8 rounded-xl border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark space-y-4">
-          <h2 className="text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2">
-            <Clock className="w-5 h-5 text-theme-hover-light dark:text-theme-hover-dark" />
-            <span>Order Tracking & Dispatch Alerts</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark leading-relaxed">
-            As soon as your package is handed over to the courier partner, an automated dispatch notification is sent to your email and phone with a live consignment tracking code. You can also view live delivery progress anytime using our <strong>Track Order</strong> portal.
-          </p>
-        </div>
-
-        {/* Action CTA Box */}
-        <div className="p-6 sm:p-8 rounded-2xl border border-theme-hover-light/30 dark:border-theme-hover-dark/30 bg-theme-card-light dark:bg-theme-card-dark flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
+        {/* Support & Tracking CTA */}
+        <div className="p-6 sm:p-8 rounded-xl border border-[#C59345]/30 bg-theme-card-light dark:bg-theme-card-dark flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
           <div className="space-y-1 text-center sm:text-left">
             <h3 className="text-base sm:text-lg font-serif font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Track your current parcel shipment
+              Need assistance with your delivery?
             </h3>
             <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-              Enter your Order Number and phone or email to check real-time courier status.
+              Our customer care team is available via WhatsApp, phone, and email to help track or coordinate your shipment.
             </p>
           </div>
-          <div className="flex items-center gap-3 flex-wrap justify-center">
+          <div className="flex items-center gap-3 flex-wrap justify-center shrink-0">
             <Link
               href="/track-order"
-              className="px-5 py-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:hover:bg-neutral-200 dark:text-neutral-900 text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1.5"
+              className="no-theme-hover px-4 py-2.5 rounded-[2px] bg-[#B88636] hover:bg-[#A8752B] text-white !text-white hover:text-white text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 shadow-2xs active:scale-95"
             >
               <span>Track Order</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <Link
               href="/contact"
-              className="px-5 py-2.5 rounded-lg border border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light bg-theme-surface-light dark:bg-theme-surface-dark text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold uppercase tracking-wider transition-colors"
+              className="px-4 py-2.5 rounded-[2px] border border-theme-border-light dark:border-theme-border-dark hover:border-[#C59345] bg-white dark:bg-[#1A120B] text-theme-text-primary-light dark:text-theme-text-primary-dark text-xs font-semibold uppercase tracking-wider transition-colors"
             >
-              <span>Contact Support</span>
+              <span>Contact Care</span>
             </Link>
           </div>
         </div>

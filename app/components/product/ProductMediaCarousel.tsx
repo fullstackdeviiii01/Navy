@@ -126,15 +126,23 @@ export default function ProductMediaCarousel({
     setIsPlaying(false);
   };
 
-  const goToPrevious = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const goToPrevious = (e?: React.MouseEvent | React.TouchEvent | any) => {
+    if (e && typeof e.stopPropagation === "function") {
+      e.stopPropagation();
+    }
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
     setCurrentIndex((prev) => (prev === 0 ? media.length - 1 : prev - 1));
   };
 
-  const goToNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const goToNext = (e?: React.MouseEvent | React.TouchEvent | any) => {
+    if (e && typeof e.stopPropagation === "function") {
+      e.stopPropagation();
+    }
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
     setCurrentIndex((prev) => (prev === media.length - 1 ? 0 : prev + 1));
   };
 
@@ -169,6 +177,7 @@ export default function ProductMediaCarousel({
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(0);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -176,12 +185,19 @@ export default function ProductMediaCarousel({
   };
 
   const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 50) {
-      goToNext({} as React.MouseEvent);
+    if (!touchStart || !touchEnd) {
+      setTouchStart(0);
+      setTouchEnd(0);
+      return;
     }
-    if (touchStart - touchEnd < -50) {
-      goToPrevious({} as React.MouseEvent);
+    const distance = touchStart - touchEnd;
+    if (distance > 50) {
+      goToNext();
+    } else if (distance < -50) {
+      goToPrevious();
     }
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   if (!media || media.length === 0) {
@@ -243,15 +259,27 @@ export default function ProductMediaCarousel({
         {media.length > 1 && (
           <>
             <button
-              onClick={goToPrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-0 group-hover:opacity-100"
+              type="button"
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrevious(e);
+              }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-0 group-hover:opacity-100 cursor-pointer"
               aria-label="Previous media"
             >
               <ChevronLeft className="w-4 h-4 text-white" />
             </button>
             <button
-              onClick={goToNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-0 group-hover:opacity-100"
+              type="button"
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext(e);
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-0 group-hover:opacity-100 cursor-pointer"
               aria-label="Next media"
             >
               <ChevronRight className="w-4 h-4 text-white" />
@@ -398,15 +426,27 @@ export default function ProductMediaCarousel({
           {media.length > 1 && (
             <>
               <button
-                onClick={goToPrevious}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100"
+                type="button"
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPrevious(e);
+                }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100 cursor-pointer"
                 aria-label="Previous media"
               >
                 <ChevronLeft className="w-4 h-4 text-white" />
               </button>
               <button
-                onClick={goToNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100"
+                type="button"
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNext(e);
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100 cursor-pointer"
                 aria-label="Next media"
               >
                 <ChevronRight className="w-4 h-4 text-white" />

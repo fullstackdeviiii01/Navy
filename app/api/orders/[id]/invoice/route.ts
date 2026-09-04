@@ -18,10 +18,10 @@ async function getCompanyInfo() {
   const info = settings?.company_info ?? {};
   return {
     name:    info.company_name    ?? "Talal Wooden Lamps",
-    address: info.company_address ?? "Atelier Workshop, Lahore, Pakistan",
-    city:    info.company_city    ?? "Lahore, Pakistan",
+    address: info.company_address ?? "Atelier Workshop, Sahiwal, Pakistan",
+    city:    info.company_city    ?? "Sahiwal, Pakistan",
     email:   info.company_email   ?? "contact@talalwoodenlamp.com",
-    phone:   info.company_phone   ?? "+92 300 1234567",
+    phone:   info.company_phone   ?? "+92 300 9692765",
     website: info.company_website ?? "www.talalwoodenlamp.com",
     logo:    info.company_logo    ?? undefined,
   };

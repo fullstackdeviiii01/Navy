@@ -36,7 +36,13 @@ interface CategoryItem {
 }
 
 export default function Footerr() {
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({});
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
+    company_name: "Talal Wooden Lamp",
+    company_phone: "+92 300 9692765",
+    company_email: "contact@talalwoodenlamp.com",
+    company_address: "Sahiwal, Punjab, Pakistan",
+    copyright_text: "© 2026 Talal Wooden Lamps. Handcrafted in Pakistan",
+  });
   const [categories, setCategories] = useState<CategoryItem[]>([]);
 
   useEffect(() => {
@@ -47,7 +53,9 @@ export default function Footerr() {
   const fetchCompanyInfo = async () => {
     try {
       const data = await siteSettingsApi.getCompanyInfo();
-      setCompanyInfo(data.company_info || {});
+      if (data?.company_info) {
+        setCompanyInfo((prev) => ({ ...prev, ...data.company_info }));
+      }
     } catch (error) {
       console.error("Failed to fetch company info:", error);
     }
@@ -263,24 +271,24 @@ export default function Footerr() {
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#C59345] shrink-0" />
                 <a
-                  href={`tel:${(companyInfo.company_phone || "+92 312 1234567").replace(/\s+/g, "")}`}
+                  href={`tel:${(companyInfo.company_phone || "+92 300 9692765").replace(/\s+/g, "")}`}
                   className="hover:text-[#C59345] transition-colors"
                 >
-                  {companyInfo.company_phone || "+92 312 1234567"}
+                  {companyInfo.company_phone || "+92 300 9692765"}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#C59345] shrink-0" />
                 <a
-                  href={`mailto:${companyInfo.company_email || "info@talalwoodenlamp.com"}`}
+                  href={`mailto:${companyInfo.company_email || "contact@talalwoodenlamp.com"}`}
                   className="hover:text-[#C59345] transition-colors truncate"
                 >
-                  {companyInfo.company_email || "info@talalwoodenlamp.com"}
+                  {companyInfo.company_email || "contact@talalwoodenlamp.com"}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#C59345] shrink-0 mt-0.5" />
-                <span>{companyInfo.company_address || "Lahore, Pakistan"}</span>
+                <span>{companyInfo.company_address || "Sahiwal, Punjab, Pakistan"}</span>
               </li>
             </ul>
           </div>

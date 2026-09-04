@@ -171,10 +171,10 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   });
 
   const companyLines = [
-    data.company.address || "Atelier Workshop, Lahore, Pakistan",
-    data.company.city || "Lahore, Pakistan",
-    data.company.email || "concierge@talalwoodenlamp.com",
-    data.company.phone ? `Tel: ${data.company.phone}` : "+92 300 1234567",
+    data.company.address || "Atelier Workshop, Sahiwal, Pakistan",
+    data.company.city || "Sahiwal, Pakistan",
+    data.company.email || "contact@talalwoodenlamp.com",
+    data.company.phone ? `Tel: ${data.company.phone}` : "+92 300 9692765",
   ];
 
   companyLines.forEach((line, i) => {

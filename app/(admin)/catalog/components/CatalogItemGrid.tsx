@@ -8,6 +8,7 @@ import { getPrimaryProductImage } from "../../../../lib/utils/productImageUtils"
 
 interface CatalogItem {
   _id: string;
+  sku?: string;
   name: string;
   description: string;
   pricing: {
@@ -188,7 +189,7 @@ export default function CatalogItemGrid({
                       </div>
                     </td>
 
-                    {/* Title */}
+                    {/* Title & SKU */}
                     <td className="py-3 px-4 max-w-[220px]">
                       <button
                         type="button"
@@ -197,6 +198,11 @@ export default function CatalogItemGrid({
                       >
                         {product.name}
                       </button>
+                      {(product.sku || product.inventory?.sku || isVariable) && (
+                        <span className="text-[10px] font-mono text-theme-text-muted-light dark:text-theme-text-muted-dark block truncate mt-0.5">
+                          SKU: {product.sku || product.inventory?.sku || (isVariable ? `${product.variants?.filter((v: any) => v.sku)?.length || 0}/${product.variants?.length || 0} variant SKUs` : "—")}
+                        </span>
+                      )}
                     </td>
 
                     {/* Category */}

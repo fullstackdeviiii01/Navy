@@ -25,7 +25,7 @@ export const getHomeDataSSR = async () => {
       .lean();
 
     const productFields =
-      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo";
+      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium";
 
     const newArrivals = await (Product as any)
       .find({
@@ -38,27 +38,59 @@ export const getHomeDataSSR = async () => {
       .limit(12)
       .lean();
 
-    const mostLovedProducts = await (Product as any)
+    // Query tagged "Most Loved by Customers" products
+    let mostLovedProducts = await (Product as any)
       .find({
         status: "active",
         is_visible: true,
+        is_most_loved: true,
       })
       .select(productFields)
       .populate("category_id", "name slug")
-      .sort({ purchase_count: -1, rating_average: -1, created_at: -1 })
-      .limit(16)
+      .sort({ purchase_count: -1, created_at: -1 })
+      .limit(30)
       .lean();
 
-    const premiumProducts = await (Product as any)
+    // Graceful fallback if no products tagged yet
+    if (!mostLovedProducts || mostLovedProducts.length === 0) {
+      mostLovedProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ purchase_count: -1, rating_average: -1, created_at: -1 })
+        .limit(20)
+        .lean();
+    }
+
+    // Query tagged "Premium Collection" products
+    let premiumProducts = await (Product as any)
       .find({
         status: "active",
         is_visible: true,
+        is_premium: true,
       })
       .select(productFields)
       .populate("category_id", "name slug")
       .sort({ "pricing.price": -1, created_at: -1 })
-      .limit(16)
+      .limit(30)
       .lean();
+
+    // Graceful fallback if no products tagged yet
+    if (!premiumProducts || premiumProducts.length === 0) {
+      premiumProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ "pricing.price": -1, created_at: -1 })
+        .limit(20)
+        .lean();
+    }
 
     const bestSellers = await (Product as any)
       .find({

@@ -76,7 +76,7 @@ export default async function ProductDetail({
           product.seo?.meta_description ||
           product.description?.replace(/<[^>]*>?/gm, "") ||
           `Handcrafted ${product.name} in solid hardwood.`,
-        sku: product._id.toString(),
+        sku: product.sku || product.inventory?.sku || product._id.toString(),
         brand: {
           "@type": "Brand",
           name: product.brand || "Talal Wooden Lamps",

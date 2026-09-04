@@ -56,6 +56,9 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
     stock_quantity: "",
     low_stock_threshold: "10",
     status: "draft",
+    is_most_loved: false,
+    is_premium: false,
+    sku: "",
   });
 
   const [images, setImages] = useState<any[]>([]);
@@ -125,6 +128,9 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         stock_quantity: p.inventory?.stock_quantity?.toString() || "",
         low_stock_threshold: p.inventory?.low_stock_threshold?.toString() || "10",
         status: p.status || "draft",
+        is_most_loved: Boolean(p.is_most_loved),
+        is_premium: Boolean(p.is_premium),
+        sku: p.sku || p.inventory?.sku || "",
       });
 
       setImages(p.images || []);
@@ -367,6 +373,8 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         brand: formData.brand,
         category_id: formData.category_id,
         status: formData.status,
+        is_most_loved: Boolean(formData.is_most_loved),
+        is_premium: Boolean(formData.is_premium),
         images: allImages,
         videos: allVideos,
         hasVariants,
@@ -380,12 +388,14 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
       };
 
       if (!hasVariants) {
+        productPayload.sku = formData.sku?.trim() || undefined;
         productPayload.pricing = {
           price: parseFloat(formData.price) || 0,
           compare_at_price: formData.compare_at_price ? parseFloat(formData.compare_at_price) : undefined,
           currency: "PKR",
         };
         productPayload.inventory = {
+          sku: formData.sku?.trim() || undefined,
           stock_quantity: parseInt(formData.stock_quantity) || 0,
           low_stock_threshold: parseInt(formData.low_stock_threshold) || 10,
           stock_status: parseInt(formData.stock_quantity) > 0 ? "in_stock" : "out_of_stock",
@@ -393,9 +403,22 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         productPayload.variantOptions = [];
         productPayload.variants = [];
       } else {
+        // Pre-validate unique variant SKUs on client
+        const variantSkus = preparedVariants
+          .map((v) => (v.sku || "").trim())
+          .filter(Boolean);
+        const dupSku = variantSkus.find((s, idx) => variantSkus.indexOf(s) !== idx);
+        if (dupSku) {
+          alert(`Duplicate variant SKU "${dupSku}" found! Each variant must have a unique SKU.`);
+          setLoading(false);
+          return;
+        }
+
         const prices = preparedVariants.map((v) => v.price).filter((p) => typeof p === "number" && !isNaN(p));
         const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
         const totalStock = preparedVariants.reduce((sum, v) => sum + (v.stockQuantity || 0), 0);
+
+        productPayload.sku = formData.sku?.trim() || undefined;
 
         productPayload.pricing = {
           price: minPrice,
@@ -752,10 +775,22 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
             <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
               <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-2">
                 <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                  Stock & Tracking
+                  Stock & SKU Identification
                 </h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
+                    Product SKU
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. TL-001"
+                    value={formData.sku}
+                    onChange={(e) => updateFormData({ sku: e.target.value.toUpperCase() })}
+                    className="w-full px-3.5 py-2 text-xs font-mono uppercase border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                  />
+                </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-theme-text-secondary-light dark:text-theme-text-secondary-dark mb-1">
                     Stock Quantity *
@@ -804,12 +839,15 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
           </div>
         )}
 
-        {/* 7. Publishing & Visibility Status */}
-        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-4">
+        {/* 7. Publishing & Visibility Status + Homepage Showcase Tags */}
+        <div className="bg-theme-surface-light dark:bg-theme-surface-dark rounded-xl border border-theme-border-light dark:border-theme-border-dark p-4 sm:p-6 space-y-5">
           <div className="border-b border-theme-border-light/80 dark:border-theme-border-dark/80 pb-2">
             <h3 className="text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
-              Catalog Visibility & Status
+              Catalog Visibility & Homepage Showcase
             </h3>
+            <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+              Control general catalog publication and choose which homepage curated sections this product appears in.
+            </p>
           </div>
 
           <div className="max-w-xs">
@@ -826,6 +864,64 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
               <option value="active">Active (Live in customer catalog)</option>
               <option value="archived">Archived (Delisted from catalog)</option>
             </select>
+          </div>
+
+          {/* Homepage Curated Showcase Tags */}
+          <div className="pt-3 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-3">
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#A8752B] dark:text-[#C59345]">
+                Homepage Showcase Sections
+              </h4>
+              <p className="text-xs text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                Tag this product to be featured in the animated homepage product sections. Products automatically rotate every 5 seconds.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Most Loved Tag */}
+              <label className={`flex items-start gap-3 p-3.5 rounded-lg border cursor-pointer transition-all select-none ${
+                formData.is_most_loved
+                  ? "bg-[#C59345]/10 border-[#C59345] shadow-xs"
+                  : "bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 border-theme-border-light dark:border-theme-border-dark hover:border-[#C59345]/50"
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.is_most_loved}
+                  onChange={(e) => updateFormData({ is_most_loved: e.target.checked })}
+                  className="mt-0.5 w-4 h-4 text-[#C59345] border-gray-300 rounded focus:ring-[#C59345] cursor-pointer"
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="block text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Most Loved by Our Customers
+                  </span>
+                  <span className="block text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                    Displays in the &ldquo;MOST LOVED BY OUR CUSTOMERS&rdquo; section on the home page.
+                  </span>
+                </div>
+              </label>
+
+              {/* Premium Collection Tag */}
+              <label className={`flex items-start gap-3 p-3.5 rounded-lg border cursor-pointer transition-all select-none ${
+                formData.is_premium
+                  ? "bg-[#C59345]/10 border-[#C59345] shadow-xs"
+                  : "bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 border-theme-border-light dark:border-theme-border-dark hover:border-[#C59345]/50"
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.is_premium}
+                  onChange={(e) => updateFormData({ is_premium: e.target.checked })}
+                  className="mt-0.5 w-4 h-4 text-[#C59345] border-gray-300 rounded focus:ring-[#C59345] cursor-pointer"
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="block text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Premium Collection
+                  </span>
+                  <span className="block text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                    Displays in the &ldquo;PREMIUM COLLECTION&rdquo; section on the home page.
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 

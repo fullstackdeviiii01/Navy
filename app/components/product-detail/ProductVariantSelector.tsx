@@ -271,19 +271,14 @@ export default function ProductVariantSelector({
               {/* Label */}
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                  {attributeOption.displayName}
+                  {attributeOption.displayName}:
                 </span>
-                {selectedValue && (
-                  <span className="text-xs text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                    — <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium">{selectedValue}</span>
-                  </span>
-                )}
               </div>
 
               <fieldset>
                 <legend className="sr-only">{attributeOption.displayName}</legend>
                 <div
-                  className="flex flex-wrap gap-2"
+                  className="flex flex-wrap gap-2.5 items-center"
                   role="group"
                   aria-label={attributeOption.displayName}
                 >
@@ -294,7 +289,7 @@ export default function ProductVariantSelector({
                     const hexMatch = value.match(/#(?:[0-9a-fA-F]{3}){1,2}\b/);
                     const cleanDisplayName = hexMatch ? value.replace(hexMatch[0], "").trim() : value;
 
-                    // COLOR OPTION: Render Product Photo Thumbnail (if image available)
+                    // COLOR OPTION: Render Product Photo Thumbnail in Circular Shape
                     if (isColorOption) {
                       const colorThumb =
                         attributeOption.colorImages?.[value]?.[0] ||
@@ -316,24 +311,24 @@ export default function ProductVariantSelector({
                             disabled={isDisabled}
                             title={`${cleanDisplayName || value}${!inStock ? " (Out of stock)" : ""}`}
                             className={`
-                              relative w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden border-2 transition-all duration-200 p-0.5 flex-shrink-0 group
+                              relative w-12 h-12 sm:w-13 sm:h-13 rounded-full overflow-hidden transition-all duration-200 p-0.5 flex-shrink-0 group
                               ${
                                 isSelected
-                                  ? "border-theme-primary ring-2 ring-theme-primary/30 scale-105 shadow-md"
+                                  ? "border-2 border-neutral-900 dark:border-white shadow-xs scale-105"
                                   : inStock
-                                    ? "border-theme-border-light dark:border-theme-border-dark hover:border-theme-hover-light dark:hover:border-theme-hover-dark hover:scale-105"
+                                    ? "border border-theme-border-light dark:border-theme-border-dark hover:border-neutral-400 hover:scale-105"
                                     : "opacity-40 cursor-not-allowed border-theme-border-light/40"
                               }
                             `}
                             aria-label={`${cleanDisplayName || value}${isSelected ? " (selected)" : ""}${!inStock ? " (sold out)" : ""}`}
                             aria-pressed={isSelected}
                           >
-                            <div className="relative w-full h-full rounded-[4px] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                            <div className="relative w-full h-full rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                               <Image
                                 src={colorThumb}
                                 alt={cleanDisplayName || value}
                                 fill
-                                className="object-cover group-hover:scale-105 transition-transform"
+                                className="object-cover rounded-full group-hover:scale-105 transition-transform"
                                 sizes="52px"
                               />
                             </div>
