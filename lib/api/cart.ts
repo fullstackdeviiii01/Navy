@@ -36,6 +36,30 @@ export const cartApi = {
     return result;
   },
 
+  initiateBuyNow: async (
+    productId: string,
+    quantity: number = 1,
+    variantId?: string,
+    variantAttributes?: Record<string, string>,
+    productName?: string,
+    productImage?: string
+  ) => {
+    const response = await fetch("/api/cart/buy-now", {
+      method: "POST",
+      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({
+        product_id: productId,
+        quantity,
+        variant_id: variantId,
+        variant_attributes: variantAttributes,
+        product_name: productName,
+        product_image: productImage,
+      }),
+    });
+    return handleResponse(response);
+  },
+
   updateQuantity: async (itemId: string, quantity: number) => {
     const response = await fetch(`/api/cart/item/${itemId}`, {
       method: "PUT",
@@ -74,21 +98,28 @@ export const cartApi = {
     return handleResponse(response);
   },
 
-  applyCoupon: async (code: string) => {
+  applyCoupon: async (code: string, buyNow: boolean = false) => {
     const response = await fetch("/api/cart/apply-coupon", {
       method: "POST",
-      headers: getApiHeaders({ "Content-Type": "application/json" }),
+      headers: getApiHeaders({
+        "Content-Type": "application/json",
+        ...(buyNow ? { "x-buy-now": "1" } : {}),
+      }),
       credentials: "include",
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, buy_now: buyNow }),
     });
     return handleResponse(response);
   },
 
-  removeCoupon: async () => {
+  removeCoupon: async (buyNow: boolean = false) => {
     const response = await fetch("/api/cart/remove-coupon", {
       method: "POST",
-      headers: getApiHeaders(),
+      headers: getApiHeaders({
+        "Content-Type": "application/json",
+        ...(buyNow ? { "x-buy-now": "1" } : {}),
+      }),
       credentials: "include",
+      body: JSON.stringify({ buy_now: buyNow }),
     });
     return handleResponse(response);
   },

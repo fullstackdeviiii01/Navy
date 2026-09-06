@@ -16,6 +16,7 @@ interface AddToCartButtonProps {
   productName?: string;
   productImage?: string;
   onSuccess?: () => void;
+  onBeforeAdd?: () => void;
 }
 
 export default function AddToCartButton({
@@ -27,6 +28,7 @@ export default function AddToCartButton({
   productName,
   productImage,
   onSuccess,
+  onBeforeAdd,
 }: AddToCartButtonProps) {
   const { refreshCart, updateCart, openCart } = useUser();
   const [isAdding, setIsAdding] = useState(false);
@@ -37,6 +39,8 @@ export default function AddToCartButton({
       e.preventDefault();
       e.stopPropagation();
     }
+
+    if (onBeforeAdd) onBeforeAdd();
 
     setIsAdding(true);
 
@@ -86,26 +90,23 @@ export default function AddToCartButton({
     <button
       onClick={handleAddToCart}
       disabled={disabled || isAdding}
-      className="w-full h-[50px] flex items-center justify-center gap-3 px-6 sm:px-8 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.99]"
-      aria-label={isAdded ? "Item added to cart" : isAdding ? "Adding item to cart" : "Add item to cart"}
+      className="w-full h-12 flex items-center justify-center gap-2 px-3 sm:px-6 bg-[#4A2E18] hover:bg-[#3B2412] active:bg-[#2C1A0B] text-white font-sans font-bold text-xs sm:text-sm uppercase tracking-[0.15em] rounded-xs transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs whitespace-nowrap"
+      aria-label={isAdded ? "Item added to cart" : isAdding ? "Adding item to cart" : "Add to cart"}
       aria-live="polite"
       aria-atomic="true"
     >
       {isAdded ? (
         <>
           <Check className="w-4 h-4 text-white"/>
-          <span>ADDED TO BASKET</span>
+          <span>ADDED TO CART</span>
         </>
       ) : isAdding ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin text-white" />
-          <span>ADDING TO BASKET...</span>
+          <span>ADDING...</span>
         </>
       ) : (
-        <>
-          <ShoppingBag className="w-4 h-4" />
-          <span>ADD TO BASKET</span>
-        </>
+        <span>ADD TO CART</span>
       )}
     </button>
   );

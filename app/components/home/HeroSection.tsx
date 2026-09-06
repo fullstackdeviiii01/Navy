@@ -224,72 +224,69 @@ export default function HeroSection({ products = [] }: HeroSectionProps) {
   };
 
   return (
-    <section className="relative w-full bg-[#E5E5E5] dark:bg-[#0A0604] text-[#241910] dark:text-[#F3E8D6] overflow-hidden select-none transition-colors">
+    <section className="relative w-full bg-[#EDEBE8] text-[#241910] overflow-hidden select-none">
 
       {/* ========================================================================= */}
       {/* 1. RESPONSIVE HERO BANNER (MOBILE, TABLET, LAPTOP & DESKTOP) */}
       {/* ========================================================================= */}
-      <div className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
+      <div className="relative w-full min-h-[290px] xs:min-h-[320px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
 
         {/* Full-width Responsive Hero Image (Moved 90px up on tablet and higher) */}
         <div className="absolute inset-0 md:-top-[90px] md:h-[calc(100%+90px)] z-0 pointer-events-none">
-          {/* <div className="absolute inset-0 translate-x-[60px] xs:translate-x-[75px] sm:translate-x-[80px] md:translate-x-[95px] lg:translate-x-[150px] lg:-translate-y-[20px]"> */}
-            <Image
-              src="/images/talal_wooden_lamp_hero_image.png"
-              alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
-              fill
-              priority
-              className="object-cover object-[82%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
-              sizes="100vw"
-            />
-          {/* </div> */}
-          {/* Responsive light gradient overlay ensuring high text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#E5E5E5]/95 via-[#E5E5E5]/75 to-transparent dark:from-[#0A0604]/95 dark:via-[#0A0604]/70 dark:to-transparent w-full sm:w-[85%] md:w-[70%] lg:w-[60%]" />
-          <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#E5E5E5] via-[#E5E5E5]/70 to-transparent dark:from-[#0A0604] dark:via-[#0A0604]/70 dark:to-transparent" />
+          <Image
+            src="/images/talal_wooden_lamp_hero_image.png"
+            alt="Handcrafted Solid Wooden Table Lamp with Warm Glowing Filament Bulb"
+            fill
+            priority
+            className="object-cover object-[86%_center] xs:object-[84%_center] sm:object-[78%_center] md:object-[74%_center] lg:object-center"
+            sizes="100vw"
+          />
+          {/* Subtle light gradient on left ensuring high text readability without obscuring the lamp */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#EDEBE8]/95 via-[#EDEBE8]/60 to-transparent w-[62%] sm:w-[60%] md:w-[55%]" />
+          <div className="absolute inset-x-0 bottom-0 h-4 sm:h-8 bg-gradient-to-t from-[#EDEBE8]/50 to-transparent" />
         </div>
 
-        {/* Hero Content Area (Moved 30px up on laptop and higher) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full relative z-10 py-8 sm:py-12 md:py-14">
-          <div className="max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2.5 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6 lg:-translate-y-[30px]">
+        {/* Hero Content Area */}
+        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 xl:px-12 w-full relative z-10 py-6 sm:py-12 md:py-14">
+          <div className="w-[62%] xs:w-[58%] sm:w-auto sm:max-w-xl xl:max-w-2xl flex flex-col justify-center text-left space-y-2 sm:space-y-3 pl-1 sm:pl-4 lg:pl-6 lg:-translate-y-[30px]">
 
             {/* Elegant Script Tagline */}
-            <p className="font-serif italic text-[#C59345] text-lg sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-xs">
+            <p className="font-serif italic text-[#C59345] text-xs xs:text-sm sm:text-2xl md:text-3xl lg:text-[32px] font-normal tracking-wide drop-shadow-xs">
               Handmade Natural
             </p>
 
-            {/* Main Bold Headline: text-[#1C140E] in light mode, brown #C59345 in dark mode */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-[#1C140E] dark:text-[#C59345] tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-xs">
+            {/* Main Bold Headline */}
+            <h1 className="text-lg xs:text-xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-serif font-bold text-[#1C140E] tracking-tight uppercase leading-[1.05] whitespace-nowrap drop-shadow-xs">
               WOODEN <span className="text-[#C59345]">LAMP</span>
             </h1>
 
-            {/* Sub-headline: text-[#241910] in light mode, warm #A8752B in dark mode */}
+            {/* Sub-headline: 2 clean lines on mobile, inline on desktop */}
             <div className="pt-0.5 sm:pt-1">
-              <h2 className="text-xs sm:text-base md:text-lg lg:text-xl font-serif font-semibold text-[#241910] dark:text-[#A8752B] tracking-wide inline-block">
-                Crafted by Nature, Designed to Inspire
+              <h2 className="text-[10.5px] xs:text-xs sm:text-base md:text-lg lg:text-xl font-serif font-semibold text-[#241910] tracking-wide leading-snug">
+                Crafted by Nature,<br className="block sm:hidden" /> Designed to Inspire
               </h2>
-              <div className="h-[2px] w-12 sm:w-20 bg-[#C59345] mt-1 sm:mt-1.5 rounded-full" />
             </div>
 
-            {/* Body Description: original text-[#5A4638] in light mode, deep dark premium brown in dark mode */}
-            <p className="text-xs sm:text-sm md:text-[15px] text-[#5A4638] dark:text-[#8C6239] leading-relaxed max-w-md lg:max-w-lg pt-1 font-sans">
+            {/* Body Description */}
+            <p className="text-[9.5px] xs:text-[11px] sm:text-sm md:text-[15px] text-[#5A4638] leading-tight xs:leading-snug sm:leading-relaxed max-w-[210px] xs:max-w-[240px] sm:max-w-md lg:max-w-lg font-sans">
               Premium quality wooden lamps, carefully handcrafted to bring warmth, elegance and a natural touch to your space.
             </p>
 
-            {/* Dual CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-5">
+            {/* Dual CTA Buttons (Stacked on mobile, side-by-side on tablet/desktop, always single-line words) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 pt-2 sm:pt-4 md:pt-5">
               <Link
                 href="/products"
-                className="no-theme-hover inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white !text-white hover:text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer shadow-sm"
+                className="no-theme-hover inline-flex items-center justify-center gap-2 px-4 py-2 xs:px-5 xs:py-2.5 sm:px-7 sm:py-3.5 bg-[#C59345] hover:bg-[#B37F33] text-white !text-white hover:!text-white text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em] rounded-xs transition-colors duration-200 cursor-pointer shadow-xs sm:shadow-sm whitespace-nowrap shrink-0"
               >
-                <span className="text-white !text-white">SHOP NOW</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                <span className="whitespace-nowrap">SHOP NOW</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
               </Link>
 
               <Link
                 href="/products?sort=popular"
-                className="no-theme-hover inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 border border-[#C59345] hover:border-[#A8752B] text-[#A8752B] hover:text-[#8A5E22] hover:bg-[#C59345]/10 dark:border-[#C59345] dark:text-[#C59345] dark:hover:bg-[#C59345]/10 text-xs sm:text-sm font-medium uppercase tracking-[0.14em] rounded-sm transition-colors duration-200 cursor-pointer"
+                className="no-theme-hover inline-flex items-center justify-center px-3.5 py-2 xs:px-4 xs:py-2.5 sm:px-6 sm:py-3.5 border border-[#C59345] hover:border-[#A8752B] text-[#A8752B] hover:text-[#8A5E22] hover:bg-[#C59345]/10 text-[9.5px] xs:text-[10.5px] sm:text-xs md:text-sm font-medium uppercase tracking-[0.12em] sm:tracking-[0.14em] rounded-xs transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0"
               >
-                EXPLORE COLLECTION
+                <span className="whitespace-nowrap">EXPLORE COLLECTION</span>
               </Link>
             </div>
 

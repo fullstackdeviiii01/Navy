@@ -7,12 +7,12 @@ export const shippingApi = {
     return handleResponse(response);
   },
 
-  selectService: async (serviceId: string) => {
+  selectService: async (serviceId: string, buyNow: boolean = false) => {
     const response = await fetch("/api/cart/select-shipping", {
       method: "POST",
       headers: getApiHeaders({ "Content-Type": "application/json" }),
       credentials: "include",
-      body: JSON.stringify({ shipping_service_id: serviceId }),
+      body: JSON.stringify({ shipping_service_id: serviceId, buy_now: buyNow }),
     });
     return handleResponse(response);
   },

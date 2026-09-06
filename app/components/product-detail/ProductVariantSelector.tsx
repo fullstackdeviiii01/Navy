@@ -43,36 +43,33 @@ interface ProductVariantSelectorProps {
     previewImageUrl?: string,
   ) => void;
   selectedVariant?: ProductVariant | null;
+  /** Parent-driven selected attributes — keeps the selector in sync when
+   *  the parent auto-selects (e.g. on Add to Cart without user selection). */
+  selectedAttributes?: Record<string, string>;
 }
 
 export default function ProductVariantSelector({
   variants,
   variantAttributes,
   onSelectionChange,
+  selectedAttributes,
 }: ProductVariantSelectorProps) {
-  // Auto-select initial options from the first available variant by default
-  const initialSelection = useMemo(() => {
-    if (!variants?.length && !variantAttributes?.length) return {};
-    const firstVar = variants.find((v) => v.isAvailable !== false) || variants[0];
-    const sel: VariantSelection = {};
-    if (firstVar?.attributes) {
-      firstVar.attributes.forEach((attr) => {
-        sel[attr.name] = attr.value;
+  // Start with NO selection — the UI shows nothing pre-selected
+  const [currentSelection, setCurrentSelection] = useState<VariantSelection>({});
+
+  // Keep local state in sync when parent pushes selectedAttributes
+  // (e.g. after auto-selecting the first variant on Add-to-Cart)
+  useEffect(() => {
+    if (selectedAttributes && Object.keys(selectedAttributes).length > 0) {
+      setCurrentSelection((prev) => {
+        // Only update if they actually differ to avoid infinite loops
+        const changed = Object.keys(selectedAttributes).some(
+          (k) => prev[k] !== selectedAttributes[k],
+        );
+        return changed ? { ...selectedAttributes } : prev;
       });
     }
-    variantAttributes?.forEach((attr) => {
-      if (!sel[attr.name] && attr.values?.[0]) {
-        sel[attr.name] = attr.values[0];
-      }
-    });
-    return sel;
-  }, [variants, variantAttributes]);
-
-  const [currentSelection, setCurrentSelection] = useState<VariantSelection>(initialSelection);
-
-  const isFullySelected = useMemo(() => {
-    return variantAttributes.every((attr) => currentSelection[attr.name]);
-  }, [currentSelection, variantAttributes]);
+  }, [selectedAttributes]);
 
   const variantImageMap = useMemo(() => {
     const map: Record<string, Record<string, string>> = {};
@@ -144,26 +141,6 @@ export default function ProductVariantSelector({
       }) || null
     );
   };
-
-  // Auto-emit default variant on mount or when options load
-  useEffect(() => {
-    if (Object.keys(initialSelection).length > 0) {
-      setCurrentSelection(initialSelection);
-      const matched = findMatchingVariant(initialSelection) || (variants.find((v) => v.isAvailable !== false) || variants[0]) || null;
-      let previewImg = matched?.imageUrl;
-      if (!previewImg) {
-        for (const [k, v] of Object.entries(initialSelection)) {
-          const opt = variantAttributes.find((o) => o.name.toLowerCase() === k.toLowerCase());
-          if (opt?.colorImages?.[v]) {
-            const img = opt.colorImages[v];
-            previewImg = Array.isArray(img) ? img[0] : img;
-            if (previewImg) break;
-          }
-        }
-      }
-      onSelectionChange(initialSelection, matched, previewImg);
-    }
-  }, [initialSelection]);
 
   const handleSelect = (attributeName: string, value: string) => {
     const newSelection: VariantSelection = {
@@ -237,26 +214,8 @@ export default function ProductVariantSelector({
     onSelectionChange(newSelection, matchingVariant, previewImg);
   };
 
-  const getMissingSelections = (): string[] => {
-    return variantAttributes
-      .filter((attr) => !currentSelection[attr.name])
-      .map((attr) => attr.displayName);
-  };
-
   return (
     <div className="space-y-2">
-      {/* Selection Progress Indicator */}
-      {!isFullySelected && variantAttributes.length > 1 && (
-        <div
-          className="p-2 bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs"
-          role="status"
-          aria-live="polite"
-        >
-          <span className="font-semibold uppercase tracking-wider">Please select: </span>
-          <span>{getMissingSelections().join(", ")}</span>
-        </div>
-      )}
-
       {variantAttributes
         .sort((a, b) => a.position - b.position)
         .map((attributeOption) => {

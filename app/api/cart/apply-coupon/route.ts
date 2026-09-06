@@ -10,7 +10,8 @@ import User from "../../../models/User";
 
 export async function POST(request: NextRequest) {
   try {
-    const { code } = await request.json();
+    const body = await request.json();
+    const { code, buy_now } = body;
 
     if (!code) {
       return NextResponse.json(
@@ -82,8 +83,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Get cart
+    const isBuyNow =
+      buy_now === true ||
+      buy_now === "1" ||
+      request.headers.get("x-buy-now") === "1" ||
+      request.nextUrl.searchParams.get("buy_now") === "1";
+
     let cart;
-    if (user) {
+    if (isBuyNow) {
+      const buyNowSessionId = `buynow_${user ? "user_" : "guest_"}${user ? user._id.toString() : sessionId}`;
+      cart = await (Cart as any).findOne({ session_id: buyNowSessionId }).populate({
+        path: "items.product_id",
+      });
+    } else if (user) {
       cart = await (Cart as any).findOne({ user_id: user._id }).populate({
         path: "items.product_id",
       });

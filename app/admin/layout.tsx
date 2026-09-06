@@ -47,13 +47,13 @@ export default withRoleAccess(AdminLayout, ["admin"], {
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href="/sign-in?redirect=/admin/dashboard"
-            className="inline-flex items-center justify-center px-5 py-2.5 bg-theme-primary hover:bg-theme-hover-light dark:hover:bg-theme-hover-dark text-theme-btn-text text-xs uppercase tracking-wider font-semibold transition-colors"
+            className="no-theme-hover inline-flex items-center justify-center px-5 py-2.5 bg-theme-primary hover:bg-[#8C5E20] text-white !text-white hover:!text-white text-xs uppercase tracking-wider font-semibold transition-colors shadow-xs"
           >
             Sign In as Admin
           </a>
           <a
             href="/"
-            className="inline-flex items-center justify-center px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light text-xs uppercase tracking-wider font-semibold hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
+            className="no-theme-hover inline-flex items-center justify-center px-4 py-2.5 border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-theme-primary dark:hover:text-theme-primary text-xs uppercase tracking-wider font-semibold hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
           >
             Back to Store
           </a>

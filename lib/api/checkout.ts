@@ -22,9 +22,10 @@ export interface CheckoutData {
     name: string;
     phone: string;
   };
-  payment_method: "cod" | "bank_transfer";
+  payment_method: "cod" | "bank_transfer" | "jazzcash" | string;
   proof_url?: string;
   bank_reference?: string;
+  buy_now?: boolean;
 }
 
 export interface CheckoutResponse {

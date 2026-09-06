@@ -28,6 +28,35 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const isBuyNow = request.nextUrl.searchParams.get("buy_now") === "1" || request.headers.get("x-buy-now") === "1";
+
+    if (isBuyNow) {
+      const sessionIdForBuyNow = user ? user._id.toString() : getOrCreateSessionId(request).sessionId;
+      const buyNowSessionId = `buynow_${user ? "user_" : "guest_"}${sessionIdForBuyNow}`;
+      let buyNowCart = await Cart.findOne({ session_id: buyNowSessionId });
+      if (!buyNowCart) {
+        return NextResponse.json({ cart: null }, { status: 404 });
+      }
+      await buyNowCart.populate([
+        { path: "items.product_id" },
+        {
+          path: "selected_shipping_service_id",
+          select: "name display_name inventory description base_price currency estimated_days_min estimated_days_max is_active",
+        },
+      ]);
+      const rawCouponId = (buyNowCart.applied_coupon_id as any)?._id || buyNowCart.applied_coupon_id;
+      const coupon = rawCouponId ? await (await import("../../models/Coupon")).default.findById(rawCouponId) : null;
+      const shippingService = buyNowCart.selected_shipping_service_id;
+      await buyNowCart.calculateTotals(coupon, shippingService);
+      if (rawCouponId) {
+        await buyNowCart.populate({
+          path: "applied_coupon_id",
+          select: "code description discount_type discount_value min_order_amount",
+        });
+      }
+      return NextResponse.json({ cart: buyNowCart, buy_now: true });
+    }
+
     let cart;
 
     if (user) {

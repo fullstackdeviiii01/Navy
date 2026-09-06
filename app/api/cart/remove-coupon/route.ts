@@ -21,15 +21,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let cart;
+    let body: any = {};
+    try {
+      body = await request.json();
+    } catch (_) {}
 
-    if (user) {
-      cart = await Cart.findOne({ user_id: user._id });
-    } else {
-      const sessionId = getSessionIdFromRequest(request);
+    const isBuyNow =
+      body.buy_now === true ||
+      body.buy_now === "1" ||
+      request.headers.get("x-buy-now") === "1" ||
+      request.nextUrl.searchParams.get("buy_now") === "1";
+
+    let sessionId = null;
+    if (!user) {
+      sessionId = getSessionIdFromRequest(request);
       if (!sessionId) {
         return NextResponse.json({ error: "No session found" }, { status: 401 });
       }
+    }
+
+    let cart: any;
+    if (isBuyNow) {
+      const buyNowSessionId = `buynow_${user ? "user_" : "guest_"}${user ? user._id.toString() : sessionId}`;
+      cart = await Cart.findOne({ session_id: buyNowSessionId });
+    } else if (user) {
+      cart = await Cart.findOne({ user_id: user._id });
+    } else {
       cart = await Cart.findOne({ session_id: sessionId });
     }
 

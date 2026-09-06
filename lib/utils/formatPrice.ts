@@ -14,3 +14,12 @@ export function formatPriceRaw(price?: number | null): string {
   const validNum = typeof price === "number" && !Number.isNaN(price) ? price : 0;
   return `Rs. ${validNum.toLocaleString("en-PK")}`;
 }
+
+export function formatDetailPrice(price?: number | null): string {
+  const validNum = typeof price === "number" && !Number.isNaN(price) ? price : 0;
+  return `Rs.${validNum.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+

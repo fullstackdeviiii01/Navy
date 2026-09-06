@@ -9,7 +9,7 @@ import User from "../../../models/User";
 
 export async function POST(request: NextRequest) {
   try {
-    const { shipping_service_id } = await request.json();
+    const { shipping_service_id, buy_now } = await request.json();
 
     if (!shipping_service_id) {
       return NextResponse.json(
@@ -54,7 +54,10 @@ export async function POST(request: NextRequest) {
     }
 
     let cart: any;
-    if (user) {
+    if (buy_now) {
+      const buyNowSessionId = `buynow_${user ? "user_" : "guest_"}${user ? user._id.toString() : sessionId}`;
+      cart = await Cart.findOne({ session_id: buyNowSessionId });
+    } else if (user) {
       cart = await Cart.findOne({ user_id: user._id });
     } else {
       cart = await Cart.findOne({ session_id: sessionId });

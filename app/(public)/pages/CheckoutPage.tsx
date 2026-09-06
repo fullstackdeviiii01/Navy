@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "../../context/UserContext";
 import { cartApi } from "../../../lib/api/cart";
 import { shippingApi } from "../../../lib/api/shipping";
@@ -18,8 +18,11 @@ import { trackInitiateCheckout } from "../../../lib/meta/pixel";
 export default function CheckoutPage() {
   const { cart: contextCart, authUser, dbUser, loading: userLoading, refreshCart, updateCart, updateUserProfile, refreshUser } = useUser();
   const router = useRouter();
-  const [cart, setCart] = useState<any>(contextCart || null);
-  const [loading, setLoading] = useState(!contextCart);
+  const searchParams = useSearchParams();
+  const isBuyNow = searchParams?.get("buy_now") === "1" || searchParams?.get("buyNow") === "true";
+
+  const [cart, setCart] = useState<any>(isBuyNow ? null : contextCart || null);
+  const [loading, setLoading] = useState(isBuyNow ? true : !contextCart);
   const [error, setError] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -45,6 +48,8 @@ export default function CheckoutPage() {
   // React immediately whenever context cart updates (e.g. if modified in cart sidebar)
   useEffect(() => {
     if (isOrderPlaced.current) return;
+    if (isBuyNow) return; // Do not sync with context cart during Buy-It-Now express checkout
+
     if (!userLoading) {
       if (contextCart) {
         if (!contextCart.items || contextCart.items.length === 0) {
@@ -69,7 +74,48 @@ export default function CheckoutPage() {
         loadSavedAddresses();
       }
     }
-  }, [contextCart, userLoading, dbUser, router]);
+  }, [contextCart, userLoading, dbUser, router, isBuyNow]);
+
+  // Load dedicated Buy-It-Now express cart
+  useEffect(() => {
+    if (isOrderPlaced.current) return;
+    if (isBuyNow) {
+      fetchBuyNowCart();
+      if (dbUser) {
+        loadSavedAddresses();
+      }
+    }
+  }, [isBuyNow, dbUser]);
+
+  const fetchBuyNowCart = async () => {
+    if (isOrderPlaced.current) return;
+    try {
+      setLoading(true);
+      const res = await fetch("/api/cart?buy_now=1", {
+        headers: { "x-buy-now": "1" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!data?.cart || !data.cart.items || data.cart.items.length === 0) {
+        if (!isOrderPlaced.current) {
+          router.push("/cart");
+        }
+        return;
+      }
+      setCart(data.cart);
+      if (data.cart.selected_shipping_service_id) {
+        setSelectedShippingService(
+          data.cart.selected_shipping_service_id._id ||
+          data.cart.selected_shipping_service_id
+        );
+      }
+    } catch (err) {
+      console.error("Failed to fetch buy-now cart:", err);
+      setError("Failed to load express checkout");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Track Meta Pixel InitiateCheckout
   useEffect(() => {
@@ -159,13 +205,17 @@ export default function CheckoutPage() {
     setShippingLoading(true);
     setError("");
     try {
-      const data = await shippingApi.selectService(serviceId);
+      const data = await shippingApi.selectService(serviceId, isBuyNow);
       setSelectedShippingService(serviceId);
       if (data?.cart) {
         setCart(data.cart);
-        updateCart?.(data.cart);
+        if (!isBuyNow) {
+          updateCart?.(data.cart);
+        }
       }
-      await refreshCart();
+      if (!isBuyNow) {
+        await refreshCart();
+      }
     } catch (error: any) {
       setError(error.message || "Failed to select shipping service");
     } finally {
@@ -246,7 +296,12 @@ export default function CheckoutPage() {
 
   const handlePaymentSuccess = async (orderId: string) => {
     isOrderPlaced.current = true;
-    updateCart?.({ items: [], subtotal: 0, total: 0 });
+    if (!isBuyNow) {
+      updateCart?.({ items: [], subtotal: 0, total: 0 });
+    } else {
+      // User's regular cart was never cleared, keep regular cart in sync
+      await refreshCart();
+    }
     router.replace(`/order-confirmation/${orderId}`);
   };
 
@@ -278,6 +333,7 @@ export default function CheckoutPage() {
       billing_address: sameAsShipping ? shippingAddress : billingAddress,
       same_as_shipping: sameAsShipping,
       customer_notes: customerNotes,
+      buy_now: isBuyNow,
       ...(isGuestCheckout && { guest_info: guestInfo }),
     };
 

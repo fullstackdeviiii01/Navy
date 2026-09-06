@@ -2,12 +2,17 @@
 "use client";
 
 import Rating from "../shared/Rating";
-import { formatPrice } from "../../../lib/utils/formatPrice";
+import ProductWishlistButton from "./ProductWishlistButton";
+import { formatDetailPrice } from "../../../lib/utils/formatPrice";
 
 interface ProductInfoProps {
   product: {
+    _id?: string;
     name: string;
     brand?: string;
+    short_description?: string;
+    subtitle?: string;
+    tagline?: string;
     pricing: {
       price: number;
       compare_at_price?: number;
@@ -42,125 +47,138 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product, selectedVariant }: ProductInfoProps) {
-  const isVariableProduct = product.hasVariants && product.variantPricing;
+  const isVariableProduct = Boolean(
+    product.hasVariants && (product.variantPricing || (product as any).variants?.length)
+  );
+
+  const minVariantPrice = product.variantPricing?.minPrice ?? (product as any).variants?.[0]?.price;
+  const maxVariantPrice = product.variantPricing?.maxPrice;
 
   const basePrice = selectedVariant
     ? selectedVariant.price
-    : isVariableProduct
-      ? product.variantPricing!.minPrice
-      : product.pricing.price;
+    : minVariantPrice !== undefined
+      ? minVariantPrice
+      : product.pricing?.price || 0;
 
   const comparePrice = selectedVariant
     ? selectedVariant.compareAtPrice
-    : isVariableProduct
-      ? undefined
-      : product.pricing.compare_at_price;
+    : product.pricing?.compare_at_price;
 
-  const displayPrice = formatPrice(basePrice);
-  const maxPrice = !selectedVariant && isVariableProduct && product.variantPricing!.priceVaries
-    ? formatPrice(product.variantPricing!.maxPrice)
-    : null;
-
-  const stockQuantity = selectedVariant
-    ? selectedVariant.stockQuantity
-    : product.inventory.stock_quantity;
+  const displayPrice = formatDetailPrice(basePrice);
+  const maxPrice =
+    !selectedVariant &&
+    isVariableProduct &&
+    product.variantPricing?.priceVaries &&
+    maxVariantPrice &&
+    maxVariantPrice !== minVariantPrice
+      ? formatDetailPrice(maxVariantPrice)
+      : null;
 
   const isOutOfStock = selectedVariant
     ? selectedVariant.stockQuantity === 0
-    : product.inventory.stock_status === "out_of_stock";
+    : (product as any).variants?.length
+      ? (product as any).variants.every((v: any) => v.stockQuantity === 0 || v.isAvailable === false)
+      : product.inventory?.stock_status === "out_of_stock";
 
-  const isLowStock = selectedVariant
-    ? selectedVariant.stockQuantity > 0 && selectedVariant.stockQuantity <= (selectedVariant.lowStockThreshold || 5)
-    : product.inventory.stock_status === "low_stock";
-
-  const categoryName = product.category_id?.name || "Solid Wood Lamp";
-  const currentSku = selectedVariant?.sku || product.sku || product.inventory?.sku;
+  const categoryName = product.category_id?.name || "Table Lamp";
+  const currentSku = selectedVariant?.sku || product.sku || product.inventory?.sku || (product as any).variants?.[0]?.sku;
   const discountPercent = comparePrice && comparePrice > basePrice
     ? Math.round(((comparePrice - basePrice) / comparePrice) * 100)
     : null;
 
   return (
-    <div className="space-y-3 pb-4 border-b border-theme-border-light dark:border-theme-border-dark">
-      {/* Reviews & Handmade Craftsmanship Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-xs">
-          <Rating rating={product.rating_average || 0} count={product.rating_count || 0} size="sm" showCount={false} />
-          <span className="text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-medium">
-            {product.rating_count > 0
-              ? `${product.rating_count} ${product.rating_count === 1 ? "review" : "reviews"}`
-              : "No reviews yet"}
-          </span>
-        </div>
+    <div className="space-y-2.5 pb-3">
+      {/* Title & Wishlist Button Row */}
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="text-2xl sm:text-3xl font-sans font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-snug">
+          {product.name}
+        </h1>
+        {product._id && (
+          <ProductWishlistButton
+            productId={product._id}
+            className="h-9 w-9 border-none bg-transparent hover:bg-black/5 dark:hover:bg-white/5 rounded-full"
+          />
+        )}
+      </div>
 
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#8A5E22]/10 border border-[#8A5E22]/25 text-theme-hover-light dark:text-theme-hover-dark text-[10px] font-semibold tracking-wider uppercase">
-          ✦ 100% Solid Wood
+      {/* Reviews Row */}
+      <div className="flex items-center gap-2 pt-0.5">
+        <Rating rating={product.rating_average || 0} count={product.rating_count || 0} size="sm" showCount={false} />
+        <span className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-sans font-normal">
+          {product.rating_count > 0
+            ? `${product.rating_count} ${product.rating_count === 1 ? "review" : "reviews"}`
+            : "No reviews yet"}
         </span>
       </div>
 
-      {/* Title & Price Group */}
-      <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark leading-tight">
-          {product.name}
-        </h1>
+      {/* Optional Tagline / Short Description */}
+      {(product.short_description || product.subtitle || product.tagline) && (
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-sans pt-0.5">
+          {product.short_description || product.subtitle || product.tagline}
+        </p>
+      )}
 
-        {/* Price Block with Discount Tag */}
-        <div className="flex flex-wrap items-baseline gap-2.5 pt-0.5">
-          {comparePrice && comparePrice > basePrice && (
-            <span className="text-sm sm:text-base text-theme-text-muted-light dark:text-theme-text-muted-dark line-through font-serif">
-              {formatPrice(comparePrice)}
-            </span>
-          )}
-          <span
-            className="text-2xl sm:text-3xl font-serif font-bold text-red-600 dark:text-red-400"
-            aria-label={`Price: ${displayPrice}`}
-          >
-            {displayPrice}
+      {/* Price Block with Compare Price & Save Badge - Clean Responsive Single Line */}
+      <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap whitespace-nowrap pt-1.5">
+        {comparePrice && comparePrice > basePrice && (
+          <span className="text-xs xs:text-sm sm:text-base text-gray-400 dark:text-gray-500 line-through font-sans whitespace-nowrap shrink-0">
+            {formatDetailPrice(comparePrice)}
           </span>
-          {maxPrice && (
-            <>
-              <span className="text-base font-serif text-theme-text-muted-light dark:text-theme-text-muted-dark">
-                —
-              </span>
-              <span className="text-2xl sm:text-3xl font-serif font-bold text-red-600 dark:text-red-400" aria-label={`Maximum price: ${maxPrice}`}>
-                {maxPrice}
-              </span>
-            </>
-          )}
-          {discountPercent && discountPercent > 0 && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60 ml-1">
-              Save {discountPercent}%
+        )}
+        <span
+          className={`text-xl xs:text-2xl sm:text-3xl font-sans font-bold tracking-tight whitespace-nowrap shrink-0 ${
+            comparePrice && comparePrice > basePrice
+              ? "text-[#D32F2F] dark:text-[#FF5252]"
+              : "text-[#4A2E18] dark:text-[#F3EBE1]"
+          }`}
+          aria-label={`Price: ${displayPrice}`}
+        >
+          {displayPrice}
+        </span>
+        {maxPrice && (
+          <>
+            <span className="text-sm sm:text-base font-sans text-gray-400 dark:text-gray-500 shrink-0">
+              —
             </span>
-          )}
-        </div>
+            <span className="text-xl xs:text-2xl sm:text-3xl font-sans font-bold text-[#D32F2F] dark:text-[#FF5252] whitespace-nowrap shrink-0" aria-label={`Maximum price: ${maxPrice}`}>
+              {maxPrice}
+            </span>
+          </>
+        )}
+        {discountPercent && discountPercent > 0 && (
+          <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded text-[10px] xs:text-[11px] sm:text-xs font-semibold font-sans bg-[#FCE8E6] text-[#D93025] dark:bg-red-950/60 dark:text-red-300 whitespace-nowrap shrink-0">
+            Save {discountPercent}%
+          </span>
+        )}
       </div>
 
-      {/* Clean Meta Details (SKU, Availability, Product Type) */}
-      <div className="pt-3 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2 text-xs font-mono">
+      {/* Meta Details: SKU -> AVAILABILITY -> PRODUCT TYPE */}
+      <div className="pt-3 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-1.5 text-xs font-sans">
         {currentSku && (
-          <div className="flex items-center gap-3">
-            <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+          <div className="flex items-center gap-1.5">
+            <span className="uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">
               SKU:
             </span>
-            <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-bold">
+            <span className="text-gray-800 dark:text-gray-200 font-semibold">
               {currentSku}
             </span>
           </div>
         )}
 
-        <div className="flex items-center gap-3">
-          <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+        <div className="flex items-center gap-1.5">
+          <span className="uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">
             AVAILABILITY:
           </span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-bold tracking-wide">
-            In Stock
+          <span className={`font-semibold ${isOutOfStock ? "text-red-600 dark:text-red-400" : "text-teal-600 dark:text-teal-400"}`}>
+            {isOutOfStock ? "Out of Stock" : "In Stock"}
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="w-32 uppercase tracking-wider text-theme-text-muted-light dark:text-theme-text-muted-dark text-[11px] font-semibold">
+        <div className="flex items-center gap-1.5">
+          <span className="uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">
             PRODUCT TYPE:
           </span>
-          <span className="text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium capitalize font-sans">
+          <span className="text-gray-800 dark:text-gray-200 font-semibold capitalize">
             {categoryName}
           </span>
         </div>

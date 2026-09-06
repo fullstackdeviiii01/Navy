@@ -172,7 +172,11 @@ CartSchema.methods.calculateTotals = async function (coupon = null, shippingServ
 
   this.discount_amount = 0;
 
-  if (coupon && coupon.is_active) {
+  const isCouponValid = coupon
+    ? (typeof coupon.isValid === "function" ? coupon.isValid() : Boolean(coupon.is_active))
+    : false;
+
+  if (coupon && isCouponValid) {
     await this.populate({
       path: "items.product_id",
     });

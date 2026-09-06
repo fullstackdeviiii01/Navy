@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       payment_method,
       proof_url,
       bank_reference,
+      buy_now,
     } = await request.json();
 
     if (!shipping_address || !payment_method) {
@@ -133,9 +134,16 @@ export async function POST(request: NextRequest) {
 
     // ── Cart ──────────────────────────────────────────────────────────────────
     let cart: any;
-    const cartQuery = user
-      ? { user_id: user._id }
-      : { session_id: sessionId };
+    let cartQuery: any;
+
+    if (buy_now) {
+      const buyNowSessionId = `buynow_${user ? "user_" : "guest_"}${user ? user._id.toString() : sessionId}`;
+      cartQuery = { session_id: buyNowSessionId };
+    } else {
+      cartQuery = user
+        ? { user_id: user._id }
+        : { session_id: sessionId };
+    }
 
     cart = await (Cart as any)
       .findOne(cartQuery)
@@ -385,11 +393,17 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Clear cart ────────────────────────────────────────────────────────────
-    cart.items = [];
-    cart.applied_coupon_id = null;
-    cart.selected_shipping_service_id = null;
-    await cart.calculateTotals();
-    await cart.save();
+    if (buy_now) {
+      // For Buy-It-Now orders: Delete ONLY the temporary express cart.
+      // Customer's regular shopping cart remains 100% untouched and preserved!
+      await Cart.deleteOne({ _id: cart._id });
+    } else {
+      cart.items = [];
+      cart.applied_coupon_id = null;
+      cart.selected_shipping_service_id = null;
+      await cart.calculateTotals();
+      await cart.save();
+    }
 
     return NextResponse.json({
       success: true,

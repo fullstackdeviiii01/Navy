@@ -36,54 +36,43 @@ export default function ProductQuantity({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 py-1">
-      <div className="flex items-center gap-3">
-        {showLabel && (
-          <span 
-            className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark shrink-0" 
-            id="quantity-label"
-          >
-            QUANTITY:
-          </span>
-        )}
-        
-        {/* Stepper Control */}
-        <div 
-          className="inline-flex items-center border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark shadow-2xs" 
-          role="group" 
-          aria-labelledby={showLabel ? "quantity-label" : undefined}
-          aria-label="Quantity selector"
+    <div className="flex items-center shrink-0">
+      {/* Symmetrical 3-column stepper matching customer reference */}
+      <div 
+        className="grid grid-cols-3 items-stretch border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-[#1E1711] rounded-xs h-12 w-28 sm:w-32 shrink-0 select-none overflow-hidden" 
+        role="group" 
+        aria-label="Quantity selector"
+      >
+        <button
+          type="button"
+          onClick={handleDecrease}
+          disabled={quantity <= 1}
+          className="flex items-center justify-center text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-25 disabled:cursor-not-allowed hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors border-r border-neutral-300 dark:border-neutral-600 cursor-pointer"
+          aria-label="Decrease quantity"
         >
-          <button
-            type="button"
-            onClick={handleDecrease}
-            disabled={quantity <= 1}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            aria-label="Decrease quantity"
-          >
-            <Minus className="w-3 h-3" />
-          </button>
-          
-          <input
-            type="number"
-            value={quantity}
-            onChange={handleInputChange}
-            min={1}
-            className="w-10 sm:w-12 h-8 sm:h-9 text-center text-xs sm:text-sm font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark border-x border-theme-border-light dark:border-theme-border-dark bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            aria-label={`Quantity, ${quantity}`}
-            aria-valuemin={1}
-            aria-valuenow={quantity}
-          />
-          
-          <button
-            type="button"
-            onClick={handleIncrease}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-theme-text-primary-light dark:text-theme-text-primary-dark hover:bg-theme-card-light dark:hover:bg-theme-card-dark transition-colors"
-            aria-label="Increase quantity"
-          >
-            <Plus className="w-3 h-3" />
-          </button>
-        </div>
+          <Minus className="w-3.5 h-3.5" />
+        </button>
+        
+        <input
+          type="number"
+          value={quantity}
+          onChange={handleInputChange}
+          min={1}
+          className="w-full h-full text-center font-sans text-sm font-semibold text-neutral-900 dark:text-neutral-100 bg-transparent focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none select-all"
+          aria-label={`Quantity, ${quantity}`}
+          aria-valuemin={1}
+          aria-valuenow={quantity}
+        />
+        
+        <button
+          type="button"
+          onClick={handleIncrease}
+          disabled={quantity >= max}
+          className="flex items-center justify-center text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-25 disabled:cursor-not-allowed hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors border-l border-neutral-300 dark:border-neutral-600 cursor-pointer"
+          aria-label="Increase quantity"
+        >
+          <Plus className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );

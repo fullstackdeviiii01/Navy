@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Play, Pause, ChevronUp, ChevronDown, ZoomIn, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Pause, ZoomIn, X } from "lucide-react";
 
 interface MediaItem {
   type: "image" | "video";
@@ -103,20 +103,11 @@ export default function ProductMediaCarousel({
       const container = thumbnailScrollRef.current;
       const thumbnail = container.children[currentIndex] as HTMLElement;
       if (thumbnail) {
-        const isDesktop = window.innerWidth >= 640;
-        if (isDesktop) {
-          const containerHeight = container.offsetHeight;
-          const thumbnailTop = thumbnail.offsetTop;
-          const thumbnailHeight = thumbnail.offsetHeight;
-          const scrollPosition = thumbnailTop - containerHeight / 2 + thumbnailHeight / 2;
-          container.scrollTo({ top: scrollPosition, behavior: "smooth" });
-        } else {
-          const containerWidth = container.offsetWidth;
-          const thumbnailLeft = thumbnail.offsetLeft;
-          const thumbnailWidth = thumbnail.offsetWidth;
-          const scrollPosition = thumbnailLeft - containerWidth / 2 + thumbnailWidth / 2;
-          container.scrollTo({ left: scrollPosition, behavior: "smooth" });
-        }
+        const containerWidth = container.offsetWidth;
+        const thumbnailLeft = thumbnail.offsetLeft;
+        const thumbnailWidth = thumbnail.offsetWidth;
+        const scrollPosition = thumbnailLeft - containerWidth / 2 + thumbnailWidth / 2;
+        container.scrollTo({ left: scrollPosition, behavior: "smooth" });
       }
     }
   }, [currentIndex, showThumbnails, isCard]);
@@ -144,16 +135,6 @@ export default function ProductMediaCarousel({
       e.preventDefault();
     }
     setCurrentIndex((prev) => (prev === media.length - 1 ? 0 : prev + 1));
-  };
-
-  const scrollThumbnailsVertical = (direction: "up" | "down") => {
-    if (thumbnailScrollRef.current) {
-      const scrollAmount = 140;
-      thumbnailScrollRef.current.scrollBy({
-        top: direction === "up" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
   };
 
   const togglePlayPause = () => {
@@ -290,91 +271,17 @@ export default function ProductMediaCarousel({
     );
   }
 
-  // ── DETAIL VIEW (Vertical Thumbnails on Left + Portrait Main Image on Right + Lightbox Popup) ──
+  // ── DETAIL VIEW (Main Image on Top + Centered Dots + Horizontal Thumbnails Underneath) ──
   return (
     <>
-      <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3.5 items-start w-full">
-        {/* Vertical Thumbnails (Desktop/Tablet) / Horizontal (Mobile) */}
-        {showThumbnails && media.length > 1 && (
-          <div className="relative flex-shrink-0 w-full sm:w-20 md:w-22 group">
-            {/* Scroll Up button (Desktop) */}
-            <button
-              onClick={() => scrollThumbnailsVertical("up")}
-              className="hidden sm:flex absolute -top-2 left-1/2 -translate-x-1/2 z-10 p-1 bg-black/70 hover:bg-black/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              aria-label="Scroll thumbnails up"
-            >
-              <ChevronUp className="w-3.5 h-3.5 text-white" />
-            </button>
-
-            <div
-              ref={thumbnailScrollRef}
-              className="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-y-auto max-h-[560px] w-full scrollbar-hide py-0.5"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {media.map((item, index) => (
-                <button
-                  key={index}
-                  aria-label={`Go to slide ${index + 1}`}
-                  onClick={() => goToSlide(index)}
-                  className={`relative flex-shrink-0 w-16 h-20 sm:w-full sm:h-24 bg-theme-card-light dark:bg-theme-card-dark border transition-all ${
-                    index === currentIndex
-                      ? "border-theme-hover-light dark:border-theme-hover-dark ring-2 ring-theme-hover-light"
-                      : "border-theme-border-light/70 dark:border-theme-border-dark/70 opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  {item.type === "image" ? (
-                    <Image
-                      src={item.url}
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="88px"
-                    />
-                  ) : (
-                    <div className="relative w-full h-full bg-black/10 overflow-hidden">
-                      {item.thumbnail ? (
-                        <Image
-                          src={item.thumbnail}
-                          alt={`Video thumbnail ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="88px"
-                        />
-                      ) : (
-                        <video
-                          src={item.url}
-                          className="w-full h-full object-cover"
-                          muted
-                          preload="metadata"
-                        />
-                      )}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
-                        <Play className="text-white w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Scroll Down button (Desktop) */}
-            <button
-              onClick={() => scrollThumbnailsVertical("down")}
-              className="hidden sm:flex absolute -bottom-2 left-1/2 -translate-x-1/2 z-10 p-1 bg-black/70 hover:bg-black/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              aria-label="Scroll thumbnails down"
-            >
-              <ChevronDown className="w-3.5 h-3.5 text-white" />
-            </button>
-          </div>
-        )}
-
+      <div className="flex flex-col gap-3 w-full">
         {/* Main Image Display */}
         <div
           ref={carouselRef}
           role="region"
           aria-roledescription="carousel"
           aria-label={`${productName} media gallery`}
-          className="relative flex-1 aspect-[4/5] max-h-[560px] w-full bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group cursor-zoom-in"
+          className="relative w-full aspect-[4/5] sm:aspect-square max-h-[540px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group cursor-zoom-in rounded-xs"
           onMouseEnter={() => {
             setIsVideoHovered(true);
             setShowControls(true);
@@ -415,10 +322,25 @@ export default function ProductMediaCarousel({
             <ZoomIn className="w-4 h-4 text-white" />
           </div>
 
-          {/* Counter Badge */}
+          {/* Pagination Dots at Bottom Center of Main Image */}
           {media.length > 1 && (
-            <div className="absolute bottom-3 right-3 bg-black/80 text-white text-[11px] font-mono tracking-widest px-2.5 py-1 z-10 pointer-events-none">
-              {currentIndex + 1} / {media.length}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-2.5 py-1 rounded-full z-10">
+              {media.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToSlide(idx);
+                  }}
+                  className={`transition-all rounded-full ${
+                    idx === currentIndex
+                      ? "w-4 h-1.5 bg-white"
+                      : "w-1.5 h-1.5 bg-white/50 hover:bg-white/80"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
           )}
 
@@ -433,7 +355,7 @@ export default function ProductMediaCarousel({
                   e.stopPropagation();
                   goToPrevious(e);
                 }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100 cursor-pointer"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/75 text-white transition-opacity z-10 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer rounded-sm"
                 aria-label="Previous media"
               >
                 <ChevronLeft className="w-4 h-4 text-white" />
@@ -446,7 +368,7 @@ export default function ProductMediaCarousel({
                   e.stopPropagation();
                   goToNext(e);
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/65 hover:bg-black/85 text-white transition-opacity z-10 opacity-100 cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/75 text-white transition-opacity z-10 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer rounded-sm"
                 aria-label="Next media"
               >
                 <ChevronRight className="w-4 h-4 text-white" />
@@ -478,6 +400,62 @@ export default function ProductMediaCarousel({
             </div>
           )}
         </div>
+
+        {/* Horizontal Thumbnails Row directly below */}
+        {showThumbnails && media.length > 1 && (
+          <div className="w-full relative">
+            <div
+              ref={thumbnailScrollRef}
+              className="flex gap-2.5 overflow-x-auto scrollbar-hide py-1 w-full"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {media.map((item, index) => (
+                <button
+                  key={index}
+                  aria-label={`Go to slide ${index + 1}`}
+                  onClick={() => goToSlide(index)}
+                  className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-theme-card-light dark:bg-theme-card-dark rounded-xs transition-all ${
+                    index === currentIndex
+                      ? "border-2 border-[#532e16] dark:border-white shadow-sm ring-1 ring-[#532e16]/20"
+                      : "border border-gray-200 dark:border-gray-700/80 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  {item.type === "image" ? (
+                    <Image
+                      src={item.url}
+                      alt={`Thumbnail ${index + 1}`}
+                      fill
+                      className="object-cover rounded-xs"
+                      sizes="80px"
+                    />
+                  ) : (
+                    <div className="relative w-full h-full bg-black/10 overflow-hidden rounded-xs">
+                      {item.thumbnail ? (
+                        <Image
+                          src={item.thumbnail}
+                          alt={`Video thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <video
+                          src={item.url}
+                          className="w-full h-full object-cover"
+                          muted
+                          preload="metadata"
+                        />
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
+                        <Play className="text-white w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── FULLSCREEN LIGHTBOX POPUP MODAL (Matching Review Lightbox) ── */}

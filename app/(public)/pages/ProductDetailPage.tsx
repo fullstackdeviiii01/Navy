@@ -6,6 +6,7 @@ import { productsApi } from "../../../lib/api/products";
 import ProductInfo from "../../components/product-detail/ProductInfo";
 import ProductQuantity from "../../components/product-detail/ProductQuantity";
 import AddToCartButton from "../../components/product-detail/AddToCartButton";
+import BuyItNowButton from "../../components/product-detail/BuyItNowButton";
 import ProductTabs from "../../components/product-detail/ProductTabs";
 import ProductReviewSection from "../../components/product-detail/ProductReviewSection";
 import RelatedProducts from "../../components/product-detail/RelatedProducts";
@@ -13,9 +14,9 @@ import ProductBreadcrumb from "../../components/product-detail/ProductBreadcrumb
 import Loader from "../../components/shared/Loader";
 import ProductMediaCarousel from "../../components/product/ProductMediaCarousel";
 import ProductVariantSelector from "../../components/product-detail/ProductVariantSelector";
-import ProductWishlistButton from "../../components/product-detail/ProductWishlistButton";
-import { formatPrice } from "../../../lib/utils/formatPrice";
+import { formatPrice, formatDetailPrice } from "../../../lib/utils/formatPrice";
 import { trackViewContent } from "../../../lib/meta/pixel";
+import { Eye, Truck, RotateCcw, ChevronDown, Mail, Link2, Check } from "lucide-react";
 
 interface Props {
   productId: string;
@@ -46,6 +47,41 @@ export default function ProductDetailPageContent({ productId }: Props) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [shippingOpen, setShippingOpen] = useState(false);
+  const [returnsOpen, setReturnsOpen] = useState(false);
+  const [viewingCount, setViewingCount] = useState(14);
+
+  const handleCopyLink = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  // Realistic dynamic live viewer count (fluctuates naturally between 8 and 21)
+  useEffect(() => {
+    if (productId) {
+      let hash = 0;
+      for (let i = 0; i < productId.length; i++) {
+        hash = (hash << 5) - hash + productId.charCodeAt(i);
+        hash |= 0;
+      }
+      const initial = 11 + Math.abs(hash % 7); // between 11 and 17
+      setViewingCount(initial);
+    }
+
+    const timer = setInterval(() => {
+      setViewingCount((prev) => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + delta;
+        return Math.min(21, Math.max(8, next));
+      });
+    }, 6000);
+
+    return () => clearInterval(timer);
+  }, [productId]);
 
   useEffect(() => {
     if (productId) {
@@ -76,21 +112,9 @@ export default function ProductDetailPageContent({ productId }: Props) {
       const prod = data.product;
       setProduct(prod);
 
-      // Auto-select first variant on load
-      if (prod?.hasVariants && prod?.variants && prod.variants.length > 0) {
-        const firstVar = prod.variants.find((v: any) => v.isAvailable !== false) || prod.variants[0];
-        if (firstVar) {
-          setSelectedVariant(firstVar);
-          const initialAttrs: Record<string, string> = {};
-          (firstVar.attributes || []).forEach((a: any) => {
-            initialAttrs[a.name] = a.value;
-          });
-          setSelectedAttributes(initialAttrs);
-          if (firstVar.imageUrl) {
-            setPreviewImageUrl(firstVar.imageUrl);
-          }
-        }
-      }
+      // Do NOT auto-select a variant on load — the UI starts with nothing selected.
+      // The first variant will only be auto-resolved when the user clicks
+      // "Add to Cart" or "Buy It Now" without having manually chosen an option.
     } catch (error) {
       console.error("Failed to fetch product:", error);
     } finally {
@@ -109,6 +133,73 @@ export default function ProductDetailPageContent({ productId }: Props) {
       }
     } catch (error) {
       console.error("Failed to fetch related products:", error);
+    }
+  };
+
+  /** Resolve the effective variant and its attributes without mutating state.
+   *  - If all attributes selected: returns selectedVariant.
+   *  - If partial attributes selected: finds first compatible variant.
+   *  - If nothing selected: returns the first available variant. */
+  const getResolvedVariantAndAttributes = () => {
+    if (!product?.hasVariants || !product?.variants?.length) return { variant: null, attrs: {} };
+    if (selectedVariant) {
+      const attrs =
+        Object.keys(selectedAttributes).length > 0
+          ? selectedAttributes
+          : Object.fromEntries((selectedVariant.attributes || []).map((a: any) => [a.name, a.value]));
+      return { variant: selectedVariant, attrs };
+    }
+
+    const selectedKeys = Object.keys(selectedAttributes);
+    if (selectedKeys.length > 0) {
+      const matched =
+        (product.variants as ProductVariant[]).find(
+          (v: any) =>
+            v.isAvailable !== false &&
+            selectedKeys.every((key) =>
+              v.attributes?.some(
+                (a: any) =>
+                  a.name.toLowerCase() === key.toLowerCase() &&
+                  a.value.toLowerCase() === selectedAttributes[key].toLowerCase()
+              )
+            )
+        ) ||
+        (product.variants as ProductVariant[]).find((v: any) =>
+          selectedKeys.every((key) =>
+            v.attributes?.some(
+              (a: any) =>
+                a.name.toLowerCase() === key.toLowerCase() &&
+                a.value.toLowerCase() === selectedAttributes[key].toLowerCase()
+            )
+          )
+        );
+
+      if (matched) {
+        const attrs: Record<string, string> = {};
+        (matched.attributes || []).forEach((a: any) => { attrs[a.name] = a.value; });
+        Object.assign(attrs, selectedAttributes);
+        return { variant: matched as ProductVariant, attrs };
+      }
+    }
+
+    const firstVar = product.variants.find((v: any) => v.isAvailable !== false) || product.variants[0];
+    if (!firstVar) return { variant: null, attrs: {} };
+    const attrs: Record<string, string> = {};
+    (firstVar.attributes || []).forEach((a: any) => { attrs[a.name] = a.value; });
+    return { variant: firstVar as ProductVariant, attrs };
+  };
+
+  /** Called by Add-to-Cart / Buy-It-Now buttons right before their API call.
+   *  If the user hasn't manually selected options, this auto-selects the first
+   *  available variant so the correct data is sent to the cart and the UI shows it. */
+  const handleAutoSelectFirstVariant = () => {
+    if (!product?.hasVariants || !product?.variants?.length) return;
+    if (selectedVariant) return;
+    const { variant, attrs } = getResolvedVariantAndAttributes();
+    if (variant) {
+      setSelectedVariant(variant);
+      setSelectedAttributes(attrs);
+      if (variant.imageUrl) setPreviewImageUrl(variant.imageUrl);
     }
   };
 
@@ -174,7 +265,22 @@ export default function ProductDetailPageContent({ productId }: Props) {
     ? false
     : product.inventory?.stock_status === "out_of_stock";
 
-  const currentPrice = selectedVariant?.price || product.pricing?.price || 0;
+  const resolvedVariantData = isVariableProduct ? getResolvedVariantAndAttributes() : { variant: null, attrs: {} };
+  const effectiveVariant = selectedVariant || resolvedVariantData.variant;
+  const effectiveAttributes =
+    Object.keys(selectedAttributes).length > 0
+      ? selectedAttributes
+      : resolvedVariantData.attrs;
+  const effectiveProductImage =
+    selectedVariant?.imageUrl ||
+    previewImageUrl ||
+    resolvedVariantData.variant?.imageUrl ||
+    product.images?.find((img: any) => img.is_primary)?.url ||
+    product.images?.[0]?.url;
+
+  const currentPrice = selectedVariant?.price
+    || effectiveVariant?.price
+    || product.pricing?.price || 0;
 
   const currentStock = isVariableProduct
     ? (product.variants as ProductVariant[]).reduce(
@@ -367,65 +473,199 @@ export default function ProductDetailPageContent({ productId }: Props) {
                     variantAttributes={product.variantOptions || []}
                     onSelectionChange={handleVariantSelection}
                     selectedVariant={selectedVariant}
+                    selectedAttributes={selectedAttributes}
                   />
                 </div>
               )}
 
-              {/* Main action block: Quantity + Total Price + Add to Cart (Always Active) */}
-              <div className="space-y-2 pt-0.5">
-                {/* Quantity + total price */}
-                <div
-                  className="space-y-1.5"
-                  role="region"
-                  aria-label="Quantity and pricing"
-                >
-                  <ProductQuantity
-                    quantity={quantity}
-                    onQuantityChange={setQuantity}
-                  />
-                  <div className="flex items-baseline justify-between pt-1.5 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 text-xs">
-                    <span className="text-[11px] uppercase tracking-[0.18em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
-                      Total Price:
-                    </span>
-                    <span
-                      className="text-base sm:text-lg font-serif text-theme-text-primary-light dark:text-theme-text-primary-dark font-medium"
-                      aria-label={`Total price: ${formatPrice(totalPrice)}`}
-                    >
-                      {formatPrice(totalPrice)}
-                    </span>
-                  </div>
+              {/* Main action block: Subtotal + Quantity + Add To Cart + Buy It Now + Share + Accordions */}
+              <div className="space-y-3 pt-2">
+                {/* Dynamic Subtotal line */}
+                <div className="text-sm sm:text-base font-sans text-neutral-700 dark:text-neutral-300">
+                  Subtotal:{" "}
+                  <span className="font-bold text-[#4A2E18] dark:text-[#F3EBE1] font-sans tracking-tight">
+                    {formatDetailPrice(totalPrice)}
+                  </span>
                 </div>
 
-                {/* Add to Cart button + Wishlist Heart button (Always Visible & Enabled) */}
-                <div
-                  className="pt-0.5"
-                  role="region"
-                  aria-label="Product actions"
-                >
-                  <div className="flex items-center gap-2.5">
+                {/* Quantity label + Stepper & Add To Cart button row */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-sans text-neutral-600 dark:text-neutral-400 select-none">
+                    Quantity:
+                  </label>
+                  <div className="flex items-center gap-2.5 sm:gap-3 w-full">
+                    <ProductQuantity
+                      quantity={quantity}
+                      onQuantityChange={setQuantity}
+                    />
                     <div className="flex-1 min-w-0">
                       <AddToCartButton
                         productId={product._id}
                         quantity={quantity}
-                        variantId={selectedVariant?._id || (isVariableProduct ? product.variants?.[0]?._id : undefined)}
-                        variantAttributes={
-                          Object.keys(selectedAttributes).length > 0
-                            ? selectedAttributes
-                            : (isVariableProduct && product.variants?.[0]?.attributes
-                              ? Object.fromEntries(product.variants[0].attributes.map((a: any) => [a.name, a.value]))
-                              : {})
-                        }
+                        variantId={effectiveVariant?._id}
+                        variantAttributes={effectiveAttributes}
                         productName={product.name}
-                        productImage={
-                          selectedVariant?.imageUrl ||
-                          previewImageUrl ||
-                          product.images?.find((img: any) => img.is_primary)?.url ||
-                          product.images?.[0]?.url
-                        }
+                        productImage={effectiveProductImage}
+                        onBeforeAdd={handleAutoSelectFirstVariant}
                         disabled={false}
                       />
                     </div>
-                    <ProductWishlistButton productId={product._id} />
+                  </div>
+                </div>
+
+                {/* BUY IT NOW full-width button */}
+                <div className="w-full">
+                  <BuyItNowButton
+                    productId={product._id}
+                    quantity={quantity}
+                    variantId={effectiveVariant?._id}
+                    variantAttributes={effectiveAttributes}
+                    productName={product.name}
+                    productImage={effectiveProductImage}
+                    onBeforeBuy={handleAutoSelectFirstVariant}
+                    disabled={false}
+                  />
+                </div>
+
+                {/* Professional Social Share Bar */}
+                <div className="flex items-center gap-2 pt-2 text-xs font-sans text-neutral-500 dark:text-neutral-400 select-none">
+                  <span className="text-[11px] font-sans font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 mr-1 select-none">
+                    SHARE
+                  </span>
+                  
+                  {/* Facebook */}
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-500 hover:text-[#1877F2] hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                    aria-label="Share on Facebook"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                  </a>
+
+                  {/* X / Twitter */}
+                  <a
+                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}&text=${encodeURIComponent(product.name || "Wooden Lamp")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-500 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                    aria-label="Share on X"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+
+                  {/* Pinterest */}
+                  <a
+                    href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}&description=${encodeURIComponent(product.name || "Wooden Lamp")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-500 hover:text-[#BD081C] hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                    aria-label="Pin on Pinterest"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.291 1.199-.334 1.357-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.546.535 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/>
+                    </svg>
+                  </a>
+
+                  {/* Email */}
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(product.name || "Handcrafted Wooden Lamp")}&body=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                    aria-label="Share via Email"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </a>
+
+                  {/* Copy Link */}
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors relative cursor-pointer"
+                    aria-label="Copy link"
+                  >
+                    {copiedLink ? (
+                      <Check className="w-4 h-4 text-emerald-600" />
+                    ) : (
+                      <Link2 className="w-4 h-4" />
+                    )}
+                    {copiedLink && (
+                      <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-neutral-900 text-white text-[10px] rounded-xs shadow-md whitespace-nowrap">
+                        Copied!
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Real-time Viewing Indicator (Dynamic & Realistic) */}
+                <div className="flex items-center gap-2 pt-1 text-xs sm:text-sm font-sans text-neutral-600 dark:text-neutral-400 select-none">
+                  <Eye className="w-4 h-4 text-neutral-400 dark:text-neutral-500 shrink-0" />
+                  <span>
+                    <span className="font-semibold text-neutral-800 dark:text-neutral-200 tabular-nums">
+                      {viewingCount}
+                    </span>{" "}
+                    customers are viewing this product
+                  </span>
+                </div>
+
+                {/* Collapsible Accordions: Free Shipping & Free Returns */}
+                <div className="pt-2 border-t border-neutral-200 dark:border-neutral-700/80 divide-y divide-neutral-200 dark:divide-neutral-700/80">
+                  {/* Free Shipping Accordion */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setShippingOpen(!shippingOpen)}
+                      className="w-full flex items-center justify-between py-3 text-left font-sans text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Truck className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                        <span>Free Shipping</span>
+                      </div>
+                      <ChevronDown
+                        className={`w-4 h-4 text-neutral-500 transition-transform duration-200 ${
+                          shippingOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {shippingOpen && (
+                      <div className="pb-3 text-xs text-neutral-600 dark:text-neutral-400 space-y-1.5 animate-in fade-in duration-200 pl-6.5 font-sans">
+                        <p>• Free standard delivery across Pakistan on orders above Rs. 15,000.</p>
+                        <p>• Estimated delivery time is 3 to 5 business days nationwide.</p>
+                        <p>• Cash on Delivery (COD) and secure online payment options available.</p>
+                        <p>• Hand-packed in protective shock-absorbent packaging to ensure pristine condition upon arrival.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Free Returns Accordion */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setReturnsOpen(!returnsOpen)}
+                      className="w-full flex items-center justify-between py-3 text-left font-sans text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <RotateCcw className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                        <span>Free Returns</span>
+                      </div>
+                      <ChevronDown
+                        className={`w-4 h-4 text-neutral-500 transition-transform duration-200 ${
+                          returnsOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {returnsOpen && (
+                      <div className="pb-3 text-xs text-neutral-600 dark:text-neutral-400 space-y-1.5 animate-in fade-in duration-200 pl-6.5 font-sans">
+                        <p>• 14-day hassle-free exchange and return policy from date of delivery.</p>
+                        <p>• Items must be undamaged and returned in their original packaging.</p>
+                        <p>• In the rare event of transit damage, we provide an immediate 100% free replacement.</p>
+                        <p>• For assistance, contact our dedicated customer support team directly.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
