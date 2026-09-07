@@ -26,6 +26,7 @@ import ReturnStatusCard from "../../returns/ReturnStatusCard";
 import { returnsApi } from "../../../../lib/api/returns";
 import { formatPrice } from "../../../../lib/utils/formatPrice";
 import { openImagePreview } from "../../../../lib/utils/mediaPreview";
+import { getCourierTrackingUrl } from "../../../../lib/constants/couriers";
 
 interface UserOrderDetailViewProps {
   order: any;
@@ -381,12 +382,50 @@ export default function UserOrderDetailView({
                     <span className="text-[10px] uppercase font-semibold text-theme-text-muted-light block">
                       Tracking Waybill / ID
                     </span>
-                    <span className="font-mono font-bold text-indigo-700 dark:text-indigo-400">
-                      {order.tracking_number}
-                    </span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="font-mono font-bold text-indigo-700 dark:text-indigo-400">
+                        {order.tracking_number}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (navigator?.clipboard) {
+                            navigator.clipboard.writeText(order.tracking_number);
+                            alert("Tracking ID copied to clipboard!");
+                          }
+                        }}
+                        className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                        title="Copy tracking ID"
+                      >
+                        <Copy size={12} />
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
+
+              {(() => {
+                const trackingUrl = getCourierTrackingUrl(order.carrier, order.tracking_number);
+                if (!trackingUrl) return null;
+                return (
+                  <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+                    <a
+                      href={trackingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => {
+                        if (navigator?.clipboard && order.tracking_number) {
+                          navigator.clipboard.writeText(order.tracking_number);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                    >
+                      <span>Visit {order.carrier || "Courier"} Official Website</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>

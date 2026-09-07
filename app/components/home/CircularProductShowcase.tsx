@@ -67,7 +67,7 @@ export default function CircularProductShowcase({ products = [] }: CircularProdu
     if (isDragging) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % total);
-    }, 4000);
+    }, 10000);
     return () => clearInterval(timer);
   }, [total, isDragging]);
 

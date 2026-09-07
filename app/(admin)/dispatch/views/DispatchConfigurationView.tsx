@@ -41,9 +41,9 @@ interface EmailConfig {
       enabled: boolean;
       notify_on_request: boolean;
       notify_on_approved: boolean;
-      notify_on_received: boolean;
-      notify_on_processed: boolean;
-      notify_on_completed: boolean;
+      notify_on_received?: boolean;
+      notify_on_processed?: boolean;
+      notify_on_completed?: boolean;
       notify_on_rejected: boolean;
       admin_email: string;
     };

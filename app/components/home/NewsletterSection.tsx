@@ -3,7 +3,16 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { BsInstagram, BsFacebook, BsWhatsapp } from "react-icons/bs";
+import { 
+  BsInstagram, 
+  BsTiktok,
+  BsFacebook, 
+  BsPinterest, 
+  BsWhatsapp, 
+  BsYoutube, 
+  BsTwitterX, 
+  BsLinkedin 
+} from "react-icons/bs";
 import { Check, Loader2 } from "lucide-react";
 import { newsletterApi } from "../../../lib/api/newsletter";
 import { siteSettingsApi } from "../../../lib/api/siteSettings";
@@ -15,13 +24,14 @@ export default function NewsletterSection() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
   const [socialMedia, setSocialMedia] = useState<{
     instagram?: string;
+    tiktok?: string;
     facebook?: string;
     whatsapp?: string;
-  }>({
-    facebook: "https://www.facebook.com/share/14m5wWfkaPa/",
-    instagram: "https://www.instagram.com/talalwoodenlamp?igsi=MWpoNG5rbGNyY2ZpcQ==",
-    whatsapp: "https://wa.me/923009692765",
-  });
+    pinterest?: string;
+    youtube?: string;
+    twitter?: string;
+    linkedin?: string;
+  }>({});
 
   useEffect(() => {
     siteSettingsApi
@@ -30,9 +40,14 @@ export default function NewsletterSection() {
         const sm = data?.company_info?.social_media || data?.social_media;
         if (sm) {
           setSocialMedia({
-            facebook: sm.facebook || "https://www.facebook.com/share/14m5wWfkaPa/",
-            instagram: sm.instagram || "https://www.instagram.com/talalwoodenlamp?igsi=MWpoNG5rbGNyY2ZpcQ==",
-            whatsapp: sm.whatsapp || "https://wa.me/923009692765",
+            instagram: sm.instagram || "",
+            tiktok: sm.tiktok || "",
+            facebook: sm.facebook || "",
+            whatsapp: sm.whatsapp || "",
+            pinterest: sm.pinterest || "",
+            youtube: sm.youtube || "",
+            twitter: sm.twitter || "",
+            linkedin: sm.linkedin || "",
           });
         }
       })
@@ -67,7 +82,70 @@ export default function NewsletterSection() {
     ? rawWa
     : rawWa.trim()
     ? `https://wa.me/${rawWa.replace(/\D/g, "")}`
-    : "https://wa.me/923009692765";
+    : "";
+
+  const socialPlatforms = [
+    {
+      key: "facebook",
+      label: "Facebook",
+      icon: BsFacebook,
+      href: socialMedia.facebook,
+      hoverClass: "hover:border-[#C58A2B] hover:text-[#C58A2B] hover:!text-[#C58A2B]",
+    },
+    {
+      key: "instagram",
+      label: "Instagram",
+      icon: BsInstagram,
+      href: socialMedia.instagram,
+      hoverClass: "hover:border-[#C58A2B] hover:text-[#C58A2B] hover:!text-[#C58A2B]",
+    },
+    {
+      key: "tiktok",
+      label: "TikTok",
+      icon: BsTiktok,
+      href: socialMedia.tiktok,
+      hoverClass: "hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white",
+    },
+    {
+      key: "whatsapp",
+      label: "WhatsApp",
+      icon: BsWhatsapp,
+      href: whatsappHref || undefined,
+      hoverClass: "hover:border-[#25D366] hover:text-[#25D366] hover:!text-[#25D366]",
+    },
+    {
+      key: "pinterest",
+      label: "Pinterest",
+      icon: BsPinterest,
+      href: socialMedia.pinterest,
+      hoverClass: "hover:border-[#BD081C] hover:text-[#BD081C] hover:!text-[#BD081C]",
+    },
+    {
+      key: "youtube",
+      label: "YouTube",
+      icon: BsYoutube,
+      href: socialMedia.youtube,
+      hoverClass: "hover:border-[#FF0000] hover:text-[#FF0000] hover:!text-[#FF0000]",
+    },
+    {
+      key: "twitter",
+      label: "X (Twitter)",
+      icon: BsTwitterX,
+      href: socialMedia.twitter,
+      hoverClass: "hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white",
+    },
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      icon: BsLinkedin,
+      href: socialMedia.linkedin,
+      hoverClass: "hover:border-[#0A66C2] hover:text-[#0A66C2] hover:!text-[#0A66C2]",
+    },
+  ];
+
+  const activeSocials = socialPlatforms.filter(
+    (p) => p.href && typeof p.href === "string" && p.href.trim().length > 0
+  );
 
   return (
     <section className="relative w-full bg-[#E5E5E5] dark:bg-[#120D09] text-[#1C140E] dark:text-[#F3E8D6] border-b border-[#B8A894] dark:border-[#3A2A1D] overflow-hidden select-none transition-colors">
@@ -145,37 +223,25 @@ export default function NewsletterSection() {
             </form>
 
             {/* Circular Social Media Icons (Centered on mobile, left-aligned under input on laptop) */}
-            <div className="flex items-center justify-center lg:justify-start gap-2.5 pt-0.5 text-white/90 w-full">
-              <a
-                href={socialMedia.facebook || "https://facebook.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C58A2B] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="Facebook"
-              >
-                <BsFacebook className="w-3.5 h-3.5" />
-              </a>
-
-              <a
-                href={socialMedia.instagram || "https://instagram.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C58A2B] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C58A2B] hover:!text-[#C58A2B] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="Instagram"
-              >
-                <BsInstagram className="w-3.5 h-3.5" />
-              </a>
-
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#25D366] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#25D366] hover:!text-[#25D366] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="WhatsApp"
-              >
-                <BsWhatsapp className="w-3.5 h-3.5" />
-              </a>
-            </div>
+            {activeSocials.length > 0 && (
+              <div className="flex items-center justify-center lg:justify-start flex-wrap gap-2.5 pt-0.5 text-white/90 w-full">
+                {activeSocials.map((platform) => {
+                  const Icon = platform.icon;
+                  return (
+                    <a
+                      key={platform.key}
+                      href={platform.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`no-theme-hover w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#D5D0C6] dark:border-white/20 bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 transition-all duration-200 cursor-pointer shadow-2xs ${platform.hoverClass}`}
+                      aria-label={platform.label}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
 
           </div>
 

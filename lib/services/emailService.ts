@@ -214,7 +214,14 @@ export class EmailService {
     }
 
     const customerEmail =
-      order.order_type === "guest" ? order.guest_info.email : order.user_id.email;
+      order.order_type === "guest"
+        ? (order.guest_info?.email || order.shipping_address?.email)
+        : (order.user_id?.email || order.guest_info?.email || order.shipping_address?.email);
+
+    if (!customerEmail) {
+      console.warn("⚠️ [EMAIL DEBUG] No recipient email found for order status update:", order.order_number);
+      return;
+    }
 
     const canSend = await this.isUserEmailEnabled(customerEmail);
     if (!canSend) {
@@ -321,11 +328,11 @@ export class EmailService {
 
       let shouldNotify = false;
       switch (status) {
-        case "approved":   shouldNotify = config.email_notifications.return_notifications.notify_on_approved;  break;
-        case "received":   shouldNotify = config.email_notifications.return_notifications.notify_on_received;  break;
-        case "processed":  shouldNotify = config.email_notifications.return_notifications.notify_on_processed; break;
-        case "completed":  shouldNotify = config.email_notifications.return_notifications.notify_on_completed; break;
-        case "rejected":   shouldNotify = config.email_notifications.return_notifications.notify_on_rejected;  break;
+        case "approved":   shouldNotify = Boolean(config.email_notifications?.return_notifications?.notify_on_approved);  break;
+        case "received":   shouldNotify = Boolean(config.email_notifications?.return_notifications?.notify_on_received);  break;
+        case "processed":  shouldNotify = Boolean(config.email_notifications?.return_notifications?.notify_on_processed); break;
+        case "completed":  shouldNotify = Boolean(config.email_notifications?.return_notifications?.notify_on_completed); break;
+        case "rejected":   shouldNotify = Boolean(config.email_notifications?.return_notifications?.notify_on_rejected);  break;
       }
 
       if (!shouldNotify) {

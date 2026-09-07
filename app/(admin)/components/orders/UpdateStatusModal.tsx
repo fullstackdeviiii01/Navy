@@ -18,7 +18,10 @@ export default function UpdateStatusModal({
 }: UpdateStatusModalProps) {
   const [selectedStatus, setSelectedStatus] = useState(order.status);
   const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || "");
-  const [carrier, setCarrier] = useState(order.carrier || "");
+  const [carrier, setCarrier] = useState(order.carrier || "TCS Express");
+  const [customCarrier, setCustomCarrier] = useState("");
+
+  const effectiveCarrier = carrier === "Other Courier" ? (customCarrier || "Other Courier") : carrier;
 
   const statuses = [
     { value: "pending", label: "Pending" },
@@ -30,15 +33,15 @@ export default function UpdateStatusModal({
   ];
 
   const handleSubmit = () => {
-  if (selectedStatus === "shipped") {
-    onUpdate(selectedStatus, { 
-      tracking_number: trackingNumber, 
-      carrier: carrier 
-    });
-  } else {
-    onUpdate(selectedStatus);
-  }
-};
+    if (selectedStatus === "shipped") {
+      onUpdate(selectedStatus, { 
+        tracking_number: trackingNumber.trim(), 
+        carrier: effectiveCarrier.trim() 
+      });
+    } else {
+      onUpdate(selectedStatus);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -86,26 +89,55 @@ export default function UpdateStatusModal({
             <>
               <div>
                 <label className="block text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-                  Tracking Number
+                  Courier Service (Pakistan) *
+                </label>
+                <select
+                  value={carrier}
+                  onChange={(e) => setCarrier(e.target.value)}
+                  className="w-full px-4 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary cursor-pointer"
+                >
+                  <option value="TCS Express">TCS Express</option>
+                  <option value="Leopards Courier">Leopards Courier</option>
+                  <option value="M&P Express Logistics">M&P Express Logistics</option>
+                  <option value="Trax Logistics">Trax Logistics</option>
+                  <option value="Call Courier">Call Courier</option>
+                  <option value="PostEx">PostEx</option>
+                  <option value="Pakistan Post">Pakistan Post</option>
+                  <option value="Rider">Rider</option>
+                  <option value="Daewoo FastEx">Daewoo FastEx</option>
+                  <option value="BlueEx">BlueEx</option>
+                  <option value="Swyft Logistics">Swyft Logistics</option>
+                  <option value="Other Courier">Other Courier (Custom)</option>
+                </select>
+              </div>
+
+              {carrier === "Other Courier" && (
+                <div>
+                  <label className="block text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+                    Enter Courier Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={customCarrier}
+                    onChange={(e) => setCustomCarrier(e.target.value)}
+                    placeholder="e.g. Bykea, Local Cargo, etc."
+                    required
+                    className="w-full px-4 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
+                  {effectiveCarrier} Tracking Number *
                 </label>
                 <input
                   type="text"
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
-                  placeholder="Enter tracking number"
-                  className="w-full px-4 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark mb-2">
-                  Carrier
-                </label>
-                <input
-                  type="text"
-                  value={carrier}
-                  onChange={(e) => setCarrier(e.target.value)}
-                  placeholder="e.g., FedEx, UPS, USPS"
-                  className="w-full px-4 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary"
+                  placeholder="Enter consignment / tracking number"
+                  required
+                  className="w-full px-4 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary font-mono"
                 />
               </div>
             </>

@@ -6,9 +6,13 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   BsInstagram,
+  BsTiktok,
   BsFacebook,
   BsPinterest,
   BsWhatsapp,
+  BsYoutube,
+  BsTwitterX,
+  BsLinkedin,
 } from "react-icons/bs";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { siteSettingsApi } from "../../lib/api/siteSettings";
@@ -20,11 +24,16 @@ interface CompanyInfo {
   company_email?: string;
   company_phone?: string;
   company_address?: string;
+  company_location_link?: string;
   social_media?: {
     instagram?: string;
+    tiktok?: string;
     facebook?: string;
     pinterest?: string;
     whatsapp?: string;
+    youtube?: string;
+    twitter?: string;
+    linkedin?: string;
   };
   copyright_text?: string;
 }
@@ -94,7 +103,70 @@ export default function Footerr() {
     ? rawWa
     : rawWa.trim()
     ? `https://wa.me/${rawWa.replace(/\D/g, "")}`
-    : "https://wa.me/923009692765";
+    : "";
+
+  const socialPlatforms = [
+    {
+      key: "facebook",
+      label: "Facebook",
+      icon: BsFacebook,
+      href: companyInfo.social_media?.facebook,
+      hoverClass: "hover:border-[#1877F2] hover:text-[#1877F2]",
+    },
+    {
+      key: "instagram",
+      label: "Instagram",
+      icon: BsInstagram,
+      href: companyInfo.social_media?.instagram,
+      hoverClass: "hover:border-[#E4405F] hover:text-[#E4405F]",
+    },
+    {
+      key: "tiktok",
+      label: "TikTok",
+      icon: BsTiktok,
+      href: companyInfo.social_media?.tiktok,
+      hoverClass: "hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white",
+    },
+    {
+      key: "whatsapp",
+      label: "WhatsApp",
+      icon: BsWhatsapp,
+      href: waLink || undefined,
+      hoverClass: "hover:border-[#25D366] hover:text-[#25D366]",
+    },
+    {
+      key: "pinterest",
+      label: "Pinterest",
+      icon: BsPinterest,
+      href: companyInfo.social_media?.pinterest,
+      hoverClass: "hover:border-[#BD081C] hover:text-[#BD081C]",
+    },
+    {
+      key: "youtube",
+      label: "YouTube",
+      icon: BsYoutube,
+      href: companyInfo.social_media?.youtube,
+      hoverClass: "hover:border-[#FF0000] hover:text-[#FF0000]",
+    },
+    {
+      key: "twitter",
+      label: "X (Twitter)",
+      icon: BsTwitterX,
+      href: companyInfo.social_media?.twitter,
+      hoverClass: "hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white",
+    },
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      icon: BsLinkedin,
+      href: companyInfo.social_media?.linkedin,
+      hoverClass: "hover:border-[#0A66C2] hover:text-[#0A66C2]",
+    },
+  ];
+
+  const activeSocials = socialPlatforms.filter(
+    (p) => p.href && typeof p.href === "string" && p.href.trim().length > 0
+  );
 
   return (
     <footer className="relative w-full bg-[#E5E5E5] dark:bg-[#120D09] text-[#241910] dark:text-[#F3E8D6] border-t border-[#B8A894] dark:border-[#3A2A1D] select-none transition-colors mt-0">
@@ -140,38 +212,26 @@ export default function Footerr() {
               We create more than lamps, we craft warmth, elegance and timeless beauty for your home.
             </p>
 
-            {/* Circular Social Media Icons (Instagram, Facebook, WhatsApp) */}
-            <div className="flex items-center gap-2.5 pt-1 text-white/90">
-              <a
-                href={companyInfo.social_media?.facebook || "https://facebook.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C59345] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C59345] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="Facebook"
-              >
-                <BsFacebook className="w-3.5 h-3.5" />
-              </a>
-
-              <a
-                href={companyInfo.social_media?.instagram || "https://instagram.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#C59345] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#C59345] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="Instagram"
-              >
-                <BsInstagram className="w-3.5 h-3.5" />
-              </a>
-
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 hover:border-[#25D366] bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 hover:text-[#25D366] transition-all duration-200 cursor-pointer shadow-2xs"
-                aria-label="WhatsApp"
-              >
-                <BsWhatsapp className="w-3.5 h-3.5" />
-              </a>
-            </div>
+            {/* Circular Social Media Icons (Dynamically rendered only if configured) */}
+            {activeSocials.length > 0 && (
+              <div className="flex items-center flex-wrap gap-2.5 pt-1 text-white/90">
+                {activeSocials.map((platform) => {
+                  const Icon = platform.icon;
+                  return (
+                    <a
+                      key={platform.key}
+                      href={platform.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-7 h-7 rounded-full border border-[#D5D0C6] dark:border-white/20 bg-white dark:bg-[#1C140E] flex items-center justify-center text-[#241910] dark:text-white/80 transition-all duration-200 cursor-pointer shadow-2xs ${platform.hoverClass}`}
+                      aria-label={platform.label}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
 
           </div>
 
@@ -288,7 +348,22 @@ export default function Footerr() {
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#C59345] shrink-0 mt-0.5" />
-                <span>{companyInfo.company_address || "Sahiwal, Punjab, Pakistan"}</span>
+                {companyInfo.company_location_link ? (
+                  <a
+                    href={companyInfo.company_location_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#C59345] transition-colors inline-flex items-center gap-1 group/map"
+                    title="View workshop on Google Maps"
+                  >
+                    <span>{companyInfo.company_address || "Sahiwal, Punjab, Pakistan"}</span>
+                    <span className="text-[10px] text-[#C59345] opacity-75 group-hover/map:opacity-100 uppercase tracking-wider font-semibold ml-0.5">
+                      (Map ↗)
+                    </span>
+                  </a>
+                ) : (
+                  <span>{companyInfo.company_address || "Sahiwal, Punjab, Pakistan"}</span>
+                )}
               </li>
             </ul>
           </div>

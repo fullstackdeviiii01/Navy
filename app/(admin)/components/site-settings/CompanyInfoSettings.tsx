@@ -5,9 +5,13 @@ import { useState, useEffect, useRef } from "react";
 import { FaSave, FaUpload, FaTrash, FaBuilding, FaEnvelope, FaGlobe } from "react-icons/fa";
 import { 
   BsInstagram, 
+  BsTiktok,
   BsFacebook, 
   BsPinterest, 
-  BsWhatsapp 
+  BsWhatsapp,
+  BsYoutube,
+  BsTwitterX,
+  BsLinkedin
 } from "react-icons/bs";
 import { siteSettingsApi } from "../../../../lib/api/siteSettings";
 import Image from "next/image";
@@ -15,8 +19,13 @@ import Loader from "../../../components/shared/Loader";
 
 const SOCIAL_PLATFORMS = [
   { key: "instagram", label: "Instagram", icon: BsInstagram, placeholder: "https://instagram.com/yourhandle" },
+  { key: "tiktok", label: "TikTok", icon: BsTiktok, placeholder: "https://tiktok.com/@yourhandle" },
   { key: "facebook", label: "Facebook", icon: BsFacebook, placeholder: "https://facebook.com/yourpage" },
   { key: "whatsapp", label: "WhatsApp", icon: BsWhatsapp, placeholder: "https://wa.me/923009692765" },
+  { key: "pinterest", label: "Pinterest", icon: BsPinterest, placeholder: "https://pinterest.com/yourhandle" },
+  { key: "youtube", label: "YouTube", icon: BsYoutube, placeholder: "https://youtube.com/@yourchannel" },
+  { key: "twitter", label: "X (Twitter)", icon: BsTwitterX, placeholder: "https://x.com/yourhandle" },
+  { key: "linkedin", label: "LinkedIn", icon: BsLinkedin, placeholder: "https://linkedin.com/company/yourhandle" },
 ];
 
 export default function CompanyInfoSettings() {
@@ -36,8 +45,13 @@ export default function CompanyInfoSettings() {
     company_website: "",
     social_media: {
       instagram: "",
+      tiktok: "",
       facebook: "",
       whatsapp: "",
+      pinterest: "",
+      youtube: "",
+      twitter: "",
+      linkedin: "",
     },
     copyright_text: "",
   });
@@ -62,8 +76,13 @@ export default function CompanyInfoSettings() {
           company_website: data.company_info.company_website || "",
           social_media: {
             instagram: data.company_info.social_media?.instagram || "",
+            tiktok: data.company_info.social_media?.tiktok || "",
             facebook: data.company_info.social_media?.facebook || "",
             whatsapp: data.company_info.social_media?.whatsapp || "",
+            pinterest: data.company_info.social_media?.pinterest || "",
+            youtube: data.company_info.social_media?.youtube || "",
+            twitter: data.company_info.social_media?.twitter || "",
+            linkedin: data.company_info.social_media?.linkedin || "",
           },
           copyright_text: data.company_info.copyright_text || "",
         });
@@ -331,12 +350,15 @@ export default function CompanyInfoSettings() {
             </label>
             <input
               id="company-location-link"
-              type="url"
+              type="text"
               value={formData.company_location_link}
               onChange={(e) => setFormData((prev) => ({ ...prev, company_location_link: e.target.value }))}
-              placeholder="https://maps.google.com/?q=..."
+              placeholder="https://maps.google.com/?q=... or embed link"
               className="w-full px-3 py-2 border border-theme-border-light dark:border-theme-border-dark rounded-lg bg-theme-bg-light dark:bg-theme-bg-dark text-theme-text-primary-light dark:text-theme-text-primary-dark focus:outline-none focus:ring-2 focus:ring-theme-primary text-xs sm:text-sm"
             />
+            <p className="text-[11px] text-theme-text-muted-light dark:text-theme-text-muted-dark mt-1">
+              Supports Google Maps share links, place URLs, or embed codes. Displayed responsively on the Contact page &amp; Footer.
+            </p>
           </div>
 
           <div className="md:col-span-2">

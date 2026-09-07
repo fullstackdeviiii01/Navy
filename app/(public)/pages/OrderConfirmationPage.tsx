@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import Loader from "../../components/shared/Loader";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { getCourierTrackingUrl } from "../../../lib/constants/couriers";
 import { getItemImage } from "../../../lib/utils/productImages";
 import { openImagePreview } from "../../../lib/utils/mediaPreview";
 import DownloadInvoiceButton from "../../components/invoice/DownloadInvoiceButton";
@@ -401,6 +402,75 @@ export default function OrderConfirmationPage({ orderId }: Props) {
           {/* RIGHT: Delivery, Payment & Concierge Info (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             
+            {/* Live Courier Tracking Card (if dispatched) */}
+            {(order.tracking_number || order.carrier) && (
+              <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6 shadow-xs space-y-3">
+                <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 pb-2 border-b border-theme-border-light dark:border-theme-border-dark">
+                  <Truck className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark" />
+                  <span>Live Courier Tracking</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {order.carrier && (
+                    <div>
+                      <span className="text-[10px] uppercase font-semibold text-theme-text-muted-light block">
+                        Courier Partner
+                      </span>
+                      <span className="font-bold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                        {order.carrier}
+                      </span>
+                    </div>
+                  )}
+                  {order.tracking_number && (
+                    <div>
+                      <span className="text-[10px] uppercase font-semibold text-theme-text-muted-light block">
+                        Tracking / Consignment ID
+                      </span>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="font-mono font-bold text-indigo-700 dark:text-indigo-400">
+                          {order.tracking_number}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (navigator?.clipboard) {
+                              navigator.clipboard.writeText(order.tracking_number);
+                              alert("Tracking ID copied to clipboard!");
+                            }
+                          }}
+                          className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                          title="Copy tracking ID"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {(() => {
+                  const trackingUrl = getCourierTrackingUrl(order.carrier, order.tracking_number);
+                  if (!trackingUrl) return null;
+                  return (
+                    <div className="pt-2 border-t border-theme-border-light/60 dark:border-theme-border-dark/60">
+                      <a
+                        href={trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => {
+                          if (navigator?.clipboard && order.tracking_number) {
+                            navigator.clipboard.writeText(order.tracking_number);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                      >
+                        <span>Visit {order.carrier || "Courier"} Official Website</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
             {/* Delivery Details Card */}
             <div className="border border-theme-border-light dark:border-theme-border-dark bg-theme-surface-light dark:bg-theme-surface-dark p-4 sm:p-6 shadow-xs space-y-3">
               <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark flex items-center gap-2 pb-2 border-b border-theme-border-light dark:border-theme-border-dark">

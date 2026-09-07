@@ -250,13 +250,13 @@ export default function CuratedProductCarousel({
   const [startIndex, setStartIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // 2. 5-second automatic rotation: cycle through the tagged product pool
+  // 2. 10-second automatic rotation: cycle smoothly through the tagged product pool
   useEffect(() => {
     if (!uniqueProducts || uniqueProducts.length <= 1 || isPaused) return;
 
     const interval = setInterval(() => {
       setStartIndex((prev) => (prev + 1) % uniqueProducts.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [uniqueProducts, isPaused]);

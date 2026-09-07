@@ -65,10 +65,10 @@ export async function PUT(
 
     if (status === "confirmed" && !order.confirmed_at) {
       order.confirmed_at = new Date();
-    } else if (status === "shipped" && !order.shipped_at) {
-      order.shipped_at = new Date();
-      if (tracking_number) order.tracking_number = tracking_number;
-      if (carrier) order.carrier = carrier;
+    } else if (status === "shipped") {
+      if (!order.shipped_at) order.shipped_at = new Date();
+      if (tracking_number !== undefined) order.tracking_number = tracking_number;
+      if (carrier !== undefined) order.carrier = carrier;
     } else if (status === "delivered" && !order.delivered_at) {
       order.delivered_at = new Date();
     } else if (status === "cancelled" && !order.cancelled_at) {

@@ -11,12 +11,16 @@ export const orderStatusUpdateTemplate = (order: any, status: string) => {
       ? order.guest_info?.name
       : (order.user_id?.name || order.guest_info?.name || "Valued Patron");
 
+  const isCod = (order.payment_method || "").toLowerCase() === "cod";
+
   const statusConfig: Record<string, { title: string; subtitle: string; color: string; message: string }> = {
     confirmed: {
       title: "Order Confirmed",
-      subtitle: "PAYMENT VERIFIED & ORDER QUEUED",
+      subtitle: isCod ? "ORDER VERIFIED & IN PRODUCTION" : "PAYMENT VERIFIED & ORDER QUEUED",
       color: "#16a34a",
-      message: "Your payment has been successfully confirmed. Our master woodturners and artisans have begun preparing your handcrafted luminaire.",
+      message: isCod
+        ? `Your Cash on Delivery (COD) order has been verified and confirmed. Our master artisans have begun preparing your handcrafted luminaire. Total payment of Rs. ${(order.pricing?.total || 0).toLocaleString()} will be collected in cash upon delivery.`
+        : "Your payment has been successfully confirmed. Our master woodturners and artisans have begun preparing your handcrafted luminaire.",
     },
     processing: {
       title: "Crafting in Progress",
@@ -102,13 +106,41 @@ export const orderStatusUpdateTemplate = (order: any, status: string) => {
                 </td>
               </tr>
               <tr>
-                <td style="padding: 10px 14px; color: #64748b; font-weight: 500;">
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">
+                  Payment Method:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                  ${isCod ? "Cash on Delivery (COD)" : (order.payment_method ? order.payment_method.toUpperCase() : "Online Payment")}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">
                   Delivery Destination:
                 </td>
-                <td style="padding: 10px 14px; font-weight: 600; color: #0f172a; text-align: right;">
+                <td style="padding: 10px 14px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #f1f5f9;">
                   ${order.shipping_address?.city || "Pakistan"}
                 </td>
               </tr>
+              ${order.carrier ? `
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500; border-bottom: 1px solid #f1f5f9;">
+                  Courier Service:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 700; color: #0f172a; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                  ${order.carrier}
+                </td>
+              </tr>
+              ` : ""}
+              ${order.tracking_number ? `
+              <tr>
+                <td style="padding: 10px 14px; color: #64748b; font-weight: 500;">
+                  Tracking / Consignment ID:
+                </td>
+                <td style="padding: 10px 14px; font-weight: 700; font-family: monospace; color: #4338ca; text-align: right;">
+                  ${order.tracking_number}
+                </td>
+              </tr>
+              ` : ""}
             </tbody>
           </table>
 

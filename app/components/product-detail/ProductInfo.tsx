@@ -87,7 +87,7 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
     : null;
 
   return (
-    <div className="space-y-2.5 pb-3">
+    <div className="space-y-2.5">
       {/* Title & Wishlist Button Row */}
       <div className="flex items-start justify-between gap-3">
         <h1 className="text-2xl sm:text-3xl font-sans font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark leading-snug">
@@ -135,16 +135,6 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
         >
           {displayPrice}
         </span>
-        {maxPrice && (
-          <>
-            <span className="text-sm sm:text-base font-sans text-gray-400 dark:text-gray-500 shrink-0">
-              —
-            </span>
-            <span className="text-xl xs:text-2xl sm:text-3xl font-sans font-bold text-[#D32F2F] dark:text-[#FF5252] whitespace-nowrap shrink-0" aria-label={`Maximum price: ${maxPrice}`}>
-              {maxPrice}
-            </span>
-          </>
-        )}
         {discountPercent && discountPercent > 0 && (
           <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 rounded text-[10px] xs:text-[11px] sm:text-xs font-semibold font-sans bg-[#FCE8E6] text-[#D93025] dark:bg-red-950/60 dark:text-red-300 whitespace-nowrap shrink-0">
             Save {discountPercent}%
@@ -153,7 +143,7 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
       </div>
 
       {/* Meta Details: SKU -> AVAILABILITY -> PRODUCT TYPE */}
-      <div className="pt-3 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-1.5 text-xs font-sans">
+      <div className="pt-3.5 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-3.5 text-xs font-sans">
         {currentSku && (
           <div className="flex items-center gap-1.5">
             <span className="uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">

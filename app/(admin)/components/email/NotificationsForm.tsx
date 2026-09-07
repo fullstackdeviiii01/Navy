@@ -26,9 +26,9 @@ interface NotificationsFormProps {
       enabled: boolean;
       notify_on_request: boolean;
       notify_on_approved: boolean;
-      notify_on_received: boolean;
-      notify_on_processed: boolean;
-      notify_on_completed: boolean;
+      notify_on_received?: boolean;
+      notify_on_processed?: boolean;
+      notify_on_completed?: boolean;
       notify_on_rejected: boolean;
       admin_email: string;
     };
@@ -247,36 +247,6 @@ export default function NotificationsForm({ emailNotifications, onNotificationsC
                 className="w-4 h-4 text-blue-600 flex-shrink-0"
               />
               <span className="text-xs sm:text-sm">Notify on Approved</span>
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications.notify_on_received}
-                onChange={(e) => onNotificationsChange("return_notifications", "notify_on_received", e.target.checked)}
-                className="w-4 h-4 text-blue-600 flex-shrink-0"
-              />
-              <span className="text-xs sm:text-sm">Notify on Received</span>
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications.notify_on_processed}
-                onChange={(e) => onNotificationsChange("return_notifications", "notify_on_processed", e.target.checked)}
-                className="w-4 h-4 text-blue-600 flex-shrink-0"
-              />
-              <span className="text-xs sm:text-sm">Notify on Processed</span>
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications.notify_on_completed}
-                onChange={(e) => onNotificationsChange("return_notifications", "notify_on_completed", e.target.checked)}
-                className="w-4 h-4 text-blue-600 flex-shrink-0"
-              />
-              <span className="text-xs sm:text-sm">Notify on Completed</span>
             </label>
 
             <label className="flex items-center gap-2">

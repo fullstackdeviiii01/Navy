@@ -3,9 +3,13 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface ISocialMedia {
   instagram?: string;
+  tiktok?: string;
   facebook?: string;
-  pinterest?: string;
   whatsapp?: string;
+  pinterest?: string;
+  youtube?: string;
+  twitter?: string;
+  linkedin?: string;
 }
 
 export interface ICompanyInfo {
@@ -32,9 +36,13 @@ export interface ISiteSettingsDocument extends Document {
 const SocialMediaSchema = new Schema<ISocialMedia>(
   {
     instagram: { type: String, trim: true },
+    tiktok: { type: String, trim: true },
     facebook: { type: String, trim: true },
-    pinterest: { type: String, trim: true },
     whatsapp: { type: String, trim: true },
+    pinterest: { type: String, trim: true },
+    youtube: { type: String, trim: true },
+    twitter: { type: String, trim: true },
+    linkedin: { type: String, trim: true },
   },
   { _id: false }
 );

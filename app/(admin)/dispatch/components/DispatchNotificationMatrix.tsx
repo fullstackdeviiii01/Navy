@@ -27,9 +27,9 @@ interface EmailNotifications {
     enabled: boolean;
     notify_on_request: boolean;
     notify_on_approved: boolean;
-    notify_on_received: boolean;
-    notify_on_processed: boolean;
-    notify_on_completed: boolean;
+    notify_on_received?: boolean;
+    notify_on_processed?: boolean;
+    notify_on_completed?: boolean;
     notify_on_rejected: boolean;
     admin_email: string;
   };
@@ -315,60 +315,6 @@ export default function DispatchNotificationMatrix({
               />
               <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
                 Notify on Return Approved
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2.5 p-2.5 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications?.notify_on_received ?? true}
-                onChange={(e) =>
-                  onNotificationsChange(
-                    "return_notifications",
-                    "notify_on_received",
-                    e.target.checked
-                  )
-                }
-                className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
-              />
-              <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Item Received
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2.5 p-2.5 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications?.notify_on_processed ?? true}
-                onChange={(e) =>
-                  onNotificationsChange(
-                    "return_notifications",
-                    "notify_on_processed",
-                    e.target.checked
-                  )
-                }
-                className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
-              />
-              <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Inspection Complete
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2.5 p-2.5 rounded-lg border border-theme-border-light dark:border-theme-border-dark bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-              <input
-                type="checkbox"
-                checked={emailNotifications.return_notifications?.notify_on_completed ?? true}
-                onChange={(e) =>
-                  onNotificationsChange(
-                    "return_notifications",
-                    "notify_on_completed",
-                    e.target.checked
-                  )
-                }
-                className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4"
-              />
-              <span className="font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark">
-                Notify on Refund Sent
               </span>
             </label>
 

@@ -226,7 +226,10 @@ export default function ProductVariantSelector({
             attributeOption.displayName.toLowerCase() === "color";
 
           return (
-            <div key={attributeOption.name} className="space-y-1.5">
+            <div
+              key={attributeOption.name}
+              className="pt-3 pb-1 border-t border-theme-border-light/60 dark:border-theme-border-dark/60 space-y-2"
+            >
               {/* Label */}
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-[0.2em] font-medium text-theme-text-secondary-light dark:text-theme-text-secondary-dark">
@@ -311,7 +314,7 @@ export default function ProductVariantSelector({
                         }
                         disabled={isDisabled}
                         className={`
-                          relative px-3.5 py-1.5 border text-xs uppercase tracking-[0.15em] font-medium transition-all
+                          relative px-3.5 py-1.5 border rounded-full text-xs tracking-wider font-medium transition-all
                           ${
                             isSelected
                               ? "border-theme-primary bg-theme-primary text-theme-btn-text shadow-sm"

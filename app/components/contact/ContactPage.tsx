@@ -3,8 +3,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MapPin, ExternalLink } from "lucide-react";
 import { siteSettingsApi } from "../../../lib/api/siteSettings";
+import { getGoogleMapsEmbedUrl } from "../../../lib/utils/googleMaps";
 import ContactForm from "./ContactForm";
 import ContactInfo from "./ContactInfo";
 import Loader from "../shared/Loader";
@@ -36,6 +37,8 @@ export default function ContactPage() {
       </div>
     );
   }
+
+  const mapEmbedUrl = settings ? getGoogleMapsEmbedUrl(settings.company_location_link, settings.company_address) : "";
 
   return (
     <div className="min-h-screen bg-theme-bg-light dark:bg-theme-bg-dark py-12 sm:py-16 transition-colors">
@@ -79,6 +82,55 @@ export default function ContactPage() {
             <ContactForm />
           </div>
         </div>
+
+        {/* Atelier Location & Interactive Google Map */}
+        {(settings?.company_location_link || settings?.company_address) && mapEmbedUrl && (
+          <div className="mt-12 sm:mt-16 pt-8 sm:pt-12 border-t border-theme-border-light dark:border-theme-border-dark">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+              <div>
+                <p className="text-xs font-medium tracking-[0.2em] uppercase text-theme-hover-light dark:text-theme-hover-dark mb-1">
+                  FIND OUR WORKSHOP
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-serif font-medium text-theme-text-primary-light dark:text-theme-text-primary-dark tracking-tight">
+                  Atelier &amp; Studio Location
+                </h2>
+                {settings.company_address && (
+                  <p className="text-xs sm:text-sm text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-1.5 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-theme-hover-light dark:text-theme-hover-dark shrink-0" />
+                    <span>{settings.company_address}</span>
+                  </p>
+                )}
+              </div>
+              {settings.company_location_link && (
+                <a
+                  href={settings.company_location_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-white hover:bg-[#C58A2B] hover:border-[#C58A2B] transition-all text-xs font-semibold uppercase tracking-wider shadow-xs shrink-0 self-start sm:self-auto"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Open in Google Maps</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+
+            {/* Responsive Map Container */}
+            <div className="relative w-full h-[320px] sm:h-[400px] md:h-[460px] rounded-lg overflow-hidden border border-theme-border-light dark:border-theme-border-dark shadow-sm bg-neutral-100 dark:bg-neutral-900">
+              <iframe
+                title="Atelier Workshop Location Map"
+                src={mapEmbedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -187,15 +187,15 @@ button.link:hover {
 /* Smooth product swap transition for curated homepage carousels */
 @keyframes productSmoothSwap {
   0% {
-    opacity: 0.3;
-    transform: scale(0.985);
+    opacity: 0.05;
+    transform: translateY(4px);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
 .animate-product-swap {
-  animation: productSmoothSwap 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: productSmoothSwap 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
