@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Search, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductImagesProps {
   images: { url: string; alt_text?: string }[];
@@ -12,7 +12,6 @@ interface ProductImagesProps {
 
 export default function ProductImages({ images, productName }: ProductImagesProps) {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false);
 
   if (!images || images.length === 0) {
     return (
@@ -74,14 +73,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
           {selectedImage + 1} / {images.length}
         </div>
 
-        {/* Zoom trigger */}
-        <button
-          onClick={() => setIsZoomed(true)}
-          className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-          aria-label="Zoom image"
-        >
-          <Search className="w-4 h-4" />
-        </button>
+
 
         {/* Quick Nav Arrows on Hover */}
         {images.length > 1 && (
@@ -104,30 +96,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
         )}
       </div>
 
-      {/* Fullscreen Zoom Modal */}
-      {isZoomed && (
-        <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-          onClick={() => setIsZoomed(false)}
-        >
-          <button
-            onClick={() => setIsZoomed(false)}
-            className="absolute top-6 right-6 text-white/80 hover:text-white p-2"
-            aria-label="Close fullscreen image"
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <div className="relative max-w-5xl max-h-[85vh] w-full h-full">
-            <Image
-              src={images[selectedImage].url}
-              alt={images[selectedImage].alt_text || productName}
-              fill
-              className="object-contain"
-              sizes="90vw"
-            />
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

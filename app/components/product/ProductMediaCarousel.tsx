@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Play, Pause, ZoomIn, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
 
 interface MediaItem {
   type: "image" | "video";
@@ -37,7 +37,7 @@ export default function ProductMediaCarousel({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [showControls, setShowControls] = useState(false);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const thumbnailScrollRef = useRef<HTMLDivElement>(null);
@@ -54,21 +54,7 @@ export default function ProductMediaCarousel({
     }
   }, [activeVariantImageUrl, media]);
 
-  // Keyboard navigation for Lightbox
-  useEffect(() => {
-    if (!isLightboxOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsLightboxOpen(false);
-      } else if (e.key === "ArrowLeft") {
-        setCurrentIndex((prev) => (prev === 0 ? media.length - 1 : prev - 1));
-      } else if (e.key === "ArrowRight") {
-        setCurrentIndex((prev) => (prev === media.length - 1 ? 0 : prev + 1));
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isLightboxOpen, media.length]);
+
 
   const currentMedia = media[currentIndex];
   const isCard = variant === "card";
@@ -151,8 +137,6 @@ export default function ProductMediaCarousel({
   const handleMainMediaClick = () => {
     if (isCard && productId) {
       router.push(`/product/${productId}`);
-    } else if (!isCard) {
-      setIsLightboxOpen(true);
     }
   };
 
@@ -281,7 +265,7 @@ export default function ProductMediaCarousel({
           role="region"
           aria-roledescription="carousel"
           aria-label={`${productName} media gallery`}
-          className="relative w-full aspect-[4/5] sm:aspect-square max-h-[540px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group cursor-zoom-in rounded-xs"
+          className="relative w-full aspect-[4/5] sm:aspect-square max-h-[540px] bg-theme-card-light dark:bg-theme-card-dark border border-theme-border-light dark:border-theme-border-dark overflow-hidden group rounded-xs"
           onMouseEnter={() => {
             setIsVideoHovered(true);
             setShowControls(true);
@@ -317,10 +301,7 @@ export default function ProductMediaCarousel({
             />
           )}
 
-          {/* Zoom Indicator Icon on Hover */}
-          <div className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none rounded-sm">
-            <ZoomIn className="w-4 h-4 text-white" />
-          </div>
+
 
           {/* Pagination Dots at Bottom Center of Main Image */}
           {media.length > 1 && (
@@ -458,75 +439,7 @@ export default function ProductMediaCarousel({
         )}
       </div>
 
-      {/* ── FULLSCREEN LIGHTBOX POPUP MODAL (Matching Review Lightbox) ── */}
-      {isLightboxOpen && (
-        <div
-          className="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setIsLightboxOpen(false)}
-        >
-          {/* Close button */}
-          <button
-            onClick={() => setIsLightboxOpen(false)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 hover:text-white p-2.5 z-20 bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
-            aria-label="Close fullscreen preview"
-          >
-            <X className="w-6 h-6" />
-          </button>
 
-          {/* Counter Badge */}
-          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 text-white text-xs font-mono tracking-widest px-3.5 py-1.5 bg-white/10 backdrop-blur-xs rounded-full z-20">
-            {currentIndex + 1} / {media.length}
-          </div>
-
-          {/* Previous / Next buttons */}
-          {media.length > 1 && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goToPrevious(e);
-                }}
-                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 p-3 sm:p-4 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full z-20 transition-all cursor-pointer"
-                aria-label="Previous media"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goToNext(e);
-                }}
-                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 p-3 sm:p-4 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full z-20 transition-all cursor-pointer"
-                aria-label="Next media"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            </>
-          )}
-
-          {/* Enlarged Media Container */}
-          <div
-            className="relative max-w-5xl max-h-[85vh] w-full h-full flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {currentMedia.type === "image" ? (
-              <img
-                src={currentMedia.url}
-                alt={currentMedia.alt_text || productName}
-                className="max-h-[85vh] max-w-full object-contain rounded-xs select-none shadow-2xl"
-              />
-            ) : (
-              <video
-                src={currentMedia.url}
-                controls
-                autoPlay
-                className="max-h-[85vh] max-w-full rounded-xs shadow-2xl"
-              />
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }
