@@ -176,6 +176,10 @@ export default function AccountPage() {
         throw new Error(data.error || "Failed to update password");
       }
 
+      if (data.token) {
+        localStorage.setItem("auth_token", data.token);
+      }
+
       setSuccess("Password updated successfully.");
       setPasswordForm({
         currentPassword: "",

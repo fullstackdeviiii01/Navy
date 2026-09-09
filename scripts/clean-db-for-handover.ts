@@ -116,6 +116,7 @@ async function cleanDatabase() {
             wishlist: [],
             order_count: 0,
             total_spent: 0,
+            login_history: [],
           },
           $unset: {
             last_order_at: "",

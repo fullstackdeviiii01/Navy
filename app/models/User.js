@@ -57,6 +57,8 @@ const UserSchema = new mongoose.Schema(
     role: { type: String, enum: ["user", "admin"], default: "user" },
     is_active: { type: Boolean, default: true },
     is_banned: { type: Boolean, default: false },
+    token_version: { type: Number, default: 0 },
+    password_changed_at: { type: Date },
 
     // Preferences
     preferred_currency: { type: String, default: "PKR" }, // ISO 4217

@@ -1,7 +1,7 @@
 // app/api/auth/change-password/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getIdTokenFromHeader, verifyIdToken } from "../../../../lib/auth";
+import { getIdTokenFromHeader, verifyIdToken, generateToken } from "../../../../lib/auth";
 import connectDB from "../../../../lib/db";
 import User from "../../../models/User";
 
@@ -53,12 +53,35 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(new_password, salt);
 
     user.password = hashedPassword;
+    user.token_version = (user.token_version || 0) + 1;
+    user.password_changed_at = new Date();
     await user.save();
 
-    return NextResponse.json({
+    // Issue updated token with the incremented token_version for the current user
+    const newToken = generateToken(user);
+
+    const response = NextResponse.json({
       success: true,
       message: "Password updated successfully",
+      token: newToken,
     });
+
+    const isProd = process.env.NODE_ENV === "production";
+    response.cookies.set("__session", newToken, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+      secure: isProd,
+      sameSite: "lax",
+    });
+    response.cookies.set("auth_token", newToken, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: false,
+      secure: isProd,
+      sameSite: "lax",
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Change password error:", error);
     return NextResponse.json(
