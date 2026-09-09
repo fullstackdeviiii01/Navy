@@ -127,6 +127,7 @@ export interface IProductDocument extends Document {
   visibility: "public" | "hidden" | "members_only";
   is_most_loved?: boolean;
   is_premium?: boolean;
+  is_featured?: boolean;
 
   published_at?: Date;
   available_from?: Date;

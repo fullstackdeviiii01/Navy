@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { ProductVariant } from "../../../../../types/product-variants";
+import { convertImageToWebP } from "../../../../../lib/utils/imageToWebp";
 
 interface PermutationItemFormProps {
   isOpen: boolean;
@@ -36,8 +37,9 @@ export default function PermutationItemForm({
 
     try {
       setUploading(true);
+      const webpFile = await convertImageToWebP(file);
       const data = new FormData();
-      data.append("image", file);
+      data.append("image", webpFile);
 
       const response = await fetch("/api/products/upload-image", {
         method: "POST",

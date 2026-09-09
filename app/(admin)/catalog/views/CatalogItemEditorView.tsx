@@ -11,6 +11,7 @@ import FinishMatrixStudio, { ColorItem } from "../components/matrix/FinishMatrix
 import dynamic from "next/dynamic";
 import Loader from "../../../components/shared/Loader";
 import { VariantOption, ProductVariant } from "../../../../types/product-variants";
+import { convertImageToWebP } from "../../../../lib/utils/imageToWebp";
 
 const LazyJoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -58,6 +59,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
     status: "draft",
     is_most_loved: false,
     is_premium: false,
+    is_featured: false,
     sku: "",
   });
 
@@ -130,6 +132,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         status: p.status || "draft",
         is_most_loved: Boolean(p.is_most_loved),
         is_premium: Boolean(p.is_premium),
+        is_featured: Boolean(p.is_featured),
         sku: p.sku || p.inventory?.sku || "",
       });
 
@@ -166,8 +169,9 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
   const uploadFiles = async (files: File[]): Promise<any[]> => {
     const uploadedImages = [];
     for (const file of files) {
+      const webpFile = await convertImageToWebP(file);
       const uploadFormData = new FormData();
-      uploadFormData.append("image", file);
+      uploadFormData.append("image", webpFile);
 
       const response = await fetch("/api/products/upload-image", {
         method: "POST",
@@ -178,7 +182,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         const data = await response.json();
         uploadedImages.push({
           url: data.url,
-          alt_text: file.name,
+          alt_text: webpFile.name,
           is_primary: false,
         });
       }
@@ -375,6 +379,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
         status: formData.status,
         is_most_loved: Boolean(formData.is_most_loved),
         is_premium: Boolean(formData.is_premium),
+        is_featured: Boolean(formData.is_featured),
         images: allImages,
         videos: allVideos,
         hasVariants,
@@ -877,7 +882,7 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
               {/* Most Loved Tag */}
               <label className={`flex items-start gap-3 p-3.5 rounded-lg border cursor-pointer transition-all select-none ${
                 formData.is_most_loved
@@ -896,6 +901,28 @@ export default function CatalogItemEditorView({ mode, productId }: CatalogItemEd
                   </span>
                   <span className="block text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
                     Displays in the &ldquo;MOST LOVED BY OUR CUSTOMERS&rdquo; section on the home page.
+                  </span>
+                </div>
+              </label>
+
+              {/* Featured Collection Tag */}
+              <label className={`flex items-start gap-3 p-3.5 rounded-lg border cursor-pointer transition-all select-none ${
+                formData.is_featured
+                  ? "bg-[#C59345]/10 border-[#C59345] shadow-xs"
+                  : "bg-theme-bg-light/50 dark:bg-theme-bg-dark/50 border-theme-border-light dark:border-theme-border-dark hover:border-[#C59345]/50"
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={formData.is_featured}
+                  onChange={(e) => updateFormData({ is_featured: e.target.checked })}
+                  className="mt-0.5 w-4 h-4 text-[#C59345] border-gray-300 rounded focus:ring-[#C59345] cursor-pointer"
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="block text-xs font-semibold text-theme-text-primary-light dark:text-theme-text-primary-dark">
+                    Featured Collection
+                  </span>
+                  <span className="block text-[11px] text-theme-text-secondary-light dark:text-theme-text-secondary-dark mt-0.5">
+                    Displays in the &ldquo;FEATURED COLLECTION&rdquo; section on the home page.
                   </span>
                 </div>
               </label>

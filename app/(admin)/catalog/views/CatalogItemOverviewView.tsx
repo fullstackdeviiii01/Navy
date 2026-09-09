@@ -196,6 +196,11 @@ export default function CatalogItemOverviewView({
                   ★ Most Loved
                 </span>
               )}
+              {product.is_featured && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9.5px] font-mono font-bold uppercase tracking-wider bg-[#C59345]/20 border border-[#C59345]/50 text-[#8E6533] dark:text-[#E5B568] rounded-xs">
+                  ✦ Featured
+                </span>
+              )}
               {product.is_premium && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9.5px] font-mono font-bold uppercase tracking-wider bg-[#8E6533]/15 border border-[#8E6533]/40 text-[#8E6533] dark:text-[#E5C189] rounded-xs">
                   ◆ Premium

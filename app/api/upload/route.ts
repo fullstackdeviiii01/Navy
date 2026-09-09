@@ -38,14 +38,26 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 10);
     const rawExt = file.name.split(".").pop()?.toLowerCase() || (isImage ? "jpg" : isPdf ? "pdf" : "mp4");
-    const sanitizedExt = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+    let sanitizedExt = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+
+    const bytes = await file.arrayBuffer();
+    let buffer = Buffer.from(bytes);
+
+    // Convert to WebP if it's an image and not already WebP/SVG/GIF
+    if (isImage && sanitizedExt !== "webp" && sanitizedExt !== "svg" && sanitizedExt !== "gif") {
+      try {
+        const sharp = (await import("sharp")).default;
+        buffer = await sharp(buffer).webp({ quality: 85 }).toBuffer();
+        sanitizedExt = "webp";
+      } catch (sharpErr) {
+        // Fallback safely if sharp is unavailable
+      }
+    }
+
     const filename = `media_${timestamp}_${randomString}.${sanitizedExt}`;
 
     const { ensureUploadDir } = await import("../../../lib/storage/uploads");
     const uploadDir = await ensureUploadDir("uploads", "returns");
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);

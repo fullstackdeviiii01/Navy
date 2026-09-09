@@ -106,11 +106,12 @@ export default function ContactPage() {
                   href={settings.company_location_link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-theme-surface-light dark:bg-theme-surface-dark border border-theme-border-light dark:border-theme-border-dark text-theme-text-primary-light dark:text-theme-text-primary-dark hover:text-white hover:bg-[#C58A2B] hover:border-[#C58A2B] transition-all text-xs font-semibold uppercase tracking-wider shadow-xs shrink-0 self-start sm:self-auto"
+                  className="no-theme-hover inline-flex items-center gap-2 px-4 py-2.5 rounded-sm text-xs font-semibold uppercase tracking-wider shadow-xs shrink-0 self-start sm:self-auto transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: "#A8752B", color: "#FFFFFF" }}
                 >
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Open in Google Maps</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <MapPin className="w-3.5 h-3.5" style={{ color: "#FFFFFF" }} />
+                  <span style={{ color: "#FFFFFF" }}>Open in Google Maps</span>
+                  <ExternalLink className="w-3 h-3" style={{ color: "#FFFFFF" }} />
                 </a>
               )}
             </div>

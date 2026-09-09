@@ -25,7 +25,7 @@ export const getHomeDataSSR = async () => {
       .lean();
 
     const productFields =
-      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium";
+      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium is_featured";
 
     const newArrivals = await (Product as any)
       .find({
@@ -92,6 +92,33 @@ export const getHomeDataSSR = async () => {
         .lean();
     }
 
+    // Query tagged "Featured Collection" products
+    let featuredProducts = await (Product as any)
+      .find({
+        status: "active",
+        is_visible: true,
+        is_featured: true,
+      })
+      .select(productFields)
+      .populate("category_id", "name slug")
+      .sort({ created_at: -1 })
+      .limit(30)
+      .lean();
+
+    // Graceful fallback if no products tagged yet
+    if (!featuredProducts || featuredProducts.length === 0) {
+      featuredProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ created_at: -1 })
+        .limit(20)
+        .lean();
+    }
+
     const bestSellers = await (Product as any)
       .find({
         status: "active",
@@ -121,6 +148,7 @@ export const getHomeDataSSR = async () => {
         bestSellers,
         mostLovedProducts: mostLovedProducts.length > 0 ? mostLovedProducts : bestSellers,
         premiumProducts: premiumProducts.length > 0 ? premiumProducts : newArrivals,
+        featuredProducts: featuredProducts.length > 0 ? featuredProducts : newArrivals,
         showcaseProducts: showcaseProducts.length > 0 ? showcaseProducts : (mostLovedProducts.length > 0 ? mostLovedProducts : bestSellers),
       })
     );
@@ -132,6 +160,7 @@ export const getHomeDataSSR = async () => {
       bestSellers: [],
       mostLovedProducts: [],
       premiumProducts: [],
+      featuredProducts: [],
       showcaseProducts: [],
     };
   }

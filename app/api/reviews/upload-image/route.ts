@@ -32,14 +32,26 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 10);
     const rawExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const ext = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+    let ext = rawExt.replace(/[^a-zA-Z0-9]/g, "");
+
+    const bytes = await file.arrayBuffer();
+    let buffer = Buffer.from(bytes);
+
+    // Server-side double safeguard: If not already WebP, convert to WebP
+    if (ext !== "webp" && ext !== "svg" && ext !== "gif") {
+      try {
+        const sharp = (await import("sharp")).default;
+        buffer = await sharp(buffer).webp({ quality: 85 }).toBuffer();
+        ext = "webp";
+      } catch (sharpErr) {
+        // If sharp binary is unavailable on server, keep original safely
+      }
+    }
+
     const filename = `review_${timestamp}_${randomString}.${ext}`;
 
     const { ensureUploadDir } = await import("../../../../lib/storage/uploads");
     const uploadDir = await ensureUploadDir("reviews", "images");
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);

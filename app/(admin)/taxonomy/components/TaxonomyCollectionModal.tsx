@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { categoriesApi } from "../../../../lib/api/categories";
 import { FaUpload, FaTimes, FaImage, FaTrash } from "react-icons/fa";
 import Image from "next/image";
+import { convertImageToWebP } from "../../../../lib/utils/imageToWebp";
 
 interface CategoryItem {
   _id: string;
@@ -79,13 +80,15 @@ export default function TaxonomyCollectionModal({
 
     try {
       setUploading(true);
+      const webpFile = await convertImageToWebP(file);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(webpFile);
 
-      const result = await categoriesApi.uploadImage(file);
+      const result = await categoriesApi.uploadImage(webpFile);
       setFormData((prev) => ({ ...prev, image_url: result.imageUrl }));
     } catch (error: any) {
       alert(error.message || "Failed to upload image");

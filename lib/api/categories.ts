@@ -1,4 +1,5 @@
 import { getAuthToken, handleResponse } from "./helpers";
+import { convertImageToWebP } from "../utils/imageToWebp";
 
 export const categoriesApi = {
   getAll: async (includeInactive = true) => {
@@ -51,8 +52,9 @@ export const categoriesApi = {
   },
 
   uploadImage: async (file: File) => {
+    const webpFile = await convertImageToWebP(file);
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", webpFile);
 
     const response = await fetch("/api/categories/upload-image", {
       method: "POST",

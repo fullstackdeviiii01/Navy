@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       .lean();
 
     const productFields =
-      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium";
+      "name description pricing images rating_average rating_count purchase_count inventory attributes hasVariants variants variantOptions variantPricing variantInventory category_id seo is_most_loved is_premium is_featured";
 
     // New Arrivals (most recently created active products)
     const newArrivals = await (Product as any)
@@ -81,6 +81,32 @@ export async function GET(request: NextRequest) {
         .lean();
     }
 
+    // Featured Collection
+    let featuredProducts = await (Product as any)
+      .find({
+        status: "active",
+        is_visible: true,
+        is_featured: true,
+      })
+      .select(productFields)
+      .populate("category_id", "name slug")
+      .sort({ created_at: -1 })
+      .limit(30)
+      .lean();
+
+    if (!featuredProducts || featuredProducts.length === 0) {
+      featuredProducts = await (Product as any)
+        .find({
+          status: "active",
+          is_visible: true,
+        })
+        .select(productFields)
+        .populate("category_id", "name slug")
+        .sort({ created_at: -1 })
+        .limit(20)
+        .lean();
+    }
+
     // Best Sellers (highest sales volume active products)
     const bestSellers = await (Product as any)
       .find({
@@ -99,6 +125,7 @@ export async function GET(request: NextRequest) {
       bestSellers,
       mostLovedProducts,
       premiumProducts,
+      featuredProducts,
     });
   } catch (error) {
     console.error("Home data fetch failed:", error);

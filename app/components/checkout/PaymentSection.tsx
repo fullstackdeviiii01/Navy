@@ -18,6 +18,7 @@ import PaymentMethodSelector, {
   STATIC_PAYMENT_METHODS,
 } from "./PaymentMethodSelector";
 import { checkoutApi } from "../../../lib/api/checkout";
+import { convertImageToWebP } from "../../../lib/utils/imageToWebp";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface PaymentSectionProps {
@@ -48,8 +49,9 @@ export default function PaymentSection({
   };
 
   const uploadProof = async (file: File): Promise<string> => {
+    const webpFile = await convertImageToWebP(file);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", webpFile);
 
     const res = await fetch("/api/upload/payment-proof", {
       method: "POST",

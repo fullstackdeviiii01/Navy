@@ -392,6 +392,11 @@ export const ProductSchema = new Schema<IProductDocument>(
       default: false,
       index: true,
     },
+    is_featured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
 
     // ========== Dates ==========
     published_at: {

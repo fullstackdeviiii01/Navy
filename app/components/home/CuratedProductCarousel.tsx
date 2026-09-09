@@ -1,10 +1,10 @@
 // app/components/home/CuratedProductCarousel.tsx
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Loader2, Check, ArrowRight, ShoppingCart, Plus } from "lucide-react";
+import { Heart, Loader2, Check, ChevronLeft, ChevronRight, ShoppingCart, Plus } from "lucide-react";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { getProductMainImage } from "../../../lib/utils/productImages";
 import { getProductUrl } from "../../../lib/utils/productUrl";
@@ -55,7 +55,7 @@ const getProductPrice = (prod?: ProductItem): number => {
   return !isNaN(num) && num > 0 ? num : 0;
 };
 
-// Individual Product Grid Card (Clean static image, no dots, screen-responsive buttons)
+// Individual Product Grid Card
 function ProductGridCard({
   product,
   isAdding,
@@ -80,7 +80,7 @@ function ProductGridCard({
     <div
       className={`${className} flex flex-col justify-between bg-[#E5E5E5] dark:bg-[#241A12] border border-[#C2B29F] dark:border-[#3E2B1E] rounded-[2px] shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden group min-w-0`}
     >
-      {/* Full-Bleed Product Image with Clean Link (Dots removed) */}
+      {/* Full-Bleed Product Image with Clean Link */}
       <Link
         href={getProductUrl(product)}
         className="relative aspect-square w-full bg-[#E5E5E5] dark:bg-[#1A120B] block overflow-hidden"
@@ -170,8 +170,6 @@ function ProductGridCard({
 export default function CuratedProductCarousel({
   title,
   products = [],
-  viewAllLink = "/products",
-  topButtonText = "Show all products",
   bgClass = "bg-[#E5E5E5] dark:bg-[#1A120B]",
 }: CuratedProductCarouselProps) {
   const { refreshCart, updateCart, openCart } = useUser();
@@ -179,6 +177,9 @@ export default function CuratedProductCarousel({
 
   const [addingId, setAddingId] = useState<string | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleAddToCart = async (product: ProductItem, e: React.MouseEvent) => {
     e.preventDefault();
@@ -236,7 +237,7 @@ export default function CuratedProductCarousel({
     }
   };
 
-  // 1. Strict Deduplication Safeguard: Filter out any duplicate IDs so every product in pool is 100% distinct
+  // Strict Deduplication Safeguard
   const uniqueProducts = useMemo(() => {
     const seen = new Set<string>();
     return (products || []).filter((p) => {
@@ -247,42 +248,74 @@ export default function CuratedProductCarousel({
     });
   }, [products]);
 
-  const [startIndex, setStartIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  // Compute smooth scroll step
+  const getScrollStep = useCallback(() => {
+    if (!scrollContainerRef.current) return 200;
+    const container = scrollContainerRef.current;
+    const firstCard = container.firstElementChild as HTMLElement;
+    if (firstCard) {
+      const cardRect = firstCard.getBoundingClientRect();
+      // Calculate gap between cards if available
+      const secondCard = firstCard.nextElementSibling as HTMLElement;
+      if (secondCard) {
+        const gap = secondCard.getBoundingClientRect().left - cardRect.right;
+        return cardRect.width + gap;
+      }
+      return cardRect.width + 12;
+    }
+    return container.clientWidth / 3;
+  }, []);
 
-  // 2. 10-second automatic rotation: cycle smoothly through the tagged product pool
+  const handleScrollRight = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const step = getScrollStep();
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (container.scrollLeft >= maxScroll - 8) {
+      container.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      container.scrollBy({ left: step, behavior: "smooth" });
+    }
+  }, [getScrollStep]);
+
+  const handleScrollLeft = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const step = getScrollStep();
+
+    if (container.scrollLeft <= 8) {
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      container.scrollTo({ left: maxScroll, behavior: "smooth" });
+    } else {
+      container.scrollBy({ left: -step, behavior: "smooth" });
+    }
+  }, [getScrollStep]);
+
+  // Auto-scroll every 3.5 seconds with pause on interaction
   useEffect(() => {
     if (!uniqueProducts || uniqueProducts.length <= 1 || isPaused) return;
 
     const interval = setInterval(() => {
-      setStartIndex((prev) => (prev + 1) % uniqueProducts.length);
-    }, 10000);
+      handleScrollRight();
+    }, 3500);
 
     return () => clearInterval(interval);
-  }, [uniqueProducts, isPaused]);
+  }, [uniqueProducts, isPaused, handleScrollRight]);
 
   if (!uniqueProducts || uniqueProducts.length === 0) return null;
-
-  // 3. Sliding Window: exactly up to 5 products starting from startIndex (wraps around unique pool)
-  // Guaranteed: windowCount <= uniqueProducts.length, so all visible slots are 100% distinct
-  const windowCount = Math.min(uniqueProducts.length, 5);
-  const displayProducts = Array.from({ length: windowCount }, (_, i) => {
-    const idx = (startIndex + i) % uniqueProducts.length;
-    return {
-      product: uniqueProducts[idx],
-      slotIndex: i,
-    };
-  });
 
   return (
     <section
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
       className={`relative w-full py-6 sm:py-10 md:py-12 border-b border-[#B8A894] dark:border-[#38281B] transition-colors select-none ${bgClass}`}
     >
       <div className="max-w-7xl mx-auto px-1.5 xs:px-2.5 sm:px-6 lg:px-8">
 
-        {/* Section Header: --- TITLE ---------------------------- [Show all products ->] */}
+        {/* Section Header: --- TITLE ---------------------------- [<] [>] */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-3 mb-3 sm:mb-6 md:mb-8">
           
           {/* Decorative Framing Title */}
@@ -294,28 +327,37 @@ export default function CuratedProductCarousel({
             <span className="h-[1px] flex-1 bg-[#B8A894]" />
           </div>
 
-          {/* Top Button: "Show all products" */}
-          <Link
-            href={viewAllLink}
-            className="no-theme-hover inline-flex items-center gap-1 px-2 xs:px-2.5 sm:px-4 py-1 sm:py-2 rounded-[2px] border border-[#C59345]/70 hover:border-[#C59345] bg-white dark:bg-[#2A1D13] hover:bg-[#C59345] dark:hover:bg-[#C59345] text-[#A8752B] hover:text-white dark:text-[#E5B568] dark:hover:text-white text-[8px] xs:text-[9.5px] sm:text-xs font-bold uppercase tracking-[0.05em] sm:tracking-[0.1em] transition-all duration-200 shadow-2xs active:scale-95 shrink-0"
-          >
-            <span>{topButtonText}</span>
-            <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
-          </Link>
+          {/* Tiny Circular Left & Right Arrow Buttons (Replaces "Show all pieces" button) */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleScrollLeft}
+              aria-label="Scroll left"
+              className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 rounded-full border border-[#C59345]/70 hover:border-[#C59345] bg-white dark:bg-[#2A1D13] hover:bg-[#C59345] text-[#A8752B] hover:text-white dark:text-[#E5B568] dark:hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs active:scale-90 cursor-pointer"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+            </button>
+            <button
+              type="button"
+              onClick={handleScrollRight}
+              aria-label="Scroll right"
+              className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 rounded-full border border-[#C59345]/70 hover:border-[#C59345] bg-white dark:bg-[#2A1D13] hover:bg-[#C59345] text-[#A8752B] hover:text-white dark:text-[#E5B568] dark:hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs active:scale-90 cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+            </button>
+          </div>
         </div>
 
-        {/* 3 in a Row on Mobile / 4 on Tablet / 5 on Laptop with 5-second Rotation */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
-          {displayProducts.map(({ product, slotIndex }) => (
+        {/* Butter-Smooth Horizontal Scrolling Product Showcase */}
+        {/* 3 visible on mobile (<sm), 4 on tablet (sm), 5 on desktop (lg) */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 lg:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {uniqueProducts.map((product) => (
             <div
-              key={`slot-${slotIndex}-${product._id}`}
-              className={`transition-all duration-500 min-w-0 ${
-                slotIndex === 3
-                  ? "hidden sm:flex"
-                  : slotIndex === 4
-                  ? "hidden lg:flex"
-                  : "flex"
-              }`}
+              key={`product-${product._id}`}
+              className="shrink-0 snap-start w-[calc((100%-16px)/3)] sm:w-[calc((100%-36px)/4)] lg:w-[calc((100%-80px)/5)]"
             >
               <ProductGridCard
                 product={product}
@@ -324,7 +366,7 @@ export default function CuratedProductCarousel({
                 onAddToCart={handleAddToCart}
                 onWishlistToggle={handleWishlistToggle}
                 inWishlist={isInWishlist(product._id)}
-                className="w-full animate-product-swap"
+                className="w-full h-full"
               />
             </div>
           ))}

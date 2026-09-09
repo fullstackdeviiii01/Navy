@@ -99,10 +99,11 @@ export default function ContactInfo({ settings }: ContactInfoProps) {
                     href={settings.company_location_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-theme-hover-light/10 dark:bg-theme-hover-dark/15 border border-theme-hover-light/30 dark:border-theme-hover-dark/30 text-theme-hover-light dark:text-theme-hover-dark hover:bg-theme-hover-light hover:text-white dark:hover:bg-theme-hover-dark dark:hover:text-white transition-all text-xs font-medium mt-2"
+                    className="no-theme-hover inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium mt-2 transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: "#A8752B", color: "#FFFFFF" }}
                   >
-                    <span>View on Google Maps</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <span style={{ color: "#FFFFFF" }}>View on Google Maps</span>
+                    <ExternalLink className="w-3 h-3" style={{ color: "#FFFFFF" }} />
                   </a>
                 )}
               </div>

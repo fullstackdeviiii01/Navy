@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { Star, Upload, Trash2, Image as ImageIcon, Video as VideoIcon, Loader2 } from "lucide-react";
+import { convertImageToWebP } from "../../../lib/utils/imageToWebp";
 
 interface ReviewFormProps {
   productId: string;
@@ -60,8 +61,9 @@ export default function ReviewForm({
     setError("");
 
     try {
+      const webpFile = await convertImageToWebP(file);
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("image", webpFile);
 
       const response = await fetch("/api/reviews/upload-image", {
         method: "POST",

@@ -63,6 +63,7 @@ export default async function HomePage() {
     categories = [],
     mostLovedProducts = [],
     premiumProducts = [],
+    featuredProducts = [],
     showcaseProducts = [],
   } = await getHomeDataSSR();
 
@@ -74,20 +75,25 @@ export default async function HomePage() {
       {/* 3. Shop By Category (Circular Concentric Gold Badges) */}
       <CategoryCircleGrid categories={categories} />
 
-      {/* 4. Most Loved by Our Customers (Full-width, Stacked, Exactly 5 Products) */}
+      {/* 4. Most Loved by Our Customers */}
       <CuratedProductCarousel
         title="MOST LOVED BY OUR CUSTOMERS"
         products={mostLovedProducts}
         viewAllLink="/products?sort=popular"
-        topButtonText="Show all products"
       />
 
-      {/* 5. Premium Collection (Full-width, Stacked, Exactly 5 Products) */}
+      {/* 5. Featured Collection */}
+      <CuratedProductCarousel
+        title="FEATURED COLLECTION"
+        products={featuredProducts}
+        viewAllLink="/products?sort=newest"
+      />
+
+      {/* 6. Premium Collection */}
       <CuratedProductCarousel
         title="PREMIUM COLLECTION"
         products={premiumProducts}
         viewAllLink="/products?sort=price-desc"
-        topButtonText="Show all products"
       />
 
       {/* 6. Brand Value & Trust Highlights Bar */}
